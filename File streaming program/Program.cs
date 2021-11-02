@@ -9,6 +9,7 @@ namespace Filestreaming_Program
         {
             //*** INIT ***
             Console.WriteLine("--------- Initializing streaming ----------");
+            DBInfo.Initialize();
 
             //CLEAR DESTINATION DB
             Console.WriteLine("Clearing destination DB tables...");
@@ -42,7 +43,7 @@ namespace Filestreaming_Program
             Task task4 = DBUtilities.AsyncExecution<EngineProperty>(engineProperties.Entries, engineProperties);
             Task task5 = DBUtilities.AsyncExecution<HealthReport>(healthReports.Entries, healthReports);
 
-            System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite);
+            Console.ReadKey();
         }
     }
 }
