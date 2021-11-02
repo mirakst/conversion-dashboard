@@ -23,7 +23,7 @@ namespace Filestreaming_Program
         {
             Console.WriteLine();
             var conn = DBInfo.ConnectToDestDB();
-            return conn.Execute($"Delete From AFSTEMNING;\nDelete From ENGINE_PROPERTIES;\nDelete From EXECUTIONS;\n" +
+            return conn.Execute($"use [{DBInfo.DestDatabase}];\nDelete From AFSTEMNING;\nDelete From ENGINE_PROPERTIES;\nDelete From EXECUTIONS;\n" +
                                 $"Delete From HEALTH_REPORT;\nDelete From LOGGING;\nDelete From LOGGING_CONTEXT;\n" +
                                 $"Delete From MANAGER_TRACKING;\nDelete from MANAGERS;");
         }

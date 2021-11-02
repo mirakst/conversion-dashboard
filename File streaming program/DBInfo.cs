@@ -12,6 +12,9 @@ namespace Filestreaming_Program
     {
         public static string SrcConnectionString { get; private set; }
         public static string DestConnectionString { get; private set; }
+        public static string DestDatabase { get; private set; }
+        public static string SrcDatabase { get; private set; }
+        public static string Servername { get; private set; }
         public static DateTime convStartTime; //Time of the first database entry
 
         public static void Initialize()
@@ -24,12 +27,11 @@ namespace Filestreaming_Program
                 throw new ArgumentException("Invalid format in [hostinfo.meta] file. Expected [SERVER NAME;SOURCE DB;DESTINATION DB]");
             }
 
-            string hostname = parts[0];
-            string src = parts[1];
-            string dest = parts[2];
-
-            SrcConnectionString = $"Data Source={hostname};Initial Catalog={src};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            DestConnectionString = $"Data Source={hostname};Initial Catalog={dest};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            Servername = parts[0];
+            SrcDatabase = parts[1];
+            DestDatabase = parts[2];
+            SrcConnectionString = $"Data Source={Servername};Initial Catalog={SrcDatabase};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            DestConnectionString = $"Data Source={Servername};Initial Catalog={DestDatabase};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         }
 
         public static SqlConnection ConnectToSrcDB() //Returns a connection to the source DB
