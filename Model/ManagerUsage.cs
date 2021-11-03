@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System;
+
+namespace Model
 {
     public class ManagerUsage
     {
@@ -10,9 +12,9 @@
             Date = date;
         }
 
-        public int ExecutionId { get; }
-        public int RowsRead { get; }
-        public int RowsWritten { get; }
-        public DateTime Date { get; }
+        public int ExecutionId { get; } //From parentManager.ExecutionId (?), or SomeExecution.Id
+        public int RowsRead { get; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
+        public int RowsWritten { get; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
+        public DateTime Date { get; } //From [TIMESTAMP] in [dbo].[ENGINE_PROPERTIES].
     }
 }

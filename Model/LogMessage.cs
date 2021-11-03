@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System;
+
+namespace Model
 {
     public class LogMessage
     {
@@ -10,14 +12,14 @@
             Manager = manager;    
         }
 
-        public enum LogMessageType
+        public enum LogMessageType : byte
         {
             INFO, WARNING, ERROR, VALIDATION
         }
 
-        public LogMessageType Type { get; }
-        public string Content { get; }
-        public DateTime Date { get; }
-        public Manager Manager { get; }
+        public LogMessageType Type { get; } //From [LOG_LEVEL] in [dbo].[LOGGING].
+        public string Content { get; } //From [LOG_MESSAGE] in [dbo].[LOGGING].
+        public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
+        public Manager Manager { get; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
     }
 }

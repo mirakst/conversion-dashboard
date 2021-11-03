@@ -1,4 +1,7 @@
-﻿namespace Model
+﻿using System;
+using System.Collections.Generic;
+
+namespace Model
 {
     public class Log
     {
@@ -8,7 +11,7 @@
         }
 
         [Flags]
-        public enum LogFilters : short
+        public enum LogFilters : byte
         {
             INFO = 0,
             WARNING = 1,
@@ -17,6 +20,6 @@
         }
 
         public LogFilters Filters { get; set; }
-        public List<LogMessage> Messages { get; private set; } = new();
+        public List<LogMessage> Messages { get; private set; } = new(); //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id .
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System;
+
+namespace Model
 {
     public class ValidationTest
     {
@@ -15,9 +17,9 @@
             OK, FAILED, FAIL_MISMATCH, DISABLED
         }
 
-        public ValidationStatus Status { get; }
-        public string Name { get; }
-        public DateTime Date { get; }
-        public Manager Manager { get; }
+        public ValidationStatus Status { get; } //From [AFSTEMRESULTAT] in [dbo].[AFSTEMNING]
+        public string Name { get; } //From [DESCRIPTION] in [dbo].[AFSTEMNING]
+        public DateTime Date { get; } //From [AFSTEMTDATO] in [dbo].[AFSTEMNING]
+        public Manager Manager { get; } //From [MANAGER] in [dbo].[AFSTEMNING]
     }
 }

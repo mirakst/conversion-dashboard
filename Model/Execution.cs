@@ -1,4 +1,7 @@
-﻿namespace Model
+﻿using System;
+using System.Collections.Generic;
+
+namespace Model
 {
     public class Execution
     {
@@ -27,14 +30,14 @@
         #endregion
 
         #region Properties
-        public int Id { get; }
-        public DateTime StartTime { get; private set; }
-        public DateTime EndTime { get; private set; }
-        public TimeSpan Runtime { get; private set; }
-        public int RowsReadTotal { get; set; }
-        public int RowsWrittenTotal { get; set; }
-        public ExecutionStatus Status { get; private set; }
-        public List<Manager> Managers { get; } = new();
+        public long Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
+        public DateTime StartTime { get; private set; } //From [CREATED] in [dbo].[EXECUTIONS].
+        public DateTime EndTime { get; private set; } //DateTime.Now when an execution is registered as done (from log?).
+        public TimeSpan Runtime { get; private set; } //EndTime.Subtract(StartTime)
+        public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
+        public int RowsWrittenTotal { get; set; } //OnExecutionFinished, for each manager, RowsWrittenTotal += RowsWritten.
+        public ExecutionStatus Status { get; private set; } //This one is obvious, dummy.
+        public List<Manager> Managers { get; } = new(); //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
         #endregion
     }
 }
