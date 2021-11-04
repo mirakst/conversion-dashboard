@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using DashboardBackend.Database.Models;
+using Model;
 
 namespace DashboardBackend.Database
 {
@@ -22,10 +23,14 @@ namespace DashboardBackend.Database
         /// <returns>A list of all Executions</returns>
         List<Execution> GetExecutions();
 
-        List<Afstemning> GetAfstemninger(DateTime minDate);
-        List<Afstemning> GetAfstemninger();
+        List<ValidationTest> GetAfstemninger(DateTime minDate);
+        List<ValidationTest> GetAfstemninger();
 
-        List<Logging> GetLogMessages(DateTime minDate);
-        List<Logging> GetLogMessages();
+        List<LogMessage> GetLogMessages(DateTime minDate);
+        List<LogMessage> GetLogMessages();
+        List<Manager> GetManagers();
+        HealthReport GetHealthReport();
+        List<CpuLoad> GetCpuReadings();
+        List<NetworkUsage> GetNetworkReadings();
     }
 }

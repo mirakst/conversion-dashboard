@@ -11,6 +11,6 @@ namespace Model
         }
 
         public DateTime LastModified { get; set; } //DateTime.Now when modified (through compilation function or just test added?), event and handler maybe?
-        public List<ValidationReport> ValidationTests { get; set; } = new();
+        public List<ValidationTest> ValidationTests { get; set; } = new();
     }
 }

@@ -43,5 +43,10 @@ namespace Model
         public TimeSpan Runtime { get; private set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
         public ManagerStatus Status { get; private set; } //[STATUS] from [dbo].[MANAGER_TRACKING], where [MGR] = Name - until a manager start is logged, in which case it is RUNNING until a manager finishing is logged.
         public List<ManagerUsage> Readings { get; set; } = new(); //Readings from [dbo].[MANAGER_TRACKING], where [MGR] = Name.
+
+        public override string ToString()
+        {
+            return $"MANAGER ID: {Id}\nMANAGER EXECUTION ID: {ExecutionId}\nMANAGER NAME: {Name}\n";
+        }
     }
 }

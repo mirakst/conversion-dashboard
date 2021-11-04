@@ -4,7 +4,7 @@ namespace Model
 {
     public class Network
     {
-        public Network(string name, string macAddress, int speed)
+        public Network(string name, string macAddress, long speed)
         {
             Name = name;
             MacAddress = macAddress;
@@ -16,5 +16,10 @@ namespace Model
         public long Speed { get; } //bps //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'Interface 0: Speed'.
         //The properties above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'NETWORK_INIT'.
         public List<NetworkUsage> Readings { get; set; }
+
+        public override string ToString()
+        {
+            return $"ADAPTER NAME: {Name}\nMAC ADDRESS: {MacAddress}\nSPEED: {Speed} bps";
+        }
     }
 }

@@ -20,6 +20,6 @@ namespace Model
         }
 
         public LogFilters Filters { get; set; }
-        public List<LogMessage> Messages { get; private set; } = new(); //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id .
+        public List<LogMessage> Messages { get; set; } = new(); //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id .
     }
 }
