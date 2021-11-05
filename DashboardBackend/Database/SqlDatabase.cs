@@ -14,10 +14,12 @@ namespace DashboardBackend.Database
         }
 
         public DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
-        
+
         /// <inheritdoc/>
-        public List<ValidationTest> GetAfstemninger(DateTime minDate)
+        public List<ValidationTest> GetAfstemninger(DateTime minDate = default(DateTime))
         {
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+
             using NetcompanyDbContext db = new();
             var queryResult = db.Afstemnings.Where(e => e.Afstemtdato > minDate)
                                             .OrderBy(e => e.Afstemtdato).ToList();
@@ -31,15 +33,12 @@ namespace DashboardBackend.Database
             return result;
         }
 
-        /// <inheritdoc/>
-        public List<ValidationTest> GetAfstemninger()
-        {
-            return GetAfstemninger(SqlMinDateTime);
-        }
 
         /// <inheritdoc />
-        public List<Execution> GetExecutions(DateTime minDate)
+        public List<Execution> GetExecutions(DateTime minDate = default(DateTime))
         {
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+
             using NetcompanyDbContext db = new();
             var queryResult = db.Executions.Where(e => e.Created > minDate)
                                            .OrderBy(e => e.Created).ToList();
@@ -53,17 +52,14 @@ namespace DashboardBackend.Database
             return result;
         }
 
-        /// <inheritdoc />
-        public List<Execution> GetExecutions()
-        {
-            return GetExecutions(SqlMinDateTime);
-        }
-
         /// <inheritdoc/>
-        public List<LogMessage> GetLogMessages(DateTime minDate)
+        public List<LogMessage> GetLogMessages(int ExecutionId, DateTime minDate = default(DateTime))
         {
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+
             using NetcompanyDbContext db = new();
             var queryResult = db.Loggings.Where(e => e.Created > minDate)
+                                         .Where(e => e.ExecutionId == ExecutionId)
                                          .OrderBy(e => e.Created).ToList();
             List<LogMessage> result = new();
             
@@ -73,12 +69,6 @@ namespace DashboardBackend.Database
             }
 
             return result;
-        }
-
-        /// <inheritdoc/>
-        public List<LogMessage> GetLogMessages()
-        {
-            return GetLogMessages(SqlMinDateTime);
         }
 
         public List<Manager> GetManagers()
@@ -98,15 +88,18 @@ namespace DashboardBackend.Database
         public HealthReport GetHealthReport()
         {
             using NetcompanyDbContext db = new();
-            var queryResult = db.HealthReports.OrderBy(e => e.LogTime).ToList();
+            var queryResult = db.HealthReports.OrderBy(e => e.LogTime)
+                                              .ToList();
 
             HealthReport result = DataConversion.InitHealthReport(queryResult);
-            
+
             return result;
         }
 
-        public List<CpuLoad> GetCpuReadings(DateTime minDate)
+        public List<CpuLoad> GetCpuReadings(DateTime minDate = default(DateTime))
         {
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+
             using NetcompanyDbContext db = new();
             var queryResult = db.HealthReports.Where(e => e.LogTime > minDate && e.ReportType == "CPU")
                                               .OrderBy(e => e.LogTime).ToList();
@@ -120,13 +113,10 @@ namespace DashboardBackend.Database
             return result;
         }
 
-        public List<CpuLoad> GetCpuReadings()
+        public List<NetworkUsage> GetNetworkReadings(DateTime minDate = default(DateTime))
         {
-            return GetCpuReadings(SqlMinDateTime);
-        }
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
 
-        public List<NetworkUsage> GetNetworkReadings(DateTime minDate)
-        {
             using NetcompanyDbContext db = new();
             var queryResult = db.HealthReports.Where(e => e.LogTime > minDate && e.ReportType == "NETWORK")
                                               .OrderBy(e => e.LogTime).ToList();
@@ -136,9 +126,21 @@ namespace DashboardBackend.Database
             return result;
         }
 
-        public List<NetworkUsage> GetNetworkReadings()
+        public List<RamUsage> GetRamReadings(DateTime minDate = default(DateTime))
         {
-            return GetNetworkReadings(SqlMinDateTime);
+            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+
+            using NetcompanyDbContext db = new();
+            var queryResult = db.HealthReports.Where(e => e.LogTime > minDate && e.ReportType == "Memory")
+                                              .OrderBy(e => e.LogTime).ToList();
+            List<RamUsage> result = new();
+
+            foreach (var item in queryResult.Where(e => e.ReportKey == "AVAILABLE"))
+            {
+                result.Add(new RamUsage((int)item.ExecutionId, (long)item.ReportNumericValue, (DateTime)item.LogTime));
+            }
+
+            return result;
         }
     }
 }

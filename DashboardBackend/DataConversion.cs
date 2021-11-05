@@ -8,7 +8,7 @@ namespace DashboardBackend
         public static bool HealthReportConfigured { get; private set; } = false;
         public static LogMessage.LogMessageType GetLogMessageType(LoggingEntry entry)
         {
-            if (entry.LogLevel.StartsWith("Afstemning"))
+            if (entry.LogMessage.StartsWith("Afstemning"))
                 return LogMessage.LogMessageType.VALIDATION;
 
             switch (entry.LogLevel)
@@ -80,21 +80,23 @@ namespace DashboardBackend
             var logTimes = entries.Select(e => e.LogTime).Distinct().ToList();
 
             List<List<HealthReportEntry>> distinctReports = new();
-            DateTime lastReadingTime = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+            DateTime prevLogTime = new();
 
             foreach (var item in logTimes)
             {
-                if (item.Value.Subtract(lastReadingTime).Duration() < TimeSpan.FromSeconds(1))
+                if (item.Value.Subtract(prevLogTime).Duration() < TimeSpan.FromSeconds(1))
                 {
-                    List<HealthReportEntry> entryList = entries.FindAll(e => e.LogTime.Value.Subtract(lastReadingTime).Duration() < TimeSpan.FromSeconds(1) && e.LogTime.Value.Subtract(lastReadingTime).Duration() > TimeSpan.FromSeconds(0));
-                    distinctReports.Add(distinctReports.Last().Concat(entryList).ToList());
-                    distinctReports.RemoveAt(distinctReports.Count - 2);
+                    List<HealthReportEntry> entryList = entries.Where(e => e.LogTime >= prevLogTime)
+                                                               .Where(e => e.LogTime < prevLogTime.AddSeconds(1)).ToList();
+
+                    distinctReports.RemoveAt(distinctReports.Count - 1);
+                    distinctReports.Add(entryList);
                 }
                 else
                 {
                     distinctReports.Add(entries.FindAll(e => e.LogTime == (DateTime)item));
                 }
-                lastReadingTime = item.Value;
+                prevLogTime = item.Value;
             }
 
             foreach (var item in distinctReports)

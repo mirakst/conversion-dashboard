@@ -4,7 +4,7 @@ namespace Model
 {
     public class RamUsage
     {
-        public RamUsage(int executionId, int available, DateTime date)
+        public RamUsage(int executionId, long available, DateTime date)
         {
             ExecutionId = executionId;
             Available = available;
@@ -16,5 +16,9 @@ namespace Model
         public DateTime Date { get; } //From [LOG_TIME] in [dbo].[HEALTH_REPORT].
         //The properties above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'MEMORY'.
 
+        public override string ToString()
+        {
+            return $"{Date.ToLongTimeString()}: {Available} bytes";
+        }
     }
 }

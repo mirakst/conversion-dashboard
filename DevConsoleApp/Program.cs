@@ -14,23 +14,16 @@ namespace DevConsoleApp
 
             //**** CONV AND EXECUTION TESTING ****
             Conversion conv = new();
-            Console.WriteLine(NowString+" -- Started! --");
-            /*conv.Executions = databaseHandler.GetExecutions();
-            Console.WriteLine(NowString+" -- Executions fetched --");
+            conv.Executions = databaseHandler.GetExecutions();
             conv.ActiveExecution.Managers = databaseHandler.GetManagers();
-            Console.WriteLine(NowString+" -- Managers fetched --");
-            conv.ActiveExecution.Log.Messages = databaseHandler.GetLogMessages();
-            Console.WriteLine(NowString+" -- Log messages fetched --");
+            conv.ActiveExecution.Log.Messages = databaseHandler.GetLogMessages(conv.ActiveExecution.Id);
             conv.ActiveExecution.ValidationReport.ValidationTests = databaseHandler.GetAfstemninger();
-            Console.WriteLine(NowString+" -- Validations fetched --");
             conv.HealthReport = databaseHandler.GetHealthReport();
-            Console.WriteLine(NowString+" -- Health report fetched --");
             conv.HealthReport.Cpu.Readings = databaseHandler.GetCpuReadings();
-            Console.WriteLine(NowString+" -- Cpu readings fetched --");
-            conv.HealthReport.Network.Readings = databaseHandler.GetNetworkReadings();*/
-            List<NetworkUsage> networkUsage = databaseHandler.GetNetworkReadings();
-            Console.WriteLine(NowString+" -- Network readings fetched --");
-            /*foreach (var item in conv.Executions)
+            conv.HealthReport.Network.Readings = databaseHandler.GetNetworkReadings();
+            conv.HealthReport.Ram.Readings = databaseHandler.GetRamReadings();
+
+            foreach (var item in conv.Executions)
             {
                 Console.WriteLine(item);
             }
@@ -45,19 +38,19 @@ namespace DevConsoleApp
             foreach (var item in conv.ActiveExecution.ValidationReport.ValidationTests)
             {
                 Console.WriteLine(item);
-            }*/
+            }
 
-/*            Console.WriteLine(conv.HealthReport.ToString());
-*/
-            /*foreach (var item in conv.HealthReport.Cpu.Readings)
+            Console.WriteLine(conv.HealthReport.ToString());
+
+            foreach (var item in conv.HealthReport.Cpu.Readings)
             {
                 Console.WriteLine(item.ToString());
-            }*/
-            /*foreach (var item in conv.HealthReport.Network.Readings)
+            }
+            foreach (var item in conv.HealthReport.Network.Readings)
             {
                 Console.WriteLine(item.ToString());
-            }*/
-            foreach (var item in networkUsage)
+            }
+            foreach (var item in conv.HealthReport.Ram.Readings)
             {
                 Console.WriteLine(item.ToString());
             }
