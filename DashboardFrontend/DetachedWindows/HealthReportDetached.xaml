@@ -25,7 +25,7 @@
                                        VerticalAlignment="Center"
                                        Grid.Column="0"
                                        Grid.Row="0"
-                                       Margin="0,0,5,5"/>
+                                       Margin="0,0,40,5"/>
                             <TextBlock Name="ramCurrentUsage"
                                        Text="RAM usage: 0%"
                                        Foreground="{DynamicResource ForegroundColor}"
@@ -72,8 +72,50 @@
                 <TabItem Name="networkTab"
                          Header="Network"
                          Background="{DynamicResource BackgroundColor}"
-                         Foreground="{DynamicResource ForegroundColor}">
-                    
+                         Foreground="{DynamicResource ForegroundColor}" IsSelected="True">
+                    <Border Margin="10">
+                        <Grid>
+                            <TextBlock Name="networkTextBlock"
+                                       FontSize="15"
+                                       Grid.Column="0"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}">
+                                Send:<LineBreak/>
+                                Send delta:<LineBreak/>
+                                Send speed:<LineBreak/>
+                                <LineBreak/>
+                                Recived:<LineBreak/>
+                                Recived delta:<LineBreak/>
+                                Recived speed:<LineBreak/>
+                            </TextBlock>
+                            <TextBlock Name="networkDataTextBlock"
+                                       FontSize="15"
+                                       Grid.Column="1"
+                                       Margin="0,0,10,0"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextAlignment="Right">
+                                102 KB<LineBreak/>
+                                932 KB<LineBreak/>
+                                123 MB<LineBreak/>
+                                <LineBreak/>
+                                43 KB<LineBreak/>
+                                12 KB<LineBreak/>
+                                13 MB<LineBreak/>
+                            </TextBlock>
+                            <d3:Chart Name="networkSendReciveChart"
+                                      Background="{DynamicResource BackgroundColor}"
+                                      Foreground="{DynamicResource ForegroundColor}"
+                                      Grid.Column="2">
+                                <Grid/>
+                            </d3:Chart>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="7*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </Border>
                 </TabItem>
             </TabControl>
             <Grid.ColumnDefinitions>
