@@ -5,7 +5,11 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- Resources for the entire application can be defined here. -->
-
+        
+        <!-- Default design for background -->
+        <SolidColorBrush x:Key="BackgroundColor" Color="#14325C"/>
+        <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
+        
         <!-- Default design for buttons -->
         <Style x:Key="DefaultButton" TargetType="Button">
             <Setter Property="FontFamily" Value="Tahoma"/>
