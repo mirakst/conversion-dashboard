@@ -6,10 +6,11 @@
         xmlns:d3="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
-        Title="Conversion dashboard" Height="720" Width="1280"
+        Title="Conversion dashboard"
+        Height="720"
+        Width="1280"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
         
-    
     <Border Background="#344472">
         <Grid>
             <Grid Name="controlPanel" 
@@ -24,8 +25,8 @@
                         Grid.RowSpan="2" 
                         Background="Transparent" 
                         BorderBrush="Transparent">
-                    <Image Name="startStopImage" 
-                                   Source="Icons/Start.png"/>
+                    <Image Name="startStopImage"
+                           Source="Icons/Start.png"/>
                 </Button>
                 <Button Name="settingsButton" 
                         Margin="0, 0, 10, 0" 
@@ -42,8 +43,9 @@
                            Margin="5, 0, 5, 0" 
                            Grid.Column="2" 
                            Grid.Row="0" 
-                           Grid.RowSpan="2">
-                Conversion - 1
+                           Grid.RowSpan="2"
+                           Text="Conversion - 1">
+                    
                 </TextBlock>
                 <Grid Grid.Column="3" 
                       Grid.Row="0">
@@ -59,7 +61,6 @@
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
                 </Grid>
-
                 <Grid Grid.Column="3" 
                       Grid.Row="1">
                     <ProgressBar Name="conversionProgressBar" 
@@ -200,35 +201,62 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="validationReportGrid" Margin="0, 0, 5, 0" Grid.Column="1" Grid.Row="3">
-                <TextBlock Name="validationReportSearchBar" adorners:Watermark.Text="Search" Margin="0,0,2,2" 
-                         Background="White" Grid.Column="0"
-                         Grid.Row="0"/>
-                <!--HorizontalAlignmen="{StaticResource DefaultButton}"-->
-                <Button VerticalAlignment="Stretch"/>
-                <Button Name="validationReportSearchButton" Content="Search" Margin="0"
-                        Grid.Column="1" Grid.Row="0"/>
-                <!-- Fjernet style="default button"-->
-                <Button Name="validationReportFilter" Content="Filter" Margin="0,0,2,2" 
-                        Grid.Column="2" Grid.Row="0" Style="{StaticResource DefaultButton}"/>
-                <ToggleButton Name="validationReportrefresh" Content="Refresh" Margin="0,0,2,2" 
-                              Grid.Column="3" Grid.Row="0">
-                    <!--="{StaticResource DefaultTogvalidationReportExpandButton}">-->
-                </ToggleButton>
-                <Button Name="validationReportExpandButton" Content="Expand" Click="ExpandValidationReportButtonClick" 
-                        Margin="0,0,0,2" Grid.Column="4" Grid.Row="0" 
+            <Grid Name="validationReportGrid"
+                  Margin="0, 0, 5, 0"
+                  Grid.Column="1"
+                  Grid.Row="3">
+                <TextBlock Name="validationReportSearchBar"
+                           adorners:Watermark.Text="Search"
+                           Margin="0,0,2,2" 
+                           Background="White"
+                           Grid.Column="0"
+                           Grid.Row="0"/>
+                <Button Name="validationReportSearchButton"
+                        Content="Search" Margin="0"
+                        Grid.Column="1"
+                        Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <ListView x:Name="ValidationList" Grid.Column="0" Grid.ColumnSpan="5" 
-                          Grid.Row="1" ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}" AlternationCount="2">
+                <Button Name="validationReportFilter"
+                        Content="Filter"
+                        Margin="0,0,2,2" 
+                        Grid.Column="2"
+                        Grid.Row="0"
+                        Style="{StaticResource DefaultButton}"/>
+                <ToggleButton Name="validationReportrefresh"
+                              Content="Refresh"
+                              Margin="0,0,2,2" 
+                              Grid.Column="3"
+                              Grid.Row="0"
+                              Style="{StaticResource DefaultToggleButton}">
+                </ToggleButton>
+                <Button Name="validationReportExpandButton"
+                        Content="Expand"
+                        Click="ExpandValidationReportButtonClick" 
+                        Margin="0,0,0,2"
+                        Grid.Column="4"
+                        Grid.Row="0" 
+                        Style="{StaticResource DefaultButton}"/>
+                <!-- TreeView kan overvejes istedet for  ListView -->
+                <ListView x:Name="ValidationList"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="5" 
+                          Grid.Row="1"
+                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
+                          AlternationCount="2">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Manager name" Width="auto" DisplayMemberBinding="{Binding ManagerName}"/>
-                            <GridViewColumn Header="Validations OK" Width="auto" DisplayMemberBinding="{Binding ValidationsOk}"/>
-                            <GridViewColumn Header="Status" Width="auto" DisplayMemberBinding="{Binding ManagerStatus}"/>
+                            <GridViewColumn Header="Manager name"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ManagerName}"/>
+                            <GridViewColumn Header="Validations OK"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
+                            <GridViewColumn Header="Status"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <!-- måske TreeView -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
                     <ColumnDefinition Width="*"/>
@@ -241,11 +269,22 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="healthReportGrid" Margin="5,0,0,0" Grid.Column="2" Grid.Row="3">
-                <Button Name="healthReportExpandButton" Click="ExpandHealthReportButtonClick" Content="Expand" 
-                        Grid.Column="3" Grid.Row="0" Style="{StaticResource DefaultButton}"/>
-                <d3:Chart Name="healthReportGraph" Background="White" Margin="0, 5, 0, 0" 
-                          Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1">
+            <Grid Name="healthReportGrid"
+                  Margin="5,0,0,0"
+                  Grid.Column="2"
+                  Grid.Row="3">
+                <Button Name="healthReportExpandButton"
+                        Click="ExpandHealthReportButtonClick"
+                        Content="Expand" 
+                        Grid.Column="3"
+                        Grid.Row="0"
+                        Style="{StaticResource DefaultButton}"/>
+                <d3:Chart Name="healthReportGraph"
+                          Background="White"
+                          Margin="0, 5, 0, 0" 
+                          Grid.Column="0"
+                          Grid.ColumnSpan="5"
+                          Grid.Row="1">
                     <Grid Name="healthReportTempGrid"/>
                 </d3:Chart>
                 <Grid.ColumnDefinitions>
