@@ -1,0 +1,275 @@
+﻿<Window x:Class="DashboardInterface.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+        xmlns:adorners="http://gu.se/Adorners"
+        mc:Ignorable="d"
+        Title="Conversion dashboard" Height="720" Width="1280"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        
+    
+    <Border Background="#344472">
+        <Grid>
+            <Grid Name="controlPanel" 
+                  Grid.Column="1" 
+                  Grid.ColumnSpan="3" 
+                  Grid.Row="1">
+                <Button Name="startStopButton" 
+                        Click="StartStopButtonClick" 
+                        Margin="0, 0, 10, 0" 
+                        Grid.Column="0" 
+                        Grid.Row="0" 
+                        Grid.RowSpan="2" 
+                        Background="Transparent" 
+                        BorderBrush="Transparent">
+                    <Image Name="startStopImage" 
+                                   Source="Icons/Start.png"/>
+                </Button>
+                <Button Name="settingsButton" 
+                        Margin="0, 0, 10, 0" 
+                        Click="SettingsButtonClick" 
+                        Grid.Column="1" 
+                        Grid.Row="0" 
+                        Grid.RowSpan="2" 
+                        Background="Transparent" 
+                        BorderBrush="Transparent">
+                    <Image Source="Icons/Cog.png"/>
+                </Button>
+                <TextBlock Name="conversionName" 
+                           FontSize="28" 
+                           Margin="5, 0, 5, 0" 
+                           Grid.Column="2" 
+                           Grid.Row="0" 
+                           Grid.RowSpan="2">
+                Conversion - 1
+                </TextBlock>
+                <Grid Grid.Column="3" 
+                      Grid.Row="0">
+                    <ProgressBar Name="managerProgressBar" 
+                                 Margin="2" 
+                                 Grid.Column="3" 
+                                 Grid.Row="0" 
+                                 Minimum="0" 
+                                 Maximum="100" 
+                                 Value="85"/>
+                    <TextBlock Text="{Binding ElementName=managerProgressBar, Path=Value, StringFormat=Manager #: {0:0}%}" 
+                               FontSize="15" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Grid>
+
+                <Grid Grid.Column="3" 
+                      Grid.Row="1">
+                    <ProgressBar Name="conversionProgressBar" 
+                                 Margin="2" 
+                                 Grid.Column="3" 
+                                 Grid.Row="1" 
+                                 Minimum="0" 
+                                 Maximum="100" 
+                                 Value="15"/>
+                    <TextBlock Text="{Binding ElementName=conversionProgressBar, Path=Value, StringFormat=Conversion: {0:0}%}" 
+                               FontSize="15" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="8*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid Name="managerGrid" 
+                  Grid.Column="1" 
+                  Grid.Row="2" 
+                  Margin="0,10,5,10">
+                <TextBox Name="managerSearchBox" 
+                         adorners:Watermark.Text="Search" 
+                         Background="White" 
+                         Grid.Column="0" 
+                         Grid.Row="0" 
+                         Margin="0,0,2,2"/>
+                <Button Name="managerSearchButton" 
+                        Content="Search" 
+                        Grid.Column="1" 
+                        Grid.Row="0" 
+                        Margin="0,0,2,2" 
+                        Style="{StaticResource DefaultButton}"/>
+                <Button Name="managerExpandButton" 
+                        Content="Expand" 
+                        Click="ExpandManagerButtonClick" 
+                        Grid.Column="2" 
+                        Grid.Row="0" 
+                        Margin="0,0,0,2" 
+                        Style="{StaticResource DefaultButton}"/>
+                <ListView x:Name="managerList" 
+                          Grid.Column="0" 
+                          Grid.ColumnSpan="3" 
+                          Grid.Row="1" 
+                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}" 
+                          AlternationCount="2">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Manager name" 
+                                            Width="auto" 
+                                            DisplayMemberBinding="{Binding ManagerName}"/>
+                            <GridViewColumn Header="Score" 
+                                            Width="auto" 
+                                            DisplayMemberBinding="{Binding ManagerScore}"/>
+                            <GridViewColumn Header="Status" 
+                                            Width="auto" 
+                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid Name="logGrid" 
+                  Margin="5,10,0,10" 
+                  Grid.Column="2" 
+                  Grid.Row="2">
+                <ToggleButton Name="logInfoButton" 
+                              Content="Info" 
+                              Grid.Column="0" 
+                              Grid.Row="0" 
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <ToggleButton Name="logWarningsButton" 
+                              Content="Warning" 
+                              Grid.Column="1" 
+                              Grid.Row="0" 
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <ToggleButton Name="logErrorButton" 
+                              Content="Error" 
+                              Grid.Column="2" 
+                              Grid.Row="0" 
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <ToggleButton Name="logFatalButton" 
+                              Content="Fatal" 
+                              Grid.Column="3" 
+                              Grid.Row="0" 
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <ToggleButton Name="logFilterButton" 
+                              Content="Filter" 
+                              Grid.Column="4"
+                              Grid.Row="0" 
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <Button Name="logExpandButton" 
+                        Content="Expand" 
+                        Click="ExpandLogButtonClick" 
+                        Grid.Column="6" 
+                        Grid.Row="0" 
+                        Style="{StaticResource DefaultButton}"/>
+                <ScrollViewer Name="logScrollViewer" 
+                              Grid.Column="0" 
+                              Grid.Row="1" 
+                              Grid.ColumnSpan="7">
+                    <ListView x:Name="LogEntryList">
+                        <GridView>
+                            <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"></GridViewColumn>
+                            <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="auto"></GridViewColumn>
+                            <GridViewColumn Header="Manager" DisplayMemberBinding="{Binding Manager}" Width="auto"></GridViewColumn>
+                            <GridViewColumn Header="Log message" DisplayMemberBinding="{Binding Content}" Width="auto"></GridViewColumn>
+                        </GridView>
+                    </ListView>
+                </ScrollViewer>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid Name="validationReportGrid" Margin="0, 0, 5, 0" Grid.Column="1" Grid.Row="3">
+                <TextBlock Name="validationReportSearchBar" adorners:Watermark.Text="Search" Margin="0,0,2,2" 
+                         Background="White" Grid.Column="0"
+                         Grid.Row="0"/>
+                <!--HorizontalAlignmen="{StaticResource DefaultButton}"-->
+                <Button VerticalAlignment="Stretch"/>
+                <Button Name="validationReportSearchButton" Content="Search" Margin="0"
+                        Grid.Column="1" Grid.Row="0"/>
+                <!-- Fjernet style="default button"-->
+                <Button Name="validationReportFilter" Content="Filter" Margin="0,0,2,2" 
+                        Grid.Column="2" Grid.Row="0" Style="{StaticResource DefaultButton}"/>
+                <ToggleButton Name="validationReportrefresh" Content="Refresh" Margin="0,0,2,2" 
+                              Grid.Column="3" Grid.Row="0">
+                    <!--="{StaticResource DefaultTogvalidationReportExpandButton}">-->
+                </ToggleButton>
+                <Button Name="validationReportExpandButton" Content="Expand" Click="ExpandValidationReportButtonClick" 
+                        Margin="0,0,0,2" Grid.Column="4" Grid.Row="0" 
+                        Style="{StaticResource DefaultButton}"/>
+                <ListView x:Name="ValidationList" Grid.Column="0" Grid.ColumnSpan="5" 
+                          Grid.Row="1" ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}" AlternationCount="2">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Manager name" Width="auto" DisplayMemberBinding="{Binding ManagerName}"/>
+                            <GridViewColumn Header="Validations OK" Width="auto" DisplayMemberBinding="{Binding ValidationsOk}"/>
+                            <GridViewColumn Header="Status" Width="auto" DisplayMemberBinding="{Binding ManagerStatus}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <!-- måske TreeView -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid Name="healthReportGrid" Margin="5,0,0,0" Grid.Column="2" Grid.Row="3">
+                <Button Name="healthReportExpandButton" Click="ExpandHealthReportButtonClick" Content="Expand" 
+                        Grid.Column="3" Grid.Row="0" Style="{StaticResource DefaultButton}"/>
+                <d3:Chart Name="healthReportGraph" Background="White" Margin="0, 5, 0, 0" 
+                          Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1">
+                    <Grid Name="healthReportTempGrid"/>
+                </d3:Chart>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+        </Grid>
+    </Border>
+</Window>

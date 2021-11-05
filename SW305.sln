@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{808A4020-110B-42BC-86DC-968645430538}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{808A4020-110B-42BC-86DC-968645430538}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevConsoleApp", "DevConsoleApp\DevConsoleApp.csproj", "{15030058-50AB-4705-A813-C1181D6BE405}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevConsoleApp", "DevConsoleApp\DevConsoleApp.csproj", "{15030058-50AB-4705-A813-C1181D6BE405}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardFrontend", "DashboardFrontend\DashboardFrontend.csproj", "{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{15030058-50AB-4705-A813-C1181D6BE405}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15030058-50AB-4705-A813-C1181D6BE405}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15030058-50AB-4705-A813-C1181D6BE405}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
