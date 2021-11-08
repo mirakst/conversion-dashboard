@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace DashboardFrontend.DeatachedWindows
+namespace DashboardFrontend.DetachedWindows
 {
     public partial class HealthReportDetached : Window
     {

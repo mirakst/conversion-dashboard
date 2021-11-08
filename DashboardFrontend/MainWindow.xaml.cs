@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.DeatachedWindows;
+﻿using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
 using System.Windows;
 
@@ -39,11 +39,11 @@ namespace DashboardInterface
 
         public void ExpandLogButtonClick(object sender, RoutedEventArgs e)
         {
-            //LogWindow expandLog = new();
-            //expandLog.Closing += OnLogWindowClosing;
-            //logExpandButton.IsEnabled = false;
-            //expandLog.Owner = Application.Current.MainWindow;
-            //expandLog.Show();
+            LogDetached expandLog = new();
+            expandLog.Closing += OnLogWindowClosing;
+            logExpandButton.IsEnabled = false;
+            expandLog.Owner = Application.Current.MainWindow;
+            expandLog.Show();
         }
 
         public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
@@ -88,6 +88,11 @@ namespace DashboardInterface
         private void OnHealthWindowClosing(object sender, CancelEventArgs e)
         {
             healthReportExpandButton.IsEnabled = true;
+        }
+
+        private void LogEntryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

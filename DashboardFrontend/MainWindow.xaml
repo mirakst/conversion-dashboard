@@ -179,12 +179,14 @@
                               Grid.Row="1" 
                               Grid.ColumnSpan="7">
                     <ListView x:Name="LogEntryList">
-                        <GridView>
-                            <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"></GridViewColumn>
-                            <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="auto"></GridViewColumn>
-                            <GridViewColumn Header="Manager" DisplayMemberBinding="{Binding Manager}" Width="auto"></GridViewColumn>
-                            <GridViewColumn Header="Log message" DisplayMemberBinding="{Binding Content}" Width="auto"></GridViewColumn>
-                        </GridView>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"></GridViewColumn>
+                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="auto"></GridViewColumn>
+                                <GridViewColumn Header="Manager" DisplayMemberBinding="{Binding Manager}" Width="auto"></GridViewColumn>
+                                <GridViewColumn Header="Log message" DisplayMemberBinding="{Binding Content}" Width="auto"></GridViewColumn>
+                            </GridView>
+                        </ListView.View>
                     </ListView>
                 </ScrollViewer>
                 <Grid.ColumnDefinitions>
