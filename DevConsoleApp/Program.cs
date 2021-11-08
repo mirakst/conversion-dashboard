@@ -1,29 +1,27 @@
-﻿using DashboardBackend.Database;
+﻿using DashboardBackend;
+using DashboardBackend.Database;
 using Model;
-using System;
-using System.Linq;
 
 namespace DevConsoleApp
 {
     class Program
     {
-        public static string NowString { get => $"[{DateTime.Now.ToLongTimeString()}]"; }
         static void Main(string[] args)
         {
-            IDatabaseHandler databaseHandler = new SqlDatabase();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
 
             //**** CONV AND EXECUTION TESTING ****
             Conversion conv = new();
-            conv.Executions = databaseHandler.GetExecutions();
-            conv.ActiveExecution.Managers = databaseHandler.GetManagers();
-            conv.ActiveExecution.Log.Messages = databaseHandler.GetLogMessages(conv.ActiveExecution.Id);
-            conv.ActiveExecution.ValidationReport.ValidationTests = databaseHandler.GetAfstemninger();
-            conv.HealthReport = databaseHandler.GetHealthReport();
-            conv.HealthReport.Cpu.Readings = databaseHandler.GetCpuReadings();
-            conv.HealthReport.Network.Readings = databaseHandler.GetNetworkReadings();
-            conv.HealthReport.Ram.Readings = databaseHandler.GetRamReadings();
+            conv.Executions = DataUtilities.GetExecutions();
+            conv.ActiveExecution.Managers = DataUtilities.GetManagers();
+            conv.ActiveExecution.Log.Messages = DataUtilities.GetLogMessages(conv.ActiveExecution.Id); //Maybe automatically populate this? When executions are made, query messages that match Id and populate log.
+            conv.ActiveExecution.ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+            conv.HealthReport = DataUtilities.GetHealthReport();
+            conv.HealthReport.Cpu.Readings = DataUtilities.GetCpuReadings();
+            conv.HealthReport.Network.Readings = DataUtilities.GetNetworkReadings();
+            conv.HealthReport.Ram.Readings = DataUtilities.GetRamReadings();
 
-            foreach (var item in conv.Executions)
+            /*foreach (var item in conv.Executions)
             {
                 Console.WriteLine(item);
             }
@@ -53,7 +51,10 @@ namespace DevConsoleApp
             foreach (var item in conv.HealthReport.Ram.Readings)
             {
                 Console.WriteLine(item.ToString());
-            }
+            }*/
         }
+
+        public static string NowString { get => $"[{DateTime.Now.ToLongTimeString()}]"; }
+
     }
 }

@@ -1,31 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Model
+﻿namespace Model
 {
-    public class OnModifiedEventArgs
-    {
-        public OnModifiedEventArgs(string text) { Text = text; }
-        public string Text { get; }
-    }
-
     public class ValidationReport
     {
+        #region Constructors
         public ValidationReport()
         {
 
         }
+        #endregion Constructors
 
-        public delegate void OnModifiedEventHandler(object sender, OnModifiedEventArgs e);
+        #region Properties
+        public DateTime LastModified { get; private set; }
 
-        public event OnModifiedEventHandler OnModified;
-
-        public DateTime LastModified { get; set; } //DateTime.Now when modified (through compilation function or just test added?), event and handler maybe?
-        public List<ValidationTest> ValidationTests { get => ValidationTests; set
+        private List<ValidationTest> _validationTests = new();
+        public List<ValidationTest> ValidationTests
+        {
+            get => _validationTests;
+            set
             {
-                ValidationTests = value;
-
+                _validationTests.AddRange(value);
+                OnModified(); // Raises event when property is set. Possible parameters include = List content, list count etc.
+                LastModified = DateTime.Now;
             }
         }
+        #endregion Properties
+
+        #region Event handling
+        public delegate void ValidationReportModifiedHandler(ValidationReport source, DateTime timestamp);
+
+        public event ValidationReportModifiedHandler Modified;
+
+        protected virtual void OnModified()
+        {
+            if (Modified != null)
+            {
+                Modified(this, DateTime.Now);
+            }
+        }
+        #endregion Event handling
     }
 }
