@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ExpandedWindows\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Gu.Wpf.Adorners" Version="2.1.1" />
     <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />

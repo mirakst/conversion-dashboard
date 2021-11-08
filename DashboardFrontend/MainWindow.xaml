@@ -10,8 +10,8 @@
         Height="720"
         Width="1280"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-        
-    <Border Background="#344472">
+
+    <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Name="controlPanel" 
                   Grid.Column="1" 

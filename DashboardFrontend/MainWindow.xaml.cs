@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using DashboardFrontend.DeatachedWindows;
+using System.ComponentModel;
 using System.Windows;
 
 namespace DashboardInterface
@@ -56,11 +57,11 @@ namespace DashboardInterface
 
         public void ExpandHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            //HealthReportWindow expandHR = new();
-            //healthReportExpandButton.IsEnabled = false;
-            //expandHR.Closing += OnHealthWindowClosing;
-            //expandHR.Owner = Application.Current.MainWindow;
-            //expandHR.Show();
+            HealthReportDetached expandHR = new();
+            healthReportExpandButton.IsEnabled = false;
+            expandHR.Closing += OnHealthWindowClosing;
+            expandHR.Owner = Application.Current.MainWindow;
+            expandHR.Show();
         }
 
         //OnWindowClosing events
