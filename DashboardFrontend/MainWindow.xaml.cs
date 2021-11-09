@@ -88,10 +88,5 @@ namespace DashboardInterface
         {
             healthReportExpandButton.IsEnabled = true;
         }
-
-        private void LogEntryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }
