@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d3="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Title="Health report monitoring"
@@ -14,11 +14,11 @@
             <TabControl Background="{DynamicResource BackgroundColor}"
                         BorderBrush="{DynamicResource BorderColor}">
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                         Name="cpuRamTab"
+                         Name="tabItemCpuRam"
                          Header="CPU &amp; RAM">
                     <Border Margin="10">
                         <Grid>
-                            <TextBlock Name="cpuCurrentLoad"
+                            <TextBlock Name="textBlockCurrentCpuLoad"
                                        Text="CPU load: 0%"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
@@ -26,7 +26,7 @@
                                        Grid.Column="0"
                                        Grid.Row="0"
                                        Margin="0,0,40,5"/>
-                            <TextBlock Name="ramCurrentUsage"
+                            <TextBlock Name="textBlockCurrentRamUsage"
                                        Text="RAM usage: 0%"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
@@ -34,7 +34,7 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <ComboBox Name="intervalComboBox"
+                            <ComboBox Name="comboBoxChartInterval"
                                       FontSize="20"
                                       Margin="0,0,0,5"
                                       VerticalAlignment="Center"
@@ -47,15 +47,15 @@
                                 <ComboBoxItem Content="12 Hours"/>
                                 <ComboBoxItem Content="24 Hours"/>
                             </ComboBox>
-                            <d3:Chart Name="healthReportChart"
+                            <idd:Chart Name="iddChartHealthReport"
                                       Background="{DynamicResource BackgroundColor}"
                                       Foreground="{DynamicResource ForegroundColor}"
                                       Margin="0,5,0,0"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="4"
                                       Grid.Row="1">
-                                <Grid Name="healthReportGrid"/>
-                            </d3:Chart>
+                                <Grid Name="gridHealthReportChartGrid"/>
+                            </idd:Chart>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
@@ -70,11 +70,11 @@
                     </Border>
                 </TabItem>
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}" 
-                         Name="networkTab"
+                         Name="tabItemNewtwork"
                          Header="Network">
                     <Border Margin="10">
                         <Grid>
-                            <TextBlock Name="networkTextBlock"
+                            <TextBlock Name="textBlockNetwork"
                                        FontSize="15"
                                        Grid.Column="0"
                                        Grid.Row="1"
@@ -88,7 +88,7 @@
                                 Recived delta:<LineBreak/>
                                 Recived speed:<LineBreak/>
                             </TextBlock>
-                            <TextBlock Name="networkDataTextBlock"
+                            <TextBlock Name="textBlockNetworkData"
                                        FontSize="15"
                                        Grid.Column="1"
                                        Grid.Row="1"
@@ -104,7 +104,7 @@
                                 12 KB<LineBreak/>
                                 13 MB<LineBreak/>
                             </TextBlock>
-                            <ComboBox Name="networkIntervalComboBox"
+                            <ComboBox Name="comboBoxNetworkChartInterval"
                                       FontSize="20"
                                       Margin="0,0,0,5"
                                       VerticalAlignment="Center"
@@ -117,14 +117,14 @@
                                 <ComboBoxItem Content="12 Hour"/>
                                 <ComboBoxItem Content="24 Hour"/>
                             </ComboBox>
-                            <d3:Chart Name="networkSendReciveChart"
+                            <idd:Chart Name="iddChartNetwork"
                                       Background="{DynamicResource BackgroundColor}"
                                       Foreground="{DynamicResource ForegroundColor}"
                                       Grid.Column="2"
                                       Grid.ColumnSpan="2"
                                       Grid.Row="1">
-                                <Grid/>
-                            </d3:Chart>
+                                <Grid Name="gridNetworkChartGrid"/>
+                            </idd:Chart>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>
@@ -139,12 +139,6 @@
                     </Border>
                 </TabItem>
             </TabControl>
-            <Grid.ColumnDefinitions>
-
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-
-            </Grid.RowDefinitions>
         </Grid>
     </Border>
 </Window>

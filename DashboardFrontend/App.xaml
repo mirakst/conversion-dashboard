@@ -11,6 +11,11 @@
         <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
         <SolidColorBrush x:Key="BorderColor" Color="Black"/>
 
+        <!-- Validation Report -->
+        <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
+        <SolidColorBrush x:Key="validationReportDisabledColor" Color="Yellow"/>
+        <SolidColorBrush x:Key="validationReportErrorColor" Color="Red"/>
+
         <!-- Default design for buttons -->
         <Style x:Key="DefaultButton" TargetType="Button">
             <Setter Property="FontFamily" Value="Tahoma"/>
