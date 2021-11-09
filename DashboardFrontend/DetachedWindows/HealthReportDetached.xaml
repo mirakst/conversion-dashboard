@@ -8,7 +8,8 @@
         WindowStartupLocation="CenterOwner"
         Title="Health report monitoring"
         Height="450"
-        Width="800">
+        Width="800"
+        >
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TabControl Background="{DynamicResource BackgroundColor}"
@@ -47,13 +48,14 @@
                                 <ComboBoxItem Content="12 Hours"/>
                                 <ComboBoxItem Content="24 Hours"/>
                             </ComboBox>
+                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="1000" Grid.Row="1"/>
                             <idd:Chart Name="iddChartHealthReport"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Margin="0,5,0,0"
-                                      Grid.Column="0"
-                                      Grid.ColumnSpan="4"
-                                      Grid.Row="1">
+                                       Background="{StaticResource CanvasColor}"
+                                       Foreground="{StaticResource ForegroundColor}"
+                                       Style="{StaticResource DefaultChart}"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="4"
+                                       Grid.Row="1">
                                 <Grid Name="gridHealthReportChartGrid"/>
                             </idd:Chart>
                             <Grid.ColumnDefinitions>
@@ -117,12 +119,14 @@
                                 <ComboBoxItem Content="12 Hour"/>
                                 <ComboBoxItem Content="24 Hour"/>
                             </ComboBox>
+                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.Column="2" Grid.ColumnSpan="1000" Grid.Row="1"/>
                             <idd:Chart Name="iddChartNetwork"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Grid.Column="2"
-                                      Grid.ColumnSpan="2"
-                                      Grid.Row="1">
+                                       Background="{StaticResource CanvasColor}"
+                                       Foreground="{StaticResource ForegroundColor}"
+                                       Style="{StaticResource DefaultChart}"
+                                       Grid.Column="2"
+                                       Grid.ColumnSpan="2"
+                                       Grid.Row="1">
                                 <Grid Name="gridNetworkChartGrid"/>
                             </idd:Chart>
                             <Grid.ColumnDefinitions>

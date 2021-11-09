@@ -9,28 +9,40 @@
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        WindowStyle="None"
+        MouseDown="DraggableGrid"
+        ResizeMode="CanResizeWithGrip"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    <!--Command bindings for window controls-->
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
+    </Window.CommandBindings>
 
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Name="gridControlPanel" 
-                  Grid.Column="1" 
-                  Grid.ColumnSpan="3" 
+                  Grid.Column="2" 
+                  Grid.ColumnSpan="2" 
                   Grid.Row="1">
                 <Button Name="buttonStartStop" 
                         Click="ButtonStartStopClick" 
-                        Margin="0, 0, 10, 0" 
                         Grid.Column="0" 
                         Grid.Row="0" 
                         Grid.RowSpan="2" 
                         Background="Transparent" 
                         BorderBrush="Transparent">
-                    <Image Name="startStopImage"
-                           Source="Icons/Start.png"/>
+                    <Image Source="Icons/Start.png"/>
                 </Button>
                 <Button Name="buttonSettings" 
-                        Margin="0, 0, 10, 0" 
-                        Click="buttonSettingsClick" 
+                        Click="ButtonSettingsClick" 
                         Grid.Column="1" 
                         Grid.Row="0" 
                         Grid.RowSpan="2" 
@@ -38,15 +50,14 @@
                         BorderBrush="Transparent">
                     <Image Source="Icons/Cog.png"/>
                 </Button>
-                <TextBlock Name="textBlockConversionName" 
+                <TextBlock x:Name="textBlockConversionName" 
                            FontSize="28"
                            Margin="5, 0, 5, 0"
                            Grid.Column="2"
                            Grid.Row="0"
                            Grid.RowSpan="2"
-                           Text="Conversion - 1">
-                    
-                </TextBlock>
+                           Foreground="{StaticResource ForegroundColor}"
+                           Text="Conversion - 1"/>
                 <Grid Grid.Column="3" 
                       Grid.Row="0">
                     <ProgressBar Name="progressBarManagerProgress" 
@@ -87,7 +98,7 @@
                 </Grid.RowDefinitions>
             </Grid>
             <Grid Name="gridManager" 
-                  Grid.Column="1" 
+                  Grid.Column="2" 
                   Grid.Row="2" 
                   Margin="0,10,5,10">
                 <TextBox Name="textBoxManagerSearchBox" 
@@ -102,19 +113,22 @@
                         Grid.Row="0" 
                         Margin="0,0,2,2" 
                         Style="{StaticResource DefaultButton}"/>
-                <Button Name="buttonExpandManager" 
-                        Content="Expand" 
-                        Click="ExpandManagerButtonClick" 
+                <Button Name="buttonDetachManager" 
+                        Click="DetachManagerButtonClick" 
                         Grid.Column="2" 
                         Grid.Row="0" 
-                        Margin="0,0,0,2" 
-                        Style="{StaticResource DefaultButton}"/>
+                        Style="{StaticResource DetachButton}">
+                    <Image Source="Icons/Detach.png"/>
+                </Button>
                 <ListView x:Name="listViewManagerList" 
                           Grid.Column="0" 
                           Grid.ColumnSpan="3" 
                           Grid.Row="1" 
                           ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}" 
-                          AlternationCount="2">
+                          AlternationCount="2"
+                          Background="{StaticResource CanvasColor}"
+                          Foreground="{StaticResource ForegroundColor}"
+                          BorderBrush="{StaticResource BorderColor}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Manager name" 
@@ -139,9 +153,9 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="gridLog"
-                  Margin="5,10,0,10"
-                  Grid.Column="2"
+            <Grid Name="gridLog" 
+                  Margin="5,10,0,10" 
+                  Grid.Column="3" 
                   Grid.Row="2">
                 <ToggleButton Name="toggleButtonLogInfo" 
                               Content="Info" 
@@ -168,25 +182,37 @@
                               Grid.Column="4"
                               Grid.Row="0" 
                               Style="{StaticResource DefaultToggleButton}"/>
-                <Button Name="buttonLogExpand" 
-                        Content="Expand" 
-                        Click="ExpandLogButtonClick" 
-                        Grid.Column="6" 
+                <Button Name="buttonLogDetach" 
+                        Click="DetachLogButtonClick" 
+                        Grid.Column="5"
+                        Grid.ColumnSpan="2"
                         Grid.Row="0" 
-                        Style="{StaticResource DefaultButton}"/>
+                        Style="{StaticResource DetachButton}">
+                    <Image Source="Icons/Detach.png"/>
+                </Button>
                 <ScrollViewer Name="scrollViewerLog" 
                               Grid.Column="0" 
                               Grid.Row="1" 
-                              Grid.ColumnSpan="7">
-                    <ListView x:Name="LogEntryList">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"/>
-                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="auto"/>
-                                <GridViewColumn Header="Manager" DisplayMemberBinding="{Binding Manager}" Width="auto"/>
-                                <GridViewColumn Header="Log message" DisplayMemberBinding="{Binding Content}" Width="auto"/>
-                            </GridView>
-                        </ListView.View>
+                              Grid.ColumnSpan="7"
+                              Margin="0,0,1,0">
+                    <ListView x:Name="listLogEntry" 
+                              Background="{StaticResource CanvasColor}"
+                              Foreground="{StaticResource ForegroundColor}"
+                              BorderBrush="{StaticResource BorderColor}">
+                        <GridView>
+                            <GridViewColumn Header="Timestamp" 
+                                            DisplayMemberBinding="{Binding Date}" 
+                                            Width="auto"/>
+                            <GridViewColumn Header="Type" 
+                                            DisplayMemberBinding="{Binding Type}" 
+                                            Width="auto"/>
+                            <GridViewColumn Header="Manager" 
+                                            DisplayMemberBinding="{Binding Manager}" 
+                                            Width="auto"/>
+                            <GridViewColumn Header="Log message" 
+                                            DisplayMemberBinding="{Binding Content}" 
+                                            Width="auto"/>
+                        </GridView>
                     </ListView>
                 </ScrollViewer>
                 <Grid.ColumnDefinitions>
@@ -204,14 +230,15 @@
                 </Grid.RowDefinitions>
             </Grid>
             <Grid Name="gridValidationReport"
-                  Margin="5,10,0,10"
-                  Grid.Column="1"
+                  Margin="0, 0, 5, 0"
+                  Grid.Column="2"
                   Grid.Row="3">
-                <TextBox Name="textBoxValidationReportSearchBar"
-                         adorners:Watermark.Text="Search"
-                         Margin="0,0,5,0"
-                         Grid.Column="0"
-                         Grid.Row="0"/>
+                <TextBox Name="textBoxValidationReportSearchBox" 
+                         adorners:Watermark.Text="Search" 
+                         Background="White" 
+                         Grid.Column="0" 
+                         Grid.Row="0" 
+                         Margin="0,0,2,2"/>
                 <Button Name="buttonValidationReportSearch"
                         Content="Search"
                         Margin="0,0,5,0"
@@ -225,68 +252,45 @@
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
                 <ToggleButton Name="toggleButtonValidationReportRefreshToggle"
-                              Content="Refresh"
-                              Margin="0,0,5,0"
+                              FontFamily="Webdings"
+                              FontSize="16"
+                              Content="q"
+                              Margin="0,0,30,2" 
                               Grid.Column="3"
                               Grid.Row="0"
-                              Style="{StaticResource DefaultToggleButton}"/>
-                <Button Name="buttonValidationReportExpand"
-                        Content="Expand"
-                        Click="ExpandValidationReportButtonClick"
+                              Style="{StaticResource DefaultToggleButton}">
+                </ToggleButton>
+                <Button Name="buttonValidationReportDetach"
+                        Click="DetachValidationReportButtonClick" 
                         Grid.Column="4"
-                        Grid.Row="0"
-                        Style="{StaticResource DefaultButton}"/>
-                <DataGrid Name="dataGridValidationReport"
-                          Background="{DynamicResource BackgroundColor}"
-                          ToolTip="Click to expand"
-                          AutoGenerateColumns="False"
-                          Margin="0,10,0,0"
+                        Grid.Row="0" 
+                        Style="{StaticResource DetachButton}">
+                    <Image Source="Icons/Detach.png"/>
+                </Button>
+                <!-- TreeView kan overvejes istedet for  ListView -->
+                <ListView x:Name="listViewValidationReport"
                           Grid.Column="0"
-                          Grid.ColumnSpan="5"
-                          Grid.Row="1">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Manager name"
-                                        Binding="{Binding ManagerName}"
-                                        IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Validations OK"
-                                        Binding="{Binding ValidationsOK}"
-                                        IsReadOnly="True">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Validations total"
-                                        Binding="{Binding ValidationsTotal}"
-                                        IsReadOnly="True">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Score"
-                                        Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
-                                        IsReadOnly="True">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                    <DataGrid.RowDetailsTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <ListBox ItemsSource="{Binding ValidationReportList}"
-                                     Grid.Column="0"/>
-                                <ListBox ItemsSource="{Binding ValidationReportStatus}"
-                                     Grid.Column="1"/>
-                            </DockPanel>
-                        </DataTemplate>
-                    </DataGrid.RowDetailsTemplate>
-                </DataGrid>
+                          Grid.ColumnSpan="5" 
+                          Grid.Row="1"
+                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
+                          AlternationCount="2"
+                          Background="{StaticResource CanvasColor}"
+                          Foreground="{StaticResource ForegroundColor}"
+                          BorderBrush="{StaticResource BorderColor}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Manager name"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ManagerName}"/>
+                            <GridViewColumn Header="Validations OK"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
+                            <GridViewColumn Header="Status"
+                                            Width="auto"
+                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*"/>
                     <ColumnDefinition Width="*"/>
@@ -301,24 +305,27 @@
             </Grid>
             <Grid Name="gridHealthReportChartGrid"
                   Margin="5,0,0,0"
-                  Grid.Column="2"
+                  Grid.Column="3"
                   Grid.Row="3">
-                <Button Name="buttonHealthReportExpand"
-                        Click="ExpandHealthReportButtonClick"
-                        Content="Expand" 
-                        Grid.Column="3"
-                        Grid.Row="0"
-                        Style="{StaticResource DefaultButton}"/>
+                <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="1000" Grid.Row="1"/>
                 <idd:Chart Name="iddChartHealthReportGraph"
-                          Background="White"
-                          Margin="0, 5, 0, 0" 
-                          Grid.Column="0"
-                          Grid.ColumnSpan="5"
-                          Grid.Row="1">
+                           Background="{StaticResource CanvasColor}"
+                           Foreground="{StaticResource ForegroundColor}"
+                           Style="{StaticResource DefaultChart}"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="5"
+                           Grid.Row="1">
                     <Grid Name="gridHealthReportChartGridChartGrid"/>
                 </idd:Chart>
+                <Button Name="buttonHealthReportDetach"
+                        Click="DetachHealthReportButtonClick"
+                        Grid.Column="3"
+                        Grid.Row="0"
+                        Style="{StaticResource DetachButton}">
+                    <Image Source="Icons/Detach.png"/>
+                </Button>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="19*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -326,18 +333,53 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
+            <Rectangle Grid.Column="0" Grid.RowSpan="1000" Fill="{DynamicResource WindowBorderColor}"/>
+            <Rectangle Grid.Column="5" Grid.RowSpan="1000" Fill="{DynamicResource WindowBorderColor}"/>
+            <Grid Name="WindowControlGrid"
+                  Grid.Column="5"
+                  Grid.Row="0"
+                  Margin="5,5,5,0">
+                <Button Name="ButtonMinimize" 
+                        Grid.Column="0" 
+                        Style="{StaticResource DefaultWindowButton}"
+                        Content="0"
+                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                <Button Name="ButtonMaximize" 
+                        Grid.Column="1" 
+                        Style="{StaticResource DefaultWindowButton}"
+                        Content="1"
+                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
+                <Button Name="ButtonRestore" 
+                        Grid.Column="1" 
+                        Style="{StaticResource DefaultWindowButton}"
+                        Content="2"
+                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
+                        Visibility="Collapsed"/>
+                <Button Name="ButtonClose" 
+                        Grid.Column="2" 
+                        Style="{StaticResource DefaultWindowButton}"
+                        Content="r"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
         </Grid>
     </Border>

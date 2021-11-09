@@ -1,15 +1,18 @@
 ﻿<Application x:Class="DashboardInterface.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
              xmlns:local="clr-namespace:DashboardInterface"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- Resources for the entire application can be defined here. -->
         
         <!-- Default design Kasper -->
-        <SolidColorBrush x:Key="BackgroundColor" Color="#14325C"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#36393f"/>
         <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
-        <SolidColorBrush x:Key="BorderColor" Color="Black"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#828790"/>
+        <SolidColorBrush x:Key="CanvasColor" Color="#2f3136"/>
+        <SolidColorBrush x:Key="WindowBorderColor" Color="#202225"/>
 
         <!-- Validation Report -->
         <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
@@ -18,12 +21,31 @@
 
         <!-- Default design for buttons -->
         <Style x:Key="DefaultButton" TargetType="Button">
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        </Style>
+        <Style x:Key="DetachButton" TargetType="Button" >
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
         </Style>
         <Style x:Key="DefaultToggleButton" TargetType="ToggleButton">
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        </Style>
+        <Style x:Key="DefaultWindowButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="Foreground" Value="{StaticResource ForegroundColor}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        </Style>
+        
+        <!--Default design for charts-->
+        <Style x:Key="DefaultChart" TargetType="idd:Chart">
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="PlotHeight" Value="1.02"/>
+            <Setter Property="PlotWidth" Value="1.02"/>
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
         </Style>
 
         <!-- Design for start/stop button (Bliver det stadig brugt Kasper med din løsning? -->
