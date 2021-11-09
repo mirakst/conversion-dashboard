@@ -1,4 +1,5 @@
 ﻿using DashboardFrontend.DeatachedWindows;
+using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
 using System.Windows;
 
@@ -48,11 +49,11 @@ namespace DashboardInterface
 
         public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            //ValidationReportWindow expandVR = new();
-            //expandVR.Closing += OnValidationWindowClosing;
-            //buttonValidationReportExpand.IsEnabled = false;
-            //expandVR.Owner = Application.Current.MainWindow;
-            //expandVR.Show();
+            ValidationReportDetached expandVR = new();
+            expandVR.Closing += OnValidationWindowClosing;
+            buttonValidationReportExpand.IsEnabled = false;
+            expandVR.Owner = Application.Current.MainWindow;
+            expandVR.Show();
         }
 
         public void ExpandHealthReportButtonClick(object sender, RoutedEventArgs e)

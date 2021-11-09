@@ -1,0 +1,85 @@
+﻿<Window x:Class="DashboardFrontend.DetachedWindows.ValidationReportDetached"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
+        xmlns:adorners="http://gu.se/Adorners"
+        mc:Ignorable="d"
+        Title="Validation report monitoring" Height="450" Width="800"
+        Background="{DynamicResource BackgroundColor}"
+        FontFamily="Segoe UI"
+        FontSize="15">
+    <Border BorderThickness="10"
+            Background="{DynamicResource BackgroundColor}">
+        <Grid>
+            <TextBox Name="textBoxValidationReportSearchBar"
+                     adorners:Watermark.Text="Search"
+                     Margin="0,0,5,5"
+                     Grid.Column="0"
+                     Grid.Row="0"/>
+            <Button Name="buttonValidationReportSearch"
+                    Content="Search"
+                    Margin="5,0,5,5"
+                    Grid.Column="1"
+                    Grid.Row="0"/>
+            <Button Name="buttonValidationReportFilter"
+                    Content="Filter"
+                    Margin="5,0,5,5"
+                    Grid.Column="2"
+                    Grid.Row="0"/>
+            <ToggleButton Name="toggleButtonValidationReportRefreshToggle"
+                          Content="Refresh"
+                          Margin="5,0,0,5"
+                          Grid.Column="3"
+                          Grid.Row="0"/>
+            <DataGrid Name="dataGridValidationReport"
+                      Background="{DynamicResource BackgroundColor}"
+                      AutoGenerateColumns="False"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="4"
+                      Grid.Row="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Manager name"
+                                        Binding="{Binding ManagerName}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Validations OK"
+                                        Binding="{Binding ValidationsOK}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Validations total"
+                                        Binding="{Binding ValidationsTotal}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Score"
+                                        Binding="{Binding ManagerScore}"
+                                        IsReadOnly="True"/>
+                </DataGrid.Columns>
+                <DataGrid.RowHeaderTemplate>
+                    <DataTemplate>
+                        <Expander Expanded="OnExpandChange"
+                                  Collapsed="OnExpandChange"/>
+                    </DataTemplate>
+                </DataGrid.RowHeaderTemplate>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <ListBox ItemsSource="{Binding ValidationReportList}"
+                                     Grid.Column="0"/>
+                            <ListBox ItemsSource="{Binding ValidationReportStatus}"
+                                     Grid.Column="1"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
+    </Border>
+</Window>
