@@ -41,7 +41,7 @@ namespace DashboardInterface
         {
             LogDetached expandLog = new();
             expandLog.Closing += OnLogWindowClosing;
-            logExpandButton.IsEnabled = false;
+            buttonLogExpand.IsEnabled = false;
             expandLog.Show();
         }
 
