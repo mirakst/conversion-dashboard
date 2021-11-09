@@ -9,7 +9,8 @@
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        WindowStartupLocation="CenterScreen">
 
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>

@@ -13,9 +13,9 @@ namespace DashboardInterface
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            //DialogWindow dialogWindow = new();
-            //dialogWindow.Owner = Application.Current.MainWindow;
-            //dialogWindow.ShowDialog();
+            ConnectDBDialog dialogPopup = new();
+            dialogPopup.Owner = Application.Current.MainWindow;
+            dialogPopup.ShowDialog();
         }
 
         //Expand window events
@@ -24,7 +24,6 @@ namespace DashboardInterface
             //SettingsWindow settingsWindow = new();
             //settingsWindow.Closing += OnSettingsWindowClosing;
             //settingsWindow.IsEnabled = false;
-            //settingsWindow.Owner = Application.Current.MainWindow;
             //settingsWindow.ShowDialog();
         }
 
@@ -33,7 +32,6 @@ namespace DashboardInterface
             //ManagerWindow expandManager = new();
             //expandManager.Closing += OnManagerWindowClosing;
             //buttonExpandManager.IsEnabled = false;
-            //expandManager.Owner = Application.Current.MainWindow;
             //expandManager.Show();
         }
 
@@ -42,7 +40,6 @@ namespace DashboardInterface
             //LogWindow expandLog = new();
             //expandLog.Closing += OnLogWindowClosing;
             //buttonLogExpand.IsEnabled = false;
-            //expandLog.Owner = Application.Current.MainWindow;
             //expandLog.Show();
         }
 
@@ -51,7 +48,6 @@ namespace DashboardInterface
             ValidationReportDetached expandVR = new();
             expandVR.Closing += OnValidationWindowClosing;
             buttonValidationReportExpand.IsEnabled = false;
-            expandVR.Owner = Application.Current.MainWindow;
             expandVR.Show();
         }
 
@@ -60,7 +56,6 @@ namespace DashboardInterface
             HealthReportDetached expandHR = new();
             buttonHealthReportExpand.IsEnabled = false;
             expandHR.Closing += OnHealthWindowClosing;
-            expandHR.Owner = Application.Current.MainWindow;
             expandHR.Show();
         }
 
