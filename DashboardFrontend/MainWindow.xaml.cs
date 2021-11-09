@@ -1,4 +1,3 @@
-﻿using DashboardFrontend.DeatachedWindows;
 using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
 using System.Windows;
