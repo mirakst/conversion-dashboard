@@ -39,11 +39,10 @@ namespace DashboardInterface
 
         public void ExpandLogButtonClick(object sender, RoutedEventArgs e)
         {
-            //LogWindow expandLog = new();
-            //expandLog.Closing += OnLogWindowClosing;
-            //buttonLogExpand.IsEnabled = false;
-            //expandLog.Owner = Application.Current.MainWindow;
-            //expandLog.Show();
+            LogDetached expandLog = new();
+            expandLog.Closing += OnLogWindowClosing;
+            buttonLogExpand.IsEnabled = false;
+            expandLog.Show();
         }
 
         public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
