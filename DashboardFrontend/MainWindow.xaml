@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d3="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
         Title="Conversion dashboard"
@@ -13,12 +13,12 @@
 
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
-            <Grid Name="controlPanel" 
+            <Grid Name="gridControlPanel" 
                   Grid.Column="1" 
                   Grid.ColumnSpan="3" 
                   Grid.Row="1">
-                <Button Name="startStopButton" 
-                        Click="StartStopButtonClick" 
+                <Button Name="buttonStartStop" 
+                        Click="ButtonStartStopClick" 
                         Margin="0, 0, 10, 0" 
                         Grid.Column="0" 
                         Grid.Row="0" 
@@ -28,9 +28,9 @@
                     <Image Name="startStopImage"
                            Source="Icons/Start.png"/>
                 </Button>
-                <Button Name="settingsButton" 
+                <Button Name="buttonSettings" 
                         Margin="0, 0, 10, 0" 
-                        Click="SettingsButtonClick" 
+                        Click="buttonSettingsClick" 
                         Grid.Column="1" 
                         Grid.Row="0" 
                         Grid.RowSpan="2" 
@@ -38,39 +38,39 @@
                         BorderBrush="Transparent">
                     <Image Source="Icons/Cog.png"/>
                 </Button>
-                <TextBlock Name="conversionName" 
-                           FontSize="28" 
-                           Margin="5, 0, 5, 0" 
-                           Grid.Column="2" 
-                           Grid.Row="0" 
+                <TextBlock Name="textBlockConversionName" 
+                           FontSize="28"
+                           Margin="5, 0, 5, 0"
+                           Grid.Column="2"
+                           Grid.Row="0"
                            Grid.RowSpan="2"
                            Text="Conversion - 1">
                     
                 </TextBlock>
                 <Grid Grid.Column="3" 
                       Grid.Row="0">
-                    <ProgressBar Name="managerProgressBar" 
+                    <ProgressBar Name="progressBarManagerProgress" 
                                  Margin="2" 
                                  Grid.Column="3" 
                                  Grid.Row="0" 
                                  Minimum="0" 
                                  Maximum="100" 
                                  Value="85"/>
-                    <TextBlock Text="{Binding ElementName=managerProgressBar, Path=Value, StringFormat=Manager #: {0:0}%}" 
+                    <TextBlock Text="{Binding ElementName=progressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
                                FontSize="15" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
                 </Grid>
                 <Grid Grid.Column="3" 
                       Grid.Row="1">
-                    <ProgressBar Name="conversionProgressBar" 
+                    <ProgressBar Name="progressBarConversionProgress" 
                                  Margin="2" 
                                  Grid.Column="3" 
                                  Grid.Row="1" 
                                  Minimum="0" 
                                  Maximum="100" 
                                  Value="15"/>
-                    <TextBlock Text="{Binding ElementName=conversionProgressBar, Path=Value, StringFormat=Conversion: {0:0}%}" 
+                    <TextBlock Text="{Binding ElementName=progressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
                                FontSize="15" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
@@ -86,30 +86,30 @@
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="managerGrid" 
+            <Grid Name="gridManager" 
                   Grid.Column="1" 
                   Grid.Row="2" 
                   Margin="0,10,5,10">
-                <TextBox Name="managerSearchBox" 
+                <TextBox Name="textBoxManagerSearchBox" 
                          adorners:Watermark.Text="Search" 
                          Background="White" 
                          Grid.Column="0" 
                          Grid.Row="0" 
                          Margin="0,0,2,2"/>
-                <Button Name="managerSearchButton" 
+                <Button Name="buttonManagerSearch" 
                         Content="Search" 
                         Grid.Column="1" 
                         Grid.Row="0" 
                         Margin="0,0,2,2" 
                         Style="{StaticResource DefaultButton}"/>
-                <Button Name="managerExpandButton" 
+                <Button Name="buttonExpandManager" 
                         Content="Expand" 
                         Click="ExpandManagerButtonClick" 
                         Grid.Column="2" 
                         Grid.Row="0" 
                         Margin="0,0,0,2" 
                         Style="{StaticResource DefaultButton}"/>
-                <ListView x:Name="managerList" 
+                <ListView x:Name="listViewManagerList" 
                           Grid.Column="0" 
                           Grid.ColumnSpan="3" 
                           Grid.Row="1" 
@@ -139,46 +139,46 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="logGrid" 
-                  Margin="5,10,0,10" 
-                  Grid.Column="2" 
+            <Grid Name="gridLog"
+                  Margin="5,10,0,10"
+                  Grid.Column="2"
                   Grid.Row="2">
-                <ToggleButton Name="logInfoButton" 
+                <ToggleButton Name="toggleButtonLogInfo" 
                               Content="Info" 
                               Grid.Column="0" 
                               Grid.Row="0" 
                               Style="{StaticResource DefaultToggleButton}"/>
-                <ToggleButton Name="logWarningsButton" 
+                <ToggleButton Name="toggleButtonLogWarning" 
                               Content="Warning" 
                               Grid.Column="1" 
                               Grid.Row="0" 
                               Style="{StaticResource DefaultToggleButton}"/>
-                <ToggleButton Name="logErrorButton" 
-                              Content="Error" 
-                              Grid.Column="2" 
-                              Grid.Row="0" 
+                <ToggleButton Name="toggleButtonLogError"
+                              Content="Error"
+                              Grid.Column="2"
+                              Grid.Row="0"
                               Style="{StaticResource DefaultToggleButton}"/>
-                <ToggleButton Name="logFatalButton" 
-                              Content="Fatal" 
-                              Grid.Column="3" 
-                              Grid.Row="0" 
+                <ToggleButton Name="toggleButtonLogFatal" 
+                              Content="Fatal"
+                              Grid.Column="3"
+                              Grid.Row="0"
                               Style="{StaticResource DefaultToggleButton}"/>
-                <ToggleButton Name="logFilterButton" 
+                <ToggleButton Name="toggleButtonLogFilter" 
                               Content="Filter" 
                               Grid.Column="4"
                               Grid.Row="0" 
                               Style="{StaticResource DefaultToggleButton}"/>
-                <Button Name="logExpandButton" 
+                <Button Name="buttonLogExpand" 
                         Content="Expand" 
                         Click="ExpandLogButtonClick" 
                         Grid.Column="6" 
                         Grid.Row="0" 
                         Style="{StaticResource DefaultButton}"/>
-                <ScrollViewer Name="logScrollViewer" 
+                <ScrollViewer Name="scrollViewerLog" 
                               Grid.Column="0" 
                               Grid.Row="1" 
                               Grid.ColumnSpan="7">
-                    <ListView x:Name="LogEntryList">
+                    <ListView x:Name="listLogEntry">
                         <GridView>
                             <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"></GridViewColumn>
                             <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="auto"></GridViewColumn>
@@ -201,64 +201,92 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="validationReportGrid"
-                  Margin="0, 0, 5, 0"
+            <Grid Name="gridValidationReport"
+                  Margin="5,10,0,10"
                   Grid.Column="1"
                   Grid.Row="3">
-                <TextBlock Name="validationReportSearchBar"
-                           adorners:Watermark.Text="Search"
-                           Margin="0,0,2,2" 
-                           Background="White"
-                           Grid.Column="0"
-                           Grid.Row="0"/>
-                <Button Name="validationReportSearchButton"
-                        Content="Search" Margin="0"
+                <TextBox Name="textBoxValidationReportSearchBar"
+                         adorners:Watermark.Text="Search"
+                         Margin="0,0,5,0"
+                         Grid.Column="0"
+                         Grid.Row="0"/>
+                <Button Name="buttonValidationReportSearch"
+                        Content="Search"
+                        Margin="0,0,5,0"
                         Grid.Column="1"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <Button Name="validationReportFilter"
+                <Button Name="buttonValidationReportFilter"
                         Content="Filter"
-                        Margin="0,0,2,2" 
+                        Margin="0,0,5,0"
                         Grid.Column="2"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <ToggleButton Name="validationReportrefresh"
+                <ToggleButton Name="toggleButtonValidationReportRefreshToggle"
                               Content="Refresh"
-                              Margin="0,0,2,2" 
+                              Margin="0,0,5,0"
                               Grid.Column="3"
                               Grid.Row="0"
-                              Style="{StaticResource DefaultToggleButton}">
-                </ToggleButton>
-                <Button Name="validationReportExpandButton"
+                              Style="{StaticResource DefaultToggleButton}"/>
+                <Button Name="buttonValidationReportExpand"
                         Content="Expand"
-                        Click="ExpandValidationReportButtonClick" 
-                        Margin="0,0,0,2"
+                        Click="ExpandValidationReportButtonClick"
                         Grid.Column="4"
-                        Grid.Row="0" 
+                        Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <!-- TreeView kan overvejes istedet for  ListView -->
-                <ListView x:Name="ValidationList"
+                <DataGrid Name="dataGridValidationReport"
+                          Background="{DynamicResource BackgroundColor}"
+                          ToolTip="Click to expand"
+                          AutoGenerateColumns="False"
+                          Margin="0,10,0,0"
                           Grid.Column="0"
-                          Grid.ColumnSpan="5" 
-                          Grid.Row="1"
-                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                          AlternationCount="2">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Manager name"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerName}"/>
-                            <GridViewColumn Header="Validations OK"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
-                            <GridViewColumn Header="Status"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                          Grid.ColumnSpan="5"
+                          Grid.Row="1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Manager name"
+                                        Binding="{Binding ManagerName}"
+                                        IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Validations OK"
+                                        Binding="{Binding ValidationsOK}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Validations total"
+                                        Binding="{Binding ValidationsTotal}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Score"
+                                        Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <ListBox ItemsSource="{Binding ValidationReportList}"
+                                     Grid.Column="0"/>
+                                <ListBox ItemsSource="{Binding ValidationReportStatus}"
+                                     Grid.Column="1"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="7*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -269,24 +297,24 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="healthReportGrid"
+            <Grid Name="gridHealthReportChartGrid"
                   Margin="5,0,0,0"
                   Grid.Column="2"
                   Grid.Row="3">
-                <Button Name="healthReportExpandButton"
+                <Button Name="buttonHealthReportExpand"
                         Click="ExpandHealthReportButtonClick"
                         Content="Expand" 
                         Grid.Column="3"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <d3:Chart Name="healthReportGraph"
+                <idd:Chart Name="iddChartHealthReportGraph"
                           Background="White"
                           Margin="0, 5, 0, 0" 
                           Grid.Column="0"
                           Grid.ColumnSpan="5"
                           Grid.Row="1">
-                    <Grid Name="healthReportTempGrid"/>
-                </d3:Chart>
+                    <Grid Name="gridHealthReportChartGridChartGrid"/>
+                </idd:Chart>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="9*"/>
                     <ColumnDefinition Width="*"/>

@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.DeatachedWindows;
+using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
 using System.Windows;
 
@@ -11,7 +11,7 @@ namespace DashboardInterface
             InitializeComponent();
         }
 
-        public void StartStopButtonClick(object sender, RoutedEventArgs e)
+        public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
             //DialogWindow dialogWindow = new();
             //dialogWindow.Owner = Application.Current.MainWindow;
@@ -19,7 +19,7 @@ namespace DashboardInterface
         }
 
         //Expand window events
-        public void SettingsButtonClick(object sender, RoutedEventArgs e)
+        public void buttonSettingsClick(object sender, RoutedEventArgs e)
         {
             //SettingsWindow settingsWindow = new();
             //settingsWindow.Closing += OnSettingsWindowClosing;
@@ -32,7 +32,7 @@ namespace DashboardInterface
         {
             //ManagerWindow expandManager = new();
             //expandManager.Closing += OnManagerWindowClosing;
-            //managerExpandButton.IsEnabled = false;
+            //buttonExpandManager.IsEnabled = false;
             //expandManager.Owner = Application.Current.MainWindow;
             //expandManager.Show();
         }
@@ -41,24 +41,24 @@ namespace DashboardInterface
         {
             //LogWindow expandLog = new();
             //expandLog.Closing += OnLogWindowClosing;
-            //logExpandButton.IsEnabled = false;
+            //buttonLogExpand.IsEnabled = false;
             //expandLog.Owner = Application.Current.MainWindow;
             //expandLog.Show();
         }
 
         public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            //ValidationReportWindow expandVR = new();
-            //expandVR.Closing += OnValidationWindowClosing;
-            //validationReportExpandButton.IsEnabled = false;
-            //expandVR.Owner = Application.Current.MainWindow;
-            //expandVR.Show();
+            ValidationReportDetached expandVR = new();
+            expandVR.Closing += OnValidationWindowClosing;
+            buttonValidationReportExpand.IsEnabled = false;
+            expandVR.Owner = Application.Current.MainWindow;
+            expandVR.Show();
         }
 
         public void ExpandHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportDetached expandHR = new();
-            healthReportExpandButton.IsEnabled = false;
+            buttonHealthReportExpand.IsEnabled = false;
             expandHR.Closing += OnHealthWindowClosing;
             expandHR.Owner = Application.Current.MainWindow;
             expandHR.Show();
@@ -67,27 +67,27 @@ namespace DashboardInterface
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            settingsButton.IsEnabled = true;
+            buttonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            managerExpandButton.IsEnabled = true;
+            buttonExpandManager.IsEnabled = true;
         }
 
         private void OnLogWindowClosing(object sender, CancelEventArgs e)
         {
-            logExpandButton.IsEnabled = true;
+            buttonLogExpand.IsEnabled = true;
         }
 
         private void OnValidationWindowClosing(object sender, CancelEventArgs e)
         {
-            validationReportExpandButton.IsEnabled = true;
+            buttonValidationReportExpand.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object sender, CancelEventArgs e)
         {
-            healthReportExpandButton.IsEnabled = true;
+            buttonHealthReportExpand.IsEnabled = true;
         }
     }
 }
