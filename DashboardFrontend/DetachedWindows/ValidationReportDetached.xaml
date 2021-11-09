@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
         Title="Validation report monitoring" Height="450" Width="800"
@@ -35,6 +34,7 @@
                           Grid.Row="0"/>
             <DataGrid Name="dataGridValidationReport"
                       Background="{DynamicResource BackgroundColor}"
+                      ToolTip="Click to expand"
                       AutoGenerateColumns="False"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
@@ -45,20 +45,32 @@
                                         IsReadOnly="True"/>
                     <DataGridTextColumn Header="Validations OK"
                                         Binding="{Binding ValidationsOK}"
-                                        IsReadOnly="True"/>
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Validations total"
                                         Binding="{Binding ValidationsTotal}"
-                                        IsReadOnly="True"/>
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Score"
-                                        Binding="{Binding ManagerScore}"
-                                        IsReadOnly="True"/>
+                                        Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
-                <DataGrid.RowHeaderTemplate>
-                    <DataTemplate>
-                        <Expander Expanded="OnExpandChange"
-                                  Collapsed="OnExpandChange"/>
-                    </DataTemplate>
-                </DataGrid.RowHeaderTemplate>
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
                         <DockPanel>
@@ -70,6 +82,30 @@
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
+            <Grid Grid.Column="0"
+                  Grid.ColumnSpan="4"
+                  Grid.Row="2">
+                <TextBlock Name="textBlockValidationReportStatsTotal"
+                       Text="{Binding ValidationReportStatsTotal}"
+                       Background="White"
+                       TextAlignment="Center"
+                       Grid.Column="0"/>
+                <TextBlock Name="textBlockValidationReportStatsFailed"
+                       Text="{Binding ValidationReportStatsFailed}"
+                       Background="White"
+                       TextAlignment="Center"
+                       Grid.Column="1"/>
+                <TextBlock Name="textBlockValidationReportStatsDisabled"
+                       Text="{Binding ValidationReportStatsDisabled}"
+                       Background="White"
+                       TextAlignment="Center"
+                       Grid.Column="2"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="7*"/>
                 <ColumnDefinition Width="*"/>
@@ -79,6 +115,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
         </Grid>
     </Border>

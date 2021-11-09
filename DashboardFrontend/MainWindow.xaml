@@ -139,9 +139,9 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            <Grid Name="gridLog" 
-                  Margin="5,10,0,10" 
-                  Grid.Column="2" 
+            <Grid Name="gridLog"
+                  Margin="5,10,0,10"
+                  Grid.Column="2"
                   Grid.Row="2">
                 <ToggleButton Name="toggleButtonLogInfo" 
                               Content="Info" 
@@ -153,15 +153,15 @@
                               Grid.Column="1" 
                               Grid.Row="0" 
                               Style="{StaticResource DefaultToggleButton}"/>
-                <ToggleButton Name="toggleButtonLogError" 
-                              Content="Error" 
-                              Grid.Column="2" 
-                              Grid.Row="0" 
+                <ToggleButton Name="toggleButtonLogError"
+                              Content="Error"
+                              Grid.Column="2"
+                              Grid.Row="0"
                               Style="{StaticResource DefaultToggleButton}"/>
                 <ToggleButton Name="toggleButtonLogFatal" 
-                              Content="Fatal" 
-                              Grid.Column="3" 
-                              Grid.Row="0" 
+                              Content="Fatal"
+                              Grid.Column="3"
+                              Grid.Row="0"
                               Style="{StaticResource DefaultToggleButton}"/>
                 <ToggleButton Name="toggleButtonLogFilter" 
                               Content="Filter" 
@@ -202,63 +202,91 @@
                 </Grid.RowDefinitions>
             </Grid>
             <Grid Name="gridValidationReport"
-                  Margin="0, 0, 5, 0"
+                  Margin="5,10,0,10"
                   Grid.Column="1"
                   Grid.Row="3">
-                <TextBlock Name="textBlockValidationReportSearchBar"
-                           adorners:Watermark.Text="Search"
-                           Margin="0,0,2,2" 
-                           Background="White"
-                           Grid.Column="0"
-                           Grid.Row="0"/>
+                <TextBox Name="textBoxValidationReportSearchBar"
+                         adorners:Watermark.Text="Search"
+                         Margin="0,0,5,0"
+                         Grid.Column="0"
+                         Grid.Row="0"/>
                 <Button Name="buttonValidationReportSearch"
-                        Content="Search" Margin="0"
+                        Content="Search"
+                        Margin="0,0,5,0"
                         Grid.Column="1"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
                 <Button Name="buttonValidationReportFilter"
                         Content="Filter"
-                        Margin="0,0,2,2" 
+                        Margin="0,0,5,0"
                         Grid.Column="2"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
                 <ToggleButton Name="toggleButtonValidationReportRefreshToggle"
                               Content="Refresh"
-                              Margin="0,0,2,2" 
+                              Margin="0,0,5,0"
                               Grid.Column="3"
                               Grid.Row="0"
-                              Style="{StaticResource DefaultToggleButton}">
-                </ToggleButton>
+                              Style="{StaticResource DefaultToggleButton}"/>
                 <Button Name="buttonValidationReportExpand"
                         Content="Expand"
-                        Click="ExpandValidationReportButtonClick" 
-                        Margin="0,0,0,2"
+                        Click="ExpandValidationReportButtonClick"
                         Grid.Column="4"
-                        Grid.Row="0" 
+                        Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
-                <!-- TreeView kan overvejes istedet for  ListView -->
-                <ListView x:Name="listViewValidationReport"
+                <DataGrid Name="dataGridValidationReport"
+                          Background="{DynamicResource BackgroundColor}"
+                          ToolTip="Click to expand"
+                          AutoGenerateColumns="False"
+                          Margin="0,10,0,0"
                           Grid.Column="0"
-                          Grid.ColumnSpan="5" 
-                          Grid.Row="1"
-                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                          AlternationCount="2">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Manager name"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerName}"/>
-                            <GridViewColumn Header="Validations OK"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
-                            <GridViewColumn Header="Status"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                          Grid.ColumnSpan="5"
+                          Grid.Row="1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Manager name"
+                                        Binding="{Binding ManagerName}"
+                                        IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Validations OK"
+                                        Binding="{Binding ValidationsOK}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Validations total"
+                                        Binding="{Binding ValidationsTotal}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Score"
+                                        Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
+                                        IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <ListBox ItemsSource="{Binding ValidationReportList}"
+                                     Grid.Column="0"/>
+                                <ListBox ItemsSource="{Binding ValidationReportStatus}"
+                                     Grid.Column="1"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="7*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
