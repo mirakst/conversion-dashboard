@@ -9,16 +9,14 @@
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStartupLocation="CenterScreen">
-
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Name="gridControlPanel" 
                   Grid.Column="1" 
                   Grid.ColumnSpan="3" 
                   Grid.Row="1">
-                <Button Name="buttonStartStop" 
+                <Button Name="buttonStartStop"
                         Click="ButtonStartStopClick" 
                         Margin="0, 0, 10, 0" 
                         Grid.Column="0" 
@@ -46,7 +44,6 @@
                            Grid.Row="0"
                            Grid.RowSpan="2"
                            Text="Conversion - 1">
-                    
                 </TextBlock>
                 <Grid Grid.Column="3" 
                       Grid.Row="0">

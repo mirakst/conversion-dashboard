@@ -23,7 +23,6 @@ namespace DashboardInterface
         {
             //SettingsWindow settingsWindow = new();
             //settingsWindow.Closing += OnSettingsWindowClosing;
-            //settingsWindow.IsEnabled = false;
             //settingsWindow.ShowDialog();
         }
 

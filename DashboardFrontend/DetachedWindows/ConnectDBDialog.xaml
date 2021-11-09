@@ -8,7 +8,8 @@
         Title="ConnectDBDialog" Height="200" Width="350"
         Background="{DynamicResource BackgroundColor}"
         WindowStartupLocation="CenterOwner"
-        WindowStyle="None">
+        WindowStyle="None"
+        ResizeMode="NoResize">
     <Border Margin="10">
         <Grid>
             <TextBlock Name="textBlockDialogHeader"
