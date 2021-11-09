@@ -42,7 +42,6 @@ namespace DashboardInterface
             LogDetached expandLog = new();
             expandLog.Closing += OnLogWindowClosing;
             logExpandButton.IsEnabled = false;
-            expandLog.Owner = Application.Current.MainWindow;
             expandLog.Show();
         }
 
