@@ -14,11 +14,11 @@
         <!-- Default design for buttons -->
         <Style x:Key="DefaultButton" TargetType="Button">
             <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="Blue"/>
+            <Setter Property="Background" Value="LightGray"/>
         </Style>
         <Style x:Key="DefaultToggleButton" TargetType="ToggleButton">
             <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="Blue"/>
+            <Setter Property="Background" Value="LightGray"/>
         </Style>
 
         <!-- Design for start/stop button (Bliver det stadig brugt Kasper med din løsning? -->

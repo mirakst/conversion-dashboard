@@ -12,28 +12,53 @@
             <ToggleButton Name="logInfoButton"
                           Content="Info"
                           Grid.Column="0"
-                          Margin="10,0,10,0"
+                          Margin="0,0,10,0"
                           Style="{StaticResource DefaultToggleButton}"/>
+            <Image Name="Info" 
+                   Source="../Icons/Info.png" 
+                   Grid.Column="0" 
+                   Stretch="Fill" 
+                   Width="15" 
+                   Height="15" 
+                   Margin="-60,0,0,0"/>
+
+
             <ToggleButton Name="logWarningButton"
                           Content="Warning"
                           Grid.Column="1"
-                          Margin="10,0,10,0"
+                          Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
+            <Image Name="Warn" 
+                   Source="../Icons/Warn.png" 
+                   Grid.Column="1" 
+                   Stretch="Fill" 
+                   Width="15" 
+                   Height="15" 
+                   Margin="-70,0,0,0"/>
             <ToggleButton Name="logErrorButton"
                           Content="Error"
                           Grid.Column="2"
-                          Margin="10,0,10,0"
+                          Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
+            <Image Name="Error" 
+                   Source="../Icons/Error.png" 
+                   Grid.Column="2" 
+                   Stretch="Fill" 
+                   Width="15" 
+                   Height="15" 
+                   Margin="-60,0,0,0"/>
             <ToggleButton Name="logFatalButton"
                           Content="Fatal"
                           Grid.Column="3"
-                          Margin="10,0,10,0"
+                          Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
+            <!-- <Image Name="Fatal" Source="../Icons/Fatal.png"/> -->
             <ToggleButton Name="logValidationButton"
                           Content="Validation"
                           Grid.Column="4"
-                          Margin="10,0,10,0"
+                          Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
+            <!-- <Image Name="Validation" Source="../Icons/Validation.png"/> -->
             <Button Name="Filter"
                     Content="Filter"
                     Grid.Column="6"
@@ -43,7 +68,9 @@
                           Grid.Row="2"
                           Grid.ColumnSpan="7">
                 <ListView Name="LogEntryList"
-                          Background="#FF1F4E90">
+                          Background="#FF1F4E90"
+                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}" 
+                          AlternationCount="2">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding Date}" Width="auto"></GridViewColumn>
@@ -68,7 +95,7 @@
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-        </Grid> 
+        </Grid>
     </Border>
-    
+
 </Window>

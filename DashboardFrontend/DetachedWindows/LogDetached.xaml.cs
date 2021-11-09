@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    /// <summary>
-    /// Interaction logic for LogDetached.xaml
-    /// </summary>
     public partial class LogDetached : Window
     {
         public LogDetached()
