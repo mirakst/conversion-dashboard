@@ -53,8 +53,5 @@ namespace DevConsoleApp
                 Console.WriteLine(item.ToString());
             }*/
         }
-
-        public static string NowString { get => $"[{DateTime.Now.ToLongTimeString()}]"; }
-
     }
 }

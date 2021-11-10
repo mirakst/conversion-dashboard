@@ -13,16 +13,22 @@ namespace DashboardBackend
         //What is the use of this right now?
         public static bool HealthReportConfigured { get; private set; } = false;
 
+
         //The class that handles the state database queries. Default is SQL.
         public static IDatabaseHandler DatabaseHandler { get; set; }
+
 
         //Set SQL minimum DateTime as default.
         public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
 
-        //Queries the state database for executions, then creates a list of them for the system model, which is returned.
-        public static List<Execution> GetExecutions(DateTime minDate = default(DateTime))
+
+        /// <summary>
+        /// Queries the state database for executions, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of executions, matching the supplied constraints.</returns>
+        public static List<Execution> GetExecutions(DateTime minDate)
         {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
 
             List<ExecutionEntry> queryResult = DatabaseHandler.QueryExecutions(minDate);
 
@@ -37,12 +43,16 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for validation tests, then creates a list of them for the system model, which is returned.
+        public static List<Execution> GetExecutions() => GetExecutions(SqlMinDateTime);
 
-        public static List<ValidationTest> GetAfstemninger(DateTime minDate = default(DateTime))
+
+        /// <summary>
+        /// Queries the state database for validation tests, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of validation tests, matching the supplied constraints.</returns>
+        public static List<ValidationTest> GetAfstemninger(DateTime minDate)
         {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
-
             List<AfstemningEntry> queryResult = DatabaseHandler.QueryAfstemninger(minDate);
 
             List<ValidationTest> result = new();
@@ -56,12 +66,26 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for log messages, then creates a list of them for the system model, which is returned.
-        public static List<LogMessage> GetLogMessages(int ExecutionId, DateTime minDate = default(DateTime))
-        {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+        public static List<ValidationTest> GetAfstemninger() => GetAfstemninger(SqlMinDateTime);
 
-            List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(ExecutionId, minDate);
+
+        /// <summary>
+        /// Queries the state database for log messages, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="ExecutionId">An execution ID constraint for the objects in the returned list.</param>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of log messages, matching the supplied constraints.</returns>
+        public static List<LogMessage> GetLogMessages(int ExecutionId, DateTime minDate)
+        {
+            List<LoggingEntry> queryResult;
+            if (ExecutionId > 0)
+            {
+                queryResult = DatabaseHandler.QueryLogMessages(ExecutionId, minDate);
+            } 
+            else
+            {
+                queryResult = DatabaseHandler.QueryLogMessages(minDate);
+            }
 
             List<LogMessage> result = new();
 
@@ -73,11 +97,18 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for managers, then creates a list of them for the system model, which is returned.
-        public static List<Manager> GetManagers(DateTime minDate = default(DateTime))
-        {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+        public static List<LogMessage> GetLogMessages(int ExecutionId) => GetLogMessages(ExecutionId, SqlMinDateTime);
+        public static List<LogMessage> GetLogMessages(DateTime minDate) => GetLogMessages(0, minDate);
+        public static List<LogMessage> GetLogMessages() => GetLogMessages(0, SqlMinDateTime);
 
+
+        /// <summary>
+        /// Queries the state database for managers, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of Managers</returns>
+        public static List<Manager> GetManagers(DateTime minDate)
+        {
             List<ManagerEntry> queryResult = DatabaseHandler.QueryManagers();  
 
             List<Manager> result = new();
@@ -90,7 +121,13 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for health report INIT entries, then creates a Health Report with system info for the system model, which is returned
+        public static List<Manager> GetManagers() => GetManagers(SqlMinDateTime);
+
+
+        /// <summary>
+        /// Queries the state database for health report INIT entries, then creates a Health Report with system info for the system model, which is returned
+        /// </summary>
+        /// <returns>A Health Report initialized with system info.</returns>
         public static HealthReport GetHealthReport()
         {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryHealthReport();
@@ -100,11 +137,14 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for health report NETWORK entries, then creates a list of them for the system model, which is returned.
-        public static List<NetworkUsage> GetNetworkReadings(DateTime minDate = default(DateTime))
-        {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
 
+        /// <summary>
+        /// Queries the state database for health report NETWORK entries, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of Network usage readings.</returns>
+        public static List<NetworkUsage> GetNetworkReadings(DateTime minDate)
+        {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryNetworkReadings(minDate);
 
             List<NetworkUsage> result = BuildNetworkUsage(queryResult);
@@ -112,11 +152,16 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for health report CPU entries, then creates a list of them for the system model, which is returned.
-        public static List<CpuLoad> GetCpuReadings(DateTime minDate = default(DateTime))
-        {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+        public static List<NetworkUsage> GetNetworkReadings() => GetNetworkReadings(SqlMinDateTime);
 
+
+        /// <summary>
+        /// Queries the state database for health report CPU entries, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of CPU load readings.</returns>
+        public static List<CpuLoad> GetCpuReadings(DateTime minDate)
+        {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryCpuReadings(minDate);
 
             List<CpuLoad> result = new();
@@ -129,11 +174,16 @@ namespace DashboardBackend
             return result;
         }
 
-        //Queries the state database for executions, then creates a list of them for the system model, which is returned.
-        public static List<RamUsage> GetRamReadings(DateTime minDate = default(DateTime))
-        {
-            minDate = minDate == default(DateTime) ? SqlMinDateTime : minDate;
+        public static List<CpuLoad> GetCpuReadings() => GetCpuReadings(SqlMinDateTime);
 
+
+        /// <summary>
+        /// Queries the state database for executions, then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of ram usage readings.</returns>
+        public static List<RamUsage> GetRamReadings(DateTime minDate)
+        {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryRamReadings(minDate);
             List<RamUsage> result = new();
 
@@ -145,7 +195,15 @@ namespace DashboardBackend
             return result;
         }
 
-        //Returns the type of the log message parameter 'entry'
+        public static List<RamUsage> GetRamReadings() => GetRamReadings(SqlMinDateTime);
+
+
+        /// <summary>
+        /// Returns the type of the log message parameter 'entry'.
+        /// </summary>
+        /// <param name="entry">A single entry from the [LOGGING] table in the state database.</param>
+        /// <returns>A log message type besed on the enum in the log message class.</returns>
+        /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
         public static LogMessageType GetLogMessageType(LoggingEntry entry)
         {
             if (entry.LogMessage.StartsWith("Afstemning"))
@@ -166,7 +224,12 @@ namespace DashboardBackend
             }
         }
 
-        //Returns the status of the validation test parameter 'entry'
+        /// <summary>
+        /// Returns the status of the validation test parameter 'entry'.
+        /// </summary>
+        /// <param name="entry">A single entry from the [AFSTEMNING] table in the state database.</param>
+        /// <returns>A validation status based on the enum in the validation class.</returns>
+        /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal validation status.</exception>
         public static ValidationStatus GetValidationStatus(AfstemningEntry entry)
         {
             switch (entry.Afstemresultat)
@@ -184,7 +247,11 @@ namespace DashboardBackend
             }
         }
 
-        //Builds the system model health report with CPU, Memory and Network, by use of entries with report_type ending on 'INIT'
+        /// <summary>
+        /// Builds the system model health report with CPU, Memory and Network, by use of entries with report_type ending on 'INIT'.
+        /// </summary>
+        /// <param name="entries">A list of Health Report entries from the state database.</param>
+        /// <returns>A Health Report initialized with system info.</returns>
         public static HealthReport BuildHealthReport(List<HealthReportEntry> entries)
         {
             HealthReport result;
@@ -215,34 +282,21 @@ namespace DashboardBackend
             return result;
         }
 
-        //Builds network usage readings. This is a big, complicated function due to the state database network logging
-        //6 entries at once for the same update, sometimes with a tiny delay inbetween some of the entries.
+        /// <summary>
+        /// Builds network usage readings by coupling network entries 6 at a time.
+        /// </summary>
+        /// <param name="entries">A list of network usage entries from the state database.</param>
+        /// <returns>A coupled list of network usage entries.</returns>
         public static List<NetworkUsage> BuildNetworkUsage(List<HealthReportEntry> entries)
         {
             List<NetworkUsage> result = new();
-
-            //List of distinct network logging timestamps.
-            var logTimes = entries.Select(e => (DateTime)e.LogTime).Distinct().ToList();
-
             List<List<HealthReportEntry>> distinctReports = new();
-            DateTime prevLogTime = new();
 
-            //If logTime is less than 1 second from previous logTime, merge entries from the two separate logTimes.
-            foreach (var item in logTimes)
+            int entryCount = entries.Count;
+
+            for (int i = 0; i < entries.Count; i+= 6)
             {
-                if (item.Subtract(prevLogTime).Duration() < TimeSpan.FromSeconds(1))
-                {
-                    List<HealthReportEntry> entryList = entries.Where(e => e.LogTime >= prevLogTime)
-                                                               .Where(e => e.LogTime < prevLogTime.AddSeconds(1)).ToList();
-
-                    distinctReports.RemoveAt(distinctReports.Count - 1);
-                    distinctReports.Add(entryList);
-                }
-                else
-                {
-                    distinctReports.Add(entries.FindAll(e => e.LogTime == (DateTime)item));
-                }
-                prevLogTime = item;
+                distinctReports.Add(entries.Skip(i).Take(6).ToList());
             }
 
             //Build system model network usage objects.

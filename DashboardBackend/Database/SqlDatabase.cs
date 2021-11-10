@@ -45,6 +45,17 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
+        public List<LoggingEntry> QueryLogMessages(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.Loggings
+                                .Where(e => e.Created > minDate)
+                                .OrderBy(e => e.Created).ToList();
+
+            return queryResult;
+        }
+
+        /// <inheritdoc/>
         public List<ManagerEntry> QueryManagers()
         {
             using NetcompanyDbContext db = new();

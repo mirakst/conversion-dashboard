@@ -24,15 +24,22 @@ namespace DashboardBackend.Database
         /// <summary>
         /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime, matching the supplied ExecutionId.
         /// </summary>
-        /// <param name="ExecutionId">An Execution ID constraint for the returned objects</param>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of Executions no older than the specified DateTime</returns>
+        /// <param name="ExecutionId">An Execution ID constraint for the returned objects.</param>
+        /// <param name="minDate">A date constraint for the returned objects.</param>
+        /// <returns>A list of log messages no older than the specified DateTime, from the specific execution.</returns>
         List<LoggingEntry> QueryLogMessages(int ExecutionId, DateTime minDate);
+
+        /// <summary>
+        /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime.
+        /// </summary>
+        /// <param name="minDate">A date constraint for the returned objects.</param>
+        /// <returns>A list of log messages no older than the specified DateTime.</returns>
+        List<LoggingEntry> QueryLogMessages(DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries in the MANAGERS table of the state database .
         /// </summary>
-        /// <returns>A list of Managers</returns>
+        /// <returns>A list of Managers.</returns>
         List<ManagerEntry> QueryManagers();
 
         /// <summary>
