@@ -89,16 +89,16 @@
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Type}" Value="Warn">
-                                    <Setter Property="Background" Value="Yellow"/>
+                                    <Setter Property="Background" Value="#FCE283"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Error">
-                                    <Setter Property="Background" Value="Red"/>
+                                    <Setter Property="Background" Value="#ED4F47"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                    <Setter Property="Background" Value="Gray"/>
+                                    <Setter Property="Background" Value="#CFCFCF"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                    <Setter Property="Background" Value="Green"/>
+                                    <Setter Property="Background" Value="#7EDE78"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
