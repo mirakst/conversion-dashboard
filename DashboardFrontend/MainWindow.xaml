@@ -10,21 +10,9 @@
         Height="720"
         Width="1280"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        WindowStyle="None"
-        MouseDown="DraggableGrid"
-        ResizeMode="CanResizeWithGrip"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0"/>
-    </WindowChrome.WindowChrome>
     <!--Command bindings for window controls-->
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
-        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
-        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
-        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
-    </Window.CommandBindings>
 
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -335,37 +323,6 @@
             </Grid>
             <Rectangle Grid.Column="0" Grid.RowSpan="1000" Fill="{DynamicResource WindowBorderColor}"/>
             <Rectangle Grid.Column="5" Grid.RowSpan="1000" Fill="{DynamicResource WindowBorderColor}"/>
-            <Grid Name="WindowControlGrid"
-                  Grid.Column="5"
-                  Grid.Row="0"
-                  Margin="5,5,5,0">
-                <Button Name="ButtonMinimize" 
-                        Grid.Column="0" 
-                        Style="{StaticResource DefaultWindowButton}"
-                        Content="0"
-                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
-                <Button Name="ButtonMaximize" 
-                        Grid.Column="1" 
-                        Style="{StaticResource DefaultWindowButton}"
-                        Content="1"
-                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
-                <Button Name="ButtonRestore" 
-                        Grid.Column="1" 
-                        Style="{StaticResource DefaultWindowButton}"
-                        Content="2"
-                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
-                        Visibility="Collapsed"/>
-                <Button Name="ButtonClose" 
-                        Grid.Column="2" 
-                        Style="{StaticResource DefaultWindowButton}"
-                        Content="r"
-                        Command="{x:Static SystemCommands.CloseWindowCommand}"/>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="1*"/>
