@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.DeatachedWindows;
+﻿using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
 using System.Windows;
 
@@ -30,11 +30,11 @@ namespace DashboardInterface
 
         public void ExpandManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            //ManagerWindow expandManager = new();
-            //expandManager.Closing += OnManagerWindowClosing;
-            //managerExpandButton.IsEnabled = false;
-            //expandManager.Owner = Application.Current.MainWindow;
-            //expandManager.Show();
+            ManagerListDetached expandmanager = new();
+            managerExpandButton.IsEnabled = false;
+            expandmanager.Closing += OnHealthWindowClosing;
+            expandmanager.Owner = Application.Current.MainWindow;
+            expandmanager.Show();
         }
 
         public void ExpandLogButtonClick(object sender, RoutedEventArgs e)
