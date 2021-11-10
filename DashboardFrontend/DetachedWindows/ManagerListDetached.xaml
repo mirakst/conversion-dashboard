@@ -61,10 +61,6 @@
                                 <DataTemplate>
                                     <Button Content="Add" 
                                             Click="Button_Click">
-                                        <Button.DataContext>
-                                            <local:item/>
-                                        </Button.DataContext>
-
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -95,7 +91,7 @@
                                     <DataGridTextColumn Header="Run #"
                                                         Binding="{Binding run}" 
                                                         IsReadOnly="True"/>
-                                    <!-- run missing in manager class-->
+                                    <!-- run # missing in manager class-->
                                     <DataGridTextColumn Header="Start time"
                                                         Binding="{Binding startTime}"
                                                         IsReadOnly="True"/>

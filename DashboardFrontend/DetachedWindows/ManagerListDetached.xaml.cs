@@ -20,6 +20,13 @@ namespace DashboardFrontend.DetachedWindows
         public int score {  get; set; }
         public string status { get; set; }
         public int id {  get; set; }
+        public int execId {  get; set; }
+        public int run {  get; set; }
+        public int startTime {  get; set; }
+        public int endTime {  get; set; }
+        public int Runtime {  get; set; }
+        public int rowsRead {  get; set; }
+        public int rowsWritten {  get; set; }
     }
     /// <summary>
     /// Interaction logic for ManagerListDetached.xaml
@@ -35,8 +42,10 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            datagridDetailedManagers.Items.Add(e.OriginalSource);
-            datagridChartedManagers.Items.Add(e.OriginalSource);
+            item? obj = ((FrameworkElement)sender).DataContext as item;
+            datagridManagers.Items.Add(obj);
+            datagridDetailedManagers.Items.Add(obj);
+            datagridChartedManagers.Items.Add(obj); 
         }
     }
 }
