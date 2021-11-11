@@ -1,11 +1,12 @@
 ﻿<Window
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
-        xmlns:adorners="http://gu.se/Adorners" x:Class="DashboardFrontend.DetachedWindows.ManagerListDetached"
+        x:Class="DashboardFrontend.DetachedWindows.ManagerListDetached"
         mc:Ignorable="d"
         Title="Manager statistics" 
         Height="720" 
@@ -31,84 +32,133 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40pt"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28"/>
                     <RowDefinition Height="22*"/>
                 </Grid.RowDefinitions>
-                
-                <TextBox x:Name="searchboxManager"
-                     FontSize="15"
-                     Margin="0,0,0,5" adorners:Watermark.Text="search"/>
 
+                <TextBox Name="textboxSearchbar"
+                         Margin="0,0,0,5"
+                         FontSize="15">
+                </TextBox>
+
+                <DockPanel Name="dockpanelSearchbutton"
+                           LastChildFill="False">
+                    <Button Name="buttonSearch" 
+                            Click="SearchManagers_Click"
+                            Margin="0,0,0,5"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            DockPanel.Dock="Right">
+                        <Image Source="../Icons/magnifyingglassgray.png"/>
+                    </Button>
+                </DockPanel>
+
+                <Button Name="buttonResetManagers"
+                        Click="ResetManagers_Click"
+                        Grid.Column="1"
+                        Margin="5,0,0,5"
+                        Content="Reset"
+                        Style="{StaticResource DefaultButton}">
+                </Button>
+                
                 <DataGrid x:Name="datagridManagers"
-                          Grid.Row="1">
+                          Grid.Row="1"
+                          Grid.ColumnSpan="2"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding id}"
-                                            IsReadOnly="True"/>
+                                            Binding="{Binding ID}"
+                                            Width="40pt"/>
+                        <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
                         <DataGridTextColumn Header="Manager name" 
-                                            Binding="{Binding name}"
-                                            IsReadOnly="True"/>
+                                            Binding="{Binding Name}"
+                                            Width="10*"/>
                         <DataGridTextColumn Header="Score" 
-                                            Binding="{Binding score}"
-                                            IsReadOnly="True"/>
+                                            Binding="{Binding Score}"
+                                            Width="*"/>
                         <DataGridTextColumn Header="Status" 
-                                            Binding="{Binding status}"
-                                            IsReadOnly="True"/>
+                                            Binding="{Binding Status}"
+                                            Width="*"/>
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Add" 
-                                            Click="Button_Click">
+                                    <Button Name="buttonAddManager"
+                                            Click="AddManager_Click"
+                                            Content="g"
+                                            FontFamily="wingdings 3"
+                                            Tag="{Binding}"
+                                            Style="{StaticResource DefaultButton}">
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-
             </Grid>
 
             <Grid x:Name="tabcontrolGrid"
                   Grid.Column="3"
-                  Grid.Row="1">
-                <TabControl
-                    Background="{StaticResource BackgroundColor}">
-                    <TabItem
-                        x:Name="TabInfo"
-                        Header="Info">
-                        <Grid x:Name="GridInfoTab">
-                            <DataGrid x:Name="datagridDetailedManagers"
-                                      Margin = "0, 3, 0, 0">
-                                <DataGrid.Columns>
+                  Grid.Row="1"
+                  Margin="0,-1,0,0">
+                <TabControl Name="tabcontrolStatistics"
+                            Background="{StaticResource BackgroundColor}"
+                            BorderBrush="Transparent">
+                    <TabItem x:Name="TabInfo"
+                             Header="Info"
+                             Height="27">
+                        <Grid x:Name="GridInfoTab"
+                              Margin="-4,-6,-3,-3">
+                            <DataGrid x:Name="datagridManagerDetails"
+                                      Margin = "0, 3, 0, 0"
+                                      IsReadOnly="True"
+                                      HeadersVisibility="Column"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <DataGrid.Columns> <!--All of these properties are necessary to move a manager from on datagrid to the other-->
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding id}"
-                                                        IsReadOnly="True"/>
+                                                        Binding="{Binding ID}"
+                                                        Width="40pt"/> 
+                                    <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
                                     <DataGridTextColumn Header="Execution #"
-                                                        Binding="{Binding execId}"
-                                                        IsReadOnly="True"/>
+                                                        Binding="{Binding ExecId}"
+                                                        Width="*"/>
                                     <DataGridTextColumn Header="Run #"
-                                                        Binding="{Binding run}" 
-                                                        IsReadOnly="True"/>
+                                                        Binding="{Binding Run}" 
+                                                        Width="*"/>
                                     <!-- run # missing in manager class-->
                                     <DataGridTextColumn Header="Start time"
-                                                        Binding="{Binding startTime}"
-                                                        IsReadOnly="True"/>
+                                                        Binding="{Binding StartTime}"
+                                                        Width="*"/>
                                     <DataGridTextColumn Header="End time"
-                                                        Binding="{Binding endTime}"
-                                                        IsReadOnly="True"/>
+                                                        Binding="{Binding EndTime}"
+                                                        Width="*"/>
                                     <DataGridTextColumn Header="Est. runtime"
                                                         Binding="{Binding Runtime}"
-                                                        IsReadOnly="True"/>
+                                                        Width="*"/>
                                     <DataGridTextColumn Header="Rows read"
-                                                        Binding="{Binding rowsRead}"
-                                                        IsReadOnly="True"/>
-                                    <!--missing-->
+                                                        Binding="{Binding RowsRead}"
+                                                        Width="*"/>
+                                    <!--missing in manager class-->
                                     <DataGridTextColumn Header="Rows written"
-                                                        Binding="{Binding rowsWritten}"
-                                                        IsReadOnly="True"/>
-                                    <!-- missing -->
+                                                        Binding="{Binding RowsWritten}"
+                                                        Width="*"/>
+                                    <!-- missing in manager class -->
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Name="buttonRemoveManager"
+                                                        Click="RemoveManager_Click"
+                                                        Content='f'
+                                                        FontFamily="wingdings 3"
+                                                        Tag="{Binding}"
+                                                        Style="{StaticResource DefaultButton}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
@@ -116,9 +166,10 @@
 
                     <TabItem
                         x:Name="TabPerformance"
-                        Header="Performance">
-                        <Grid x:Name="GridPerformanceTab">
-
+                        Header="Performance"
+                        Height="27">
+                        <Grid x:Name="GridPerformanceTab"
+                              Margin="-4,-6,-3,-3">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
@@ -129,13 +180,14 @@
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            
                             <idd:Chart x:Name="chartCPUload"
                                       Background="{DynamicResource BackgroundColor}"
                                       Foreground="{DynamicResource ForegroundColor}"
                                       Margin="0,5,0,0"
                                       Grid.Column="0"
                                       Grid.Row="0"
-                                       PlotHeight="103">
+                                      PlotHeight="103">
                                 <Grid x:Name="gridCPUload"/>
                             </idd:Chart>
 
@@ -145,7 +197,7 @@
                                       Margin="0,5,0,0"
                                       Grid.Column="0"
                                       Grid.Row="1"
-                                       PlotHeight="103">
+                                      PlotHeight="103">
                                 <Grid x:Name="gridRAMusage"/>
                             </idd:Chart>
 
@@ -165,33 +217,42 @@
                                       Margin="0,5,0,0"
                                       Grid.Column="0"
                                       Grid.Row="3"
-                                       PlotHeight="103">
+                                      PlotHeight="103">
                                 <Grid x:Name="gridRowsWritten"/>
                             </idd:Chart>
 
-                            <DataGrid x:Name="datagridChartedManagers"
+                            <DataGrid x:Name="datagridManagerCharts"
                                       Grid.Row="0"
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
-                                      Margin="10,7,0,0"
-                                      HeadersVisibility="Row"
-                                      Background="{StaticResource BackgroundColor}">
+                                      Margin="10,5,10,10"
+                                      Background="{StaticResource BackgroundColor}"
+                                      IsReadOnly="True"
+                                      BorderBrush="Transparent"
+                                      HeadersVisibility="Column"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Binding="{Binding id}"
-                                                        IsReadOnly="True"/>
+                                    <DataGridTextColumn Binding="{Binding ID}"
+                                                        Header="ID"
+                                                        Width="40pt"/>
+                                    <DataGridTextColumn Binding="{Binding ExecId}"
+                                                        Header="Exec ID"
+                                                        Width="*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Content="Remove"/>
-                                                <!-- Maybe just an X for the button-->
+                                                <Button Name="buttonRemoveManager"
+                                                        Click="RemoveManager_Click"
+                                                        Content='f'
+                                                        FontFamily="wingdings 3"
+                                                        Tag="{Binding}"
+                                                        Style="{StaticResource DefaultButton}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                 </DataGrid.Columns>
-
                             </DataGrid>
-
                         </Grid>
                     </TabItem>
                 </TabControl>
