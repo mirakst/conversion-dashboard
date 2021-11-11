@@ -15,9 +15,9 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new();
             var queryResult = db.Afstemnings
                                 .Where(e => e.Afstemtdato > minDate)
-                                .OrderBy(e => e.Afstemtdato).ToList();
+                                .OrderBy(e => e.Afstemtdato);
             
-            return queryResult;
+            return queryResult.ToList();
         }
 
 
@@ -27,9 +27,9 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new();
             var queryResult = db.Executions
                                 .Where(e => e.Created > minDate)
-                                .OrderBy(e => e.Created).ToList();
+                                .OrderBy(e => e.Created);
 
-            return queryResult;
+            return queryResult.ToList();
         }
 
         /// <inheritdoc/>
@@ -39,9 +39,9 @@ namespace DashboardBackend.Database
             var queryResult = db.Loggings
                                 .Where(e => e.Created > minDate)
                                 .Where(e => e.ExecutionId == ExecutionId)
-                                .OrderBy(e => e.Created).ToList();
+                                .OrderBy(e => e.Created);
 
-            return queryResult;
+            return queryResult.ToList();
         }
 
         /// <inheritdoc/>
@@ -50,9 +50,9 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new();
             var queryResult = db.Loggings
                                 .Where(e => e.Created > minDate)
-                                .OrderBy(e => e.Created).ToList();
+                                .OrderBy(e => e.Created);
 
-            return queryResult;
+            return queryResult.ToList();
         }
 
         /// <inheritdoc/>
@@ -60,9 +60,9 @@ namespace DashboardBackend.Database
         {
             using NetcompanyDbContext db = new();
             var queryResult = db.Managers
-                                .OrderBy(e => e.RowId).ToList();
+                                .OrderBy(e => e.RowId);
 
-            return queryResult;
+            return queryResult.ToList();
         }
 
         /// <inheritdoc/>
@@ -71,47 +71,22 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new();
             var queryResult = db.HealthReports
                                 .Where(e => e.ReportType.EndsWith("INIT"))
-                                .OrderBy(e => e.LogTime).ToList();
+                                .OrderBy(e => e.LogTime);
 
-            return queryResult;
+            return queryResult.ToList();
         }
 
         /// <inheritdoc/>
-        public List<HealthReportEntry> QueryCpuReadings(DateTime minDate)
+        public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
         {
             using NetcompanyDbContext db = new();
             var queryResult = db.HealthReports
-                                .Where(e => e.LogTime > minDate)
-                                .Where(e => e.ReportType == "CPU")
-                                .Where(e => e.ReportKey == "LOAD")
-                                .OrderBy(e => e.LogTime).ToList();
-            
-            return queryResult;
-        }
+                                .Where(e => e.ReportType == "CPU"
+                                         || e.ReportType == "NETWORK"
+                                         || e.ReportType == "MEMORY")
+                                .OrderBy(e => e.LogTime);
 
-        /// <inheritdoc/>
-        public List<HealthReportEntry> QueryNetworkReadings(DateTime minDate)
-        {
-            using NetcompanyDbContext db = new();
-            var queryResult = db.HealthReports
-                                .Where(e => e.LogTime > minDate)
-                                .Where(e => e.ReportType == "NETWORK")
-                                .OrderBy(e => e.LogTime).ToList();
-
-            return queryResult;
-        }
-
-        /// <inheritdoc/>
-        public List<HealthReportEntry> QueryRamReadings(DateTime minDate)
-        {
-            using NetcompanyDbContext db = new();
-            var queryResult = db.HealthReports
-                                .Where(e => e.LogTime > minDate)
-                                .Where(e => e.ReportType == "MEMORY")
-                                .Where(e => e.ReportKey == "AVAILABLE")
-                                .OrderBy(e => e.LogTime).ToList();
-
-            return queryResult;
+            return queryResult.ToList();
         }
     }
 }

@@ -22,7 +22,8 @@ namespace DashboardBackend.Database
         List<ExecutionEntry> QueryExecutions(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime, matching the supplied ExecutionId.
+        /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime, 
+        /// matching the supplied ExecutionId.
         /// </summary>
         /// <param name="ExecutionId">An Execution ID constraint for the returned objects.</param>
         /// <param name="minDate">A date constraint for the returned objects.</param>
@@ -49,24 +50,11 @@ namespace DashboardBackend.Database
         List<HealthReportEntry> QueryHealthReport();
 
         /// <summary>
-        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, where REPORT_TYPE is 'CPU' and REPORT_KEY is 'LOAD'.
+        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, 
+        /// where REPORT_TYPE is either 'CPU', 'NETWORK' or 'MEMORY'.
         /// </summary>
         /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of CPU load entries no older than the specified DateTime</returns>
-        List<HealthReportEntry> QueryCpuReadings(DateTime minDate);
-
-        /// <summary>
-        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, where REPORT_TYPE is 'NETWORK'.
-        /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of Network entries no older than the specified DateTime</returns>
-        List<HealthReportEntry> QueryNetworkReadings(DateTime minDate);
-
-        /// <summary>
-        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, where REPORT_TYPE is 'MEMORY' and REPORT_KEY is 'AVAILABLE'.
-        /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of RAM available entries no older than the specified DateTime</returns>
-        List<HealthReportEntry> QueryRamReadings(DateTime minDate);
+        /// <returns>A list of system performance readings no older than the specified DateTime</returns>
+        List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate);
     }
 }
