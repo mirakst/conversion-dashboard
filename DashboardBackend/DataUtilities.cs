@@ -357,7 +357,7 @@ namespace DashboardBackend
             List<List<HealthReportEntry>> distinctReports = new();
             int entryCount = entries.Count;
 
-            for (int i = 0; i < entries.Count; i += 6)
+            for (int i = 0; i < entryCount; i += 6)
             {
                 distinctReports.Add(entries.Skip(i).Take(6).ToList());
             }
