@@ -11,6 +11,9 @@
               Margin="10,10,10,10">
             <ToggleButton Name="toggleButtonLogInfo"
                           Content="Info"
+                          Tag="Info"
+                          Checked="OnToggleButtonCheck"
+                          Unchecked="OnToggleButtonUnCheck"
                           Grid.Column="0"
                           Margin="0,0,10,0"
                           Style="{StaticResource DefaultToggleButton}"/>
@@ -23,6 +26,9 @@
                    Margin="-60,0,0,0"/>
             <ToggleButton Name="toggleButtonlogWarning"
                           Content="Warning"
+                          Checked="OnToggleButtonCheck"
+                          Unchecked="OnToggleButtonUnCheck"
+                          Tag="Warn"
                           Grid.Column="1"
                           Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
@@ -35,6 +41,9 @@
                    Margin="-70,0,0,0"/>
             <ToggleButton Name="toggleButtonLogError"
                           Content="Error"
+                          Checked="OnToggleButtonCheck"
+                          Unchecked="OnToggleButtonUnCheck"
+                          Tag="Error"
                           Grid.Column="2"
                           Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
@@ -47,12 +56,18 @@
                    Margin="-60,0,0,0"/>
             <ToggleButton Name="toggleButtonLogFatal"
                           Content="Fatal"
+                          Checked="OnToggleButtonCheck"
+                          Unchecked="OnToggleButtonUnCheck"
+                          Tag="Fatal"
                           Grid.Column="3"
                           Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
             <!-- <Image Name="Fatal" Source="../Icons/Fatal.png"/> -->
             <ToggleButton Name="toggleButtonLogValidation"
                           Content="Validation"
+                          Checked="OnToggleButtonCheck"
+                          Unchecked="OnToggleButtonUnCheck"
+                          Tag="Validation"
                           Grid.Column="4"
                           Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
