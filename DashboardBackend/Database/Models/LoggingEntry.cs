@@ -9,7 +9,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("LOGGING")]
-    public partial class Logging
+    public partial class LoggingEntry
     {
         [Column("CREATED", TypeName = "datetime")]
         public DateTime? Created { get; set; }
