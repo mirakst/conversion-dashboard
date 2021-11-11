@@ -9,7 +9,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("ENGINE_PROPERTIES")]
-    public partial class EngineProperty
+    public partial class EnginePropertyEntry
     {
         [Column("MANAGER")]
         [StringLength(200)]
