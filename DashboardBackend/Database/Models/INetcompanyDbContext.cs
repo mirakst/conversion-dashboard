@@ -4,19 +4,19 @@ namespace DashboardBackend.Database.Models
 {
     public interface INetcompanyDbContext : IDisposable
     {
-        DbSet<Afstemning> Afstemnings { get; set; }
+        DbSet<AfstemningEntry> Afstemnings { get; set; }
         DbSet<AuditFkError> AuditFkErrors { get; set; }
         DbSet<AuditLogerror> AuditLogerrors { get; set; }
         DbSet<AuditLoginfo> AuditLoginfos { get; set; }
         DbSet<AuditLoginfoType> AuditLoginfoTypes { get; set; }
         DbSet<ColumnValue> ColumnValues { get; set; }
         DbSet<DestTable> DestTables { get; set; }
-        DbSet<EngineProperty> EngineProperties { get; set; }
-        DbSet<Execution> Executions { get; set; }
-        DbSet<HealthReport> HealthReports { get; set; }
-        DbSet<Logging> Loggings { get; set; }
+        DbSet<EnginePropertyEntry> EngineProperties { get; set; }
+        DbSet<ExecutionEntry> Executions { get; set; }
+        DbSet<HealthReportEntry> HealthReports { get; set; }
+        DbSet<LoggingEntry> Loggings { get; set; }
         DbSet<LoggingContext> LoggingContexts { get; set; }
-        DbSet<Manager> Managers { get; set; }
+        DbSet<ManagerEntry> Managers { get; set; }
         DbSet<ManagerTracking> ManagerTrackings { get; set; }
         DbSet<MigrationFile> MigrationFiles { get; set; }
         DbSet<SequenceTracking> SequenceTrackings { get; set; }
