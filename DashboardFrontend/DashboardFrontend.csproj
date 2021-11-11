@@ -10,6 +10,12 @@
   <ItemGroup>
     <None Remove="Icons\Cog.png" />
     <None Remove="Icons\Detach.png" />
+    <None Remove="Icons\DetachWindow.png" />
+    <None Remove="Icons\Error.png" />
+    <None Remove="Icons\Fatal.png" />
+    <None Remove="Icons\Filter.png" />
+    <None Remove="Icons\Info.png" />
+    <None Remove="Icons\Magnifyingglass.png" />
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
@@ -18,6 +24,9 @@
     <None Remove="Icons\Settings3.png" />
     <None Remove="Icons\Settings4.png" />
     <None Remove="Icons\Start.png" />
+    <None Remove="Icons\Stop.png" />
+    <None Remove="Icons\Warn.png" />
+    <None Remove="Icons\Warning.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,9 +36,36 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Icons\Cog.png" />
-    <Resource Include="Icons\Detach.png" />
-    <Resource Include="Icons\Start.png" />
+    <Resource Include="Icons\Cog.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Detach.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Error.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Fatal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Filter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Magnifyingglass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Start.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Stop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Warning.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

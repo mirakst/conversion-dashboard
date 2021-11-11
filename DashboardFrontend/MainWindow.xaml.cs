@@ -40,17 +40,15 @@ namespace DashboardInterface
             //ManagerWindow detachManager = new();
             //detachManager.Closing += OnManagerWindowClosing;
             //buttonDetachManager.IsEnabled = false;
-            //detachManager.Owner = Application.Current.MainWindow;
             //detachManager.Show();
         }
 
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            //LogWindow detachLog = new();
-            //detachLog.Closing += OnLogWindowClosing;
-            //buttonLogDetach.IsEnabled = false;
-            //detachLog.Owner = Application.Current.MainWindow;
-            //detachLog.Show();
+            LogDetached detachLog = new();
+            detachLog.Closing += OnLogWindowClosing;
+            buttonLogDetach.IsEnabled = false;
+            detachLog.Show();
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
@@ -58,7 +56,6 @@ namespace DashboardInterface
             ValidationReportDetached detachVR = new();
             detachVR.Closing += OnValidationWindowClosing;
             buttonValidationReportDetach.IsEnabled = false;
-            detachVR.Owner = Application.Current.MainWindow;
             detachVR.Show();
         }
 
@@ -67,7 +64,6 @@ namespace DashboardInterface
             HealthReportDetached detachHR = new();
             buttonHealthReportDetach.IsEnabled = false;
             detachHR.Closing += OnHealthWindowClosing;
-            detachHR.Owner = Application.Current.MainWindow;
             detachHR.Show();
         }
 

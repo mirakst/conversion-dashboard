@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Validation report monitoring" Height="450" Width="800"
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
