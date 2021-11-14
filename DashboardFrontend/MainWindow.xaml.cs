@@ -1,4 +1,6 @@
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -9,6 +11,29 @@ namespace DashboardInterface
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+                UserSettings.LoadFromFile();
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                DisplayGeneralError("Could not find configuration file", ex);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                DisplayGeneralError("Failed to parse contents of UserSettings.json", ex);
+            }
+            catch (System.IO.IOException ex)
+            {
+                DisplayGeneralError("An unexpected problem occured while loading user settings", ex);
+            }
+        }
+
+        private UserSettings UserSettings { get; } = new();
+
+        private void DisplayGeneralError(string message, Exception ex)
+        {
+            MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
@@ -21,11 +46,11 @@ namespace DashboardInterface
         //Expand window events
         public void buttonSettingsClick(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new();
+            SettingsWindow settingsWindow = new(UserSettings);
             //settingsWindow.Closing += OnSettingsWindowClosing;
             //settingsWindow.IsEnabled = false;
             //settingsWindow.Owner = Application.Current.MainWindow;
-            //settingsWindow.ShowDialog();
+            settingsWindow.ShowDialog();
         }
 
         public void ExpandManagerButtonClick(object sender, RoutedEventArgs e)

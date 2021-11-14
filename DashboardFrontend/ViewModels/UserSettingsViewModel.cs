@@ -1,38 +1,36 @@
-﻿using DashboardSettings;
-using System;
+﻿using DashboardFrontend.Settings;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace DashboardFrontend.ViewModels
 {
-    public class UserSettingsViewModel : INotifyPropertyChanged
+    public class UserSettingsViewModel : IUserSettings, INotifyPropertyChanged
     {
-        public UserSettingsViewModel() 
+        public UserSettingsViewModel(UserSettings userSettings)
         {
-            Profiles = new ObservableCollection<Profile>(UserSettings.Profiles);
-            ActiveProfile = UserSettings.ActiveProfile;
-            LoggingQueryInterval = UserSettings.LoggingQueryInterval;
-            HealthReportQueryInterval = UserSettings.HealthReportQueryInterval;
-            ValidationQueryInterval = UserSettings.ValidationQueryInterval;
-            ManagerQueryInterval = UserSettings.ManagerQueryInterval;
-            AllQueryInterval = UserSettings.AllQueryInterval;
-            SynchronizeAllQueries = UserSettings.SynchronizeAllQueries;
+            Profiles = new ObservableCollection<Profile>(userSettings.Profiles);
+            ActiveProfile = userSettings.ActiveProfile;
+            LoggingQueryInterval = userSettings.LoggingQueryInterval;
+            HealthReportQueryInterval = userSettings.HealthReportQueryInterval;
+            ValidationQueryInterval = userSettings.ValidationQueryInterval;
+            ManagerQueryInterval = userSettings.ManagerQueryInterval;
+            AllQueryInterval = userSettings.AllQueryInterval;
+            SynchronizeAllQueries = userSettings.SynchronizeAllQueries;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ObservableCollection<Profile> Profiles { get; set; }
+        public IList<Profile> Profiles { get; set; }
         public int LoggingQueryInterval { get; set; }
         public int HealthReportQueryInterval { get; set; }
         public int ValidationQueryInterval { get; set; }
         public int ManagerQueryInterval { get; set; }
         public int AllQueryInterval { get; set; }
+        public bool HasActiveProfile => ActiveProfile != null;
         public bool HasChangedActiveProfile { get; set; }
+        public Profile? SelectedProfile { get; set; }
 
         private bool _synchronizeAllQueries;
         public bool SynchronizeAllQueries
@@ -54,6 +52,5 @@ namespace DashboardFrontend.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveProfile)));
             }
         }
-        public Profile? SelectedProfile { get; set; }
     }
 }

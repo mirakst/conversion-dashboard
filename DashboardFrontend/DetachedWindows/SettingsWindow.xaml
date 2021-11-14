@@ -87,7 +87,7 @@
 
                         <TextBlock Grid.ColumnSpan="3" Text="Profiles" FontWeight="Bold" VerticalAlignment="Center"/>
 
-                        <ListBox x:Name="profileListBox" Grid.Row="1" Grid.RowSpan="3" Margin="0 5 0 5" ItemsSource="{Binding Profiles}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedProfile,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}"/>
+                        <ListBox x:Name="profileListBox" Grid.Row="1" Grid.RowSpan="3" Margin="0 5 0 5" ItemsSource="{Binding Profiles}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedProfile,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}" SelectedIndex="0"/>
 
                         <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Content="Set as active" Margin="5" Click="Button_SetActiveProfile" IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
                         <Button Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Content="New" Margin="5" Click="Button_NewProfile"/>
