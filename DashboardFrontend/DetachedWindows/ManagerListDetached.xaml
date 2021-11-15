@@ -41,7 +41,8 @@
 
                 <TextBox Name="textboxSearchbar"
                          Margin="0,0,0,5"
-                         FontSize="15">
+                         FontSize="15"
+                         KeyDown="textboxSearchbar_KeyDown">
                 </TextBox>
 
                 <DockPanel Name="dockpanelSearchbutton"

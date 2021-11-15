@@ -36,9 +36,13 @@ namespace DashboardFrontend.DetachedWindows
         public ManagerListDetached()
         {
             InitializeComponent();
-            datagridManagers.Items.Add(new Item() {Name = "Assashdoaishdoahsdaasdaadssadasdasd", Score = 3, Status = "fail", ID = 1023, Run = 4 });
-            datagridManagers.Items.Add(new Item() {Name = "usdagsgssdfsf", Score = 412, Status = "OK", ID = 1231, Runtime = 1013});
-            datagridManagers.Items.Add(new Item() { Name = "usdagsgssdfsf", Status = "OK", ID = 2112, Runtime = 3453, RowsRead = 112003 });
+
+            Random random= new Random(2);
+
+            for (int i = 0; i < 50;  i++)
+            {
+                datagridManagers.Items.Add(new Item() { ID = random.Next() % 100, Score = random.Next() % 100 });
+            }
         }
 
         private void AddManager_Click(object sender, RoutedEventArgs e)
@@ -87,15 +91,38 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
-        private void SearchManagers_Click(object sender, RoutedEventArgs e)
+        private void SearchManagers_Click(object sender, RoutedEventArgs e) 
         {
-
+            SearchManagerDatagrid();
         }
 
         private void ResetManagers_Click(object sender, RoutedEventArgs e)
         {
             datagridManagerDetails.Items.Clear();
             datagridManagerCharts.Items.Clear();
+        }
+
+        private void textboxSearchbar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && textboxSearchbar != null)
+            {
+                SearchManagerDatagrid();
+            }
+        }
+
+        private void SearchManagerDatagrid() //Selection color should probably be changed so it is easier to find.
+        {
+            for (int i = 0; i < datagridManagers.Items.Count; i++)
+            {
+                Item manager = (Item)datagridManagers.Items[i];
+                if (manager.Name == textboxSearchbar.Text || manager.ID.ToString() == textboxSearchbar.Text)
+                {
+                    datagridManagers.SelectedItem = manager;
+                    datagridManagers.ScrollIntoView(manager);
+                    return;
+                }
+            }
+            // Add tooltip for when item is not found
         }
     }
 }
