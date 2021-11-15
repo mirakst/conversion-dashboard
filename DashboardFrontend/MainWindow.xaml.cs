@@ -1,11 +1,20 @@
+using DashboardFrontend;
 using DashboardFrontend.DetachedWindows;
+using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
+        PeriodicTimer dataGenerationTimer = new(TimeSpan.FromMilliseconds(200));
+        PeriodicTimer updateGraphTimer = new(TimeSpan.FromMilliseconds(500));
+
+        private bool IsStarted = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -13,9 +22,27 @@ namespace DashboardInterface
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ConnectDBDialog dialogPopup = new();
-            dialogPopup.Owner = Application.Current.MainWindow;
-            dialogPopup.ShowDialog();
+            //ConnectDBDialog dialogPopup = new();
+            //dialogPopup.Owner = Application.Current.MainWindow;
+            //dialogPopup.ShowDialog();
+
+            if (!IsStarted)
+            {
+                gridHealthReportChartGridChartGrid.Children.Clear();
+                HealthReportMonitoring monitoring = new();
+                monitoring.AddLineGraph(gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(0, 255, 0), 2);
+                monitoring.AddLineGraph(gridHealthReportChartGridChartGrid, "ramLoad", "RAM Load", Color.FromRgb(255, 0, 0), 2);
+                monitoring.GenerateData(dataGenerationTimer, iddChartHealthReportGraph);
+                monitoring.UpdatePerformanceChart(updateGraphTimer);
+                
+                IsStarted = true;
+            }
+            else
+            {
+                dataGenerationTimer.Dispose();
+                updateGraphTimer.Dispose();
+                IsStarted = false;
+            }
         }
 
         //Expand window events

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
-        xmlns:adorners="http://gu.se/Adorners"
+        xmlns:adorners="http://gu.se/Adorners" xmlns:local="clr-namespace:DashboardFrontend"
         mc:Ignorable="d"
         Title="Conversion dashboard"
         Height="720"
@@ -313,6 +313,12 @@
                           Grid.Column="0"
                           Grid.ColumnSpan="5"
                           Grid.Row="1">
+                    <!--<idd:CustomAxis x:Name="PART_verticalAxis"
+                                    idd:Figure.Placement="Left" 
+                                     AxisOrientation="Left"
+                                     Foreground="{TemplateBinding Foreground}">
+                        <idd:MouseNavigation IsHorizontalNavigationEnabled="False"/>
+                    </idd:CustomAxis>-->
                     <Grid Name="gridHealthReportChartGridChartGrid"/>
                 </idd:Chart>
                 <Grid.ColumnDefinitions>
