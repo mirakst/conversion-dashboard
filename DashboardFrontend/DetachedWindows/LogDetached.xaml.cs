@@ -13,18 +13,17 @@ namespace DashboardFrontend.DetachedWindows
         public string Content { get; set; }
     }
 
-    public class LogFilter
-    {
-        public static bool ShowInfo { get; set; } = true;
-        public static bool ShowWarn { get; set; } = true;
-        public static bool ShowError { get; set; } = true;
-        public static bool ShowFatal { get; set; } = true;
-        public static bool ShowValidation { get; set; } = true;
-
-    }
-
     public partial class LogDetached : Window
     {
+        public static class LogFilter
+        {
+            public static bool ShowInfo { get; set; } = true;
+            public static bool ShowWarn { get; set; } = true;
+            public static bool ShowError { get; set; } = true;
+            public static bool ShowFatal { get; set; } = true;
+            public static bool ShowValidation { get; set; } = true;
+
+        }
         List<LogEntry> logList = new List<LogEntry>();
 
         public LogDetached()
