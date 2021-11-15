@@ -11,23 +11,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Model;
+using DashboardBackend;
+using DashboardBackend.Database;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public class Item
-    {
-        public string? Name { get; set; }
-        public int Score {  get; set; }
-        public string? Status { get; set; }
-        public int ID {  get; set; }
-        public int ExecId {  get; set; }
-        public int Run {  get; set; }
-        public int StartTime {  get; set; }
-        public int EndTime {  get; set; }
-        public int Runtime {  get; set; }
-        public int RowsRead {  get; set; }
-        public int RowsWritten {  get; set; }
-    }
     /// <summary>
     /// Interaction logic for ManagerListDetached.xaml
     /// </summary>
@@ -37,92 +26,106 @@ namespace DashboardFrontend.DetachedWindows
         {
             InitializeComponent();
 
-            Random random= new Random(2);
+            DataUtilities.DatabaseHandler = new SqlDatabase();             //
+            Conversion conv = new();                                       //
+            conv.Executions = DataUtilities.GetExecutions();               // Remove once the program is set up for the database simulation.
+            conv.ActiveExecution.Managers = DataUtilities.GetManagers();   //
+            conv.HealthReport = DataUtilities.BuildHealthReport();         //
+            DataUtilities.AddHealthReportReadings(conv.HealthReport);      //
 
-            for (int i = 0; i < 50;  i++)
+            Random random = new Random(5);
+
+            foreach (Manager manager in conv.ActiveExecution.Managers)
             {
-                datagridManagers.Items.Add(new Item() { ID = random.Next() % 100, Score = random.Next() % 100 });
+                manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now)); // Temp data, remove later
+                datagridManagers.Items.Add(manager);
             }
         }
 
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
-            Item? selectedManager = datagridManagers.SelectedItem as Item;
+            Manager? selectedManager = datagridManagers.SelectedItem as Manager;
 
             if (datagridManagers.SelectedItems.Count > 1)
             {
-                foreach (Item manager in datagridManagers.SelectedItems)
+                foreach (Manager manager in datagridManagers.SelectedItems)
                 {
                     if (!datagridManagerDetails.Items.Contains(manager))
                     {
-                        datagridManagerDetails.Items.Add(manager);
-                        datagridManagerCharts.Items.Add(manager);
+                        DatagridManagerMover("Add", manager);
                     }
                 }
             }
             else
             {
-                _ = datagridManagerDetails.Items.Add(selectedManager);
-                _ = datagridManagerCharts.Items.Add(selectedManager);
+                DatagridManagerMover("Add", selectedManager);
             }
+            datagridManagers.SelectedItems.Clear();
         }
 
         private void RemoveManager_Click(object sender, RoutedEventArgs e)
         {
-            Item? selectedManager = ((Button)sender).Tag as Item;
-            List<Item> managers = new() { };
+            Manager? selectedManager = ((Button)sender).Tag as Manager;
+            List<Manager> managers = new() { };
             
             if (datagridManagerDetails.SelectedItems.Count > 1 || datagridManagerCharts.SelectedItems.Count > 1)
             {
-                foreach (Item manager in TabInfo.IsSelected == true ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
+                foreach (Manager manager in TabInfo.IsSelected == true ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
                 {
                     managers.Add(manager);
                 }
-                foreach (Item manager in managers)
+                foreach (Manager manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
                 {
-                    datagridManagerDetails.Items.Remove(manager);
-                    datagridManagerCharts.Items.Remove(manager);
+                    DatagridManagerMover("Remove", manager);
                 }
             }
             else
             {
-                datagridManagerDetails.Items.Remove(selectedManager);
-                datagridManagerCharts.Items.Remove(selectedManager);
+                DatagridManagerMover("Remove", selectedManager);
             }
-        }
-
-        private void SearchManagers_Click(object sender, RoutedEventArgs e) 
-        {
-            SearchManagerDatagrid();
         }
 
         private void ResetManagers_Click(object sender, RoutedEventArgs e)
         {
-            datagridManagerDetails.Items.Clear();
-            datagridManagerCharts.Items.Clear();
+            DatagridManagerMover("Clear", null);
         }
 
-        private void textboxSearchbar_KeyDown(object sender, KeyEventArgs e)
+        private void textboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.Key == Key.Return && textboxSearchbar != null)
+            datagridManagers.SelectedItems.Clear();
+            if (textboxSearchbar.Text != null)
             {
-                SearchManagerDatagrid();
-            }
-        }
-
-        private void SearchManagerDatagrid() //Selection color should probably be changed so it is easier to find.
-        {
-            for (int i = 0; i < datagridManagers.Items.Count; i++)
-            {
-                Item manager = (Item)datagridManagers.Items[i];
-                if (manager.Name == textboxSearchbar.Text || manager.ID.ToString() == textboxSearchbar.Text)
+                List<Manager> foundmanagers = new();
+                foreach (Manager manager in datagridManagers.Items)
                 {
-                    datagridManagers.SelectedItem = manager;
-                    datagridManagers.ScrollIntoView(manager);
-                    return;
+                    if (manager.Name.Contains(textboxSearchbar.Text) || manager.Id.ToString() == textboxSearchbar.Text)
+                    {
+                        foundmanagers.Add(manager);
+                        datagridManagers.SelectedItems.Add(manager);
+                    }
                 }
             }
-            // Add tooltip for when item is not found
+        }
+
+        private void DatagridManagerMover(string method, Manager? manager)
+        {
+            switch (method)
+            {
+                case "Add":
+                    datagridManagerDetails.Items.Add(manager);
+                    datagridManagerCharts.Items.Add(manager);
+                    break;
+
+                case "Remove":
+                    datagridManagerDetails.Items.Remove(manager);
+                    datagridManagerCharts.Items.Remove(manager);
+                    break;
+
+                case "Clear":
+                    datagridManagerDetails.Items.Clear();
+                    datagridManagerCharts.Items.Clear();
+                    break;
+            }
         }
     }
 }

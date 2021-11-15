@@ -11,7 +11,7 @@
         Title="Manager statistics" 
         Height="720" 
         Width="1280">
-    <Border Background="{StaticResource BackgroundColor}">
+    <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
@@ -32,7 +32,7 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="40pt"/>
+                    <ColumnDefinition Width="35pt"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28"/>
@@ -40,21 +40,16 @@
                 </Grid.RowDefinitions>
 
                 <TextBox Name="textboxSearchbar"
+                         TextChanged="textboxSearchbar_TextChanged"
                          Margin="0,0,0,5"
-                         FontSize="15"
-                         KeyDown="textboxSearchbar_KeyDown">
+                         FontSize="15">
                 </TextBox>
 
                 <DockPanel Name="dockpanelSearchbutton"
                            LastChildFill="False">
-                    <Button Name="buttonSearch" 
-                            Click="SearchManagers_Click"
-                            Margin="0,0,0,5"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            DockPanel.Dock="Right">
-                        <Image Source="../Icons/magnifyingglassgray.png"/>
-                    </Button>
+                    <Image Source="../Icons/magnifyingglassgray.png"
+                               Margin="0,2,2,7"
+                               DockPanel.Dock="Right"/>
                 </DockPanel>
 
                 <Button Name="buttonResetManagers"
@@ -62,9 +57,9 @@
                         Grid.Column="1"
                         Margin="5,0,0,5"
                         Content="Reset"
-                        Style="{StaticResource DefaultButton}">
+                        Style="{DynamicResource DefaultButton}">
                 </Button>
-                
+
                 <DataGrid x:Name="datagridManagers"
                           Grid.Row="1"
                           Grid.ColumnSpan="2"
@@ -73,8 +68,8 @@
                           ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding ID}"
-                                            Width="40pt"/>
+                                            Binding="{Binding Id}"
+                                            Width="35pt"/>
                         <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Name}"
@@ -93,7 +88,7 @@
                                             Content="g"
                                             FontFamily="wingdings 3"
                                             Tag="{Binding}"
-                                            Style="{StaticResource DefaultButton}">
+                                            Style="{DynamicResource DefaultButton}">
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -107,7 +102,7 @@
                   Grid.Row="1"
                   Margin="0,-1,0,0">
                 <TabControl Name="tabcontrolStatistics"
-                            Background="{StaticResource BackgroundColor}"
+                            Background="{DynamicResource BackgroundColor}"
                             BorderBrush="Transparent">
                     <TabItem x:Name="TabInfo"
                              Header="Info"
@@ -119,35 +114,30 @@
                                       IsReadOnly="True"
                                       HeadersVisibility="Column"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                <DataGrid.Columns> <!--All of these properties are necessary to move a manager from on datagrid to the other-->
+                                <DataGrid.Columns>
+                                    <!--All of these properties are necessary to move a manager from on datagrid to the other-->
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding ID}"
-                                                        Width="40pt"/> 
-                                    <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
+                                                        Binding="{Binding Id}"
+                                                        Width="35pt"/>
                                     <DataGridTextColumn Header="Execution #"
-                                                        Binding="{Binding ExecId}"
-                                                        Width="*"/>
-                                    <DataGridTextColumn Header="Run #"
-                                                        Binding="{Binding Run}" 
-                                                        Width="*"/>
+                                                        Binding="{Binding ExecutionId}"
+                                                        Width="2*"/>
                                     <!-- run # missing in manager class-->
                                     <DataGridTextColumn Header="Start time"
-                                                        Binding="{Binding StartTime}"
-                                                        Width="*"/>
+                                                        Binding="{Binding StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Width="3*"/>
                                     <DataGridTextColumn Header="End time"
-                                                        Binding="{Binding EndTime}"
-                                                        Width="*"/>
+                                                        Binding="{Binding EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Width="3*"/>
                                     <DataGridTextColumn Header="Est. runtime"
                                                         Binding="{Binding Runtime}"
-                                                        Width="*"/>
+                                                        Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
                                                         Binding="{Binding RowsRead}"
-                                                        Width="*"/>
-                                    <!--missing in manager class-->
+                                                        Width="2*"/>
                                     <DataGridTextColumn Header="Rows written"
                                                         Binding="{Binding RowsWritten}"
-                                                        Width="*"/>
-                                    <!-- missing in manager class -->
+                                                        Width="2*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -156,7 +146,7 @@
                                                         Content='f'
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
-                                                        Style="{StaticResource DefaultButton}"/>
+                                                        Style="{DynamicResource DefaultButton}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -178,66 +168,78 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             
                             <idd:Chart x:Name="chartCPUload"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Margin="0,5,0,0"
-                                      Grid.Column="0"
-                                      Grid.Row="0"
-                                      PlotHeight="103">
-                                <Grid x:Name="gridCPUload"/>
+                                       LeftTitle="CPU Usage"
+                                       BottomTitle="Time"
+                                       LegendVisibility="Hidden"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Margin="0,5,0,0"
+                                       Grid.Column="0"
+                                       Grid.Row="0"
+                                       PlotHeight="103">
+                                <Grid x:Name="gridChartCPUload"/>
                             </idd:Chart>
 
                             <idd:Chart x:Name="chartRAMusage"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Margin="0,5,0,0"
-                                      Grid.Column="0"
-                                      Grid.Row="1"
-                                      PlotHeight="103">
-                                <Grid x:Name="gridRAMusage"/>
+                                       LeftTitle="RAM Usage"
+                                       BottomTitle="Time"
+                                       LegendVisibility="Hidden"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Margin="0,5,0,0"
+                                       Grid.Column="0"
+                                       Grid.Row="1"
+                                       PlotHeight="103">
+                                <Grid x:Name="gridChartRAMusage"/>
                             </idd:Chart>
 
                             <idd:Chart x:Name="chartRowsRead"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Margin="0,5,0,0"
-                                      Grid.Column="0"
-                                      Grid.Row="2"
-                                      PlotHeight="103">
-                                <Grid x:Name="gridRowsRead"/>
+                                       LeftTitle="Rows read"
+                                       BottomTitle="Time"
+                                       LegendVisibility="Hidden"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Margin="0,5,0,0"
+                                       Grid.Column="0"
+                                       Grid.Row="2"
+                                       PlotHeight="103">
+                                <Grid x:Name="gridChartRowsRead"/>
                             </idd:Chart>
 
                             <idd:Chart x:Name="chartRowsWritten"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      Foreground="{DynamicResource ForegroundColor}"
-                                      Margin="0,5,0,0"
-                                      Grid.Column="0"
-                                      Grid.Row="3"
-                                      PlotHeight="103">
-                                <Grid x:Name="gridRowsWritten"/>
+                                       LeftTitle="Rows written"
+                                       BottomTitle="Time"
+                                       LegendVisibility="Hidden"
+                                       Background="{DynamicResource BackgroundColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Margin="0,5,0,0"
+                                       Grid.Column="0"
+                                       Grid.Row="3"
+                                       PlotHeight="103">
+                                <Grid x:Name="gridChartRowsWritten"/>
                             </idd:Chart>
 
                             <DataGrid x:Name="datagridManagerCharts"
                                       Grid.Row="0"
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
-                                      Margin="10,5,10,10"
-                                      Background="{StaticResource BackgroundColor}"
+                                      Margin="15,5,0,10"
+                                      Background="{DynamicResource BackgroundColor}"
                                       IsReadOnly="True"
                                       BorderBrush="Transparent"
                                       HeadersVisibility="Column"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Binding="{Binding ID}"
+                                    <DataGridTextColumn Binding="{Binding Id}"
                                                         Header="ID"
                                                         Width="40pt"/>
-                                    <DataGridTextColumn Binding="{Binding ExecId}"
+                                    <DataGridTextColumn Binding="{Binding ExecutionId}"
                                                         Header="Exec ID"
                                                         Width="*"/>
                                     <DataGridTemplateColumn>
@@ -248,7 +250,7 @@
                                                         Content='f'
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
-                                                        Style="{StaticResource DefaultButton}"/>
+                                                        Style="{DynamicResource DefaultButton}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
