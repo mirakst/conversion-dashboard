@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using DashboardFrontend.ViewModels;
+using DashboardBackend.Models;
+using System;
 
 namespace DashboardFrontend
 {
@@ -11,12 +14,13 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
-            _logFilter = new();
-            DataContext = _logFilter;
-            
+            ViewModel = new(Log);
+            DataContext = ViewModel;
         }
 
-        private LogFilter _logFilter;
+        public Log Log { get; set; } = new();
+        public MainWindowViewModel ViewModel { get; }
+
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
@@ -41,6 +45,7 @@ namespace DashboardFrontend
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
+            
             //ManagerWindow detachManager = new();
             //detachManager.Closing += OnManagerWindowClosing;
             //buttonDetachManager.IsEnabled = false;
@@ -49,27 +54,26 @@ namespace DashboardFrontend
          
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-
-            LogDetached detachLog = new(_logFilter);
-            detachLog.Closing += OnLogWindowClosing;
-            buttonLogDetach.IsEnabled = false;
+            LogDetached detachLog = new(ViewModel.LogViewModel);
+            // detachLog.Closing += OnLogWindowClosing
+            // buttonLogDetach.IsEnabled = false;
             detachLog.Show();
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportDetached detachVR = new();
-            detachVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportDetach.IsEnabled = false;
-            detachVR.Show();
+            //ValidationReportDetached detachVR = new();
+            //detachVR.Closing += OnValidationWindowClosing;
+            //buttonValidationReportDetach.IsEnabled = false;
+            //detachVR.Show();
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached detachHR = new();
-            buttonHealthReportDetach.IsEnabled = false;
-            detachHR.Closing += OnHealthWindowClosing;
-            detachHR.Show();
+            //HealthReportDetached detachHR = new();
+            //buttonHealthReportDetach.IsEnabled = false;
+            //detachHR.Closing += OnHealthWindowClosing;
+            //detachHR.Show();
         }
 
         //OnWindowClosing events
@@ -89,7 +93,7 @@ namespace DashboardFrontend
         }
         public void OnToggleButtonClick(object sender, RoutedEventArgs e)
         {
-
+            
         }
         private void OnValidationWindowClosing(object sender, CancelEventArgs e)
         {

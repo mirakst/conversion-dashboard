@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:adorners="http://gu.se/Adorners"
+        xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
-
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
@@ -166,13 +166,13 @@
                         <ToggleButton Name="toggleButtonLogInfo"
                                   Grid.Column="0"
                                   Click="OnToggleButtonClick"
-                                  IsChecked="{Binding ShowInfo}"
+                                  IsChecked="{Binding LogViewModel.ShowInfo}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
@@ -182,13 +182,13 @@
                         <ToggleButton Name="toggleButtonLogWarning"
                               Grid.Column="2"
                               Click="OnToggleButtonClick"
-                              IsChecked="{Binding ShowWarn}"
+                              IsChecked="{Binding LogViewModel.ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
@@ -198,13 +198,13 @@
                         <ToggleButton Name="toggleButtonLogError"
                                   Grid.Column="4"
                                   Click="OnToggleButtonClick"
-                                  IsChecked="{Binding ShowError}"
+                                  IsChecked="{Binding LogViewModel.ShowError}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
@@ -214,13 +214,13 @@
                         <ToggleButton Name="toggleButtonLogFatal"
                                   Grid.Column="6"
                                   Click="OnToggleButtonClick"
-                                  IsChecked="{Binding ShowFatal}"
+                                  IsChecked="{Binding LogViewModel.ShowFatal}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
@@ -230,13 +230,13 @@
                         <ToggleButton Name="toggleButtonLogValidation"
                                   Grid.Column="8"
                                   Click="OnToggleButtonClick"
-                                  IsChecked="{Binding ShowValidation}"
+                                  IsChecked="{Binding LogViewModel.ShowValidation}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                              <!--   <Image Source="Icons/Fatal.png" 
                                    Width="13"
                                    Margin="0,0,5,0"/> -->
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
@@ -267,14 +267,13 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <DataGrid x:Name="FISSE"/>
                         <ScrollViewer Name="scrollViewerlog"
                           Grid.Column="0"
                           Grid.Row="2"
                           Grid.ColumnSpan="11">
                             
                             <DataGrid x:Name="dataGridLogEntry"
-                                      ItemsSource="{Binding LogList}"
+                                      ItemsSource="{Binding LogViewModel.Messages}"
                                     Background="{StaticResource CanvasColor}"
                                   AutoGenerateColumns="False"
                                   BorderBrush="{StaticResource BorderColor}">

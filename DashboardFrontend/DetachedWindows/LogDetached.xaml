@@ -12,7 +12,6 @@
               Margin="10,10,10,10"
               Style="{DynamicResource ComponentControlBar}">
             <ToggleButton Name="toggleButtonLogInfo"
-                          Click="OnToggleButtonClick"
                           Tag="Info"
                           Grid.Column="0"
                           IsChecked="{Binding ShowInfo}"
@@ -21,7 +20,7 @@
                     <Image Source="../Icons/Info.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="{Binding InfoCount}"/>
                     <TextBlock Text=" Messages"/>
                 </StackPanel>
             </ToggleButton>
@@ -29,7 +28,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="1"/>
             <ToggleButton Name="toggleButtonlogWarning"
-                          Click="OnToggleButtonClick"
                           Tag="Warn"
                           Grid.Column="2"
                           IsChecked="{Binding ShowWarn}"
@@ -38,7 +36,7 @@
                     <Image Source="../Icons/Warning.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="{Binding WarningCount}"/>
                     <TextBlock Text=" Warnings"/>
                 </StackPanel>
             </ToggleButton>
@@ -46,7 +44,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="3"/>
             <ToggleButton Name="toggleButtonLogError"
-                          Click="OnToggleButtonClick"
                           Tag="Error"
                           IsChecked="{Binding ShowError}"
                           Grid.Column="4"
@@ -55,7 +52,7 @@
                     <Image Source="../Icons/Error.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="{Binding ErrorCount}"/>
                     <TextBlock Text=" Errors"/>
                 </StackPanel>
             </ToggleButton>
@@ -63,7 +60,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="5"/>
             <ToggleButton Name="toggleButtonLogFatal"
-                          Click="OnToggleButtonClick"
                           Tag="Fatal"
                           IsChecked="{Binding ShowFatal}"
                           Grid.Column="6"
@@ -72,7 +68,7 @@
                 <Image Source="../Icons/Fatal.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                <TextBlock Text="0"/>
+                <TextBlock Text="{Binding FatalCount}"/>
                 <TextBlock Text=" Fatal"/>
                 </StackPanel>
             </ToggleButton>
@@ -80,7 +76,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="7"/>
             <ToggleButton Name="toggleButtonLogValidation"
-                          Click="OnToggleButtonClick"
                           Tag="Validation"
                           IsChecked="{Binding ShowValidation}"
                           Grid.Column="8"
@@ -89,7 +84,7 @@
                    <!-- <Image Source="../Icons/Validation.png"
                                    Width="13"
                                    Margin="0,0,5,0"/> -->
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="{Binding ValidationCount}"/>
                     <TextBlock Text=" Validation"/>
                 </StackPanel>
             </ToggleButton>
@@ -107,7 +102,7 @@
                           Grid.ColumnSpan="11">
                 <DataGrid Name="dataGridLogEntry"
                           Background="{StaticResource CanvasColor}"
-                                  ItemsSource="{Binding LogList}"
+                                  ItemsSource="{Binding Messages}"
                                   BorderBrush="{StaticResource BorderColor}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Timestamp" 

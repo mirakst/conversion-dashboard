@@ -6,10 +6,6 @@ namespace DashboardFrontend
     {
         public LogEntry()
         {
-            Date = DateTime.Now;
-            Type = "fuck";
-            Manager = 1;
-            Content = "content...";
         }
         public DateTime Date { get; set; }
         public string Type { get; set; }
