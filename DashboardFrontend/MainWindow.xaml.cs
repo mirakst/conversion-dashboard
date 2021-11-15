@@ -4,15 +4,19 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
-namespace DashboardInterface
+namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+            _logFilter = new();
+            DataContext = _logFilter;
+            
         }
 
+        private LogFilter _logFilter;
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
@@ -42,10 +46,11 @@ namespace DashboardInterface
             //buttonDetachManager.IsEnabled = false;
             //detachManager.Show();
         }
-
+         
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached detachLog = new();
+
+            LogDetached detachLog = new(_logFilter);
             detachLog.Closing += OnLogWindowClosing;
             buttonLogDetach.IsEnabled = false;
             detachLog.Show();
@@ -82,7 +87,10 @@ namespace DashboardInterface
         {
             buttonLogDetach.IsEnabled = true;
         }
+        public void OnToggleButtonClick(object sender, RoutedEventArgs e)
+        {
 
+        }
         private void OnValidationWindowClosing(object sender, CancelEventArgs e)
         {
             buttonValidationReportDetach.IsEnabled = true;

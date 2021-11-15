@@ -1,4 +1,4 @@
-﻿<Window x:Class="DashboardInterface.MainWindow"
+﻿<Window x:Class="DashboardFrontend.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -164,7 +164,9 @@
                     <Grid Grid.Row="0"
                       Style="{DynamicResource ComponentControlBar}">
                         <ToggleButton Name="toggleButtonLogInfo"
-                                  Grid.Column="0" 
+                                  Grid.Column="0"
+                                  Click="OnToggleButtonClick"
+                                  IsChecked="{Binding ShowInfo}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
@@ -179,6 +181,8 @@
                                Grid.Column="1"/>
                         <ToggleButton Name="toggleButtonLogWarning"
                               Grid.Column="2"
+                              Click="OnToggleButtonClick"
+                              IsChecked="{Binding ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
@@ -193,6 +197,8 @@
                                Grid.Column="3"/>
                         <ToggleButton Name="toggleButtonLogError"
                                   Grid.Column="4"
+                                  Click="OnToggleButtonClick"
+                                  IsChecked="{Binding ShowError}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
@@ -206,8 +212,9 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="5"/>
                         <ToggleButton Name="toggleButtonLogFatal"
-                                  IsChecked="True"
                                   Grid.Column="6"
+                                  Click="OnToggleButtonClick"
+                                  IsChecked="{Binding ShowFatal}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
@@ -217,18 +224,36 @@
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
+                        <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="7"/>
+                        <ToggleButton Name="toggleButtonLogValidation"
+                                  Grid.Column="8"
+                                  Click="OnToggleButtonClick"
+                                  IsChecked="{Binding ShowValidation}"
+                                  Style="{DynamicResource DefaultToggleButton}">
+                            <StackPanel Orientation="Horizontal">
+                             <!--   <Image Source="Icons/Fatal.png" 
+                                   Width="13"
+                                   Margin="0,0,5,0"/> -->
+                                <TextBlock Text="0"/>
+                                <TextBlock Text=" Validation"/>
+                            </StackPanel>
+                        </ToggleButton>
                         <Button  Name="buttonLogFilter"
-                              Grid.Column="7"
+                              Grid.Column="9"
                               Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
                         <Button Name="buttonLogDetach" 
                         Click="DetachLogButtonClick" 
-                        Grid.Column="8"
+                        Grid.Column="10"
                         Style="{DynamicResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
@@ -242,27 +267,54 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <ScrollViewer Name="scrollViewerLog"
-                                  Margin="0,0,1,0">
-                            <ListView x:Name="listLogEntry"
-                                  Background="{StaticResource CanvasColor}"
-                                  Foreground="{StaticResource ForegroundColor}"
+                        <DataGrid x:Name="FISSE"/>
+                        <ScrollViewer Name="scrollViewerlog"
+                          Grid.Column="0"
+                          Grid.Row="2"
+                          Grid.ColumnSpan="11">
+                            
+                            <DataGrid x:Name="dataGridLogEntry"
+                                      ItemsSource="{Binding LogList}"
+                                    Background="{StaticResource CanvasColor}"
+                                  AutoGenerateColumns="False"
                                   BorderBrush="{StaticResource BorderColor}">
-                                <GridView>
-                                    <GridViewColumn Header="Timestamp"
-                                                DisplayMemberBinding="{Binding Date}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Type"
-                                                DisplayMemberBinding="{Binding Type}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Manager"
-                                                DisplayMemberBinding="{Binding Manager}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Log message"
-                                                DisplayMemberBinding="{Binding Content}"
-                                                Width="auto"/>
-                                </GridView>
-                            </ListView>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Timestamp" 
+                                            Binding="{Binding Date}"
+                                            IsReadOnly="True"
+                                            Width="auto"/>
+                                    <DataGridTextColumn Header="Type" 
+                                            Binding="{Binding Type}"
+                                            IsReadOnly="True"
+                                            Width="auto"/>
+                                    <DataGridTextColumn Header="Manager" 
+                                            Binding="{Binding Manager}"
+                                            IsReadOnly="True"
+                                            Width="auto"/>
+                                    <DataGridTextColumn Header="Log message" 
+                                            Binding="{Binding Content}"
+                                            IsReadOnly="True"
+                                            Width="auto"/>
+                                </DataGrid.Columns>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Type}" Value="Warn">
+                                                <Setter Property="Background" Value="#FCE283"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Type}" Value="Error">
+                                                <Setter Property="Background" Value="#ED4F47"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                                <Setter Property="Background" Value="#CFCFCF"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                                <Setter Property="Background" Value="#7EDE78"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                            </DataGrid>
                         </ScrollViewer>
                     </Grid>
                     <Grid.RowDefinitions>

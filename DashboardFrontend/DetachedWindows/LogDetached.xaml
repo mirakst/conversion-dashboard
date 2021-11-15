@@ -9,106 +9,106 @@
         Title="Log monitoring" Height="450" Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Name ="gridLog"
-              Margin="10,10,10,10">
+              Margin="10,10,10,10"
+              Style="{DynamicResource ComponentControlBar}">
             <ToggleButton Name="toggleButtonLogInfo"
-                          Content="Info"
-                          Checked="OnToggleButtonClick"
-                          Unchecked="OnToggleButtonClick"
-                          IsChecked="{Binding LogFilter.ShowInfo}"
+                          Click="OnToggleButtonClick"
                           Tag="Info"
-                          IsEnabled="True"
                           Grid.Column="0"
-                          Margin="0,0,10,0">
-                <ToggleButton.Style>
-                    <Style TargetType="{x:Type ToggleButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                            Background="{TemplateBinding Background}">
-                                        <ContentPresenter HorizontalAlignment="Center"                  
-                                                          VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Background" Value="Gray" />
-                                <Setter Property="Content" Value="Bold"/>
-                                <Setter Property="Opacity" Value="0.5" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToggleButton.Style>
+                          IsChecked="{Binding ShowInfo}"
+                          Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Icons/Info.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/>
+                    <TextBlock Text="0"/>
+                    <TextBlock Text=" Messages"/>
+                </StackPanel>
             </ToggleButton>
-
-
-            <Image Name="imageInfo" 
-                   Source="../Icons/Info.png" 
-                   Grid.Column="0" 
-                   Stretch="Fill" 
-                   Width="15" 
-                   Height="15" 
-                   Margin="-60,0,0,0"/>
+            <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="1"/>
             <ToggleButton Name="toggleButtonlogWarning"
-                          Content="Warning"
-                          Checked="OnToggleButtonClick"
-                          Unchecked="OnToggleButtonClick"
+                          Click="OnToggleButtonClick"
                           Tag="Warn"
-                          Grid.Column="1"
-                          Margin="0,0,10,0"
-                          Style="{DynamicResource DefaultToggleButton}"/>
-            <Image Name="imageWarn" 
-                   Source="../Icons/Warn.png" 
-                   Grid.Column="1" 
-                   Stretch="Fill" 
-                   Width="15" 
-                   Height="15" 
-                   Margin="-70,0,0,0"/>
-            <ToggleButton Name="toggleButtonLogError"
-                          Content="Error"
-                          Checked="OnToggleButtonClick"
-                          Unchecked="OnToggleButtonClick"
-                          Tag="Error"
                           Grid.Column="2"
-                          Margin="0,0,10,0"
-                          Style="{DynamicResource DefaultToggleButton}"/>
-            <Image Name="imageError" 
-                   Source="../Icons/Error.png" 
-                   Grid.Column="2" 
-                   Stretch="Fill" 
-                   Width="15" 
-                   Height="15" 
-                   Margin="-60,0,0,0"/>
-            <ToggleButton Name="toggleButtonLogFatal"
-                          Content="Fatal"
-                          Checked="OnToggleButtonClick"
-                          Unchecked="OnToggleButtonClick"
-                          Tag="Fatal"
-                          Grid.Column="3"
-                          Margin="0,0,10,0"
-                          Style="{DynamicResource DefaultToggleButton}"/>
-            <!-- <Image Name="Fatal" Source="../Icons/Fatal.png"/> -->
-            <ToggleButton Name="toggleButtonLogValidation"
-                          Content="Validation"
-                          Checked="OnToggleButtonClick"
-                          Unchecked="OnToggleButtonClick"
-                          Tag="Validation"
+                          IsChecked="{Binding ShowWarn}"
+                          Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Icons/Warning.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/>
+                    <TextBlock Text="0"/>
+                    <TextBlock Text=" Warnings"/>
+                </StackPanel>
+            </ToggleButton>
+            <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="3"/>
+            <ToggleButton Name="toggleButtonLogError"
+                          Click="OnToggleButtonClick"
+                          Tag="Error"
+                          IsChecked="{Binding ShowError}"
                           Grid.Column="4"
-                          Margin="0,0,10,0"
-                          Style="{DynamicResource DefaultToggleButton}"/>
-            <!-- <Image Name="Validation" Source="../Icons/Validation.png"/> -->
+                          Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Icons/Error.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/>
+                    <TextBlock Text="0"/>
+                    <TextBlock Text=" Errors"/>
+                </StackPanel>
+            </ToggleButton>
+            <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="5"/>
+            <ToggleButton Name="toggleButtonLogFatal"
+                          Click="OnToggleButtonClick"
+                          Tag="Fatal"
+                          IsChecked="{Binding ShowFatal}"
+                          Grid.Column="6"
+                          Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                <Image Source="../Icons/Fatal.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/>
+                <TextBlock Text="0"/>
+                <TextBlock Text=" Fatal"/>
+                </StackPanel>
+            </ToggleButton>
+            <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="7"/>
+            <ToggleButton Name="toggleButtonLogValidation"
+                          Click="OnToggleButtonClick"
+                          Tag="Validation"
+                          IsChecked="{Binding ShowValidation}"
+                          Grid.Column="8"
+                          Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                   <!-- <Image Source="../Icons/Validation.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/> -->
+                    <TextBlock Text="0"/>
+                    <TextBlock Text=" Validation"/>
+                </StackPanel>
+            </ToggleButton>
+            <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="9"/>
             <Button Name="buttonFilter"
-                    Content="Filter"
-                    Grid.Column="6"
-                    Style="{DynamicResource DefaultButton}"/>
+                    Grid.Column="10"
+                    Style="{DynamicResource DefaultButton}">
+                <Image Source="../Icons/Filter.png"/>
+            </Button>
             <ScrollViewer Name="scrollViewerlog"
                           Grid.Column="0"
                           Grid.Row="2"
-                          Grid.ColumnSpan="7">
+                          Grid.ColumnSpan="11">
                 <DataGrid Name="dataGridLogEntry"
-                          Background="#FF1F4E90">
+                          Background="{StaticResource CanvasColor}"
+                                  ItemsSource="{Binding LogList}"
+                                  BorderBrush="{StaticResource BorderColor}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Timestamp" 
                                             Binding="{Binding Date}"
@@ -149,12 +149,16 @@
             </ScrollViewer>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="2"/>
                 <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="2"/>
                 <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="2"/>
                 <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="2"/>
                 <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.05*"/>
