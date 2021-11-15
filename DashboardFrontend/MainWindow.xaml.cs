@@ -10,8 +10,8 @@ namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
-        PeriodicTimer dataGenerationTimer = new(TimeSpan.FromMilliseconds(200));
-        PeriodicTimer updateGraphTimer = new(TimeSpan.FromMilliseconds(500));
+        PeriodicTimer dataGenerationTimer = new(TimeSpan.FromSeconds(1));
+        PeriodicTimer updateGraphTimer = new(TimeSpan.FromSeconds(1));
 
         private bool IsStarted = false;
 
@@ -33,7 +33,7 @@ namespace DashboardInterface
                 monitoring.AddLineGraph(gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(0, 255, 0), 2);
                 monitoring.AddLineGraph(gridHealthReportChartGridChartGrid, "ramLoad", "RAM Load", Color.FromRgb(255, 0, 0), 2);
                 monitoring.GenerateData(dataGenerationTimer, iddChartHealthReportGraph);
-                monitoring.UpdatePerformanceChart(updateGraphTimer);
+                monitoring.UpdatePerformanceChart(updateGraphTimer, iddChartHealthReportGraph);
                 
                 IsStarted = true;
             }

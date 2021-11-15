@@ -17,7 +17,7 @@ namespace DashboardFrontend
         public List<Tuple<DateTime, long>> RamUsage = new();
         private List<LineGraph> lineGraphList = new();
 
-        public int MaxView { get; set; } = 100;
+        public long MaxView { get; set; } = TimeSpan.TicksPerMinute * 1;
 
         public void AddLineGraph(Grid myGrid, string _name, string _description, Color _color, int _strokeThickness)
         {
@@ -34,30 +34,25 @@ namespace DashboardFrontend
             Trace.WriteLine(lineGraphList.Count);
         }
 
-        public async void UpdatePerformanceChart(PeriodicTimer timer)
+        public async void UpdatePerformanceChart(PeriodicTimer timer, Chart myChart)
         {
-            List<double> xAxisFormatting = new();
-
             while (await timer.WaitForNextTickAsync())
             {
                 if (CpuLoad.Count > 0 && RamUsage.Count > 0 && lineGraphList.Count > 0)
                 {
-                    var _valueXCpu = CpuLoad.Select(e => e.Item1.).ToList();
+                    var _valueXCpu = CpuLoad.Select(e => e.Item1.Ticks).ToList();
                     var _valueYCpu = CpuLoad.Select(e => e.Item2).ToList();
 
-                    var _valueXRam = CpuLoad.Select(e => e.Item1).ToList();
-                    var _valueYRam = CpuLoad.Select(e => e.Item2).ToList();
+                    var _valueXRam = RamUsage.Select(e => e.Item1.Ticks).ToList();
+                    var _valueYRam = RamUsage.Select(e => e.Item2).ToList();    
 
-                    //TrimDataList();
+                    TrimDataList();
+                    myChart.PlotOriginX = _valueXCpu.ElementAt(0);
+                    myChart.PlotWidth = MaxView;
 
-                    //foreach (DateTime time in _valueXCpu)
-                    //{
-                    //    xAxisFormatting.Add(time.ToOADate());
-                    //    Trace.WriteLine((DateTime.Now.Hour * 100) + DateTime.Now.Minute);
-                    //}
-
-                    lineGraphList.ElementAt(0).Plot(_valueXCpu, _valueYCpu);
-                    //lineGraphList.ElementAt(1).Plot(xAxisFormatting, _valueYRam);
+                    Trace.WriteLine(_valueXCpu.Count);
+                    lineGraphList.ElementAt(0).Plot( _valueXCpu, _valueYCpu);
+                    lineGraphList.ElementAt(1).Plot(_valueXRam, _valueYRam);
                 }
             }
         }
@@ -76,11 +71,11 @@ namespace DashboardFrontend
 
         private void TrimDataList()
         {
-            while (CpuLoad.Count >= MaxView)
+            while ((CpuLoad.Last().Item1.Ticks - CpuLoad.ElementAt(0).Item1.Ticks) > MaxView)
             {
                 CpuLoad.RemoveAt(0);
             }
-            while (RamUsage.Count >= MaxView)
+            while ((RamUsage.Last().Item1.Ticks - RamUsage.ElementAt(0).Item1.Ticks) > MaxView)
             {
                 RamUsage.RemoveAt(0);
             }

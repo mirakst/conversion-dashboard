@@ -20,8 +20,8 @@ namespace DashboardFrontend
             foreach (double tick in ticks)
             {
                 TextBlock text = new();
-                var time = Origin + TimeSpan.FromHours(tick);
-                text.Text = time.ToShortTimeString();
+                var time = Origin + TimeSpan.FromTicks((long)tick);
+                text.Text = time.ToLongTimeString();
                 Labels.Add(text);
             }
             return Labels.ToArray();
