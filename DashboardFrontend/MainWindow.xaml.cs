@@ -1,6 +1,8 @@
 using DashboardFrontend.DetachedWindows;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DashboardInterface
 {
@@ -11,6 +13,11 @@ namespace DashboardInterface
             InitializeComponent();
         }
 
+        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
             //DialogWindow dialogWindow = new();
@@ -18,8 +25,8 @@ namespace DashboardInterface
             //dialogWindow.ShowDialog();
         }
 
-        //Expand window events
-        public void buttonSettingsClick(object sender, RoutedEventArgs e)
+        //Detach window events
+        public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             //SettingsWindow settingsWindow = new();
             //settingsWindow.Closing += OnSettingsWindowClosing;
@@ -28,39 +35,36 @@ namespace DashboardInterface
             //settingsWindow.ShowDialog();
         }
 
-        public void ExpandManagerButtonClick(object sender, RoutedEventArgs e)
+        public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            //ManagerWindow expandManager = new();
-            //expandManager.Closing += OnManagerWindowClosing;
-            //buttonExpandManager.IsEnabled = false;
-            //expandManager.Owner = Application.Current.MainWindow;
-            //expandManager.Show();
+            //ManagerWindow detachManager = new();
+            //detachManager.Closing += OnManagerWindowClosing;
+            //buttonDetachManager.IsEnabled = false;
+            //detachManager.Show();
         }
 
-        public void ExpandLogButtonClick(object sender, RoutedEventArgs e)
+        public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached expandLog = new();
-            expandLog.Closing += OnLogWindowClosing;
-            buttonLogExpand.IsEnabled = false;
-            expandLog.Show();
+            LogDetached detachLog = new();
+            detachLog.Closing += OnLogWindowClosing;
+            buttonLogDetach.IsEnabled = false;
+            detachLog.Show();
         }
 
-        public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
+        public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportDetached expandVR = new();
-            expandVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportExpand.IsEnabled = false;
-            expandVR.Owner = Application.Current.MainWindow;
-            expandVR.Show();
+            ValidationReportDetached detachVR = new();
+            detachVR.Closing += OnValidationWindowClosing;
+            buttonValidationReportDetach.IsEnabled = false;
+            detachVR.Show();
         }
 
-        public void ExpandHealthReportButtonClick(object sender, RoutedEventArgs e)
+        public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHR = new();
-            buttonHealthReportExpand.IsEnabled = false;
-            expandHR.Closing += OnHealthWindowClosing;
-            expandHR.Owner = Application.Current.MainWindow;
-            expandHR.Show();
+            HealthReportDetached detachHR = new();
+            buttonHealthReportDetach.IsEnabled = false;
+            detachHR.Closing += OnHealthWindowClosing;
+            detachHR.Show();
         }
 
         //OnWindowClosing events
@@ -71,22 +75,22 @@ namespace DashboardInterface
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonExpandManager.IsEnabled = true;
+            buttonDetachManager.IsEnabled = true;
         }
 
         private void OnLogWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonLogExpand.IsEnabled = true;
+            buttonLogDetach.IsEnabled = true;
         }
 
         private void OnValidationWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonValidationReportExpand.IsEnabled = true;
+            buttonValidationReportDetach.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonHealthReportExpand.IsEnabled = true;
+            buttonHealthReportDetach.IsEnabled = true;
         }
     }
 }
