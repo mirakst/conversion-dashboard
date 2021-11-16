@@ -6,7 +6,7 @@
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Validation report monitoring" Height="450" Width="800"
+        Title="Validation Report" Height="600" Width="800"
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
         FontSize="15">
@@ -14,48 +14,37 @@
             Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TextBox Name="textBoxValidationReportSearchBar"
-                     adorners:Watermark.Text="Search"
                      Margin="0,0,5,5"
                      Grid.Column="0"
                      Grid.Row="0"/>
-            <Button Name="buttonValidationReportSearch"
-                    Content="Search"
-                    Margin="5,0,5,5"
-                    Grid.Column="1"
+            <ToggleButton Grid.Column="1"
+                          Margin="4 0 4 5"
+                                  Style="{DynamicResource DefaultToggleButton}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Hide OK"/>
+                    <!--<Image Source="Icons/Validation.png"
+                                   Width="13"
+                                   Margin="0,0,5,0"/>-->
+                </StackPanel>
+            </ToggleButton>
+            <Button Content="Refresh"
+                    Style="{DynamicResource DefaultButton}"
+                    Margin="5,0,0,5"
+                    Grid.Column="3"
                     Grid.Row="0"/>
-            <Button Name="buttonValidationReportFilter"
-                    Content="Filter"
-                    Margin="5,0,5,5"
-                    Grid.Column="2"
-                    Grid.Row="0"/>
-            <ToggleButton Name="toggleButtonValidationReportRefreshToggle"
-                          Content="Refresh"
-                          Margin="5,0,0,5"
-                          Grid.Column="3"
-                          Grid.Row="0"/>
             <DataGrid Name="dataGridValidationReport"
-                      Background="{DynamicResource BackgroundColor}"
                       ToolTip="Click to expand"
                       AutoGenerateColumns="False"
-                      Grid.Column="0"
-                      Grid.ColumnSpan="4"
-                      Grid.Row="1" >
+                      Margin="0 5 0 5"
+                      Grid.ColumnSpan="3"
+                      Grid.Row="1">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Manager name"
+                    <DataGridTextColumn Header="Manager"
                                         Binding="{Binding ManagerName}"
-                                        IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Validations OK"
+                                        Width="*"/>
+                    <DataGridTextColumn Header="Validations"
                                         Binding="{Binding ValidationsOK}"
-                                        IsReadOnly="True">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Validations total"
-                                        Binding="{Binding ValidationsTotal}"
-                                        IsReadOnly="True">
+                                        Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -64,7 +53,7 @@
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Score"
                                         Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
-                                        IsReadOnly="True">
+                                        Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -89,40 +78,22 @@
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
-            <Grid Grid.Column="0"
-                  Grid.ColumnSpan="4"
-                  Grid.Row="2">
-                <TextBlock Name="textBlockValidationReportStatsTotal"
-                       Text="{Binding ValidationReportStatsTotal}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="0"/>
-                <TextBlock Name="textBlockValidationReportStatsFailed"
-                       Text="{Binding ValidationReportStatsFailed}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="1"/>
-                <TextBlock Name="textBlockValidationReportStatsDisabled"
-                       Text="{Binding ValidationReportStatsDisabled}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="2"/>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="2" Grid.ColumnSpan="3"
+                        VerticalAlignment="Center">
+                <TextBlock Text="25 OK" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
+                <TextBlock Text="14 Disabled" Foreground="{DynamicResource validationReportDisabledColor}" Margin="0 0 50 0"/>
+                <TextBlock Text="3 Failed" Foreground="{DynamicResource validationReportErrorColor}" Margin="0 0 50 0"/>
+            </StackPanel>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="7*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
         </Grid>
     </Border>
