@@ -4,20 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
-        xmlns:adorners="http://gu.se/Adorners"
+        xmlns:adorners="http://gu.se/Adorners" xmlns:local="clr-namespace:DashboardFrontend"
         mc:Ignorable="d"
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
-
+        WindowStartupLocation="CenterScreen">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Name="gridControlPanel" 
                   Grid.Column="1" 
                   Grid.ColumnSpan="3" 
                   Grid.Row="1">
-                <Button Name="buttonStartStop" 
+                <Button Name="buttonStartStop"
                         Click="ButtonStartStopClick" 
                         Margin="0, 0, 10, 0" 
                         Grid.Column="0" 
@@ -45,7 +44,6 @@
                            Grid.Row="0"
                            Grid.RowSpan="2"
                            Text="Conversion - 1">
-                    
                 </TextBlock>
                 <Grid Grid.Column="3" 
                       Grid.Row="0">
@@ -303,10 +301,14 @@
                   Margin="5,0,0,0"
                   Grid.Column="2"
                   Grid.Row="3">
+                <TextBlock Name="textBoxGraphTimeWidth"
+                           Text="6"
+                           Grid.Column="1"
+                           Grid.Row="0"/>
                 <Button Name="buttonHealthReportExpand"
                         Click="ExpandHealthReportButtonClick"
                         Content="Expand" 
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
                 <idd:Chart Name="iddChartHealthReportGraph"
@@ -318,7 +320,8 @@
                     <Grid Name="gridHealthReportChartGridChartGrid"/>
                 </idd:Chart>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
