@@ -12,35 +12,35 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Model;
+using DashboardBackend;
+using DashboardFrontend.ViewModels;
+using System.Diagnostics;
 
 namespace DashboardFrontend.DetachedWindows
 {
-
-    public class ValidationEntry
-    {
-        public string ManagerName { get; set; } 
-        public int ValidationsOK { get; set; }  
-        public int ValidationsTotal { get; set; }
-        public double ManagerScore { get; set; }  
-    }
     public partial class ValidationReportDetached : Window
     {
-
-        public ValidationReportDetached()
+        public ValidationReportDetached(ValidationReport validationReport)
         {
             InitializeComponent();
-            List<ValidationEntry> inputlist = new List<ValidationEntry>();
+            ValidationReport = validationReport;
+            ViewModel = new(validationReport);
+            DataContext = ViewModel;
+        }
+        
+        public ValidationReport ValidationReport { get; set; }
+        public ValidationReportViewModel ViewModel { get; set; }
 
-            inputlist.Add(new ValidationEntry() { ManagerName = "OneCleanDude", ValidationsOK = 2, ValidationsTotal = 4, ManagerScore = 250.75 });
-            inputlist.Add(new ValidationEntry() { ManagerName = "FullSickoMode", ValidationsOK = 2, ValidationsTotal = 4, ManagerScore = 250.75 });
-            inputlist.Add(new ValidationEntry() { ManagerName = "OneEvenMoreCleanDude", ValidationsOK = 2, ValidationsTotal = 4, ManagerScore = 250.75 });
-            inputlist.Add(new ValidationEntry() { ManagerName = "HellSickoMode", ValidationsOK = 2, ValidationsTotal = 4, ManagerScore = 250.75 });
-
-            foreach (ValidationEntry validationEntry in inputlist)
-            {
-                dataGridValidationReport.Items.Add(validationEntry);
-            }
-
+        private void ExpandRow_Click(object sender, RoutedEventArgs e)
+        {
+            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+                if (vis is DataGridRow)
+                {
+                    var row = (DataGridRow)vis;
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                    break;
+                }
         }
     }
 }

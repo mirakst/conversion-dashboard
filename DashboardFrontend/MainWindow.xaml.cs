@@ -1,4 +1,7 @@
+using DashboardBackend;
+using DashboardBackend.Database;
 using DashboardFrontend.DetachedWindows;
+using Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -11,7 +14,12 @@ namespace DashboardInterface
         public MainWindow()
         {
             InitializeComponent();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
+            ValidationReport = new();
+            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
         }
+
+        public ValidationReport ValidationReport { get; set; }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
@@ -53,7 +61,8 @@ namespace DashboardInterface
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportDetached detachVR = new();
+            
+            ValidationReportDetached detachVR = new(ValidationReport);
             detachVR.Closing += OnValidationWindowClosing;
             buttonValidationReportDetach.IsEnabled = false;
             detachVR.Show();
