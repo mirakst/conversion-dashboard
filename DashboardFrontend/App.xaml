@@ -8,7 +8,7 @@
     <Application.Resources>
         <!-- Resources for the entire application can be defined here. -->
 
-        <!-- Kasper TEMP Foreground="{TemplateBinding Foreground}" -->
+        <!-- Kasper TEMP ~ should use DictionaryChart.xaml instead -->
         <Style x:Key="timeAxisStyle" TargetType="idd:PlotAxis">
             <Setter Property="Template">
                 <Setter.Value>

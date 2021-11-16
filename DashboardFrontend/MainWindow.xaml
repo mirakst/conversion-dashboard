@@ -301,10 +301,14 @@
                   Margin="5,0,0,0"
                   Grid.Column="2"
                   Grid.Row="3">
+                <TextBlock Name="textBoxGraphTimeWidth"
+                           Text="6"
+                           Grid.Column="1"
+                           Grid.Row="0"/>
                 <Button Name="buttonHealthReportExpand"
                         Click="ExpandHealthReportButtonClick"
                         Content="Expand" 
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Grid.Row="0"
                         Style="{StaticResource DefaultButton}"/>
                 <idd:Chart Name="iddChartHealthReportGraph"
@@ -313,16 +317,11 @@
                           Grid.Column="0"
                           Grid.ColumnSpan="5"
                           Grid.Row="1">
-                    <!--<idd:CustomAxis x:Name="PART_verticalAxis"
-                                    idd:Figure.Placement="Left" 
-                                     AxisOrientation="Left"
-                                     Foreground="{TemplateBinding Foreground}">
-                        <idd:MouseNavigation IsHorizontalNavigationEnabled="False"/>
-                    </idd:CustomAxis>-->
                     <Grid Name="gridHealthReportChartGridChartGrid"/>
                 </idd:Chart>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>

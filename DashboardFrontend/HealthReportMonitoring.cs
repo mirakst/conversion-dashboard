@@ -1,11 +1,8 @@
 ﻿using InteractiveDataDisplay.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -13,13 +10,38 @@ namespace DashboardFrontend
 {
     public class HealthReportMonitoring
     {
-        public List<Tuple<DateTime, long>> CpuLoad = new();
-        public List<Tuple<DateTime, long>> RamUsage = new();
-        private List<LineGraph> lineGraphList = new();
+        //The timespan a graph should show
+        public int UserViewInput { get; set; } = 2; //2 should be bound to a user input
+        private List<DataClass> _dataCollections = new();
 
-        public long MaxView { get; set; } = TimeSpan.TicksPerMinute * 1;
+        /// <summary>
+        /// A class constructed of [DateTime] list, [long] List and a [LineGraph].
+        /// </summary>
+        private class DataClass
+        {
+            public List<DateTime> Time = new();
+            public List<long> Readings = new();
+            public LineGraph Line;
 
-        public void AddLineGraph(Grid myGrid, string _name, string _description, Color _color, int _strokeThickness)
+            public DataClass(List<DateTime> _time, List<long> _readings, LineGraph line)
+            {
+                Time = _time;
+                Readings = _readings;
+                Line = line;
+            }
+        }
+
+        /// <summary>
+        /// A function to create a new DataClass and add it ti the dataCollections list.
+        /// </summary>
+        /// <param name="_timeList"></param>
+        /// <param name="_readingsList"></param>
+        /// <param name="myGrid"></param>
+        /// <param name="_name"></param>
+        /// <param name="_description"></param>
+        /// <param name="_color"></param>
+        /// <param name="_strokeThickness"></param>
+        public void Add(List<DateTime> _timeList, List<long> _readingsList, Grid myGrid, string _name, string _description, Color _color, int _strokeThickness)
         {
             LineGraph line = new()
             {
@@ -30,55 +52,55 @@ namespace DashboardFrontend
             };
 
             myGrid.Children.Add(line);
-            lineGraphList.Add(line);
-            Trace.WriteLine(lineGraphList.Count);
+            _dataCollections.Add(new DataClass(_timeList, _readingsList, line));
         }
 
-        public async void UpdatePerformanceChart(PeriodicTimer timer, Chart myChart)
+        public void Clear()
         {
-            while (await timer.WaitForNextTickAsync())
+            _dataCollections.Clear();
+        }
+
+        /// <summary>
+        /// A function for generationg data for all DataClass'.
+        /// </summary>
+        /// <param name="_timer">A [PeriodicTimer] that calls the function.</param>
+        /// <param name="_chart">The [Chart] each [DataCollection] should be plotted on.</param>
+        public async void GenerateData(PeriodicTimer _timer, Chart _chart)
+        {
+            Random random = new();
+            long MaxView;
+
+            while (await _timer.WaitForNextTickAsync())
             {
-                if (CpuLoad.Count > 0 && RamUsage.Count > 0 && lineGraphList.Count > 0)
+                MaxView = TimeSpan.TicksPerMinute * UserViewInput;
+
+                foreach (DataClass dataCollection in _dataCollections)
                 {
-                    var _valueXCpu = CpuLoad.Select(e => e.Item1.Ticks).ToList();
-                    var _valueYCpu = CpuLoad.Select(e => e.Item2).ToList();
+                    /* Random data should be replaced with actual data */
+                    dataCollection.Time.Add(DateTime.Now);
+                    dataCollection.Readings.Add((long)random.Next(0, 100));
 
-                    var _valueXRam = RamUsage.Select(e => e.Item1.Ticks).ToList();
-                    var _valueYRam = RamUsage.Select(e => e.Item2).ToList();    
+                    UpdateChart(dataCollection);
+                }
 
-                    TrimDataList();
-                    myChart.PlotOriginX = _valueXCpu.ElementAt(0);
-                    myChart.PlotWidth = MaxView;
-
-                    Trace.WriteLine(_valueXCpu.Count);
-                    lineGraphList.ElementAt(0).Plot( _valueXCpu, _valueYCpu);
-                    lineGraphList.ElementAt(1).Plot(_valueXRam, _valueYRam);
+                if (!_chart.IsMouseOver)
+                {
+                    _chart.PlotHeight = 100;
+                    _chart.PlotOriginX = DateTime.Now.AddSeconds(-100).Ticks;
+                    _chart.PlotWidth = MaxView;
                 }
             }
         }
 
-        public async void GenerateData(PeriodicTimer _timer, Chart _chart)
+        /// <summary>
+        /// Updates a graph, using a data collection.
+        /// </summary>
+        /// <param name="_dataCollection"></param>
+        private static void UpdateChart(DataClass _dataCollection)
         {
-            Random random = new();
-            while (await _timer.WaitForNextTickAsync())
-            {
-                _chart.PlotHeight = 100;
+            var _valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
 
-                CpuLoad.Add(Tuple.Create(DateTime.Now, (long)random.Next(0, 100)));
-                RamUsage.Add(Tuple.Create(DateTime.Now, (long)random.Next(0, 100)));
-            }
-        }
-
-        private void TrimDataList()
-        {
-            while ((CpuLoad.Last().Item1.Ticks - CpuLoad.ElementAt(0).Item1.Ticks) > MaxView)
-            {
-                CpuLoad.RemoveAt(0);
-            }
-            while ((RamUsage.Last().Item1.Ticks - RamUsage.ElementAt(0).Item1.Ticks) > MaxView)
-            {
-                RamUsage.RemoveAt(0);
-            }
+            _dataCollection.Line.Plot( _valueY, _dataCollection.Readings);
         }
     }
 }
