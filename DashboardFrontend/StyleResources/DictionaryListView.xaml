@@ -22,4 +22,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <DataTemplate x:Key="myHeaderTemplate">
+        <DockPanel>
+            <CheckBox/>
+            <TextBlock FontSize="16" Foreground="Black">
+                <TextBlock.Text>
+                    <Binding/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DockPanel>
+    </DataTemplate>
 </ResourceDictionary>

@@ -1,29 +1,42 @@
 ﻿using DashboardBackend;
 using Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
-    public class LogViewModel : INotifyPropertyChanged
+    public class LogViewModel : BaseViewModel
     {
         public LogViewModel(Log log)
         {
             _log = log;
-            log.Messages = DataUtilities.GetLogMessages().Take(500).ToList();
+            log.Messages = DataUtilities.GetLogMessages();
             _allMessages = new(log.Messages);
             UpdateData();
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         private ObservableCollection<LogMessage> _allMessages;
         private Log _log;
-
-        public ObservableCollection<LogMessage> Messages { get; set; } = new();
+        /*        private List<LogMessage> _messages = new();
+        */
+        private ObservableCollection<LogMessage> _messages;
+        public ObservableCollection<LogMessage> Messages { 
+            get 
+            {
+                return _messages;
+            } 
+            set 
+            { 
+                _messages = value;
+                OnPropertyChanged(nameof(Messages));
+            } 
+        }
 
         private int _infoCount;
         public int InfoCount
@@ -145,25 +158,22 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         private void Refresh()
         {
-            Messages.Clear();
+            List<LogMessage> tempMessages = new();
             InfoCount = 0;
             WarnCount = 0;
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
 
-            List<LogMessage> list = new();
-
-            foreach (LogMessage msg in _allMessages)
-            {
-                UpdateCounter(msg);
-                if (ShouldAddMessage(msg))
+                foreach (LogMessage msg in _allMessages)
                 {
-                    list.Add(msg);
+                    UpdateCounter(msg);
+                    if (ShouldAddMessage(msg))
+                    {
+                        tempMessages.Add(msg);
+                    }
                 }
-            }
-            Messages = new(list);
-
+            Messages = new(tempMessages);
         }
 
         /// <summary>
@@ -207,15 +217,6 @@ namespace DashboardFrontend.ViewModels
                 (ShowError && msg.Type == LogMessageType.ERROR) ||
                 (ShowFatal && msg.Type == LogMessageType.FATAL) ||
                 (ShowValidation && msg.Type == LogMessageType.VALIDATION);
-        }
-
-        /// <summary>
-        /// Invokes the PropertyChanged event which triggers a change in the UI
-        /// </summary>
-        /// <param name="property">Name of the property which has changed</param>
-        private void OnPropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }

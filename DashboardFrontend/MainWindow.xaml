@@ -266,55 +266,73 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <ScrollViewer Name="scrollViewerlog"
-                          Grid.Column="0"
-                          Grid.Row="2"
-                          Grid.ColumnSpan="11"
-                          CanContentScroll="True">
-                          
-                            <DataGrid x:Name="dataGridLogEntry"
-                                      ItemsSource="{Binding LogViewModel.Messages}"
-                                    Background="{StaticResource CanvasColor}"
-                                  AutoGenerateColumns="False"
-                                  BorderBrush="{StaticResource BorderColor}">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Timestamp" 
-                                            Binding="{Binding Date}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                                    <DataGridTextColumn Header="Type" 
-                                            Binding="{Binding Type}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                                    <DataGridTextColumn Header="Manager" 
-                                            Binding="{Binding Manager}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                                    <DataGridTextColumn Header="Log message" 
-                                            Binding="{Binding Content}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                                </DataGrid.Columns>
-                                <DataGrid.RowStyle>
-                                    <Style TargetType="DataGridRow">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                                <Setter Property="Background" Value="#FCE283"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Type}" Value="Error">
-                                                <Setter Property="Background" Value="#ED4F47"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                                <Setter Property="Background" Value="#CFCFCF"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                                <Setter Property="Background" Value="#7EDE78"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.RowStyle>
-                            </DataGrid>
-                        </ScrollViewer>
+                        <ListView x:Name="dataGridLogEntry"
+                                          ItemsSource="{Binding LogViewModel.Messages}"
+                                          Background="White"
+                                          Foreground="Black"
+                                          BorderBrush="{StaticResource BorderColor}"
+                                          ScrollViewer.CanContentScroll="False"
+                                          MaxHeight="5000">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Timestamp" 
+                                                    DisplayMemberBinding="{Binding Date}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Type" 
+                                                    DisplayMemberBinding="{Binding Type}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Manager" 
+                                                    DisplayMemberBinding="{Binding Manager}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Log message" 
+                                                    Width="1000">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock TextWrapping="Wrap"
+                                                                   Text="{Binding Content}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Info">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                            <Setter Property="Background" Value="#FCE283"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error">
+                                            <Setter Property="Background" Value="#ED4F47"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                            <Setter Property="Background" Value="#CFCFCF"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                            <Setter Property="Background" Value="#7EDE78"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
