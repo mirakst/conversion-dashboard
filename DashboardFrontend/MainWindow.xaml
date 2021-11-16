@@ -336,27 +336,56 @@
                     </Grid.RowDefinitions>
                 </Grid>
                 <Grid Name="gridHealthReportChartGrid"
-                  Margin="20,0,0,0"
-                  Grid.Column="1"
-                  Grid.Row="1">
+                      Margin="20,0,0,0"
+                      Grid.Column="1"
+                      Grid.Row="1">
                     <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
+                          Grid.Row="0">
+                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                BorderThickness="1"
+                                MaxHeight="25"
+                                Margin="0,0,5,0"
+                                Grid.Column="1">
+                            <Grid>
+                                <TextBlock Text="Hours: "
+                                           FontSize="15"
+                                           VerticalAlignment="Center"
+                                           Background="{DynamicResource BackgroundColor}"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           Grid.Column="0"/>
+                                <TextBox Name="textBoxChartTimeInterval"
+                                         Text="6"
+                                         FontSize="15"
+                                         MaxLength="20"
+                                         VerticalAlignment="Center"
+                                         BorderThickness="0"
+                                         Background="{DynamicResource BackgroundColor}"
+                                         Foreground="{DynamicResource ForegroundColor}"
+                                         Grid.Column="1"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </Border>
                         <Button Name="buttonHealthReportDetach"
-                        Click="DetachHealthReportButtonClick"
-                        Grid.Column="1"
-                        Style="{StaticResource DetachButton}">
+                                Click="DetachHealthReportButtonClick"
+                                Grid.Column="2"
+                                Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
+                          Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                             BorderThickness="1">
                             <idd:Chart Name="iddChartHealthReportGraph"
+                                       IsVerticalNavigationEnabled="False"
                                        Background="{DynamicResource CanvasColor}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        Style="{StaticResource HealthReportChart}">

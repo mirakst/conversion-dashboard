@@ -35,19 +35,13 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <ComboBox Name="comboBoxChartInterval"
-                                      FontSize="20"
-                                      Margin="0,0,0,5"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="3"
-                                      Grid.Row="0">
-                                <ComboBoxItem Content="30 min"/>
-                                <ComboBoxItem Content="1 Hour"/>
-                                <ComboBoxItem Content="6 Hours"
-                                              IsSelected="True"/>
-                                <ComboBoxItem Content="12 Hours"/>
-                                <ComboBoxItem Content="24 Hours"/>
-                            </ComboBox>
+                            <TextBox Name="textBoxChartTimeInterval"
+                                     Text="6 Hours"
+                                     FontSize="15"
+                                     Background="{DynamicResource BackgroundColor}"
+                                     Foreground="{DynamicResource ForegroundColor}"
+                                     Grid.Column="3"
+                                     Grid.Row="0"/>
                             <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="1000" Grid.Row="1"/>
                             <idd:Chart Name="iddChartHealthReport"
                                        Background="{StaticResource CanvasColor}"

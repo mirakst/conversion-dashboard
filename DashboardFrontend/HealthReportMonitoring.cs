@@ -1,4 +1,5 @@
-﻿using InteractiveDataDisplay.Core;
+﻿using DashboardInterface;
+using InteractiveDataDisplay.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +13,6 @@ namespace DashboardFrontend
     public class HealthReportMonitoring
     {
         //UserViewInput should be bound to a user input
-        public int UserViewInput { get; set; } = 2;
         private List<DataClass> _dataCollections = new();
 
         /// <summary>
@@ -35,13 +35,13 @@ namespace DashboardFrontend
         /// <summary>
         /// A function to create a new DataClass and add it ti the dataCollections list.
         /// </summary>
-        /// <param name="_timeList"></param>
-        /// <param name="_readingsList"></param>
-        /// <param name="myGrid"></param>
-        /// <param name="_name"></param>
-        /// <param name="_description"></param>
-        /// <param name="_color"></param>
-        /// <param name="_strokeThickness"></param>
+        /// <param name="_timeList">A list of [DateTime] objects.</param>
+        /// <param name="_readingsList">A list of [long] objects.</param>
+        /// <param name="myGrid">The child [Grid] of [Chart].</param>
+        /// <param name="_name">The name for the line.</param>
+        /// <param name="_description">A description for the graph. The description is shown in the legend.</param>
+        /// <param name="_color">A [Color] for the [LineGraph].</param>
+        /// <param name="_strokeThickness">The thickness of the [LineGraph].</param>
         public void Add(List<DateTime> _timeList, List<long> _readingsList, Grid myGrid, string _name, string _description, Color _color, int _strokeThickness)
         {
             LineGraph line = new()
@@ -66,13 +66,16 @@ namespace DashboardFrontend
         /// </summary>
         /// <param name="_timer">A [PeriodicTimer] that calls the function.</param>
         /// <param name="_chart">The [Chart] each [DataCollection] should be plotted on.</param>
-        public async void GenerateData(PeriodicTimer _timer, Chart _chart)
+        public async void GenerateData(PeriodicTimer _timer, Chart _chart, TextBox _userView)
         {
             Random random = new();
+            int userViewInt = 6;
 
             while (await _timer.WaitForNextTickAsync())
             {
-                long MaxView = TimeSpan.TicksPerMinute * UserViewInput;
+                if (!int.TryParse(_userView.Text.Split(' ')[0], out userViewInt)) { userViewInt = 6; }
+
+                long MaxView = TimeSpan.TicksPerMinute * userViewInt;
 
                 foreach (DataClass dataCollection in _dataCollections)
                 {
@@ -81,15 +84,24 @@ namespace DashboardFrontend
                     dataCollection.Readings.Add((long)random.Next(0, 100));
 
                     UpdateChart(dataCollection);
+
+                    _chart.PlotHeight = 105;
+
+                    if (!_chart.IsMouseOver)
+                    {
+                        _chart.PlotWidth = MaxView;
+                        if (dataCollection.Time.Last().Ticks - dataCollection.Time.First().Ticks >= MaxView * 0.9)
+                        {
+                            _chart.PlotOriginX = DateTime.Now.AddMinutes(-(userViewInt * 0.9)).Ticks;
+                        }
+                        else
+                        {
+                            _chart.PlotOriginX = dataCollection.Time.First().Ticks;
+                        }
+                    }
                 }
 
-                _chart.PlotHeight = 105;
-
-                if (!_chart.IsMouseOver)
-                {
-                    _chart.PlotOriginX = DateTime.Now.AddMinutes(-(UserViewInput * 0.9)).Ticks;
-                    _chart.PlotWidth = MaxView;
-                }
+                
             }
         }
 
