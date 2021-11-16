@@ -56,11 +56,12 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<ManagerEntry> QueryManagers()
+        public List<LoggingContextEntry> QueryManagers()
         {
             using NetcompanyDbContext db = new();
-            var queryResult = db.Managers
-                                .OrderBy(e => e.RowId);
+            var queryResult = db.LoggingContexts
+                                .Where(e => e.ContextId > 0)
+                                .OrderBy(e => e.ContextId);
 
             return queryResult.ToList();
         }
@@ -85,6 +86,17 @@ namespace DashboardBackend.Database
                                          || e.ReportType == "NETWORK"
                                          || e.ReportType == "MEMORY")
                                 .OrderBy(e => e.LogTime);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.EngineProperties
+                                .Where(e => e.Timestamp > minDate)
+                                .OrderBy(e => e.Timestamp);
 
             return queryResult.ToList();
         }

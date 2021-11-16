@@ -34,11 +34,20 @@
         public DateTime EndTime { get; private set; } //DateTime.Now when an execution is registered as done (from log?).
         public TimeSpan Runtime { get; private set; } //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
-        public ExecutionStatus Status { get; set; } //This one is obvious. Private set when better solution is found?
+        public ExecutionStatus Status { get; set; } //Status of the manager.
+        private Dictionary<int, Manager> _contextIdDictionary = new();
         public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
         public ValidationReport ValidationReport { get; set; } = new();
         public Log Log { get; set; } = new();
         #endregion
+
+        public void SetUpDictionaries()
+        {
+            foreach (var manager in Managers)
+            {
+                _contextIdDictionary.Add(manager.ContextId, manager);
+            }
+        }
 
         public override string ToString()
         {
