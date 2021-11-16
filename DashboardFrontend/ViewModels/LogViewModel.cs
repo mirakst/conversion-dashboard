@@ -1,12 +1,10 @@
-﻿using DashboardBackend.Models;
-using System;
+﻿using DashboardBackend;
+using Model;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -15,6 +13,7 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel(Log log)
         {
             _log = log;
+            log.Messages = DataUtilities.GetLogMessages().Take(500).ToList();
             _allMessages = new(log.Messages);
             UpdateData();
         }
@@ -57,7 +56,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private int _fatalCount;
-        public int FatalCount 
+        public int FatalCount
         {
             get => _fatalCount;
             set
@@ -152,14 +151,19 @@ namespace DashboardFrontend.ViewModels
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
+
+            List<LogMessage> list = new();
+
             foreach (LogMessage msg in _allMessages)
             {
                 UpdateCounter(msg);
                 if (ShouldAddMessage(msg))
                 {
-                    Messages.Add(msg);
+                    list.Add(msg);
                 }
             }
+            Messages = new(list);
+
         }
 
         /// <summary>
@@ -170,20 +174,20 @@ namespace DashboardFrontend.ViewModels
         {
             switch (msg.Type)
             {
-                case "Info":
-                        InfoCount++;
+                case LogMessageType.INFO:
+                    InfoCount++;
                     break;
-                case "Error":
-                        ErrorCount++;
+                case LogMessageType.WARNING:
+                    WarnCount++;
                     break;
-                case "Warn":
-                        WarnCount++;
+                case LogMessageType.ERROR:
+                    ErrorCount++;
                     break;
-                case "Fatal":
-                        FatalCount++;
+                case LogMessageType.FATAL:
+                    FatalCount++;
                     break;
-                case "Validation":
-                        ValidationCount++;
+                case LogMessageType.VALIDATION:
+                    ValidationCount++;
                     break;
                 default:
                     break;
@@ -198,11 +202,11 @@ namespace DashboardFrontend.ViewModels
         private bool ShouldAddMessage(LogMessage msg)
         {
             return
-                (ShowInfo && msg.Type == "Info") ||
-                (ShowWarn && msg.Type == "Warn") ||
-                (ShowError && msg.Type == "Error") ||
-                (ShowFatal && msg.Type == "Fatal") ||
-                (ShowValidation && msg.Type == "Validation");
+                (ShowInfo && msg.Type == LogMessageType.INFO) ||
+                (ShowWarn && msg.Type == LogMessageType.WARNING) ||
+                (ShowError && msg.Type == LogMessageType.ERROR) ||
+                (ShowFatal && msg.Type == LogMessageType.FATAL) ||
+                (ShowValidation && msg.Type == LogMessageType.VALIDATION);
         }
 
         /// <summary>

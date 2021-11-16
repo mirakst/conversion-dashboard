@@ -232,7 +232,7 @@
                                   IsChecked="{Binding LogViewModel.ShowValidation}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
-                             <!--   <Image Source="Icons/Fatal.png" 
+                             <!--   <Image Source="Icons/Validation.png" 
                                    Width="13"
                                    Margin="0,0,5,0"/> -->
                                 <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
@@ -269,8 +269,9 @@
                         <ScrollViewer Name="scrollViewerlog"
                           Grid.Column="0"
                           Grid.Row="2"
-                          Grid.ColumnSpan="11">
-                            
+                          Grid.ColumnSpan="11"
+                          CanContentScroll="True">
+                          
                             <DataGrid x:Name="dataGridLogEntry"
                                       ItemsSource="{Binding LogViewModel.Messages}"
                                     Background="{StaticResource CanvasColor}"
@@ -297,7 +298,7 @@
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Type}" Value="Warn">
+                                            <DataTrigger Binding="{Binding Type}" Value="Warning">
                                                 <Setter Property="Background" Value="#FCE283"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Type}" Value="Error">

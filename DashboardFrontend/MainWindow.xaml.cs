@@ -1,10 +1,12 @@
 using DashboardFrontend.DetachedWindows;
+using DashboardBackend;
+using DashboardBackend.Database;
+using Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using DashboardFrontend.ViewModels;
-using DashboardBackend.Models;
 using System;
 
 namespace DashboardFrontend
@@ -14,9 +16,12 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
+            
             ViewModel = new(Log);
             DataContext = ViewModel;
         }
+        
 
         public Log Log { get; set; } = new();
         public MainWindowViewModel ViewModel { get; }

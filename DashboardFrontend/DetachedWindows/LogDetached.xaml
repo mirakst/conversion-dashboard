@@ -99,7 +99,8 @@
             <ScrollViewer Name="scrollViewerlog"
                           Grid.Column="0"
                           Grid.Row="2"
-                          Grid.ColumnSpan="11">
+                          Grid.ColumnSpan="11"
+                          CanContentScroll="True">
                 <DataGrid Name="dataGridLogEntry"
                           Background="{StaticResource CanvasColor}"
                                   ItemsSource="{Binding Messages}"
@@ -125,7 +126,7 @@
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Type}" Value="Warn">
+                                <DataTrigger Binding="{Binding Type}" Value="Warning">
                                     <Setter Property="Background" Value="#FCE283"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Error">
