@@ -232,9 +232,9 @@
                                   IsChecked="{Binding LogViewModel.ShowValidation}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
-                             <!--   <Image Source="Icons/Validation.png" 
+                                <Image Source="Icons/Validation.png" 
                                    Width="13"
-                                   Margin="0,0,5,0"/> -->
+                                   Margin="0,0,5,0"/> 
                                 <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
@@ -266,7 +266,7 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <ListView x:Name="dataGridLogEntry"
+                        <ListView x:Name="listViewLogEntry"
                                           ItemsSource="{Binding LogViewModel.Messages}"
                                           Background="White"
                                           Foreground="Black"
@@ -298,7 +298,7 @@
                                                     DisplayMemberBinding="{Binding Type}"
                                                     Width="auto"/>
                                     <GridViewColumn Header="Manager" 
-                                                    DisplayMemberBinding="{Binding Manager}"
+                                                    DisplayMemberBinding="{Binding ContextId}"
                                                     Width="auto"/>
                                     <GridViewColumn Header="Log message" 
                                                     Width="1000">
@@ -317,18 +317,57 @@
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="INFO"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Warning">
                                             <Setter Property="Background" Value="#FCE283"/>
                                         </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="WARNING"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Error">
                                             <Setter Property="Background" Value="#ED4F47"/>
                                         </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="ERROR"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowError}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Fatal">
                                             <Setter Property="Background" Value="#CFCFCF"/>
                                         </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="FATAL"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                            <Setter Property="Background" Value="#7EDE78"/>
+                                            <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="VALIDATION"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                            <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                                        </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>

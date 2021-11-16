@@ -16,12 +16,11 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel(Log log)
         {
             _log = log;
-            log.Messages = DataUtilities.GetLogMessages();
-            _allMessages = new(log.Messages);
+            log.Messages = DataUtilities.GetLogMessages().TakeLast(1000).ToList();
+            UpdateCounters();
             UpdateData();
         }
 
-        private ObservableCollection<LogMessage> _allMessages;
         private Log _log;
         /*        private List<LogMessage> _messages = new();
         */
@@ -96,7 +95,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
-                Refresh();
             }
         }
         private bool _showWarn = true;
@@ -107,7 +105,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
-                Refresh();
             }
         }
         private bool _showError = true;
@@ -118,7 +115,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showError = value;
                 OnPropertyChanged(nameof(ShowError));
-                Refresh();
             }
         }
         private bool _showFatal = true;
@@ -129,7 +125,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
-                Refresh();
             }
         }
         private bool _showValidation = true;
@@ -140,7 +135,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showValidation = value;
                 OnPropertyChanged(nameof(ShowValidation));
-                Refresh();
             }
         }
 
@@ -149,39 +143,16 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void UpdateData()
         {
-            _allMessages = new(_log.Messages);
-            Refresh();
-        }
-
-        /// <summary>
-        /// Clears the log and iteratively adds messages to it depending on the selected filters
-        /// </summary>
-        private void Refresh()
-        {
-            List<LogMessage> tempMessages = new();
-            InfoCount = 0;
-            WarnCount = 0;
-            ErrorCount = 0;
-            FatalCount = 0;
-            ValidationCount = 0;
-
-                foreach (LogMessage msg in _allMessages)
-                {
-                    UpdateCounter(msg);
-                    if (ShouldAddMessage(msg))
-                    {
-                        tempMessages.Add(msg);
-                    }
-                }
-            Messages = new(tempMessages);
+            Messages = new(_log.Messages);
         }
 
         /// <summary>
         /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
         /// </summary>
         /// <param name="msg">LogMessage whose type counter should be updated</param>
-        private void UpdateCounter(LogMessage msg)
+        private void UpdateCounters()
         {
+            foreach(var msg in _log.Messages)
             switch (msg.Type)
             {
                 case LogMessageType.INFO:
@@ -202,21 +173,6 @@ namespace DashboardFrontend.ViewModels
                 default:
                     break;
             }
-        }
-
-        /// <summary>
-        /// Determines whether the given LogMessage should be displayed in the UI log
-        /// </summary>
-        /// <param name="msg">The message whose type should be considered</param>
-        /// <returns>True if the message type is enabled in the filter</returns>
-        private bool ShouldAddMessage(LogMessage msg)
-        {
-            return
-                (ShowInfo && msg.Type == LogMessageType.INFO) ||
-                (ShowWarn && msg.Type == LogMessageType.WARNING) ||
-                (ShowError && msg.Type == LogMessageType.ERROR) ||
-                (ShowFatal && msg.Type == LogMessageType.FATAL) ||
-                (ShowValidation && msg.Type == LogMessageType.VALIDATION);
         }
     }
 }
