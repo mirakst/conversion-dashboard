@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:adorners="http://gu.se/Adorners"
-        xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         Title="Conversion dashboard"
         Height="720"
