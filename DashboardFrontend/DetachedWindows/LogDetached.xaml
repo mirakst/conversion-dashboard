@@ -35,7 +35,7 @@
                     <Image Source="../Icons/Warning.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding WarningCount}"/>
+                    <TextBlock Text="{Binding WarnCount}"/>
                     <TextBlock Text=" Warnings"/>
                 </StackPanel>
             </ToggleButton>
@@ -80,9 +80,9 @@
                           Grid.Column="8"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
-                   <!-- <Image Source="../Icons/Validation.png"
+                    <Image Source="../Icons/Validation.png"
                                    Width="13"
-                                   Margin="0,0,5,0"/> -->
+                                   Margin="0,0,5,0"/> 
                     <TextBlock Text="{Binding ValidationCount}"/>
                     <TextBlock Text=" Validation"/>
                 </StackPanel>
@@ -95,53 +95,116 @@
                     Style="{DynamicResource DefaultButton}">
                 <Image Source="../Icons/Filter.png"/>
             </Button>
-            <ScrollViewer Name="scrollViewerlog"
-                          Grid.Column="0"
-                          Grid.Row="2"
-                          Grid.ColumnSpan="11"
-                          CanContentScroll="True">
-                <DataGrid Name="dataGridLogEntry"
-                          Background="{StaticResource CanvasColor}"
-                                  ItemsSource="{Binding Messages}"
-                                  BorderBrush="{StaticResource BorderColor}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Timestamp" 
-                                            Binding="{Binding Date}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                        <DataGridTextColumn Header="Type" 
-                                            Binding="{Binding Type}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                        <DataGridTextColumn Header="Manager" 
-                                            Binding="{Binding Manager}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                        <DataGridTextColumn Header="Log message" 
-                                            Binding="{Binding Content}"
-                                            IsReadOnly="True"
-                                            Width="auto"/>
-                    </DataGrid.Columns>
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                    <Setter Property="Background" Value="#FCE283"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Type}" Value="Error">
-                                    <Setter Property="Background" Value="#ED4F47"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                    <Setter Property="Background" Value="#CFCFCF"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                    <Setter Property="Background" Value="#7EDE78"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.RowStyle>
-                </DataGrid>
-            </ScrollViewer>
+            <ListView x:Name="listViewLogEntry"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="11"
+                        ItemsSource="{Binding Messages}"
+                        Background="White"
+                        Foreground="Black"
+                        BorderBrush="{StaticResource BorderColor}"
+                        ScrollViewer.CanContentScroll="False"
+                        MaxHeight="5000">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel>
+                        </VirtualizingStackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.View>
+                    <GridView>
+                        <GridView.ColumnHeaderContainerStyle>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Setter Property="Padding" Value="5,0,5,0"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="TextElement.Foreground" Value="Black"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </GridView.ColumnHeaderContainerStyle>
+                        <GridViewColumn Header="Timestamp" 
+                                                    DisplayMemberBinding="{Binding Date}"
+                                                    Width="auto"/>
+                        <GridViewColumn Header="Type" 
+                                                    DisplayMemberBinding="{Binding Type}"
+                                                    Width="auto"/>
+                        <GridViewColumn Header="Manager" 
+                                                    DisplayMemberBinding="{Binding ContextId}"
+                                                    Width="auto"/>
+                        <GridViewColumn Header="Content" 
+                                                    Width="1000">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="Wrap"
+                                                    Text="{Binding Content}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Type}" Value="Info">
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Type}" Value="INFO"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowInfo}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                <Setter Property="Background" Value="#FCE283"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Type}" Value="WARNING"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowWarn}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="Error">
+                                <Setter Property="Background" Value="#ED4F47"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Type}" Value="ERROR"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowError}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                <Setter Property="Background" Value="#CFCFCF"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Type}" Value="FATAL"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowFatal}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Type}" Value="VALIDATION"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowValidation}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <Trigger Property="Control.IsMouseOver" Value="True">
+                                <Setter Property="Control.Background" Value="Transparent" />
+                                <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/>
                 <ColumnDefinition Width="2"/>

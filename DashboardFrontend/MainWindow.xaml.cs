@@ -94,8 +94,8 @@ namespace DashboardFrontend
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogDetached detachLog = new(ViewModel.LogViewModel);
-            // detachLog.Closing += OnLogWindowClosing
-            // buttonLogDetach.IsEnabled = false;
+            detachLog.Closing += OnLogWindowClosing;
+            buttonLogDetach.IsEnabled = false;
             detachLog.Show();
         }
 
@@ -125,8 +125,8 @@ namespace DashboardFrontend
             Monitoring = new();
 
             //gridHealthReportChartGridChartGrid.Children.Clear();
-            Monitoring.Add(RamDateTime, RamReadings, expandHR.gridHealthReportChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(0, 255, 0), 2);
-            Monitoring.Add(CpuDataTime, CpuReadings, expandHR.gridHealthReportChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(0, 0, 255), 2);
+            Monitoring.Add(RamDateTime, RamReadings, expandHR.gridHealthReportChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(133, 222, 118), 2);
+            Monitoring.Add(CpuDataTime, CpuReadings, expandHR.gridHealthReportChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(245, 88, 47), 2);
             Monitoring.GenerateData(DataGenerationTimer, expandHR.iddChartHealthReport);
         }
 
@@ -162,8 +162,8 @@ namespace DashboardFrontend
             Monitoring = new();
 
             //gridHealthReportChartGridChartGrid.Children.Clear();
-            Monitoring.Add(RamDateTime, RamReadings, gridHealthReportChartGridChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(0, 255, 0), 2);
-            Monitoring.Add(CpuDataTime, CpuReadings, gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(0, 0, 255), 2);
+            Monitoring.Add(RamDateTime, RamReadings, gridHealthReportChartGridChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(133, 222, 118), 2);
+            Monitoring.Add(CpuDataTime, CpuReadings, gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(245, 88, 47), 2);
             Monitoring.GenerateData(DataGenerationTimer, iddChartHealthReportGraph);
 
             buttonHealthReportDetach.IsEnabled = true;

@@ -283,6 +283,8 @@
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style TargetType="{x:Type GridViewColumnHeader}">
                                             <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="Padding" Value="5,0,5,0"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsEnabled" Value="False">
                                                     <Setter Property="TextElement.Foreground" Value="Black"/>
@@ -299,7 +301,7 @@
                                     <GridViewColumn Header="Manager" 
                                                     DisplayMemberBinding="{Binding ContextId}"
                                                     Width="auto"/>
-                                    <GridViewColumn Header="Log message" 
+                                    <GridViewColumn Header="Content" 
                                                     Width="1000">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
