@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Log monitoring" Height="450" Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Name ="gridLog"

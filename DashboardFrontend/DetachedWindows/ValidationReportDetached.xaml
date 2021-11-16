@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Validation report monitoring" Height="450" Width="800"
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
@@ -38,7 +39,7 @@
                       AutoGenerateColumns="False"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
-                      Grid.Row="1">
+                      Grid.Row="1" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Manager name"
                                         Binding="{Binding ManagerName}"
@@ -74,10 +75,16 @@
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <ListBox ItemsSource="{Binding ValidationReportList}"
+                            <Grid>
+                                <ListBox ItemsSource="{Binding ValidationReportList}"
                                      Grid.Column="0"/>
-                            <ListBox ItemsSource="{Binding ValidationReportStatus}"
+                                <ListBox ItemsSource="{Binding ValidationReportStatus}"
                                      Grid.Column="1"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="8*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
                         </DockPanel>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>

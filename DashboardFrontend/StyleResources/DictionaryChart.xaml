@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--Default design for charts-->
+    <Style x:Key="HealthReportChart" TargetType="idd:Chart">
+        <Setter Property="Margin" Value="-1"/>
+        <Setter Property="PlotHeight" Value="1.02"/>
+        <Setter Property="PlotWidth" Value="1.02"/>
+        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        <Setter Property="PlotHeight" Value="102"/>
+        <Setter Property="IsVerticalNavigationEnabled" Value="False"/>
+        <Setter Property="Title" Value="Health report"/>
+        <Setter Property="LeftTitle" Value="Usage"/>
+        <Setter Property="BottomTitle" Value="Time"/>
+    </Style>
+</ResourceDictionary>
