@@ -1,7 +1,3 @@
-﻿
-<!-- Filter icon made by FreePik - https://www.flaticon.com/authors/FreePik -->
-<!-- DetachWindow icon made by itim2101 - https://www.flaticon.com/authors/itim2101 -->
-    
     <Application x:Class="DashboardInterface.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
