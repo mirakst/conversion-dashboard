@@ -9,8 +9,7 @@
         Title="Validation report monitoring" Height="450" Width="800"
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
-        FontSize="15"
-        WindowStartupLocation="CenterScreen">
+        FontSize="15">
     <Border BorderThickness="10"
             Background="{DynamicResource BackgroundColor}">
         <Grid>

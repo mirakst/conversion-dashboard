@@ -52,7 +52,7 @@
                             <idd:Chart Name="iddChartHealthReport"
                                        Background="{StaticResource CanvasColor}"
                                        Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource DefaultChart}"
+                                       Style="{StaticResource HealthReportChart}"
                                        Grid.Column="0"
                                        Grid.ColumnSpan="4"
                                        Grid.Row="1">
@@ -123,7 +123,7 @@
                             <idd:Chart Name="iddChartNetwork"
                                        Background="{StaticResource CanvasColor}"
                                        Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource DefaultChart}"
+                                       Style="{StaticResource HealthReportChart}"
                                        Grid.Column="2"
                                        Grid.ColumnSpan="2"
                                        Grid.Row="1">

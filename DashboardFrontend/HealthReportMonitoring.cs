@@ -1,6 +1,7 @@
 ﻿using InteractiveDataDisplay.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Controls;
@@ -10,8 +11,8 @@ namespace DashboardFrontend
 {
     public class HealthReportMonitoring
     {
-        //The timespan a graph should show
-        public int UserViewInput { get; set; } = 2; //2 should be bound to a user input
+        //UserViewInput should be bound to a user input
+        public int UserViewInput { get; set; } = 2;
         private List<DataClass> _dataCollections = new();
 
         /// <summary>
@@ -68,11 +69,10 @@ namespace DashboardFrontend
         public async void GenerateData(PeriodicTimer _timer, Chart _chart)
         {
             Random random = new();
-            long MaxView;
 
             while (await _timer.WaitForNextTickAsync())
             {
-                MaxView = TimeSpan.TicksPerMinute * UserViewInput;
+                long MaxView = TimeSpan.TicksPerMinute * UserViewInput;
 
                 foreach (DataClass dataCollection in _dataCollections)
                 {
@@ -83,10 +83,11 @@ namespace DashboardFrontend
                     UpdateChart(dataCollection);
                 }
 
+                _chart.PlotHeight = 105;
+
                 if (!_chart.IsMouseOver)
                 {
-                    _chart.PlotHeight = 100;
-                    _chart.PlotOriginX = DateTime.Now.AddSeconds(-100).Ticks;
+                    _chart.PlotOriginX = DateTime.Now.AddMinutes(-(UserViewInput * 0.9)).Ticks;
                     _chart.PlotWidth = MaxView;
                 }
             }
@@ -100,7 +101,7 @@ namespace DashboardFrontend
         {
             var _valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
 
-            _dataCollection.Line.Plot( _valueY, _dataCollection.Readings);
+            _dataCollection.Line.Plot(_valueY, _dataCollection.Readings);
         }
     }
 }

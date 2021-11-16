@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace DashboardFrontend
+namespace DashboardFrontend.StyleResources
 {
     public class CustomLabelProvider : ILabelProvider
     {
@@ -15,7 +15,6 @@ namespace DashboardFrontend
             if (ticks == null)
                 throw new ArgumentNullException("ticks");
 
-
             List<TextBlock> Labels = new();
             foreach (double tick in ticks)
             {
@@ -23,6 +22,7 @@ namespace DashboardFrontend
                 var time = Origin + TimeSpan.FromTicks((long)tick);
                 text.Text = time.ToLongTimeString();
                 Labels.Add(text);
+
             }
             return Labels.ToArray();
         }

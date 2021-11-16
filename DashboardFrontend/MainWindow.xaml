@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
-        xmlns:adorners="http://gu.se/Adorners"
-        xmlns:local="clr-namespace:DashboardFrontend"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
@@ -359,9 +357,9 @@
                         <Border BorderBrush="{DynamicResource BorderColor}"
                             BorderThickness="1">
                             <idd:Chart Name="iddChartHealthReportGraph"
-                                   Background="{DynamicResource CanvasColor}"
-                                   Foreground="{DynamicResource ForegroundColor}"
-                                   Style="{DynamicResource HealthReportChart}">
+                                       Background="{DynamicResource CanvasColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Style="{StaticResource HealthReportChart}">
                                 <Grid Name="gridHealthReportChartGridChartGrid"/>
                             </idd:Chart>
                         </Border>
