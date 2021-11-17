@@ -49,7 +49,7 @@
                         RowDetailsVisibilityMode="Collapsed" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" SelectionMode="Single" IsReadOnly="True" CanUserReorderColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Manager"
-                                        Binding="{Binding Manager}"
+                                        Binding="{Binding ManagerNameFull}"
                                         Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -58,8 +58,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Validations"
-                                        Binding="{Binding Converter={StaticResource ValidationsConverter}}"
+                    <DataGridTextColumn Header="Score"
                                         Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -68,9 +67,29 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-
-                    <DataGridTextColumn Header="Score"
-                                        Width="120">
+                    <DataGridTextColumn Header="Disabled"
+                                        Binding="{Binding DisabledCount}"
+                                        Width="64">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Failed"
+                                        Binding="{Binding FailedCount}"
+                                        Width="64">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Total"
+                                        Binding="{Binding TotalCount}"
+                                        Width="64">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -116,13 +135,14 @@
 
                 <DataGrid.RowHeaderTemplate>
                     <DataTemplate>
-                        <ToggleButton Style="{DynamicResource ValidationExpandButton}" Click="ExpandRow_Click" />
+                        <ToggleButton Margin="5 0 0 0" Style="{DynamicResource ValidationExpandButton}" Click="ExpandRow_Click" />
                     </DataTemplate>
                 </DataGrid.RowHeaderTemplate>
                 <DataGrid.RowHeaderStyle>
                     <Style TargetType="{x:Type DataGridRowHeader}">
                         <Setter Property="VerticalAlignment" Value="Top"/>
                         <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Width" Value="30"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>
 
@@ -130,40 +150,31 @@
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
                             <Separator Margin="0,5,0,5"/>
+                            
                             <ItemsControl ItemsSource="{Binding Tests}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Height="30">
+                                        <Grid Height="60">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" MinWidth="2000"/>
+                                                <ColumnDefinition Width="2*"/>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Icons/Validation report.png" Margin="2"/>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Date,StringFormat=\(d/M HH:mm\)}"
+                                                           Margin="0 0 5 0"/>
+                                                <TextBlock Text="{Binding Status}"/>
                                             </StackPanel>
-                                            <Image Grid.Column="1">
-                                                <Image.Style>
-                                                    <Style TargetType="Image">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="OK">
-                                                                <Setter Property="Source" Value="/Icons/Validation.png"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="DISABLED">
-                                                                <Setter Property="Source" Value="/Icons/Warning.png"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="FAILED">
-                                                                <Setter Property="Source" Value="/Icons/Fatal.png"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="FAIL_MISMATCH">
-                                                                <Setter Property="Source" Value="/Icons/Fatal.png"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Image.Style>
-                                            </Image>
-                                            <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Grid.Row="1">
+                                                <TextBlock Text="{Binding SrcCount,TargetNullValue='Src=N/A',StringFormat='Src=\{0\}'}"
+                                                           Margin="0 0 50 0"/>
+                                                <TextBlock Text="{Binding DstCount,TargetNullValue='Dst=N/A',StringFormat='Dst=\{0\}'}"/>
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

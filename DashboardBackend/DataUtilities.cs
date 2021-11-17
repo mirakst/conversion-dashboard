@@ -56,13 +56,15 @@ namespace DashboardBackend
             return (from item in queryResult
                     let date = item.Afstemtdato
                     let name = item.Description
+                    let managerName = item.Context
+                    let managerNameFull = item.Manager
                     let status = GetValidationStatus(item)
                     let srcCount = item.Srcantal
                     let dstCount = item.Dstantal
                     let toolkitId = item.ToolkitId
                     let srcSql = item.SrcSql
                     let dstSql = item.DstSql
-                    select new ValidationTest(date, name, status, name, srcCount, dstCount, toolkitId, srcSql, dstSql))
+                    select new ValidationTest(date, name, status, managerName, managerNameFull, srcCount, dstCount, toolkitId, srcSql, dstSql))
                     .ToList();
         }
 

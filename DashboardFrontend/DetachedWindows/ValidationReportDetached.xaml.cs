@@ -49,13 +49,10 @@ namespace DashboardFrontend.DetachedWindows
             foreach(var item in ViewModel.Data)
             {
                 DataGridRow row = (DataGridRow)validationsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
-                if (item.Manager.Contains(filter))
+                Visibility targetVisibility = item.ManagerName.Contains(filter) ? Visibility.Visible : Visibility.Collapsed;
+                if (row.Visibility != targetVisibility)
                 {
-                    row.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    row.Visibility = Visibility.Collapsed;
+                    row.Visibility = targetVisibility;
                 }
             }
         }

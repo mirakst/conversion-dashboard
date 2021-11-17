@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Model.ValidationTest.ValidationStatus;
+using static Model.ValidationTest;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -74,14 +74,14 @@ namespace DashboardFrontend.ViewModels
             FailedCount = 0;
             foreach (ValidationTest test in _validationReport.ValidationTests)
             {
-                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.Manager == test.ManagerName);
+                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
                 {
                     dataEntry.Tests.Add(test);
                 }
                 else
                 {
-                    dataEntry = new(test.ManagerName, new List<ValidationTest>());
+                    dataEntry = new(test.ManagerName, test.ManagerNameFull, new List<ValidationTest>());
                     dataEntry.Tests.Add(test);
                     Data.Add(dataEntry);
                 }
@@ -93,14 +93,14 @@ namespace DashboardFrontend.ViewModels
         {
             switch (test.Status)
             {
-                case OK:
+                case ValidationStatus.Ok:
                     OkCount++;
                     break;
-                case DISABLED:
+                case ValidationStatus.Disabled:
                     DisabledCount++;
                     break;
-                case FAILED:
-                case FAIL_MISMATCH:
+                case ValidationStatus.Failed:
+                case ValidationStatus.FailMismatch:
                     FailedCount++;
                     break;
             }
