@@ -28,6 +28,8 @@ namespace DashboardInterface
         public MainWindow()
         {
             InitializeComponent();
+            iddChartHealthReportGraph.PlotOriginX = DateTime.Now.Ticks;
+            iddChartHealthReportGraph.PlotWidth = TimeSpan.FromMinutes(6).Ticks;
         }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)

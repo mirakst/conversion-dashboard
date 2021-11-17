@@ -90,19 +90,29 @@ namespace DashboardFrontend
                     if (!_chart.IsMouseOver)
                     {
                         _chart.PlotWidth = MaxView;
-                        if (dataCollection.Time.Last().Ticks - dataCollection.Time.First().Ticks >= MaxView * 0.9)
-                        {
-                            _chart.PlotOriginX = DateTime.Now.AddMinutes(-(userViewInt * 0.9)).Ticks;
-                        }
-                        else
-                        {
-                            _chart.PlotOriginX = dataCollection.Time.First().Ticks;
-                        }
+                        _chart.PlotOriginX = AutoFitChart(userViewInt, MaxView, dataCollection);
                     }
                 }
 
                 
             }
+        }
+
+        /// <summary>
+        /// Sets the view span of the graph.
+        /// </summary>
+        /// <param name="_userViewInt"></param>
+        /// <param name="_maxView"></param>
+        /// <param name="_dataCollection"></param>
+        /// <returns></returns>
+        private static long AutoFitChart(int _userViewInt, long _maxView, DataClass _dataCollection)
+        {
+            if (_dataCollection.Time.Last().Ticks - _dataCollection.Time.First().Ticks >= _maxView * 0.9)
+            {
+                return DateTime.Now.AddMinutes(-(_userViewInt * 0.9)).Ticks;
+            }
+
+            return _dataCollection.Time.First().Ticks;
         }
 
         /// <summary>
