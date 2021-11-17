@@ -35,16 +35,34 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <TextBox Name="TextBoxChartTimeInterval"
-                                     Text="6 Hours"
-                                     FontSize="15"
-                                     Background="{DynamicResource BackgroundColor}"
-                                     Foreground="{DynamicResource ForegroundColor}"
-                                     Grid.Column="3"
-                                     Grid.Row="0"/>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="3" Grid.Column="0"
-                                       Grid.Row="1"/>
-                            <idd:Chart Name="IddChartHealthReport"
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Grid.Column="3">
+                                <Grid>
+                                    <TextBlock Text="Hours: "
+                                             FontSize="15"
+                                             VerticalAlignment="Center"
+                                             Background="{DynamicResource BackgroundColor}"
+                                             Foreground="{DynamicResource ForegroundColor}"
+                                     Grid.Column="0"/>
+                                    <TextBox Name="textBoxPerformanceTimeInterval"
+                                             Text="6"
+                                             MaxLength="20"
+                                             VerticalAlignment="Center"
+                                             FontSize="15"
+                                             BorderThickness="0"
+                                             Background="{DynamicResource BackgroundColor}"
+                                             Foreground="{DynamicResource ForegroundColor}"
+                                             Grid.Column="1"/>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </Border>
+                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="1000" Grid.Row="1"/>
+                            <idd:Chart Name="iddChartHealthReport"
+                                       Margin="1"
                                        Background="{StaticResource CanvasColor}"
                                        Foreground="{StaticResource ForegroundColor}"
                                        Style="{StaticResource HealthReportChart}"
@@ -71,64 +89,97 @@
                          Header="Network">
                     <Border Margin="10">
                         <Grid>
-                            <TextBlock Name="TextBlockNetwork"
-                                       FontSize="15"
-                                       Grid.Column="0"
-                                       Grid.Row="1"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}">
-                                Send:<LineBreak/>
-                                Send delta:<LineBreak/>
-                                Send speed:<LineBreak/>
-                                <LineBreak/>
-                                Received:<LineBreak/>
-                                Received delta:<LineBreak/>
-                                Received speed:<LineBreak/>
-                            </TextBlock>
-                            <TextBlock Name="TextBlockNetworkData"
-                                       FontSize="15"
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Margin="0,0,10,0"
+                                    Grid.Column="0"
+                                    Grid.Row="1">
+                                <Grid Margin="5">
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Send:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Send delta:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Send speed:"
+                                                   FontSize="14"/>
+                                        <TextBlock/>
+                                        <TextBlock Text="Recived"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Recived delta:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Recived speed:"
+                                                   FontSize="14"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="102 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="932 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="123 MB"
+                                                   FontSize="14"/>
+                                        <TextBlock/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="43 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="12 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="13 MB"
+                                                   FontSize="14"/>
+                                    </StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </Border>
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,0,5"
+                                    BorderThickness="1"
+                                    Grid.Column="2">
+                                <Grid Margin="5">
+                                    <TextBlock Text="Hours: "
+                                             FontSize="15"
+                                             VerticalAlignment="Center"
+                                             Background="{DynamicResource BackgroundColor}"
+                                             Foreground="{DynamicResource ForegroundColor}"
+                                     Grid.Column="0"/>
+                                    <TextBox Name="textBoxNetworkTimeInterval"
+                                             Text="6"
+                                             MaxLength="20"
+                                             VerticalAlignment="Center"
+                                             FontSize="15"
+                                             BorderThickness="0"
+                                             Background="{DynamicResource BackgroundColor}"
+                                             Foreground="{DynamicResource ForegroundColor}"
+                                             Grid.Column="1"/>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </Border>
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
                                        Grid.Column="1"
-                                       Grid.Row="1"
-                                       Margin="0,0,10,0"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       TextAlignment="Right">
-                                102 KB<LineBreak/>
-                                932 KB<LineBreak/>
-                                123 MB<LineBreak/>
-                                <LineBreak/>
-                                43 KB<LineBreak/>
-                                12 KB<LineBreak/>
-                                13 MB<LineBreak/>
-                            </TextBlock>
-                            <ComboBox Name="ComboBoxNetworkChartInterval"
-                                      FontSize="20"
-                                      Margin="0,0,0,5"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="3"
-                                      Grid.Row="0">
-                                <ComboBoxItem Content="30 min"/>
-                                <ComboBoxItem Content="1 Hour"/>
-                                <ComboBoxItem Content="6 Hour"
-                                              IsSelected="True"/>
-                                <ComboBoxItem Content="12 Hour"/>
-                                <ComboBoxItem Content="24 Hour"/>
-                            </ComboBox>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
-                            <idd:Chart Name="IddChartNetwork"
-                                       Background="{StaticResource CanvasColor}"
-                                       Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}"
-                                       Grid.Column="2"
                                        Grid.ColumnSpan="2"
                                        Grid.Row="1">
-                                <Grid Name="GridNetworkChartGrid"/>
-                            </idd:Chart>
+                                <idd:Chart Name="iddChartNetwork"
+                                       Margin="2,0,0,0"
+                                       Background="{StaticResource CanvasColor}"
+                                       Foreground="{StaticResource ForegroundColor}"
+                                       Style="{StaticResource HealthReportChart}">
+                                    <Grid Name="gridNetworkChartGrid"/>
+                                </idd:Chart>
+                            </Border>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="7*"/>
-                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"/>

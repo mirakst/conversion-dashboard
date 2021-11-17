@@ -1,7 +1,6 @@
 using DashboardFrontend;
 using DashboardFrontend.DetachedWindows;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -81,13 +80,13 @@ namespace DashboardInterface
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportDetached expandHr = new();
-            _chartVm = new ChartViewModel();
 
             if (_isStarted)
             {
                 _chartVm.Dispose();
             }
 
+            ChartVM = new();
             ButtonHealthReportDetach.IsEnabled = false;
             expandHr.Closing += OnHealthWindowClosing;
             

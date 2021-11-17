@@ -73,7 +73,7 @@ namespace DashboardFrontend
 
             while (await _timer!.WaitForNextTickAsync())
             {
-                if (!int.TryParse(_userView.Text.Split(' ')[0], out var userViewInt)) { userViewInt = 6; }
+                if (!int.TryParse(_userView.Text.Split(' ')[0], out int userViewInt)) { userViewInt = 6; }
 
                 long maxView = TimeSpan.TicksPerMinute * userViewInt;
 
@@ -92,7 +92,7 @@ namespace DashboardFrontend
                     _chart.PlotOriginX = AutoFitChart(userViewInt, maxView, dataCollection);
                 }
 
-                
+
             }
         }
 

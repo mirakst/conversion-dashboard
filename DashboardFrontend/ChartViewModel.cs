@@ -1,10 +1,7 @@
 ﻿using InteractiveDataDisplay.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -28,6 +25,12 @@ namespace DashboardFrontend
         private readonly List<long> _networkReceivedReadings = new();
         /* To here */
 
+        /// <summary>
+        /// Adds two lines to the Performance Chart and start GenerateData().
+        /// </summary>
+        /// <param name="_chart">A chart the lines should be plotted on.</param>
+        /// <param name="_grid">The sub-grid for the [Chart].</param>
+        /// <param name="_userTimeInterval">The [TextBox] for user input.</param>
         public void PerformanceMonitoringStart(Chart _chart, Grid _grid, TextBox _userChartTimeInterval)
         {
             _dataGenerationTimer  = new PeriodicTimer(TimeSpan.FromSeconds(1));
@@ -39,7 +42,13 @@ namespace DashboardFrontend
             _monitoring.GenerateData(_dataGenerationTimer, _chart, _userChartTimeInterval);
         }
 
-        public void NetworkMonitoringStart(Chart _chart, Grid _grid, TextBox _userChartTimeInterval)
+        /// <summary>
+        /// Adds two lines to the Network Chart and start GenerateData().
+        /// </summary>
+        /// <param name="_chart">A chart the lines should be plotted on.</param>
+        /// <param name="_grid">The sub-grid for the [Chart].</param>
+        /// <param name="_userTimeInterval">The [TextBox] for user input.</param>
+        public void NetworkMonitoringStart(Chart _chart, Grid _grid, TextBox _userTimeInterval)
         {
             _dataGenerationTimer  = new PeriodicTimer(TimeSpan.FromSeconds(1));
             _monitoring = new HealthReportMonitoring();
@@ -49,6 +58,9 @@ namespace DashboardFrontend
             _monitoring.GenerateData(_dataGenerationTimer, _chart, _userChartTimeInterval);
         }
 
+        /// <summary>
+        /// Disposes the [PeriodicTimer].
+        /// </summary>
         public void Dispose()
         {
             _dataGenerationTimer?.Dispose();
