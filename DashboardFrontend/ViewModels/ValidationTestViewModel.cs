@@ -7,19 +7,37 @@ namespace DashboardFrontend.ViewModels
 {
     public class ValidationTestViewModel
     {
-        public ValidationTestViewModel(string manager, string managerNameFull, List<ValidationTest> tests)
+        public ValidationTestViewModel(string manager)
         {
             ManagerName = manager;
-            ManagerNameFull = managerNameFull;
-            Tests = tests;
         }
 
         public string ManagerName { get; set; }
-        public string ManagerNameFull { get; set; }
-        public List<ValidationTest> Tests { get; set; }
-        public int OkCount => Tests.Count(t => t.Status == ValidationStatus.Ok);
-        public int DisabledCount => Tests.Count(t => t.Status == ValidationStatus.Disabled);
-        public int FailedCount => Tests.Count(t => t.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-        public int TotalCount => Tests.Count;
+        public List<ValidationTest> TestsOk { get; set; } = new();
+        public List<ValidationTest> TestsDisabled { get; set; } = new();
+        public List<ValidationTest> TestsFailed { get; set; } = new();
+        public int OkCount => TestsOk.Count;
+        public int DisabledCount => TestsDisabled.Count;
+        public int FailedCount => TestsFailed.Count;
+        public int TotalCount => OkCount + DisabledCount + FailedCount;
+
+        public void AddTest(ValidationTest test)
+        {
+            switch(test.Status)
+            {
+                case ValidationStatus.Disabled:
+                    TestsDisabled.Add(test);
+                    break;
+                case ValidationStatus.Failed:
+                case ValidationStatus.FailMismatch:
+                    TestsFailed.Add(test);
+                    break;
+                case ValidationStatus.Ok:
+                    TestsOk.Add(test);
+                    break;
+                default:
+                    return;
+            }
+        }
     }
 }

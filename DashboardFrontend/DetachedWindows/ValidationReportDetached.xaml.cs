@@ -25,7 +25,7 @@ namespace DashboardFrontend.DetachedWindows
         {
             InitializeComponent();
             ValidationReport = validationReport;
-            ViewModel = new(validationReport);
+            ViewModel = new(validationReport, validationsDataGrid);
             DataContext = ViewModel;
         }
         
@@ -41,20 +41,6 @@ namespace DashboardFrontend.DetachedWindows
                     row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     break;
                 }
-        }
-
-        private void textBoxValidationReportSearchBar_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string filter = ((TextBox)sender).Text;
-            foreach(var item in ViewModel.Data)
-            {
-                DataGridRow row = (DataGridRow)validationsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
-                Visibility targetVisibility = item.ManagerName.Contains(filter) ? Visibility.Visible : Visibility.Collapsed;
-                if (row.Visibility != targetVisibility)
-                {
-                    row.Visibility = targetVisibility;
-                }
-            }
         }
     }
 }
