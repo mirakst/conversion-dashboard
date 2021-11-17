@@ -42,6 +42,23 @@ namespace DashboardFrontend.DetachedWindows
                     break;
                 }
         }
+
+        private void textBoxValidationReportSearchBar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filter = ((TextBox)sender).Text;
+            foreach(var item in ViewModel.Data)
+            {
+                DataGridRow row = (DataGridRow)validationsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (item.Manager.Contains(filter))
+                {
+                    row.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    row.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
     }
 }
 

@@ -19,6 +19,7 @@
             Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TextBox Name="textBoxValidationReportSearchBar"
+                     TextChanged="textBoxValidationReportSearchBar_TextChanged"
                      Margin="0,0,5,5"
                      Grid.Column="0"
                      Grid.Row="0"/>
@@ -39,6 +40,7 @@
                     Grid.Row="0"/>
             
             <DataGrid ItemsSource="{Binding Data}"
+                      x:Name="validationsDataGrid"
                         AutoGenerateColumns="False"
                         Grid.Row="1"
                         Grid.ColumnSpan="3"

@@ -14,8 +14,8 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var thingy = (ValidationTestViewModel)value;
-            return $"{thingy.OkCount} of {thingy.TotalCount}";
+            var test = (ValidationTestViewModel)value;
+            return $"{test.OkCount} of {test.TotalCount}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
