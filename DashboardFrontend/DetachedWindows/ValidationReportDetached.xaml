@@ -19,7 +19,7 @@
             Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TextBox Name="textBoxValidationReportSearchBar"
-                     TextChanged="textBoxValidationReportSearchBar_TextChanged"
+                     Text="{Binding NameFilter,UpdateSourceTrigger=PropertyChanged}"
                      Margin="0,0,5,5"
                      Grid.Column="0"
                      Grid.Row="0"/>
@@ -49,7 +49,7 @@
                         RowDetailsVisibilityMode="Collapsed" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" SelectionMode="Single" IsReadOnly="True" CanUserReorderColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Manager"
-                                        Binding="{Binding ManagerNameFull}"
+                                        Binding="{Binding ManagerName}"
                                         Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -102,20 +102,8 @@
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Converter={StaticResource ShowSuccessfulManagersConverter}}"
-                                                Value="True"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},Path=DataContext.ShowSuccessfulManagers}"
-                                                Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="LightBlue"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="False">
-                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="Background" Value="WhiteSmoke"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -148,56 +136,82 @@
 
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
-                            <Separator Margin="0,5,0,5"/>
-                            
-                            <ItemsControl ItemsSource="{Binding Tests}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Height="60">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Date,StringFormat=\(d/M HH:mm\)}"
-                                                           Margin="0 0 5 0"/>
-                                                <TextBlock Text="{Binding Status}"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal"
+                        <StackPanel Orientation="Vertical"
+                                    Margin="0 5 0 5">
+                            <Separator/>
+                            <StackPanel Margin="0 15 0 0"> <!-- add visibility binding here --> 
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Icons/Fatal.png" 
+                                       Width="24"/>
+                                    <TextBlock Text="Failed" 
+                                           VerticalAlignment="Center"
+                                           Margin="5 0 0 0"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="Red"/>
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding TestsFailed}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Height="60"
+                                              Margin="0,10,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*"/>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Date,StringFormat=\(d/M HH:mm\)}"
+                                                           Foreground="Gray"
+                                                           Margin="0 0 10 0"/>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal"
                                                         Grid.Row="1">
-                                                <TextBlock Text="{Binding SrcCount,TargetNullValue='Src=N/A',StringFormat='Src=\{0\}'}"
+                                                    <TextBlock Text="Source Count  "
+                                                           Foreground="Gray"/>
+                                                    <TextBlock Text="{Binding SrcCount,TargetNullValue='N/A'}"
                                                            Margin="0 0 50 0"/>
-                                                <TextBlock Text="{Binding DstCount,TargetNullValue='Dst=N/A',StringFormat='Dst=\{0\}'}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.Template>
-                                    <ControlTemplate TargetType="ItemsControl">
-                                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderBrush}">
-                                            <ItemsPresenter/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </ItemsControl.Template>
-                            </ItemsControl>
-                            <Separator Margin="0,5,0,5"/>
+                                                    <TextBlock Text="Dest Count  "
+                                                           Foreground="Gray"/>
+                                                    <TextBlock Text="{Binding DstCount}"
+                                                           Margin="0 0 50 0"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.Template>
+                                        <ControlTemplate TargetType="ItemsControl">
+                                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderBrush}">
+                                                <ItemsPresenter/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ItemsControl.Template>
+                                </ItemsControl>
+                            </StackPanel>                                
+                            <Separator/>
                         </StackPanel>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
                 
             <StackPanel Orientation="Horizontal"
-                        Grid.Row="2" Grid.ColumnSpan="3"
-                        VerticalAlignment="Center">
-                <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
-                <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="0 0 50 0"/>
-                <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" Foreground="{DynamicResource validationReportErrorColor}" Margin="0 0 50 0"/>
+                        Grid.Row="2" 
+                        Grid.ColumnSpan="3"
+                        Margin="0 10 0 0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right">
+                <Image Source="/Icons/Fatal.png" Width="20"/>
+                <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" Foreground="{DynamicResource validationReportErrorColor}" Margin="5 0 50 0"/>
+                <Image Source="/Icons/Warning.png" Width="20"/>
+                <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="5 0 50 0"/>
+                <Image Source="/Icons/Validation.png" Width="20"/>
+                <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="{DynamicResource validationReportOkColor}" Margin="5 0 50 0"/>
+                <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
             </StackPanel>
             
             <Grid.ColumnDefinitions>

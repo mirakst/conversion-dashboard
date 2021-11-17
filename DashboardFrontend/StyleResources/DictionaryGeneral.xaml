@@ -10,6 +10,7 @@
 
     <!-- Validation Report -->
     <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
+    <SolidColorBrush x:Key="validationReportOkColor" Color="Green"/>
     <SolidColorBrush x:Key="validationReportDisabledColor" Color="Yellow"/>
     <SolidColorBrush x:Key="validationReportErrorColor" Color="Red"/>
 
