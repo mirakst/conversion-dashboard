@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Model;
 using DashboardBackend;
 using DashboardBackend.Database;
+using DashboardFrontend;
+using System.Threading;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -22,6 +16,23 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
+        private PeriodicTimer DataGenerationTimer;
+        private ManagerMonitoring managerMonitoring = new();
+        private bool IsRunning = false;
+
+
+        // remove later
+        private List<DateTime> RamDateTime = new();
+        private List<DateTime> CpuDateTime = new();
+        private List<DateTime> ReadDateTime = new();
+        private List<DateTime> WrittenDateTime = new();
+
+        private List<long> RamReadings = new();
+        private List<long> CpuReadings = new();
+        private List<long> ReadReadings = new();
+        private List<long> WrittenReadings = new();
+        //
+
         public ManagerListDetached()
         {
             InitializeComponent();
@@ -33,7 +44,7 @@ namespace DashboardFrontend.DetachedWindows
             conv.HealthReport = DataUtilities.BuildHealthReport();         //
             DataUtilities.AddHealthReportReadings(conv.HealthReport);      //
 
-            Random random = new Random(5);
+            Random random = new(5);
 
             foreach (Manager manager in conv.ActiveExecution.Managers)
             {
@@ -53,14 +64,29 @@ namespace DashboardFrontend.DetachedWindows
                     if (!datagridManagerDetails.Items.Contains(manager))
                     {
                         DatagridManagerMover("Add", manager);
+
+                        managerMonitoring.AddLine(CpuDateTime, CpuReadings, gridChartCPUload, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
+                        managerMonitoring.AddLine(RamDateTime, RamReadings, gridChartRAMusage, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
+                        managerMonitoring.AddLine(ReadDateTime, ReadReadings, gridChartRowsRead, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
+                        managerMonitoring.AddLine(WrittenDateTime, WrittenReadings, gridChartRowsWritten, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
                     }
                 }
             }
-            else
+            else if (!datagridManagerDetails.Items.Contains(selectedManager))
             {
                 DatagridManagerMover("Add", selectedManager);
             }
             datagridManagers.SelectedItems.Clear();
+
+            if (IsRunning == false)
+            {
+                DataGenerationTimer = new(TimeSpan.FromSeconds(1));
+                managerMonitoring.GenerateData(DataGenerationTimer, chartCPUload);
+                managerMonitoring.GenerateData(DataGenerationTimer, chartRAMusage);
+                managerMonitoring.GenerateData(DataGenerationTimer, chartRowsRead);
+                managerMonitoring.GenerateData(DataGenerationTimer, chartRowsWritten);
+                IsRunning = true;
+            }
         }
 
         private void RemoveManager_Click(object sender, RoutedEventArgs e)

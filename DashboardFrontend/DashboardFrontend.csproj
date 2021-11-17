@@ -13,4 +13,9 @@
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
 </Project>

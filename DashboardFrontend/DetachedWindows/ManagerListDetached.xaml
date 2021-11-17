@@ -15,7 +15,8 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"
+                                  MaxWidth="640"/>
                 <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="15"/>
@@ -168,14 +169,14 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
                             
-                            <idd:Chart x:Name="chartCPUload"
+                            <idd:Chart Name="chartCPUload"
                                        LeftTitle="CPU Usage"
                                        BottomTitle="Time"
-                                       LegendVisibility="Hidden"
+                                       LegendVisibility="Visible"
                                        Background="{DynamicResource BackgroundColor}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        Margin="0,5,0,0"
@@ -185,7 +186,7 @@
                                 <Grid x:Name="gridChartCPUload"/>
                             </idd:Chart>
 
-                            <idd:Chart x:Name="chartRAMusage"
+                            <idd:Chart Name="chartRAMusage"
                                        LeftTitle="RAM Usage"
                                        BottomTitle="Time"
                                        LegendVisibility="Hidden"
@@ -198,7 +199,7 @@
                                 <Grid x:Name="gridChartRAMusage"/>
                             </idd:Chart>
 
-                            <idd:Chart x:Name="chartRowsRead"
+                            <idd:Chart Name="chartRowsRead"
                                        LeftTitle="Rows read"
                                        BottomTitle="Time"
                                        LegendVisibility="Hidden"
@@ -211,7 +212,7 @@
                                 <Grid x:Name="gridChartRowsRead"/>
                             </idd:Chart>
 
-                            <idd:Chart x:Name="chartRowsWritten"
+                            <idd:Chart Name="chartRowsWritten"
                                        LeftTitle="Rows written"
                                        BottomTitle="Time"
                                        LegendVisibility="Hidden"
@@ -224,7 +225,7 @@
                                 <Grid x:Name="gridChartRowsWritten"/>
                             </idd:Chart>
 
-                            <DataGrid x:Name="datagridManagerCharts"
+                            <DataGrid Name="datagridManagerCharts"
                                       Grid.Row="0"
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
