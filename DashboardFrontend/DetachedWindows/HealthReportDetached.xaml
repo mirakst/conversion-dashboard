@@ -65,7 +65,7 @@
                         </Grid>
                     </Border>
                 </TabItem>
-                <TabItem Style="{DynamicResource TabItemStyleOverwrite}" 
+                <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="tabItemNewtwork"
                          Header="Network">
                     <Border Margin="10">
