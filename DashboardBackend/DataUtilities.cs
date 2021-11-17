@@ -11,7 +11,7 @@ namespace DashboardBackend
     public static class DataUtilities
     {
         //The class that handles the state database queries. Default is SQL.
-        public static IDatabaseHandler DatabaseHandler { get; set; }
+        public static IDatabaseHandler DatabaseHandler { get; set; } = new SqlDatabase();
 
 
         //Set SQL minimum DateTime as default.
@@ -26,7 +26,6 @@ namespace DashboardBackend
         /// <returns>A list of executions, matching the supplied constraints.</returns>
         public static List<Execution> GetExecutions(DateTime minDate)
         {
-
             List<ExecutionEntry> queryResult = DatabaseHandler.QueryExecutions(minDate);
 
             return (from item in queryResult 
@@ -54,12 +53,16 @@ namespace DashboardBackend
         {
             List<AfstemningEntry> queryResult = DatabaseHandler.QueryAfstemninger(minDate);
 
-            return (from test in queryResult 
-                    let afstemtDato = test.Afstemtdato 
-                    let description = test.Description 
-                    let status = GetValidationStatus(test) 
-                    let manager = test.Manager 
-                    select new ValidationTest(afstemtDato, description, status, manager))
+            return (from item in queryResult
+                    let date = item.Afstemtdato
+                    let name = item.Description
+                    let status = GetValidationStatus(item)
+                    let srcCount = item.Srcantal
+                    let dstCount = item.Dstantal
+                    let toolkitId = item.ToolkitId
+                    let srcSql = item.SrcSql
+                    let dstSql = item.DstSql
+                    select new ValidationTest(date, name, status, name, srcCount, dstCount, toolkitId, srcSql, dstSql))
                     .ToList();
         }
 
