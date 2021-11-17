@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +14,21 @@ using System.Windows.Shapes;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class ValidationReportDetached : Window
+    public partial class ConnectDBDialog : Window
     {
-        public ValidationReportDetached()
+        public ConnectDBDialog()
         {
             InitializeComponent();
+        }
+
+        private void OnButtonConnectDBClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OnButtonBackClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

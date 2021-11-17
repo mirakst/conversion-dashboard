@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Log monitoring" Height="450" Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Name ="gridLog"
@@ -27,7 +27,7 @@
                           Margin="0,0,10,0"
                           Style="{DynamicResource DefaultToggleButton}"/>
             <Image Name="imageWarn" 
-                   Source="../Icons/Warn.png" 
+                   Source="../Icons/Warning.png" 
                    Grid.Column="1" 
                    Stretch="Fill" 
                    Width="15" 
