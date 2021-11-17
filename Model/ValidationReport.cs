@@ -12,7 +12,7 @@
         #region Properties
         public DateTime LastModified { get; private set; }
 
-        private List<ValidationTest> _validationTests = new();
+        private readonly List<ValidationTest> _validationTests = new();
         public List<ValidationTest> ValidationTests
         {
             get => _validationTests;

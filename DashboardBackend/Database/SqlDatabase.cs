@@ -33,12 +33,12 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<LoggingEntry> QueryLogMessages(int ExecutionId, DateTime minDate)
+        public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
         {
             using NetcompanyDbContext db = new();
             var queryResult = db.Loggings
                                 .Where(e => e.Created > minDate)
-                                .Where(e => e.ExecutionId == ExecutionId)
+                                .Where(e => e.ExecutionId == executionId)
                                 .OrderBy(e => e.Created);
 
             return queryResult.ToList();
