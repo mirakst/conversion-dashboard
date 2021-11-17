@@ -7,7 +7,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("LOGGING_CONTEXT")]
-    public partial class LoggingContext
+    public partial class LoggingContextEntry
     {
         [Column("CONTEXT_ID")]
         public long ContextId { get; set; }

@@ -15,7 +15,7 @@ namespace DashboardBackend.Database.Models
         DbSet<ExecutionEntry> Executions { get; set; }
         DbSet<HealthReportEntry> HealthReports { get; set; }
         DbSet<LoggingEntry> Loggings { get; set; }
-        DbSet<LoggingContext> LoggingContexts { get; set; }
+        DbSet<LoggingContextEntry> LoggingContexts { get; set; }
         DbSet<ManagerEntry> Managers { get; set; }
         DbSet<ManagerTracking> ManagerTrackings { get; set; }
         DbSet<MigrationFile> MigrationFiles { get; set; }
