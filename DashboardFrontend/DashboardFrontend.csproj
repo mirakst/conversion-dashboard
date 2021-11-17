@@ -25,6 +25,7 @@
     <None Remove="Icons\Settings4.png" />
     <None Remove="Icons\Start.png" />
     <None Remove="Icons\Stop.png" />
+    <None Remove="Icons\Validation.png" />
     <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
@@ -61,6 +62,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Stop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Validation.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Warning.png">

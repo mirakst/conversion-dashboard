@@ -8,23 +8,23 @@ namespace DashboardFrontend.StyleResources
 {
     public class CustomLabelProvider : ILabelProvider
     {
-        public static DateTime Origin = new(2000, 1, 1);
+        private static readonly DateTime Origin = new(2000, 1, 1);
 
         public FrameworkElement[] GetLabels(double[] ticks)
         {
             if (ticks == null)
-                throw new ArgumentNullException("ticks");
+                throw new ArgumentNullException(nameof(ticks));
 
-            List<TextBlock> Labels = new();
+            List<TextBlock> labels = new();
             foreach (double tick in ticks)
             {
                 TextBlock text = new();
                 var time = Origin + TimeSpan.FromTicks((long)tick);
                 text.Text = time.ToLongTimeString();
-                Labels.Add(text);
+                labels.Add(text);
 
             }
-            return Labels.ToArray();
+            return labels.ToArray();
         }
     }
 

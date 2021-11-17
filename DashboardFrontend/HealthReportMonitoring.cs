@@ -13,16 +13,16 @@ namespace DashboardFrontend
     public class HealthReportMonitoring
     {
         //UserViewInput should be bound to a user input
-        private List<DataClass> _dataCollections = new();
+        private readonly List<DataClass> _dataCollections = new();
 
         /// <summary>
         /// A class constructed of [DateTime] list, [long] List and a [LineGraph].
         /// </summary>
         private class DataClass
         {
-            public List<DateTime> Time = new();
-            public List<long> Readings = new();
-            public LineGraph Line;
+            public readonly List<DateTime> Time;
+            public readonly List<long> Readings;
+            public readonly LineGraph Line;
 
             public DataClass(List<DateTime> _time, List<long> _readings, LineGraph line)
             {
@@ -33,7 +33,7 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// A function to create a new DataClass and add it ti the dataCollections list.
+        /// A function to create a new DataClass and add it to the dataCollections list.
         /// </summary>
         /// <param name="_timeList">A list of [DateTime] objects.</param>
         /// <param name="_readingsList">A list of [long] objects.</param>
@@ -62,20 +62,20 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// A function for generationg data for all DataClass'.
+        /// A function for generating data for all DataClass'.
         /// </summary>
         /// <param name="_timer">A [PeriodicTimer] that calls the function.</param>
         /// <param name="_chart">The [Chart] each [DataCollection] should be plotted on.</param>
-        public async void GenerateData(PeriodicTimer _timer, Chart _chart, TextBox _userView)
+        /// <param name="_userView">The input duration to show on the chart.</param>
+        public async void GenerateData(PeriodicTimer? _timer, Chart _chart, TextBox _userView)
         {
             Random random = new();
-            int userViewInt = 6;
 
-            while (await _timer.WaitForNextTickAsync())
+            while (await _timer!.WaitForNextTickAsync())
             {
-                if (!int.TryParse(_userView.Text.Split(' ')[0], out userViewInt)) { userViewInt = 6; }
+                if (!int.TryParse(_userView.Text.Split(' ')[0], out var userViewInt)) { userViewInt = 6; }
 
-                long MaxView = TimeSpan.TicksPerMinute * userViewInt;
+                long maxView = TimeSpan.TicksPerMinute * userViewInt;
 
                 foreach (DataClass dataCollection in _dataCollections)
                 {
@@ -87,11 +87,9 @@ namespace DashboardFrontend
 
                     _chart.PlotHeight = 105;
 
-                    if (!_chart.IsMouseOver)
-                    {
-                        _chart.PlotWidth = MaxView;
-                        _chart.PlotOriginX = AutoFitChart(userViewInt, MaxView, dataCollection);
-                    }
+                    if (_chart.IsMouseOver) continue;
+                    _chart.PlotWidth = maxView;
+                    _chart.PlotOriginX = AutoFitChart(userViewInt, maxView, dataCollection);
                 }
 
                 
@@ -107,12 +105,9 @@ namespace DashboardFrontend
         /// <returns></returns>
         private static long AutoFitChart(int _userViewInt, long _maxView, DataClass _dataCollection)
         {
-            if (_dataCollection.Time.Last().Ticks - _dataCollection.Time.First().Ticks >= _maxView * 0.9)
-            {
-                return DateTime.Now.AddMinutes(-(_userViewInt * 0.9)).Ticks;
-            }
-
-            return _dataCollection.Time.First().Ticks;
+            return _dataCollection.Time.Last().Ticks - _dataCollection.Time.First().Ticks >= _maxView * 0.9 ? 
+                DateTime.Now.AddMinutes(-(_userViewInt * 0.9)).Ticks : 
+                _dataCollection.Time.First().Ticks;
         }
 
         /// <summary>
@@ -121,9 +116,9 @@ namespace DashboardFrontend
         /// <param name="_dataCollection"></param>
         private static void UpdateChart(DataClass _dataCollection)
         {
-            var _valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
+            var valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
 
-            _dataCollection.Line.Plot(_valueY, _dataCollection.Readings);
+            _dataCollection.Line.Plot(valueY, _dataCollection.Readings);
         }
     }
 }
