@@ -1,93 +1,129 @@
-﻿using DashboardFrontend.DetachedWindows;
+using DashboardFrontend;
+using DashboardFrontend.DetachedWindows;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
+        private ChartViewModel? _chartVm;
+        private bool _isStarted;
+
         public MainWindow()
         {
             InitializeComponent();
+            IddChartHealthReportGraph.PlotOriginX = DateTime.Now.Ticks;
+            IddChartHealthReportGraph.PlotWidth = TimeSpan.FromMinutes(6).Ticks;
+            IddChartHealthReportGraph.PlotHeight = 105;
         }
 
-        public void StartStopButtonClick(object sender, RoutedEventArgs e)
+        private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
-            //DialogWindow dialogWindow = new();
-            //dialogWindow.Owner = Application.Current.MainWindow;
-            //dialogWindow.ShowDialog();
+            this.DragMove();
         }
 
-        //Expand window events
-        public void SettingsButtonClick(object sender, RoutedEventArgs e)
+        public void ButtonStartStopClick(object sender, RoutedEventArgs e)
+        {
+            //ConnectDBDialog dialogPopup = new();
+            //dialogPopup.Owner = Application.Current.MainWindow;
+            //dialogPopup.ShowDialog();
+
+            /* Should be moved to OnConnected */
+            if (!_isStarted)
+            {
+                _chartVm = new();
+                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+                _isStarted = true;
+            }
+            else
+            {
+                _chartVm?.Dispose();
+                _isStarted = false;
+            }
+        }
+
+        //Detach window events
+        public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             //SettingsWindow settingsWindow = new();
             //settingsWindow.Closing += OnSettingsWindowClosing;
-            //settingsWindow.IsEnabled = false;
-            //settingsWindow.Owner = Application.Current.MainWindow;
             //settingsWindow.ShowDialog();
         }
 
-        public void ExpandManagerButtonClick(object sender, RoutedEventArgs e)
+        public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
             ManagerListDetached expandmanager = new();
-            managerExpandButton.IsEnabled = false;
+            buttonDetachManager.IsEnabled = false;
             expandmanager.Closing += OnHealthWindowClosing;
-            expandmanager.Owner = Application.Current.MainWindow;
             expandmanager.Show();
         }
 
-        public void ExpandLogButtonClick(object sender, RoutedEventArgs e)
+        public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            //LogWindow expandLog = new();
-            //expandLog.Closing += OnLogWindowClosing;
-            //logExpandButton.IsEnabled = false;
-            //expandLog.Owner = Application.Current.MainWindow;
-            //expandLog.Show();
+            LogDetached detachLog = new();
+            detachLog.Closing += OnLogWindowClosing;
+            ButtonLogDetach.IsEnabled = false;
+            detachLog.Show();
         }
 
-        public void ExpandValidationReportButtonClick(object sender, RoutedEventArgs e)
+        public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            //ValidationReportWindow expandVR = new();
-            //expandVR.Closing += OnValidationWindowClosing;
-            //validationReportExpandButton.IsEnabled = false;
-            //expandVR.Owner = Application.Current.MainWindow;
-            //expandVR.Show();
+            ValidationReportDetached detachVr = new();
+            detachVr.Closing += OnValidationWindowClosing;
+            ButtonValidationReportDetach.IsEnabled = false;
+            detachVr.Show();
         }
 
-        public void ExpandHealthReportButtonClick(object sender, RoutedEventArgs e)
+        public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHR = new();
-            healthReportExpandButton.IsEnabled = false;
-            expandHR.Closing += OnHealthWindowClosing;
-            expandHR.Owner = Application.Current.MainWindow;
-            expandHR.Show();
+            HealthReportDetached expandHr = new();
+            _chartVm = new ChartViewModel();
+
+            if (_isStarted)
+            {
+                _chartVm.Dispose();
+            }
+
+            ButtonHealthReportDetach.IsEnabled = false;
+            expandHr.Closing += OnHealthWindowClosing;
+            
+            expandHr.Show();
+            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
+            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            settingsButton.IsEnabled = true;
+            ButtonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            managerExpandButton.IsEnabled = true;
+            ButtonDetachManager.IsEnabled = true;
         }
 
-        private void OnLogWindowClosing(object sender, CancelEventArgs e)
+        private void OnLogWindowClosing(object? sender, CancelEventArgs e)
         {
-            logExpandButton.IsEnabled = true;
+            ButtonLogDetach.IsEnabled = true;
         }
 
-        private void OnValidationWindowClosing(object sender, CancelEventArgs e)
+        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            validationReportExpandButton.IsEnabled = true;
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
-        private void OnHealthWindowClosing(object sender, CancelEventArgs e)
+        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            healthReportExpandButton.IsEnabled = true;
+            _chartVm?.Dispose();
+            _chartVm = new ChartViewModel();
+            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+
+            ButtonHealthReportDetach.IsEnabled = true;
         }
     }
 }

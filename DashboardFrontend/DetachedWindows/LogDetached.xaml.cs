@@ -2,9 +2,9 @@
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class HealthReportDetached
+    public partial class LogDetached
     {
-        public HealthReportDetached()
+        public LogDetached()
         {
             InitializeComponent();
         }
