@@ -40,7 +40,10 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Active profile" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="Active profile"
+                                           FontSize="16"
+                                           VerticalAlignment="Center"/>
+
                         <TextBlock Grid.Row="1" Text="Conversion name" VerticalAlignment="Center"/>
 
                         <TextBlock Grid.Column="1" Text='{Binding ActiveProfile.Name,FallbackValue="-"}' FontSize="16" VerticalAlignment="Center"/>
