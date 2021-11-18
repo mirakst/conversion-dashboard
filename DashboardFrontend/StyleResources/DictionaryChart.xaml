@@ -4,7 +4,7 @@
                     xmlns:local="clr-namespace:DashboardFrontend.StyleResources">
 
     <!-- Custom Axis -->
-    <Style x:Key="timeAxisStyle" TargetType="idd:PlotAxis">
+    <Style x:Key="TimeAxisStyle" TargetType="idd:PlotAxis">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="idd:PlotAxis">
@@ -52,7 +52,7 @@
                                           AxisOrientation="Bottom"
                                           IsReversed = "{Binding IsYAxisReversed, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                           Foreground="{TemplateBinding Foreground}"
-                                          Style="{StaticResource timeAxisStyle}">
+                                          Style="{StaticResource TimeAxisStyle}">
                                 <idd:MouseNavigation IsHorizontalNavigationEnabled="False"/>
                             </idd:PlotAxis>
                             <idd:AxisGrid x:Name="PART_axisGrid"

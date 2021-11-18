@@ -2,7 +2,7 @@
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class LogDetached : Window
+    public partial class LogDetached
     {
         public LogDetached()
         {

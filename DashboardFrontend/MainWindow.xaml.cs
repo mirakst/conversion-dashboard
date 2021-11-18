@@ -6,29 +6,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Threading;
-using System.Windows.Media;
 
 namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
-        private PeriodicTimer DataGenerationTimer;
-        private HealthReportMonitoring Monitoring;
-
-        /* List' should be removed once RAM and CPU data is available */
-        private List<DateTime> RamDateTime = new();
-        private List<long> RamReadings = new();
-
-        private List<DateTime> CpuDataTime = new();
-        private List<long> CpuReadings = new();
-        /* To here */
-
-        private bool IsStarted = false;
+        private ChartViewModel? _chartVm;
+        private bool _isStarted;
 
         public MainWindow()
         {
             InitializeComponent();
+            TryLoadUserSettings();
+        }
+
+        private UserSettings UserSettings { get; } = new();
+
+        private void TryLoadUserSettings()
+        {
             try
             {
                 UserSettings.LoadFromFile();
@@ -47,8 +42,6 @@ namespace DashboardInterface
             }
         }
 
-        private UserSettings UserSettings { get; } = new();
-
         private void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
@@ -66,22 +59,16 @@ namespace DashboardInterface
             //dialogPopup.ShowDialog();
 
             /* Should be moved to OnConnected */
-            if (!IsStarted)
+            if (!_isStarted)
             {
-                DataGenerationTimer  = new(TimeSpan.FromSeconds(1));
-                Monitoring = new();
-
-                gridHealthReportChartGridChartGrid.Children.Clear();
-                Monitoring.Add(RamDateTime, RamReadings, gridHealthReportChartGridChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(133, 222, 118), 2);
-                Monitoring.Add(CpuDataTime, CpuReadings, gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(245, 88, 47), 2);
-                Monitoring.GenerateData(DataGenerationTimer, iddChartHealthReportGraph, textBoxChartTimeInterval);
-                
-                IsStarted = true;
+                _chartVm = new();
+                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+                _isStarted = true;
             }
             else
             {
-                DataGenerationTimer.Dispose();
-                IsStarted = false;
+                _chartVm?.Dispose();
+                _isStarted = false;
             }
         }
 
@@ -107,75 +94,64 @@ namespace DashboardInterface
         {
             LogDetached detachLog = new();
             detachLog.Closing += OnLogWindowClosing;
-            buttonLogDetach.IsEnabled = false;
+            ButtonLogDetach.IsEnabled = false;
             detachLog.Show();
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportDetached detachVR = new();
-            detachVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportDetach.IsEnabled = false;
-            detachVR.Show();
+            ValidationReportDetached detachVr = new();
+            detachVr.Closing += OnValidationWindowClosing;
+            ButtonValidationReportDetach.IsEnabled = false;
+            detachVr.Show();
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHR = new();
+            HealthReportDetached expandHr = new();
+            _chartVm = new ChartViewModel();
 
-            if (IsStarted)
+            if (_isStarted)
             {
-                DataGenerationTimer.Dispose();
+                _chartVm.Dispose();
             }
 
-            buttonHealthReportDetach.IsEnabled = false;
-            expandHR.Closing += OnHealthWindowClosing;
+            ButtonHealthReportDetach.IsEnabled = false;
+            expandHr.Closing += OnHealthWindowClosing;
             
-            expandHR.Show();
-
-            DataGenerationTimer  = new(TimeSpan.FromSeconds(1));
-            Monitoring = new();
-
-            //gridHealthReportChartGridChartGrid.Children.Clear();
-            Monitoring.Add(RamDateTime, RamReadings, expandHR.gridHealthReportChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(133, 222, 118), 2);
-            Monitoring.Add(CpuDataTime, CpuReadings, expandHR.gridHealthReportChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(245, 88, 47), 2);
-            Monitoring.GenerateData(DataGenerationTimer, expandHR.iddChartHealthReport, expandHR.textBoxChartTimeInterval);
+            expandHr.Show();
+            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
+            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonSettings.IsEnabled = true;
+            ButtonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonDetachManager.IsEnabled = true;
+            ButtonDetachManager.IsEnabled = true;
         }
 
-        private void OnLogWindowClosing(object sender, CancelEventArgs e)
+        private void OnLogWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonLogDetach.IsEnabled = true;
+            ButtonLogDetach.IsEnabled = true;
         }
 
-        private void OnValidationWindowClosing(object sender, CancelEventArgs e)
+        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonValidationReportDetach.IsEnabled = true;
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
-        private void OnHealthWindowClosing(object sender, CancelEventArgs e)
+        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            DataGenerationTimer.Dispose();
+            _chartVm?.Dispose();
+            _chartVm = new ChartViewModel();
+            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
 
-            DataGenerationTimer  = new(TimeSpan.FromSeconds(1));
-            Monitoring = new();
-
-            //gridHealthReportChartGridChartGrid.Children.Clear();
-            Monitoring.Add(RamDateTime, RamReadings, gridHealthReportChartGridChartGrid, "ramUsage", "RAM Usage", Color.FromRgb(133, 222, 118), 2);
-            Monitoring.Add(CpuDataTime, CpuReadings, gridHealthReportChartGridChartGrid, "cpuLoad", "CPU Load", Color.FromRgb(245, 88, 47), 2);
-            Monitoring.GenerateData(DataGenerationTimer, iddChartHealthReportGraph, textBoxChartTimeInterval);
-
-            buttonHealthReportDetach.IsEnabled = true;
+            ButtonHealthReportDetach.IsEnabled = true;
         }
     }
 }
