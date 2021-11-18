@@ -20,6 +20,7 @@ namespace DashboardInterface
 
             _performanceTimer = new(TimeSpan.FromSeconds(1));
             PerformanceViewModel.StartPerformanceGraph(_performanceTimer);
+            PerformanceViewModel.AutoFocusOn();
 
             DataContext = this;
         }
@@ -119,6 +120,17 @@ namespace DashboardInterface
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
             ButtonHealthReportDetach.IsEnabled = true;
+        }
+
+        private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            PerformanceViewModel.AutoFocusOn();
+
+        }
+
+        private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
+        {
+            PerformanceViewModel.AutoFocusOff();
         }
     }
 }

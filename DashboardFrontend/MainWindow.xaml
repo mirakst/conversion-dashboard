@@ -379,7 +379,7 @@
                                                 Series="{Binding Performance}"
                                                 ZoomMode="X" 
                                                 XAxes="{Binding XAxes}"
-                                                YAxes="{Binding YAxes}">
+                                                YAxes="{Binding YAxes}" MouseLeave="CartesianChart_MouseLeave" MouseEnter="CartesianChart_MouseEnter">
                             </lvc:CartesianChart>
                         </Border>
                     </Grid>

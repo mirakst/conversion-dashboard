@@ -27,9 +27,13 @@ namespace DashboardFrontend.ViewModels
         public List<Axis> YAxes { get; set; }
         public int MaxView { get; set; } = 10;
 
+        private double LineSmoothness = 1;
+        private int LinePointSize = 10;
         private readonly Random _random = new Random();
         private readonly ObservableCollection<DateTimePoint> RAMValues = new();
         private readonly ObservableCollection<DateTimePoint> CPUValues = new();
+        private PeriodicTimer _autoFocusTimer;
+        private bool _isAutoFocusTimer = false;
 
         public PerformanceMonitoringViewModel()
         {
@@ -39,22 +43,24 @@ namespace DashboardFrontend.ViewModels
                 {
                     Name = "RAM",
                     Values = RAMValues,
+                    LineSmoothness = LineSmoothness,
                     Fill = null,
-                    Stroke = new SolidColorPaint(new SKColor(133, 222, 118), 2),
-                    GeometryStroke = new SolidColorPaint(new SKColor(133, 222, 118), 2),
-                    GeometryFill = new SolidColorPaint(new SKColor(133, 222, 118), 2),
-                    GeometrySize = 10,
+                    Stroke = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    GeometryStroke = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    GeometryFill = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    GeometrySize = LinePointSize,
                     
                 },
                 new LineSeries<DateTimePoint>
                 {
                     Name = "CPU",
                     Values = CPUValues,
+                    LineSmoothness =LineSmoothness,
                     Fill = null,
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 2),
                     GeometryStroke = new SolidColorPaint(new SKColor(245, 88, 47), 2),
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47), 2),
-                    GeometrySize = 10,
+                    GeometrySize = LinePointSize,
                 }
             };
 
@@ -77,6 +83,30 @@ namespace DashboardFrontend.ViewModels
                     MinLimit = 0,                    
                 }
             };
+        }
+
+        public void AutoFocusOff()
+        {
+            if (_isAutoFocusTimer) { _autoFocusTimer.Dispose(); }
+            _isAutoFocusTimer = false;
+        }
+
+        public async void AutoFocusOn()
+        {
+            if (!_isAutoFocusTimer)
+            {
+                _autoFocusTimer = new(TimeSpan.FromSeconds(1));
+                _isAutoFocusTimer = true;
+
+                while (await _autoFocusTimer.WaitForNextTickAsync())
+                {
+                    if (RAMValues.Count > 0)
+                    {
+                        XAxes[0].MinLimit = RAMValues.Count >= MaxView ? RAMValues.ElementAt(RAMValues.Count - MaxView).DateTime.Ticks : RAMValues.First().DateTime.Ticks;
+                        XAxes[0].MaxLimit = RAMValues.Last().DateTime.Ticks;
+                    }
+                }
+            }
         }
 
         //Skal ikke bruges
@@ -112,5 +142,42 @@ namespace DashboardFrontend.ViewModels
         {
             RAMValues.RemoveAt(0);
         }
+
+        //Functions for settings ---------------------
+
+        /// <summary>
+        /// Sets the smoothness of curves on all lines.
+        /// </summary>
+        /// <param name="_input">A number between 0 and 1. Standart is 1.</param>
+        public void ChangeLineSmoothness(double _input)
+        {
+            if (_input > 1) { return; }
+            else if (_input < 0) { return;}
+
+            foreach (LineSeries<DateTimePoint> line in Performance)
+            {
+                line.LineSmoothness = _input;
+            }
+        }
+        
+        /// <summary>
+        /// Sets the size of line points on all lines.
+        /// </summary>
+        /// <param name="_input">A number between 0 and 60. less is smaller. Standart is 10.</param>
+        public void ChangePointSize(int _input)
+        {
+            if (_input > 60) { return; }
+            else if (_input < 0) { return; }
+
+            foreach (LineSeries<DateTimePoint> line in Performance)
+            {
+                line.GeometrySize = _input;
+            }
+        }
+
+        //public void ChangeLineColor(int _line, byte _r, byte _g, byte _b)
+        //{
+        //    .Stroke = new SolidColorPaint(new SKColor(_r, _g, _b));
+        //}
     }
 }
