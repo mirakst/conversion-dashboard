@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="DefaultDatagrid" TargetType="DataGrid">
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="CanUserDeleteRows" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        <Setter Property="Background" Value="{DynamicResource HeaderColor}"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type DataGridCell}">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource TabItem.Selected.Background}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="Background" Value="{DynamicResource HeaderColor}"/>
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="3,0,0,0"/>
+            </Style>
+            <Style TargetType="{x:Type ScrollBar}">
+                <Setter Property="Background" Value="{DynamicResource HeaderColor}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+</ResourceDictionary>

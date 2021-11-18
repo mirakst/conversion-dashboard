@@ -7,6 +7,7 @@
     <SolidColorBrush x:Key="ForegroundColor" Color="White"/>
     <SolidColorBrush x:Key="BorderColor" Color="#828790"/>
     <SolidColorBrush x:Key="CanvasColor" Color="#2f3136"/>
+    <SolidColorBrush x:Key="HeaderColor" Color="#35373d"/>
 
     <!-- Validation Report -->
     <SolidColorBrush x:Key="ValidationReportNormalColor" Color="White"/>

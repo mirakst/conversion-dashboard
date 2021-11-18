@@ -43,7 +43,7 @@
                 <TextBox Name="textboxSearchbar"
                          TextChanged="textboxSearchbar_TextChanged"
                          Margin="0,0,0,5"
-                         FontSize="15">
+                         Style="{DynamicResource SearchBox}">
                 </TextBox>
 
                 <DockPanel Name="dockpanelSearchbutton"
@@ -64,13 +64,11 @@
                 <DataGrid x:Name="datagridManagers"
                           Grid.Row="1"
                           Grid.ColumnSpan="2"
-                          IsReadOnly="True"
-                          HeadersVisibility="Column"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+                          Style="{DynamicResource DefaultDatagrid}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Id}"
-                                            Width="35pt"/>
+                                            Width="30pt"/>
                         <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Name}"
@@ -106,31 +104,29 @@
                             Background="{DynamicResource BackgroundColor}"
                             BorderBrush="Transparent">
                     <TabItem x:Name="TabInfo"
-                             Style="{DynamicResource DefaultTabItem}"
                              Header="Info"
+                             Style="{DynamicResource TabItemStyleOverwrite}"
                              Height="27">
                         <Grid x:Name="GridInfoTab"
                               Margin="-4,-6,-3,-3">
                             <DataGrid x:Name="datagridManagerDetails"
                                       Margin = "0, 3, 0, 0"
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                      Style="{DynamicResource DefaultDatagrid}">
                                 <DataGrid.Columns>
                                     <!--All of these properties are necessary to move a manager from on datagrid to the other-->
                                     <DataGridTextColumn Header="ID"
                                                         Binding="{Binding Id}"
-                                                        Width="35pt"/>
+                                                        Width="30pt"/>
                                     <DataGridTextColumn Header="Execution #"
                                                         Binding="{Binding ExecutionId}"
                                                         Width="2*"/>
                                     <!-- run # missing in manager class-->
                                     <DataGridTextColumn Header="Start time"
                                                         Binding="{Binding StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
-                                                        Width="3*"/>
+                                                        Width="2*"/>
                                     <DataGridTextColumn Header="End time"
                                                         Binding="{Binding EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
-                                                        Width="3*"/>
+                                                        Width="2*"/>
                                     <DataGridTextColumn Header="Est. runtime"
                                                         Binding="{Binding Runtime}"
                                                         Width="2*"/>
@@ -160,6 +156,7 @@
                     <TabItem
                         x:Name="TabPerformance"
                         Header="Performance"
+                        Style="{DynamicResource TabItemStyleOverwrite}"
                         Height="27">
                         <Grid x:Name="GridPerformanceTab"
                               Margin="-4,-6,-3,-3">
@@ -233,16 +230,13 @@
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
                                       Margin="15,5,0,10"
-                                      Background="{DynamicResource BackgroundColor}"
-                                      IsReadOnly="True"
                                       BorderBrush="Transparent"
-                                      HeadersVisibility="Column"
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
-
+                                      Style="{DynamicResource DefaultDatagrid}"
+                                      Background="{DynamicResource BackgroundColor}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Binding="{Binding Id}"
                                                         Header="ID"
-                                                        Width="40pt"/>
+                                                        Width="30pt"/>
                                     <DataGridTextColumn Binding="{Binding ExecutionId}"
                                                         Header="Exec ID"
                                                         Width="*"/>

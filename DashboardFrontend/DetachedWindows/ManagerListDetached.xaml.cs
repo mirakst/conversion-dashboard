@@ -77,7 +77,7 @@ namespace DashboardFrontend.DetachedWindows
             if (IsRunning == false)
             {
                 _dataGenerationTimer = new(TimeSpan.FromSeconds(1));
-                managerMonitoring.GenerateData(_dataGenerationTimer, chartCPUload, chartRAMusage, chartRowsRead, chartRowsWritten);
+                //Call GenerateData here
                 IsRunning = true;
             }
         }
