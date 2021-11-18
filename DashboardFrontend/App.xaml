@@ -1,0 +1,17 @@
+    <Application x:Class="DashboardInterface.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+        
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="StyleResources/DictionaryButtons.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryChart.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryGeneral.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryListView.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryTab.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
