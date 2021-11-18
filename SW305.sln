@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend", "Dashboa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevConsoleApp", "DevConsoleApp\DevConsoleApp.csproj", "{15030058-50AB-4705-A813-C1181D6BE405}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardFrontend", "DashboardFrontend\DashboardFrontend.csproj", "{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardFrontend", "DashboardFrontend\DashboardFrontend.csproj", "{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
