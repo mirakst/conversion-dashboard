@@ -106,6 +106,7 @@
                             Background="{DynamicResource BackgroundColor}"
                             BorderBrush="Transparent">
                     <TabItem x:Name="TabInfo"
+                             Style="{DynamicResource DefaultTabItem}"
                              Header="Info"
                              Height="27">
                         <Grid x:Name="GridInfoTab"
@@ -172,6 +173,8 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
+                            
+                            
                             
                             <idd:Chart Name="chartCPUload"
                                        LeftTitle="CPU Usage"

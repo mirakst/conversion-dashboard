@@ -16,22 +16,7 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
-        private PeriodicTimer DataGenerationTimer;
-        private ManagerMonitoring managerMonitoring = new();
-        private bool IsRunning = false;
-
-
-        // remove later
-        private List<DateTime> RamDateTime = new();
-        private List<DateTime> CpuDateTime = new();
-        private List<DateTime> ReadDateTime = new();
-        private List<DateTime> WrittenDateTime = new();
-
-        private List<long> RamReadings = new();
-        private List<long> CpuReadings = new();
-        private List<long> ReadReadings = new();
-        private List<long> WrittenReadings = new();
-        //
+        
 
         public ManagerListDetached()
         {
@@ -44,6 +29,8 @@ namespace DashboardFrontend.DetachedWindows
             conv.HealthReport = DataUtilities.BuildHealthReport();         //
             DataUtilities.AddHealthReportReadings(conv.HealthReport);      //
 
+            PeriodicTimer _dataGenerationTimer = new(TimeSpan.FromSeconds(1));
+
             Random random = new(5);
 
             foreach (Manager manager in conv.ActiveExecution.Managers)
@@ -53,38 +40,44 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        private PeriodicTimer _dataGenerationTimer;
+        private ManagerMonitoring managerMonitoring = new();
+        private bool IsRunning = false;
+
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
             Manager? selectedManager = datagridManagers.SelectedItem as Manager;
+            List<Manager> managers = new();
 
             if (datagridManagers.SelectedItems.Count > 1)
             {
+                
                 foreach (Manager manager in datagridManagers.SelectedItems)
                 {
+                    managers.Add(manager);
+
                     if (!datagridManagerDetails.Items.Contains(manager))
                     {
                         DatagridManagerMover("Add", manager);
+                    }
 
-                        managerMonitoring.AddLine(CpuDateTime, CpuReadings, gridChartCPUload, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
-                        managerMonitoring.AddLine(RamDateTime, RamReadings, gridChartRAMusage, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
-                        managerMonitoring.AddLine(ReadDateTime, ReadReadings, gridChartRowsRead, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
-                        managerMonitoring.AddLine(WrittenDateTime, WrittenReadings, gridChartRowsWritten, manager.Name.Split('.').Last(), manager.Name.Split('.').Last());
+                    if (managers.Count == datagridManagers.SelectedItems.Count)
+                    {
+                        //Add multiple lines to charts here.
                     }
                 }
             }
             else if (!datagridManagerDetails.Items.Contains(selectedManager))
             {
                 DatagridManagerMover("Add", selectedManager);
+                //Add line to charts here
             }
             datagridManagers.SelectedItems.Clear();
 
             if (IsRunning == false)
             {
-                DataGenerationTimer = new(TimeSpan.FromSeconds(1));
-                managerMonitoring.GenerateData(DataGenerationTimer, chartCPUload);
-                managerMonitoring.GenerateData(DataGenerationTimer, chartRAMusage);
-                managerMonitoring.GenerateData(DataGenerationTimer, chartRowsRead);
-                managerMonitoring.GenerateData(DataGenerationTimer, chartRowsWritten);
+                _dataGenerationTimer = new(TimeSpan.FromSeconds(1));
+                managerMonitoring.GenerateData(_dataGenerationTimer, chartCPUload, chartRAMusage, chartRowsRead, chartRowsWritten);
                 IsRunning = true;
             }
         }
@@ -103,17 +96,20 @@ namespace DashboardFrontend.DetachedWindows
                 foreach (Manager manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
                 {
                     DatagridManagerMover("Remove", manager);
+                    //Remove multiple lines from charts here
                 }
             }
             else
             {
                 DatagridManagerMover("Remove", selectedManager);
+                //Remove line from charts here
             }
         }
 
         private void ResetManagers_Click(object sender, RoutedEventArgs e)
         {
             DatagridManagerMover("Clear", null);
+            //Clear charts here
         }
 
         private void textboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
