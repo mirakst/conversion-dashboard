@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Validation report monitoring" Height="450" Width="800"
@@ -14,7 +13,6 @@
             Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TextBox Name="TextBoxValidationReportSearchBar"
-                     adorners:Watermark.Text="Search"
                      Margin="0,0,5,5"
                      Grid.Column="0"
                      Grid.Row="0"/>
