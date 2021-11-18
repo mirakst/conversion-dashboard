@@ -14,12 +14,9 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var test = value as ValidationTestViewModel;
-            if (test != null)
-            {
-                return test.OkCount == test.TotalCount;
-            }
-            return true;
+            return value is ValidationTestViewModel test
+                ? test.OkCount == test.TotalCount
+                : true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

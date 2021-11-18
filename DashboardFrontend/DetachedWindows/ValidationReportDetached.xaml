@@ -13,6 +13,7 @@
         FontSize="15">
     <Window.Resources>
         <converters:ValidationsToStringConverter x:Key="ValidationsConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanVisibilityConverter"/>
         <converters:ShowSuccessfulManagersConverter x:Key="ShowSuccessfulManagersConverter"/>
     </Window.Resources>
     <Border BorderThickness="10"
@@ -136,65 +137,113 @@
 
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical"
+                        <Grid>
+                            <StackPanel Orientation="Vertical"
                                     Margin="0 5 0 5">
-                            <Separator/>
-                            <StackPanel Margin="0 15 0 0"> <!-- add visibility binding here --> 
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="/Icons/Fatal.png" 
+                                <Separator/>
+                                <StackPanel Margin="0 15 0 0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/Icons/Fatal.png" 
                                        Width="24"/>
-                                    <TextBlock Text="Failed" 
+                                        <TextBlock Text="Failed" 
                                            VerticalAlignment="Center"
                                            Margin="5 0 0 0"
                                            FontSize="18"
                                            FontWeight="Bold"
                                            Foreground="Red"/>
-                                </StackPanel>
-                                <ItemsControl ItemsSource="{Binding TestsFailed}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid Height="60"
-                                              Margin="0,10,0,10">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="2*"/>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <StackPanel Orientation="Horizontal">
+                                    </StackPanel>
+                                                <!--<Grid Margin="0,10,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="110"/>
+                                                        <ColumnDefinition Width="400"/>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="120"/>
+                                                        <ColumnDefinition Width="120"/>
+                                                        <ColumnDefinition Width="120"/>
+                                                    </Grid.ColumnDefinitions>
+
                                                     <TextBlock Text="{Binding Date,StringFormat=\(d/M HH:mm\)}"
                                                            Foreground="Gray"
                                                            Margin="0 0 10 0"/>
-                                                    <TextBlock Text="{Binding Name}"/>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal"
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   TextWrapping="Wrap"
+                                                                   Grid.Column="1"/>
+                                                        <TextBlock Text="2"
+                                                                   Grid.Column="4"/>
+                                                    <TextBlock Text="2"
+                                                               Grid.Column="5"/>
+                                                    <TextBlock Text="{Binding Status,StringFormat='({0})'}"
+                                                               Grid.Column="3"/>
+                                                </Grid>-->
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate TargetType="ItemsControl">
+                                                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderBrush}">
+                                                    <ItemsPresenter/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    </ItemsControl>
+                                </StackPanel>
+
+                                <StackPanel Margin="0 15 0 0" Visibility="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowSuccessfulManagers,Converter={StaticResource BooleanVisibilityConverter}}">
+                                    <!-- also hide if the itemscontrol is empty -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/Icons/Validation.png" 
+                                       Width="24"/>
+                                        <TextBlock Text="Ok" 
+                                           VerticalAlignment="Center"
+                                           Margin="5 0 0 0"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="LawnGreen"/>
+                                    </StackPanel>
+                                    <ItemsControl ItemsSource="{Binding TestsOk}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Height="60"
+                                              Margin="0,10,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition SharedSizeGroup="Fisse"/>
+                                                        <ColumnDefinition SharedSizeGroup="Fisse2" />
+                                                        <ColumnDefinition SharedSizeGroup="Fisse3"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Date,StringFormat=\(d/M HH:mm\)}"
+                                                           Foreground="Gray"
+                                                           Margin="0 0 10 0"/>
+                                                        <TextBlock Text="{Binding Name}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal"
                                                         Grid.Row="1">
-                                                    <TextBlock Text="Source Count  "
+                                                        <TextBlock Text="Source Count  "
                                                            Foreground="Gray"/>
-                                                    <TextBlock Text="{Binding SrcCount,TargetNullValue='N/A'}"
+                                                        <TextBlock Text="{Binding SrcCount,TargetNullValue='N/A'}"
                                                            Margin="0 0 50 0"/>
-                                                    <TextBlock Text="Dest Count  "
+                                                        <TextBlock Text="Dest Count  "
                                                            Foreground="Gray"/>
-                                                    <TextBlock Text="{Binding DstCount}"
+                                                        <TextBlock Text="{Binding DstCount}"
                                                            Margin="0 0 50 0"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                    <ItemsControl.Template>
-                                        <ControlTemplate TargetType="ItemsControl">
-                                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderBrush}">
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate TargetType="ItemsControl">
                                                 <ItemsPresenter/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </ItemsControl.Template>
-                                </ItemsControl>
-                            </StackPanel>                                
-                            <Separator/>
-                        </StackPanel>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <Separator/>
+                            </StackPanel>
+
+                        </Grid>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
@@ -210,7 +259,7 @@
                 <Image Source="/Icons/Warning.png" Width="20"/>
                 <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="5 0 50 0"/>
                 <Image Source="/Icons/Validation.png" Width="20"/>
-                <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="{DynamicResource validationReportOkColor}" Margin="5 0 50 0"/>
+                <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="LawnGreen" Margin="5 0 50 0"/>
                 <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
             </StackPanel>
             
