@@ -1,5 +1,6 @@
 using DashboardFrontend;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,9 +17,34 @@ namespace DashboardInterface
         public MainWindow()
         {
             InitializeComponent();
-            IddChartHealthReportGraph.PlotOriginX = DateTime.Now.Ticks;
-            IddChartHealthReportGraph.PlotWidth = TimeSpan.FromMinutes(6).Ticks;
-            IddChartHealthReportGraph.PlotHeight = 105;
+            TryLoadUserSettings();
+        }
+
+        private UserSettings UserSettings { get; } = new();
+
+        private void TryLoadUserSettings()
+        {
+            try
+            {
+                UserSettings.LoadFromFile();
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                DisplayGeneralError("Could not find configuration file", ex);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                DisplayGeneralError("Failed to parse contents of UserSettings.json", ex);
+            }
+            catch (System.IO.IOException ex)
+            {
+                DisplayGeneralError("An unexpected problem occured while loading user settings", ex);
+            }
+        }
+
+        private void DisplayGeneralError(string message, Exception ex)
+        {
+            MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
@@ -49,9 +75,11 @@ namespace DashboardInterface
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new();
+            SettingsWindow settingsWindow = new(UserSettings);
             //settingsWindow.Closing += OnSettingsWindowClosing;
-            //settingsWindow.ShowDialog();
+            //settingsWindow.IsEnabled = false;
+            //settingsWindow.Owner = Application.Current.MainWindow;
+            settingsWindow.ShowDialog();
         }
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
