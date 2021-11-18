@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DashboardBackend.Database.Models
 {
     [Table("AFSTEMNING")]
-    public partial class Afstemning
+    public partial class AfstemningEntry
     {
         [Key]
         [Column("ID")]

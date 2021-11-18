@@ -8,7 +8,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("MANAGERS")]
-    public partial class Manager
+    public class ManagerEntry
     {
         [Column("MANAGER_NAME")]
         [StringLength(500)]
