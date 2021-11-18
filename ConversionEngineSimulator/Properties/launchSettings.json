@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "File streaming program": {
+      "commandName": "Project",
+      "commandLineArgs": "(local)\\SQLEXPRESS ANS_CUSTOM_2 ANS_CUSTOM_2_DEST"
+    }
+  }
+}
