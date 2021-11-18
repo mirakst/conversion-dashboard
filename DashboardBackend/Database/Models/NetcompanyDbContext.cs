@@ -28,7 +28,7 @@ namespace DashboardBackend.Database.Models
         public virtual DbSet<ExecutionEntry> Executions { get; set; }
         public virtual DbSet<HealthReportEntry> HealthReports { get; set; }
         public virtual DbSet<LoggingEntry> Loggings { get; set; }
-        public virtual DbSet<LoggingContext> LoggingContexts { get; set; }
+        public virtual DbSet<LoggingContextEntry> LoggingContexts { get; set; }
         public virtual DbSet<ManagerEntry> Managers { get; set; }
         public virtual DbSet<ManagerTracking> ManagerTrackings { get; set; }
         public virtual DbSet<MigrationFile> MigrationFiles { get; set; }

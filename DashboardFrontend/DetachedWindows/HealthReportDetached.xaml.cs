@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class HealthReportDetached : Window
+    public partial class HealthReportDetached
     {
         public HealthReportDetached()
         {

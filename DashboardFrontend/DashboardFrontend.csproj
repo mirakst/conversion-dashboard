@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -37,7 +37,6 @@
     <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
@@ -84,5 +83,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-
 </Project>

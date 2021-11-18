@@ -13,10 +13,10 @@
         [Flags]
         public enum LogFilters : byte
         {
-            INFO = 0,
-            WARNING = 1,
-            ERROR = 2,
-            VALIDATION = 4
+            Info = 0,
+            Warning = 1,
+            Error = 2,
+            Validation = 4
         }
         #endregion Enums
 

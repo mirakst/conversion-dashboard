@@ -1,4 +1,5 @@
-﻿using InteractiveDataDisplay.Core;
+﻿using DashboardInterface;
+using InteractiveDataDisplay.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,17 +13,16 @@ namespace DashboardFrontend
     public class HealthReportMonitoring
     {
         //UserViewInput should be bound to a user input
-        public int UserViewInput { get; set; } = 2;
-        private List<DataClass> _dataCollections = new();
+        private readonly List<DataClass> _dataCollections = new();
 
         /// <summary>
         /// A class constructed of [DateTime] list, [long] List and a [LineGraph].
         /// </summary>
         private class DataClass
         {
-            public List<DateTime> Time = new();
-            public List<long> Readings = new();
-            public LineGraph Line;
+            public readonly List<DateTime> Time;
+            public readonly List<long> Readings;
+            public readonly LineGraph Line;
 
             public DataClass(List<DateTime> _time, List<long> _readings, LineGraph line)
             {
@@ -33,15 +33,15 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// A function to create a new DataClass and add it ti the dataCollections list.
+        /// A function to create a new DataClass and add it to the dataCollections list.
         /// </summary>
-        /// <param name="_timeList"></param>
-        /// <param name="_readingsList"></param>
-        /// <param name="myGrid"></param>
-        /// <param name="_name"></param>
-        /// <param name="_description"></param>
-        /// <param name="_color"></param>
-        /// <param name="_strokeThickness"></param>
+        /// <param name="_timeList">A list of [DateTime] objects.</param>
+        /// <param name="_readingsList">A list of [long] objects.</param>
+        /// <param name="myGrid">The child [Grid] of [Chart].</param>
+        /// <param name="_name">The name for the line.</param>
+        /// <param name="_description">A description for the graph. The description is shown in the legend.</param>
+        /// <param name="_color">A [Color] for the [LineGraph].</param>
+        /// <param name="_strokeThickness">The thickness of the [LineGraph].</param>
         public void Add(List<DateTime> _timeList, List<long> _readingsList, Grid myGrid, string _name, string _description, Color _color, int _strokeThickness)
         {
             LineGraph line = new()
@@ -62,17 +62,20 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// A function for generationg data for all DataClass'.
+        /// A function for generating data for all DataClass'.
         /// </summary>
         /// <param name="_timer">A [PeriodicTimer] that calls the function.</param>
         /// <param name="_chart">The [Chart] each [DataCollection] should be plotted on.</param>
-        public async void GenerateData(PeriodicTimer _timer, Chart _chart)
+        /// <param name="_userView">The input duration to show on the chart.</param>
+        public async void GenerateData(PeriodicTimer? _timer, Chart _chart, TextBox _userView)
         {
             Random random = new();
 
-            while (await _timer.WaitForNextTickAsync())
+            while (await _timer!.WaitForNextTickAsync())
             {
-                long MaxView = TimeSpan.TicksPerMinute * UserViewInput;
+                if (!int.TryParse(_userView.Text.Split(' ')[0], out var userViewInt)) { userViewInt = 6; }
+
+                long maxView = TimeSpan.TicksPerMinute * userViewInt;
 
                 foreach (DataClass dataCollection in _dataCollections)
                 {
@@ -81,16 +84,30 @@ namespace DashboardFrontend
                     dataCollection.Readings.Add((long)random.Next(0, 100));
 
                     UpdateChart(dataCollection);
+
+                    _chart.PlotHeight = 105;
+
+                    if (_chart.IsMouseOver) continue;
+                    _chart.PlotWidth = maxView;
+                    _chart.PlotOriginX = AutoFitChart(userViewInt, maxView, dataCollection);
                 }
 
-                _chart.PlotHeight = 105;
-
-                if (!_chart.IsMouseOver)
-                {
-                    _chart.PlotOriginX = DateTime.Now.AddMinutes(-(UserViewInput * 0.9)).Ticks;
-                    _chart.PlotWidth = MaxView;
-                }
+                
             }
+        }
+
+        /// <summary>
+        /// Sets the view span of the graph.
+        /// </summary>
+        /// <param name="_userViewInt"></param>
+        /// <param name="_maxView"></param>
+        /// <param name="_dataCollection"></param>
+        /// <returns></returns>
+        private static long AutoFitChart(int _userViewInt, long _maxView, DataClass _dataCollection)
+        {
+            return _dataCollection.Time.Last().Ticks - _dataCollection.Time.First().Ticks >= _maxView * 0.9 ? 
+                DateTime.Now.AddMinutes(-(_userViewInt * 0.9)).Ticks : 
+                _dataCollection.Time.First().Ticks;
         }
 
         /// <summary>
@@ -99,9 +116,9 @@ namespace DashboardFrontend
         /// <param name="_dataCollection"></param>
         private static void UpdateChart(DataClass _dataCollection)
         {
-            var _valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
+            var valueY = _dataCollection.Time.Select(e => e.Ticks).ToList();
 
-            _dataCollection.Line.Plot(_valueY, _dataCollection.Readings);
+            _dataCollection.Line.Plot(valueY, _dataCollection.Readings);
         }
     }
 }

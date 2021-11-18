@@ -17,7 +17,7 @@ namespace Model
         #region Enums
         public enum LogMessageType : byte
         {
-            INFO, WARNING, ERROR, FATAL, VALIDATION
+            Info, Warning, Error, Fatal, Validation
         }
         #endregion Enums
 
@@ -26,7 +26,7 @@ namespace Model
         public string Content { get; } //From [LOG_MESSAGE] in [dbo].[LOGGING].
         public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
         public int ContextId { get; } //From [CONTEXT_ID] in [dbo].[LOGGING].
-        public Manager Manager { get; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
+        public Manager Manager { get; set; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
         #endregion Properties
 
         public override string ToString()

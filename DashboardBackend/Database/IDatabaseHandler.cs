@@ -23,12 +23,12 @@ namespace DashboardBackend.Database
 
         /// <summary>
         /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime, 
-        /// matching the supplied ExecutionId.
+        /// matching the supplied executionId.
         /// </summary>
-        /// <param name="ExecutionId">An Execution ID constraint for the returned objects.</param>
+        /// <param name="executionId">An Execution ID constraint for the returned objects.</param>
         /// <param name="minDate">A date constraint for the returned objects.</param>
         /// <returns>A list of log messages no older than the specified DateTime, from the specific execution.</returns>
-        List<LoggingEntry> QueryLogMessages(int ExecutionId, DateTime minDate);
+        List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime.
@@ -38,10 +38,10 @@ namespace DashboardBackend.Database
         List<LoggingEntry> QueryLogMessages(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries in the MANAGERS table of the state database .
+        /// Retrieves all entries from the LOGGING_CONTEXT table of the state database .
         /// </summary>
         /// <returns>A list of Managers.</returns>
-        List<ManagerEntry> QueryManagers();
+        List<LoggingContextEntry> QueryManagers();
 
         /// <summary>
         /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
@@ -56,5 +56,11 @@ namespace DashboardBackend.Database
         /// <param name="minDate">A date constraint for the returned objects</param>
         /// <returns>A list of system performance readings no older than the specified DateTime</returns>
         List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate);
+
+        /// <summary>
+        /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database .
+        /// </summary>
+        /// <returns>A list of manager data.</returns>
+        List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate);
     }
 }
