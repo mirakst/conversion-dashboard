@@ -16,6 +16,7 @@
     <None Remove="Icons\Filter.png" />
     <None Remove="Icons\Info.png" />
     <None Remove="Icons\Magnifyingglass.png" />
+    <None Remove="Icons\MagnifyingglassAlt.png" />
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
@@ -26,6 +27,7 @@
     <None Remove="Icons\Start.png" />
     <None Remove="Icons\Stop.png" />
     <None Remove="Icons\Validation.png" />
+    <None Remove="Icons\ValidationAlt.png" />
     <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
@@ -35,6 +37,11 @@
     <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Icons\Cog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -57,6 +64,9 @@
     <Resource Include="Icons\Magnifyingglass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\MagnifyingglassAlt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\Start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -64,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Validation.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\ValidationAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Warning.png">

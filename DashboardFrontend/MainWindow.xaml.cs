@@ -1,13 +1,20 @@
 using DashboardFrontend;
+using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
 using DashboardFrontend.Settings;
+using DashboardBackend;
+using DashboardBackend.Database;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System;
+using System.Threading;
+using System.Windows.Media;
 
-namespace DashboardInterface
+namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
@@ -17,7 +24,10 @@ namespace DashboardInterface
         public MainWindow()
         {
             InitializeComponent();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
             TryLoadUserSettings();
+            ViewModel = new(Log);
+            DataContext = ViewModel;
         }
 
         private UserSettings UserSettings { get; } = new();
@@ -46,6 +56,10 @@ namespace DashboardInterface
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
+        
+
+        public Log Log { get; set; } = new();
+        public MainWindowViewModel ViewModel { get; }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
@@ -84,15 +98,16 @@ namespace DashboardInterface
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
+            
             //ManagerWindow detachManager = new();
             //detachManager.Closing += OnManagerWindowClosing;
             //buttonDetachManager.IsEnabled = false;
             //detachManager.Show();
         }
-
+         
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached detachLog = new();
+            LogDetached detachLog = new(ViewModel.LogViewModel);
             detachLog.Closing += OnLogWindowClosing;
             ButtonLogDetach.IsEnabled = false;
             detachLog.Show();

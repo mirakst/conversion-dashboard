@@ -1,4 +1,4 @@
-﻿using DashboardBackend.Database;
+using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
@@ -12,7 +12,6 @@ namespace DashboardBackend
     {
         //The class that handles the state database queries. Default is SQL.
         public static IDatabaseHandler DatabaseHandler { get; set; } = new SqlDatabase();
-
 
         //Set SQL minimum DateTime as default.
         public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
@@ -359,7 +358,6 @@ namespace DashboardBackend
             }
 
             //Build system model network usage objects.
-
             return (from item in distinctReports 
                     let executionId = item.First().ExecutionId.Value 
                     let logTime = item.First().LogTime.Value 

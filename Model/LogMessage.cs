@@ -1,11 +1,13 @@
-﻿namespace Model
+﻿using System.Text.RegularExpressions;
+
+namespace Model
 {
     public class LogMessage
     {
         #region Constructors
         public LogMessage(string content, LogMessageType type, int contextId, DateTime date)
         {
-            Content = content;
+            Content = Regex.Replace(content, @"(\[\d+;\d+m)|(\[\d+m)", "");
             Type = type;
             Date = date;
             ContextId = contextId;    
