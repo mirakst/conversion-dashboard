@@ -155,19 +155,19 @@ namespace DashboardFrontend.ViewModels
             foreach(var msg in _log.Messages)
             switch (msg.Type)
             {
-                case LogMessageType.INFO:
+                case LogMessageType.Info:
                     InfoCount++;
                     break;
-                case LogMessageType.WARNING:
+                case LogMessageType.Warning:
                     WarnCount++;
                     break;
-                case LogMessageType.ERROR:
+                case LogMessageType.Error:
                     ErrorCount++;
                     break;
-                case LogMessageType.FATAL:
+                case LogMessageType.Fatal:
                     FatalCount++;
                     break;
-                case LogMessageType.VALIDATION:
+                case LogMessageType.Validation:
                     ValidationCount++;
                     break;
                 default:
