@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     public class HealthReport : ITimestampedDatabaseEntry, IComparable<HealthReport>
     {

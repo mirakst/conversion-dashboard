@@ -1,4 +1,4 @@
-﻿namespace Filestreaming_Program
+﻿namespace ConversionEngineSimulator
 {
     public class LoggingContext
     {

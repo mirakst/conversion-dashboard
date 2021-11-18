@@ -1,15 +1,24 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     internal class Program
     {
-        static void Main()
+        // Currently requires the "ANS_CUSTOM_2" database to function
+        static int Main(string[] args)
         {
             //*** INIT ***
+            if (args.Length != 3)
+            {
+                Console.Error.WriteLine("Please specify -[server], -[source database], and -[destination database]");
+                return -1;
+            }
+            string server = args[0];
+            string srcDb = args[1];
+            string dstDb = args[2];
             Console.WriteLine("--------- Initializing streaming ----------");
-            DBInfo.Initialize();
+            DBInfo.Initialize(server, srcDb, dstDb);
 
             //CLEAR DESTINATION DB
             Console.WriteLine("Clearing destination DB tables...");
@@ -21,9 +30,9 @@ namespace Filestreaming_Program
             ManagerTrackingTable managerTracking = new();
             LoggingContextTable loggingContext = new();
 
-            DBUtilities.InsertTable<Manager>(managerInfo.Entries, managerInfo);
-            DBUtilities.InsertTable<ManagerTracking>(managerTracking.Entries, managerTracking);
-            DBUtilities.InsertTable<LoggingContext>(loggingContext.Entries, loggingContext);
+            DBUtilities.InsertTable(managerInfo.Entries, managerInfo);
+            DBUtilities.InsertTable(managerTracking.Entries, managerTracking);
+            DBUtilities.InsertTable(loggingContext.Entries, loggingContext);
 
             //QUERY TABLES
             Console.WriteLine("\n---------- Querying tables ----------");
@@ -37,13 +46,14 @@ namespace Filestreaming_Program
             Console.WriteLine("\n---------- Stream starting ----------");
 
             //STREAM FILES FROM THE STORED TABLES
-            Task task1 = DBUtilities.AsyncExecution<LogMsg>(logs.Entries, logs);
-            Task task2 = DBUtilities.AsyncExecution<Vote>(votes.Entries, votes);
-            Task task3 = DBUtilities.AsyncExecution<Execution>(executions.Entries, executions);
-            Task task4 = DBUtilities.AsyncExecution<EngineProperty>(engineProperties.Entries, engineProperties);
-            Task task5 = DBUtilities.AsyncExecution<HealthReport>(healthReports.Entries, healthReports);
+            _ = DBUtilities.AsyncExecution(logs.Entries, logs);
+            _ = DBUtilities.AsyncExecution(votes.Entries, votes);
+            _ = DBUtilities.AsyncExecution(executions.Entries, executions);
+            _ = DBUtilities.AsyncExecution(engineProperties.Entries, engineProperties);
+            _ = DBUtilities.AsyncExecution(healthReports.Entries, healthReports);
 
             Console.ReadKey();
+            return 0;
         }
     }
 }

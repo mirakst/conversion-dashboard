@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     public interface ITimestampedDatabaseEntry //Interface for database entries that are streamed asynchronously
     {

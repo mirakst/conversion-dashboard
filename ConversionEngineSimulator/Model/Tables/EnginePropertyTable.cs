@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     public class EnginePropertyTable : IDatabaseTable
     {

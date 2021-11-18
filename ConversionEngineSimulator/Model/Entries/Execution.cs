@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     public class Execution : ITimestampedDatabaseEntry, IComparable<Execution>
     {

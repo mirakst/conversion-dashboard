@@ -5,25 +5,24 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     static class DBUtilities
     {
         public static string GenerateQueryString(IDatabaseTable tbl, string condition = "") //Generates a select query string with option for conditions
         {
-            return "Select * From " + tbl.TableName + " " + condition;
+            return $"Select * From { tbl.TableName } { condition }";
         }
 
         public static string GenerateExecutionString(IDatabaseTable tbl) //Generates an execution string for data insertion in table
         {
-            return "Insert Into " + tbl.TableName + " (" + tbl.ColumnNames + ") Values (" + tbl.OutputColumnNames + ")";
+            return $"Insert Into { tbl.TableName } ({ tbl.ColumnNames }) Values ({ tbl.OutputColumnNames })";
         }
 
         public static int ClearDestTables() //Clears all tables in destination database
         {
-            Console.WriteLine();
             var conn = DBInfo.ConnectToDestDB();
-            return conn.Execute($"use [{DBInfo.DestDatabase}];\nDelete From AFSTEMNING;\nDelete From ENGINE_PROPERTIES;\nDelete From EXECUTIONS;\n" +
+            return conn.Execute($"Delete From AFSTEMNING;\nDelete From ENGINE_PROPERTIES;\nDelete From EXECUTIONS;\n" +
                                 $"Delete From HEALTH_REPORT;\nDelete From LOGGING;\nDelete From LOGGING_CONTEXT;\n" +
                                 $"Delete From MANAGER_TRACKING;\nDelete from MANAGERS;");
         }
@@ -50,7 +49,15 @@ namespace Filestreaming_Program
             await Task.Delay(ts).ConfigureAwait(false);
         }
 
-        public static async Task AsyncExecution<T>(List<T> entryList, IDatabaseTable tbl) where T : ITimestampedDatabaseEntry //Inserts data in destination database based on timestamp in source database
+        /// <summary>
+        /// Inserts data in destination database based on timestamp in source database
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entryList"></param>
+        /// <param name="tbl"></param>
+        /// <returns></returns>
+        public static async Task AsyncExecution<T>(List<T> entryList, IDatabaseTable tbl) 
+            where T : ITimestampedDatabaseEntry 
         {
             string executionString = GenerateExecutionString(tbl);
             await Task.Run(() =>

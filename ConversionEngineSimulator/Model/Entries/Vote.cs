@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Filestreaming_Program
+namespace ConversionEngineSimulator
 {
     public class Vote : ITimestampedDatabaseEntry, IComparable<Vote>
     {
