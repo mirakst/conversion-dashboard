@@ -163,7 +163,6 @@
                       Style="{DynamicResource ComponentControlBar}">
                         <ToggleButton Name="toggleButtonLogInfo"
                                   Grid.Column="0"
-                                  Click="OnToggleButtonClick"
                                   IsChecked="{Binding LogViewModel.ShowInfo}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
@@ -179,7 +178,6 @@
                                Grid.Column="1"/>
                         <ToggleButton Name="toggleButtonLogWarning"
                               Grid.Column="2"
-                              Click="OnToggleButtonClick"
                               IsChecked="{Binding LogViewModel.ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
@@ -195,7 +193,6 @@
                                Grid.Column="3"/>
                         <ToggleButton Name="toggleButtonLogError"
                                   Grid.Column="4"
-                                  Click="OnToggleButtonClick"
                                   IsChecked="{Binding LogViewModel.ShowError}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
@@ -211,7 +208,6 @@
                                Grid.Column="5"/>
                         <ToggleButton Name="toggleButtonLogFatal"
                                   Grid.Column="6"
-                                  Click="OnToggleButtonClick"
                                   IsChecked="{Binding LogViewModel.ShowFatal}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
@@ -227,7 +223,6 @@
                                Grid.Column="7"/>
                         <ToggleButton Name="toggleButtonLogValidation"
                                   Grid.Column="8"
-                                  Click="OnToggleButtonClick"
                                   IsChecked="{Binding LogViewModel.ShowValidation}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">

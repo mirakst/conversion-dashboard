@@ -11,7 +11,6 @@
               Margin="10,10,10,10"
               Style="{DynamicResource ComponentControlBar}">
             <ToggleButton Name="toggleButtonLogInfo"
-                          Tag="Info"
                           Grid.Column="0"
                           IsChecked="{Binding ShowInfo}"
                           Style="{DynamicResource DefaultToggleButton}">
@@ -27,7 +26,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="1"/>
             <ToggleButton Name="toggleButtonlogWarning"
-                          Tag="Warn"
                           Grid.Column="2"
                           IsChecked="{Binding ShowWarn}"
                           Style="{DynamicResource DefaultToggleButton}">
@@ -43,7 +41,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="3"/>
             <ToggleButton Name="toggleButtonLogError"
-                          Tag="Error"
                           IsChecked="{Binding ShowError}"
                           Grid.Column="4"
                           Style="{DynamicResource DefaultToggleButton}">
@@ -59,7 +56,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="5"/>
             <ToggleButton Name="toggleButtonLogFatal"
-                          Tag="Fatal"
                           IsChecked="{Binding ShowFatal}"
                           Grid.Column="6"
                           Style="{DynamicResource DefaultToggleButton}">
@@ -75,7 +71,6 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="7"/>
             <ToggleButton Name="toggleButtonLogValidation"
-                          Tag="Validation"
                           IsChecked="{Binding ShowValidation}"
                           Grid.Column="8"
                           Style="{DynamicResource DefaultToggleButton}">
