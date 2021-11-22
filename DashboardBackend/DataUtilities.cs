@@ -13,10 +13,8 @@ namespace DashboardBackend
         //The class that handles the state database queries. Default is SQL.
         public static IDatabaseHandler DatabaseHandler { get; set; } = new SqlDatabase();
 
-
         //Set SQL minimum DateTime as default.
         public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
-
 
         /// <summary>
         /// Queries the state database for executions newer than minDate, 
@@ -56,15 +54,14 @@ namespace DashboardBackend
             return (from item in queryResult
                     let date = item.Afstemtdato
                     let name = item.Description
-                    let managerName = item.Context
-                    let managerNameFull = item.Manager
+                    let managerName = item.Manager
                     let status = GetValidationStatus(item)
                     let srcCount = item.Srcantal
                     let dstCount = item.Dstantal
                     let toolkitId = item.ToolkitId
                     let srcSql = item.SrcSql
                     let dstSql = item.DstSql
-                    select new ValidationTest(date, name, status, managerName, managerNameFull, srcCount, dstCount, toolkitId, srcSql, dstSql))
+                    select new ValidationTest(date, name, status, name, srcCount, dstCount, toolkitId, srcSql, dstSql))
                     .ToList();
         }
 
@@ -361,7 +358,6 @@ namespace DashboardBackend
             }
 
             //Build system model network usage objects.
-
             return (from item in distinctReports 
                     let executionId = item.First().ExecutionId.Value 
                     let logTime = item.First().LogTime.Value 

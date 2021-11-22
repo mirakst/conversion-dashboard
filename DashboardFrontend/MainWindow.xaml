@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
-        xmlns:adorners="http://gu.se/Adorners"
         xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
@@ -26,19 +26,18 @@
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0">
-                <Grid Name="gridControlPanel"
+                <Grid Name="GridControlPanel"
                       Margin="30,30,30,0"
                       Grid.Row="0">
-                    <Button Name="buttonStartStop"
+                    <Button Name="ButtonStartStop"
                         Click="ButtonStartStopClick"
                         Grid.Column="0"
                         Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Background="Transparent" 
+                        Grid.RowSpan="2" 
                         BorderBrush="Transparent">
                         <Image Source="Icons/Start.png"/>
                     </Button>
-                    <Button Name="buttonSettings" 
+                    <Button Name="ButtonSettings" 
                         Click="ButtonSettingsClick" 
                         Grid.Column="1" 
                         Grid.Row="0" 
@@ -47,7 +46,7 @@
                         BorderBrush="Transparent">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
-                    <TextBlock x:Name="textBlockConversionName"
+                    <TextBlock x:Name="TextBlockConversionName"
                                FontSize="28"
                                MinWidth="200"
                                TextAlignment="Center"
@@ -59,28 +58,25 @@
                                Text="Conversion"/>
                     <Grid Grid.Column="3" 
                       Grid.Row="0">
-                        <ProgressBar Name="progressBarManagerProgress" 
+                        <ProgressBar Name="ProgressBarManagerProgress" 
                                  Margin="2"
-                                 Grid.Column="3"
                                  Grid.Row="0"
                                  Minimum="0"
                                  Maximum="100"
                                  Value="85"/>
-                        <TextBlock Text="{Binding ElementName=progressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
+                        <TextBlock Text="{Binding ElementName=ProgressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
                                FontSize="15" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
                     </Grid>
                     <Grid Grid.Column="3" 
                       Grid.Row="1">
-                        <ProgressBar Name="progressBarConversionProgress" 
+                        <ProgressBar Name="ProgressBarConversionProgress" 
                                  Margin="2" 
-                                 Grid.Column="3" 
-                                 Grid.Row="1" 
                                  Minimum="0" 
                                  Maximum="100" 
                                  Value="15"/>
-                        <TextBlock Text="{Binding ElementName=progressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
+                        <TextBlock Text="{Binding ElementName=ProgressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
                                FontSize="15" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
@@ -99,29 +95,28 @@
             </Grid>
             <Grid Margin="30,20,30,30" Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1">
-                <Grid Name="gridManager"
+                <Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
                       Grid.Row="0">
                     <Grid Style="{DynamicResource ComponentControlBar}"
                       Grid.Row="0">
-                        <TextBox Name="textBoxManagerSearchBox"
+                        <TextBox Name="TextBoxManagerSearchBox"
                              Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Name="dockpanelSearchbutton"
-                           LastChildFill="False">
-                            <Button Name="buttonManagerSearch"
+                        <DockPanel Grid.Column="0" Name="DockPanelSearchButton"
+                                   LastChildFill="False">
+                            <Button Name="ButtonManagerSearch"
                                 Style="{DynamicResource SearchButton}"
-                                Grid.Row="0"
                                 DockPanel.Dock="Right">
                                 <Image Source="../Icons/magnifyingglass.png"/>
                             </Button>
                         </DockPanel>
-                        <Button Name="buttonManagerFilter"
+                        <Button Name="ButtonManagerFilter"
                             Grid.Column="1"
                             Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        <Button Name="buttonDetachManager"
+                        <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
                             Style="{StaticResource DetachButton}">
@@ -135,10 +130,8 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <ListView x:Name="listViewManagerList"
+                        <ListView x:Name="ListViewManagerList"
                           Grid.Column="0"
-                          Grid.ColumnSpan="3"
-                          Grid.Row="1"
                           ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
                           AlternationCount="2"
                           Background="{StaticResource CanvasColor}"
@@ -167,48 +160,51 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                <Grid Name="gridLog" 
+                <Grid Name="GridLog" 
                   Margin="20,0,0,20"
                   Grid.Column="1" 
                   Grid.Row="0">
                     <Grid Grid.Row="0"
                       Style="{DynamicResource ComponentControlBar}">
                         <ToggleButton Name="toggleButtonLogInfo"
-                                  Grid.Column="0" 
+                                  Grid.Column="0"
+                                  IsChecked="{Binding LogViewModel.ShowInfo}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
                         <Rectangle Width="1"
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="1"/>
-                        <ToggleButton Name="toggleButtonLogWarning"
+                        <ToggleButton Name="ToggleButtonLogWarning"
                               Grid.Column="2"
+                              IsChecked="{Binding LogViewModel.ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
                         <Rectangle Width="1"
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="3"/>
-                        <ToggleButton Name="toggleButtonLogError"
+                        <ToggleButton Name="ToggleButtonLogError"
                                   Grid.Column="4"
+                                  IsChecked="{Binding LogViewModel.ShowError}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
@@ -216,29 +212,46 @@
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="5"/>
                         <ToggleButton Name="toggleButtonLogFatal"
-                                  IsChecked="True"
                                   Grid.Column="6"
+                                  IsChecked="{Binding LogViewModel.ShowFatal}"
                                   Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
                                    Width="13"
                                    Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
+                        <Rectangle Width="1"
+                               Fill="{DynamicResource BorderColor}"
+                               Grid.Column="7"/>
+                        <ToggleButton Name="toggleButtonLogValidation"
+                                  Grid.Column="8"
+                                  IsChecked="{Binding LogViewModel.ShowValidation}"
+                                  Style="{DynamicResource DefaultToggleButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Icons/Validation.png" 
+                                   Width="13"
+                                   Margin="0,0,5,0"/> 
+                                <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
+                                <TextBlock Text=" Validation"/>
+                            </StackPanel>
+                        </ToggleButton>
                         <Button  Name="buttonLogFilter"
-                              Grid.Column="7"
+                              Grid.Column="9"
                               Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        <Button Name="buttonLogDetach" 
+                        <Button Name="ButtonLogDetach" 
                         Click="DetachLogButtonClick" 
-                        Grid.Column="8"
+                        Grid.Column="10"
                         Style="{DynamicResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
@@ -252,28 +265,114 @@
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
-                        <ScrollViewer Name="scrollViewerLog"
-                                  Margin="0,0,1,0">
-                            <ListView x:Name="listLogEntry"
-                                  Background="{StaticResource CanvasColor}"
-                                  Foreground="{StaticResource ForegroundColor}"
-                                  BorderBrush="{StaticResource BorderColor}">
+                        <ListView x:Name="listViewLogEntry"
+                                          ItemsSource="{Binding LogViewModel.Messages}"
+                                          Background="White"
+                                          Foreground="Black"
+                                          BorderBrush="{StaticResource BorderColor}"
+                                          ScrollViewer.CanContentScroll="False"
+                                          MaxHeight="5000">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Timestamp"
-                                                DisplayMemberBinding="{Binding Date}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Type"
-                                                DisplayMemberBinding="{Binding Type}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Manager"
-                                                DisplayMemberBinding="{Binding Manager}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Log message"
-                                                DisplayMemberBinding="{Binding Content}"
-                                                Width="auto"/>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="Padding" Value="5,0,5,0"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Timestamp" 
+                                                    DisplayMemberBinding="{Binding Date}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Type" 
+                                                    DisplayMemberBinding="{Binding Type}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Manager" 
+                                                    DisplayMemberBinding="{Binding ContextId}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Content" 
+                                                    Width="1000">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock TextWrapping="Wrap"
+                                                                   Text="{Binding Content}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
                                 </GridView>
-                            </ListView>
-                        </ScrollViewer>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Info">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="INFO"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                            <Setter Property="Background" Value="#FCE283"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="WARNING"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error">
+                                            <Setter Property="Background" Value="#ED4F47"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="ERROR"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowError}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                            <Setter Property="Background" Value="#CFCFCF"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="FATAL"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="VALIDATION"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                            <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -522,32 +621,61 @@
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                <Grid Name="gridHealthReportChartGrid"
-                  Margin="20,0,0,0"
-                  Grid.Column="1"
-                  Grid.Row="1">
+                <Grid Name="GridHealthReportChartGrid"
+                      Margin="20,0,0,0"
+                      Grid.Column="1"
+                      Grid.Row="1">
                     <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
-                        <Button Name="buttonHealthReportDetach"
-                        Click="DetachHealthReportButtonClick"
-                        Grid.Column="1"
-                        Style="{StaticResource DetachButton}">
+                          Grid.Row="0">
+                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                BorderThickness="1"
+                                MaxHeight="25"
+                                Margin="0,0,5,0"
+                                Grid.Column="1">
+                            <Grid>
+                                <TextBlock Text="Hours: "
+                                           FontSize="15"
+                                           VerticalAlignment="Center"
+                                           Background="{DynamicResource BackgroundColor}"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           Grid.Column="0"/>
+                                <TextBox Name="TextBoxChartTimeInterval"
+                                         Text="6"
+                                         FontSize="15"
+                                         MaxLength="20"
+                                         VerticalAlignment="Center"
+                                         BorderThickness="0"
+                                         Background="{DynamicResource BackgroundColor}"
+                                         Foreground="{DynamicResource ForegroundColor}"
+                                         Grid.Column="1"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </Border>
+                        <Button Name="ButtonHealthReportDetach"
+                                Click="DetachHealthReportButtonClick"
+                                Grid.Column="2"
+                                Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
+                          Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                             BorderThickness="1">
-                            <idd:Chart Name="iddChartHealthReportGraph"
-                                   Background="{DynamicResource CanvasColor}"
-                                   Foreground="{DynamicResource ForegroundColor}"
-                                   Style="{DynamicResource HealthReportChart}">
-                                <Grid Name="gridHealthReportChartGridChartGrid"/>
+                            <idd:Chart Name="IddChartHealthReportGraph"
+                                       IsVerticalNavigationEnabled="False"
+                                       Background="{DynamicResource CanvasColor}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       Style="{StaticResource HealthReportChart}">
+                                <Grid Name="GridHealthReportChartGridChartGrid"/>
                             </idd:Chart>
                         </Border>
                     </Grid>

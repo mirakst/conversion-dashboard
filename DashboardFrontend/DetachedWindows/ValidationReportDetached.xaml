@@ -229,7 +229,6 @@
                 <TextBlock Text="{Binding LastModified,StringFormat=dd/HH HH:mm:ss}"
                            Foreground="White"/>
             </StackPanel>
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="*"/>

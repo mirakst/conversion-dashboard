@@ -3,13 +3,12 @@
     public class ValidationTest
     {
         #region Constructors
-        public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, string managerNameFull, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
+        public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
             Date = date;
             Name = name;
             Status = status;
             ManagerName = managerName;
-            ManagerNameFull = managerNameFull;
             SrcCount = srcCount;
             DstCount = dstCount;
             ToolkitId = toolkitId;
@@ -30,7 +29,6 @@
         public string Name { get; } //From [DESCRIPTION] in [dbo].[AFSTEMNING]
         public DateTime Date { get; } //From [AFSTEMTDATO] in [dbo].[AFSTEMNING]
         public string ManagerName { get; } //From [MANAGER] in [dbo].[AFSTEMNING]
-        public string ManagerNameFull { get; }
         public int? SrcCount { get; }
         public int? DstCount { get; }
         public int? ToolkitId { get; }

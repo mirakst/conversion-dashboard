@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class ValidationReportDetached : Window
+    public partial class ValidationReportDetached
     {
         public ValidationReportDetached(ValidationReport validationReport)
         {

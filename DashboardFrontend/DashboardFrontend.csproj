@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -16,6 +16,7 @@
     <None Remove="Icons\Filter.png" />
     <None Remove="Icons\Info.png" />
     <None Remove="Icons\Magnifyingglass.png" />
+    <None Remove="Icons\MagnifyingglassAlt.png" />
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
@@ -26,8 +27,10 @@
     <None Remove="Icons\Start.png" />
     <None Remove="Icons\Stop.png" />
     <None Remove="Icons\Validation report.png" />
-    <None Remove="Icons\Validation.png" />
     <None Remove="Icons\ValidationDisabled.png" />
+    <None Remove="Icons\Validation.png" />
+    <None Remove="Icons\ValidationAlt.png" />
+    <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
 
@@ -35,6 +38,10 @@
     <PackageReference Include="Gu.Wpf.Adorners" Version="2.1.1" />
     <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +71,9 @@
     <Resource Include="Icons\Magnifyingglass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\MagnifyingglassAlt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\Start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -78,10 +88,11 @@
     </Resource>
     <Resource Include="Icons\ValidationDisabled.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="Icons\ValidationAlt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Warning.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-
 </Project>

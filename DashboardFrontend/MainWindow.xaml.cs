@@ -1,28 +1,70 @@
+using DashboardFrontend;
+using DashboardFrontend.ViewModels;
+using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
 using DashboardBackend;
 using DashboardBackend.Database;
-using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.ViewModels;
 using Model;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System;
+using System.Threading;
+using System.Windows.Media;
 
 namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
+        private ChartViewModel? _chartVm;
+        private bool _isStarted;
+
         public MainWindow()
         {
             InitializeComponent();
             DataUtilities.DatabaseHandler = new SqlDatabase();
+            
+            TryLoadUserSettings();
+            
+            ViewModel = new(Log);
+            DataContext = ViewModel;
             ValidationReport = new();
             ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
             gridValidationReport.DataContext = new ValidationReportViewModel(ValidationReport, validationsDataGrid);
         }
 
+        private UserSettings UserSettings { get; } = new();
         public ValidationReport ValidationReport { get; set; }
+        public Log Log { get; set; } = new();
+        public MainWindowViewModel ViewModel { get; }
+        
+        private void TryLoadUserSettings()
+        {
+            try
+            {
+                UserSettings.LoadFromFile();
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                DisplayGeneralError("Could not find configuration file", ex);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                DisplayGeneralError("Failed to parse contents of UserSettings.json", ex);
+            }
+            catch (System.IO.IOException ex)
+            {
+                DisplayGeneralError("An unexpected problem occured while loading user settings", ex);
+            }
+        }
+
+        private void DisplayGeneralError(string message, Exception ex)
+        {
+            MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
+        }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
@@ -31,40 +73,53 @@ namespace DashboardFrontend
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            //DialogWindow dialogWindow = new();
-            //dialogWindow.Owner = Application.Current.MainWindow;
-            //dialogWindow.ShowDialog();
+            //ConnectDBDialog dialogPopup = new();
+            //dialogPopup.Owner = Application.Current.MainWindow;
+            //dialogPopup.ShowDialog();
+
+            /* Should be moved to OnConnected */
+            if (!_isStarted)
+            {
+                _chartVm = new();
+                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+                _isStarted = true;
+            }
+            else
+            {
+                _chartVm?.Dispose();
+                _isStarted = false;
+            }
         }
 
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new();
+            SettingsWindow settingsWindow = new(UserSettings);
             //settingsWindow.Closing += OnSettingsWindowClosing;
             //settingsWindow.IsEnabled = false;
             //settingsWindow.Owner = Application.Current.MainWindow;
-            //settingsWindow.ShowDialog();
+            settingsWindow.ShowDialog();
         }
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
+            
             //ManagerWindow detachManager = new();
             //detachManager.Closing += OnManagerWindowClosing;
             //buttonDetachManager.IsEnabled = false;
             //detachManager.Show();
         }
-
+         
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached detachLog = new();
-            //detachLog.Closing += OnLogWindowClosing;
-            buttonLogDetach.IsEnabled = false;
+            LogDetached detachLog = new(ViewModel.LogViewModel);
+            detachLog.Closing += OnLogWindowClosing;
+            ButtonLogDetach.IsEnabled = false;
             detachLog.Show();
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
-        {
-            
+        {            
             ValidationReportDetached detachVR = new(ValidationReport);
             detachVR.Closing += OnValidationWindowClosing;
             buttonValidationReportDetach.IsEnabled = false;
@@ -73,36 +128,51 @@ namespace DashboardFrontend
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached detachHR = new();
-            buttonHealthReportDetach.IsEnabled = false;
-            detachHR.Closing += OnHealthWindowClosing;
-            detachHR.Show();
+            HealthReportDetached expandHr = new();
+            _chartVm = new ChartViewModel();
+
+            if (_isStarted)
+            {
+                _chartVm.Dispose();
+            }
+
+            ButtonHealthReportDetach.IsEnabled = false;
+            expandHr.Closing += OnHealthWindowClosing;
+            
+            expandHr.Show();
+            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
+            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonSettings.IsEnabled = true;
+            ButtonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            buttonDetachManager.IsEnabled = true;
+            ButtonDetachManager.IsEnabled = true;
         }
 
-        private void OnLogWindowClosing(object sender, CancelEventArgs e)
+        private void OnLogWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonLogDetach.IsEnabled = true;
+            ButtonLogDetach.IsEnabled = true;
         }
 
-        private void OnValidationWindowClosing(object sender, CancelEventArgs e)
+        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonValidationReportDetach.IsEnabled = true;
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
-        private void OnHealthWindowClosing(object sender, CancelEventArgs e)
+        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
             buttonHealthReportDetach.IsEnabled = true;
+            _chartVm?.Dispose();
+            _chartVm = new ChartViewModel();
+            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+
+            ButtonHealthReportDetach.IsEnabled = true;
         }
 
         private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
