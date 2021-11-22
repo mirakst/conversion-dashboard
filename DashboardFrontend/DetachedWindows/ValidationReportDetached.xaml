@@ -7,7 +7,8 @@
         xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Validation Report" Height="800" Width="1000"
+        Title="Validation report" Height="800" Width="1000"
+
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
         FontSize="15">
