@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -16,9 +15,14 @@
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
-        <ContextMenu x:Key="ValidationTestContextMenu" DataContext="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.DataContext}">
-            <MenuItem Header="Copy source SQL" Click="MenuItem_SrcSql_Click" IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
-            <MenuItem Header="Copy destination SQL" Click="MenuItem_DstSql_Click" IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
+        <ContextMenu x:Key="ValidationTestContextMenu" 
+                     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+            <MenuItem Header="Copy source SQL" 
+                      Click="MenuItem_SrcSql_Click" 
+                      IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
+            <MenuItem Header="Copy destination SQL" 
+                      Click="MenuItem_DstSql_Click" 
+                      IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
         </ContextMenu>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
@@ -29,22 +33,24 @@
                       Margin="30,30,30,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
-                        Click="ButtonStartStopClick"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        Grid.RowSpan="2" 
-                        BorderBrush="Transparent">
+                            Click="ButtonStartStopClick"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.RowSpan="2" 
+                            BorderBrush="Transparent">
                         <Image Source="Icons/Start.png"/>
                     </Button>
+                    
                     <Button Name="ButtonSettings" 
-                        Click="ButtonSettingsClick" 
-                        Grid.Column="1" 
-                        Grid.Row="0" 
-                        Grid.RowSpan="2" 
-                        Background="Transparent" 
-                        BorderBrush="Transparent">
+                            Click="ButtonSettingsClick" 
+                            Grid.Column="1" 
+                            Grid.Row="0" 
+                            Grid.RowSpan="2" 
+                            Background="Transparent" 
+                            BorderBrush="Transparent">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
+
                     <TextBlock x:Name="TextBlockConversionName"
                                FontSize="28"
                                MinWidth="200"
@@ -56,30 +62,32 @@
                                Foreground="{DynamicResource ForegroundColor}"
                                Text="Conversion"/>
                     <Grid Grid.Column="3" 
-                      Grid.Row="0">
+                          Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
-                                 Margin="2"
-                                 Grid.Row="0"
-                                 Minimum="0"
-                                 Maximum="100"
-                                 Value="85"/>
+                                     Margin="2"
+                                     Grid.Row="0"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="85"/>
                         <TextBlock Text="{Binding ElementName=ProgressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
-                               FontSize="15" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"/>
+                                   FontSize="15" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
                     </Grid>
+                    
                     <Grid Grid.Column="3" 
-                      Grid.Row="1">
+                          Grid.Row="1">
                         <ProgressBar Name="ProgressBarConversionProgress" 
-                                 Margin="2" 
-                                 Minimum="0" 
-                                 Maximum="100" 
-                                 Value="15"/>
+                                     Margin="2" 
+                                     Minimum="0" 
+                                     Maximum="100" 
+                                     Value="15"/>
                         <TextBlock Text="{Binding ElementName=ProgressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
-                               FontSize="15" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"/>
+                                   FontSize="15" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
                     </Grid>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
@@ -92,41 +100,48 @@
                     </Grid.RowDefinitions>
                 </Grid>
             </Grid>
-            <Grid Margin="30,20,30,30" Background="{DynamicResource BackgroundColor}"
+            
+            <Grid Margin="30,20,30,30" 
+                  Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1">
                 <Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
                       Grid.Row="0">
                     <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
+                          Grid.Row="0">
                         <TextBox Name="TextBoxManagerSearchBox"
-                             Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Grid.Column="0" Name="DockPanelSearchButton"
+                                 Style="{DynamicResource SearchBox}"/>
+                        <DockPanel Grid.Column="0" 
+                                   Name="DockPanelSearchButton"
                                    LastChildFill="False">
                             <Button Name="ButtonManagerSearch"
-                                Style="{DynamicResource SearchButton}"
-                                DockPanel.Dock="Right">
+                                    Style="{DynamicResource SearchButton}"
+                                    DockPanel.Dock="Right">
                                 <Image Source="../Icons/magnifyingglass.png"/>
                             </Button>
                         </DockPanel>
+                        
                         <Button Name="ButtonManagerFilter"
                             Grid.Column="1"
                             Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
+                        
                         <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
                             Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
+                    
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
                         <ListView x:Name="ListViewManagerList"
@@ -151,6 +166,7 @@
                             </ListView.View>
                         </ListView>
                     </Grid>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -159,6 +175,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+                
                 <Grid Name="GridLog" 
                   Margin="20,0,0,20"
                   Grid.Column="1" 
@@ -166,88 +183,95 @@
                     <Grid Grid.Row="0"
                       Style="{DynamicResource ComponentControlBar}">
                         <ToggleButton Name="toggleButtonLogInfo"
-                                  Grid.Column="0"
-                                  IsChecked="{Binding LogViewModel.ShowInfo}"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="0"
+                                      IsChecked="{Binding LogViewModel.ShowInfo}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <Rectangle Width="1"
                                Fill="{DynamicResource BorderColor}"
                                Grid.Column="1"/>
                         <ToggleButton Name="ToggleButtonLogWarning"
-                              Grid.Column="2"
-                              IsChecked="{Binding LogViewModel.ShowWarn}"
-                              Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="2"
+                                      IsChecked="{Binding LogViewModel.ShowWarn}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
+                        
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="3"/>
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="3"/>
                         <ToggleButton Name="ToggleButtonLogError"
-                                  Grid.Column="4"
-                                  IsChecked="{Binding LogViewModel.ShowError}"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="4"
+                                      IsChecked="{Binding LogViewModel.ShowError}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
+                        
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="5"/>
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="5"/>
                         <ToggleButton Name="toggleButtonLogFatal"
-                                  Grid.Column="6"
-                                  IsChecked="{Binding LogViewModel.ShowFatal}"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="6"
+                                      IsChecked="{Binding LogViewModel.ShowFatal}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
+                        
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="7"/>
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="7"/>
                         <ToggleButton Name="toggleButtonLogValidation"
-                                  Grid.Column="8"
-                                  IsChecked="{Binding LogViewModel.ShowValidation}"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="8"
+                                      IsChecked="{Binding LogViewModel.ShowValidation}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Validation.png" 
-                                   Width="13"
-                                   Margin="0,0,5,0"/> 
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
                                 <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
-                        <Button  Name="buttonLogFilter"
-                              Grid.Column="9"
-                              Style="{DynamicResource FilterButton}">
+                        
+                        <Button Name="buttonLogFilter"
+                                Grid.Column="9"
+                                Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
+                        
                         <Button Name="ButtonLogDetach" 
-                        Click="DetachLogButtonClick" 
-                        Grid.Column="10"
-                        Style="{DynamicResource DetachButton}">
+                                Click="DetachLogButtonClick" 
+                                Grid.Column="10"
+                                Style="{DynamicResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2"/>
@@ -262,15 +286,16 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
+                    
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                       Grid.Row="1">
                         <ListView x:Name="listViewLogEntry"
-                                          ItemsSource="{Binding LogViewModel.Messages}"
-                                          Background="White"
-                                          Foreground="Black"
-                                          BorderBrush="{StaticResource BorderColor}"
-                                          ScrollViewer.CanContentScroll="False"
-                                          MaxHeight="5000">
+                                  ItemsSource="{Binding LogViewModel.Messages}"
+                                  Background="White"
+                                  Foreground="Black"
+                                  BorderBrush="{StaticResource BorderColor}"
+                                  ScrollViewer.CanContentScroll="False"
+                                  MaxHeight="5000">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel>
@@ -281,16 +306,21 @@
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style TargetType="{x:Type GridViewColumnHeader}">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                            <Setter Property="Padding" Value="5,0,5,0"/>
+                                            <Setter Property="IsEnabled" 
+                                                    Value="False"/>
+                                            <Setter Property="HorizontalContentAlignment" 
+                                                    Value="Left"/>
+                                            <Setter Property="Padding" 
+                                                    Value="5,0,5,0"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsEnabled" Value="False">
-                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                    <Setter Property="TextElement.Foreground" 
+                                                            Value="Black"/>
                                                 </Trigger>
                                             </Style.Triggers>
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
+                                    
                                     <GridViewColumn Header="Timestamp" 
                                                     DisplayMemberBinding="{Binding Date}"
                                                     Width="auto"/>
@@ -305,79 +335,123 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock TextWrapping="Wrap"
-                                                                   Text="{Binding Content}"/>
+                                                           Text="{Binding Content}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
+                            
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Type}" Value="Info">
-                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        <DataTrigger Binding="{Binding Type}" 
+                                                     Value="Info">
+                                            <Setter Property="Background" 
+                                                    Value="#FFFFFF"/>
                                         </DataTrigger>
+                                        
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="INFO"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
+                                                <Condition Binding="{Binding Type}" 
+                                                           Value="INFO"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                           Path=DataContext.LogViewModel.ShowInfo}" 
+                                                           Value="False"/>
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                            <Setter Property="Background" Value="#FCE283"/>
+                                        
+                                        <DataTrigger Binding="{Binding Type}" 
+                                                     Value="Warning">
+                                            <Setter Property="Background" 
+                                                    Value="#FCE283"/>
                                         </DataTrigger>
+                                        
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="WARNING"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
+                                                <Condition Binding="{Binding Type}" 
+                                                           Value="WARNING"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                           Path=DataContext.LogViewModel.ShowWarn}" 
+                                                           Value="False"/>
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Error">
-                                            <Setter Property="Background" Value="#ED4F47"/>
+                                        
+                                        <DataTrigger Binding="{Binding Type}" 
+                                                     Value="Error">
+                                            <Setter Property="Background" 
+                                                    Value="#ED4F47"/>
                                         </DataTrigger>
+                                        
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="ERROR"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowError}" Value="False"/>
+                                                <Condition Binding="{Binding Type}" 
+                                                           Value="ERROR"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                           Path=DataContext.LogViewModel.ShowError}" 
+                                                           Value="False"/>
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                            <Setter Property="Background" Value="#CFCFCF"/>
+                                        
+                                        <DataTrigger Binding="{Binding Type}" 
+                                                     Value="Fatal">
+                                            <Setter Property="Background" 
+                                                    Value="#CFCFCF"/>
                                         </DataTrigger>
+                                        
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="FATAL"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
+                                                <Condition Binding="{Binding Type}" 
+                                                           Value="FATAL"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowFatal}" 
+                                                           Value="False"/>
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        
+                                        <DataTrigger Binding="{Binding Type}" 
+                                                     Value="Validation">
+                                            <Setter Property="Background" 
+                                                    Value="#FFFFFF"/>
                                         </DataTrigger>
+                                        
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="VALIDATION"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
+                                                <Condition Binding="{Binding Type}" 
+                                                           Value="VALIDATION"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.LogViewModel.ShowValidation}" 
+                                                           Value="False"/>
                                             </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        <Trigger Property="Control.IsMouseOver" Value="True">
-                                            <Setter Property="Control.Background" Value="Transparent" />
-                                            <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                                        
+                                        <Trigger Property="Control.IsMouseOver" 
+                                                 Value="True">
+                                            <Setter Property="Control.Background" 
+                                                    Value="Transparent" />
+                                            <Setter Property="ItemsControl.BorderBrush" 
+                                                    Value="Transparent"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
+                    
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+                
                 <Grid Name="gridValidationReport"
                       DataContext="{Binding ValidationReportViewModel}"
                       Margin="0,20,20,0"
@@ -398,6 +472,7 @@
                                 <Image Source="../Icons/magnifyingglass.png"/>
                             </Button>
                         </DockPanel>
+                        
                         <ToggleButton Grid.Column="1"
                                       Margin="4 0 4 0"
                                       Style="{DynamicResource DefaultToggleButton}"
@@ -418,6 +493,7 @@
                                 Style="{StaticResource DetachButton}">      
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="60"/>
@@ -425,6 +501,7 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
+                    
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                           Grid.Row="1"
                           x:Name="ValidationReportComponent">
@@ -475,11 +552,15 @@
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
                                         <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="WhiteSmoke"/>
+                                            <Trigger Property="IsMouseOver" 
+                                                     Value="True">
+                                                <Setter Property="Background" 
+                                                        Value="WhiteSmoke"/>
                                             </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="LightBlue"/>
+                                            <Trigger Property="IsSelected" 
+                                                     Value="True">
+                                                <Setter Property="Background" 
+                                                        Value="LightBlue"/>
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
@@ -489,7 +570,8 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Vertical"
                                                     Margin="10 5 10 20">
-                                            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                            <StackPanel Orientation="Horizontal" 
+                                                        Margin="0 0 0 5">
                                                 <CheckBox Content="Show Failed" 
                                                           IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"/>
                                                 <CheckBox Content="Show Disabled" 
@@ -499,6 +581,7 @@
                                                           IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
                                                           Margin="10 0 0 0"/>
                                             </StackPanel>
+                                            
                                             <DataGrid ItemsSource="{Binding Tests}"
                                                       GridLinesVisibility="None"
                                                       IsReadOnly="True"
@@ -514,17 +597,22 @@
                                                                         Binding="{Binding Date,StringFormat=dd/MM HH:mm:ss}" 
                                                                         Width="120">
                                                     </DataGridTextColumn>
+                                                    
                                                     <DataGridTextColumn Header="Toolkit"
                                                                         Binding="{Binding ToolkitId}">
                                                     </DataGridTextColumn>
-                                                    <DataGridTextColumn Header="Description" Binding="{Binding Name}" 
+                                                    
+                                                    <DataGridTextColumn Header="Description" 
+                                                                        Binding="{Binding Name}" 
                                                                         Width="450">
                                                         <DataGridTextColumn.ElementStyle>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                                <Setter Property="TextWrapping" 
+                                                                        Value="Wrap"/>
                                                             </Style>
                                                         </DataGridTextColumn.ElementStyle>
                                                     </DataGridTextColumn>
+                                                    
                                                     <DataGridTemplateColumn Header="Status"
                                                                             SortMemberPath="Status"
                                                                             Width="125">
@@ -540,47 +628,67 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
+                                                    
                                                     <DataGridTextColumn Header="Source" 
-                                                        Binding="{Binding SrcCount,TargetNullValue='N/A'}"
-                                                        Width="80">
+                                                                        Binding="{Binding SrcCount,TargetNullValue='N/A'}"
+                                                                        Width="80">
                                                     </DataGridTextColumn>
+                                                    
                                                     <DataGridTextColumn Header="Dest" 
-                                                        Binding="{Binding DstCount,TargetNullValue='N/A'}"
-                                                        Width="80">
+                                                                        Binding="{Binding DstCount,TargetNullValue='N/A'}"
+                                                                        Width="80">
                                                     </DataGridTextColumn>
                                                 </DataGrid.Columns>
+                                                
                                                 <DataGrid.RowStyle>
                                                     <Style TargetType="DataGridRow">
-                                                        <Setter Property="ContextMenu" Value="{StaticResource ValidationTestContextMenu}"/>
-                                                        <Setter Property="ToolTip" Value="Right-click to copy SQL queries to the clipboard"/>
+                                                        <Setter Property="ContextMenu" 
+                                                                Value="{StaticResource ValidationTestContextMenu}"/>
+                                                        <Setter Property="ToolTip" 
+                                                                Value="Right-click to copy SQL queries to the clipboard"/>
                                                         <Style.Triggers>
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowOk}" Value="False"/>
-                                                                    <Condition Binding="{Binding Status}" Value="Ok"/>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.ShowOk}" 
+                                                                               Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" 
+                                                                               Value="Ok"/>
                                                                 </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Setter Property="Visibility" 
+                                                                        Value="Collapsed"/>
                                                             </MultiDataTrigger>
+                                                            
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowDisabled}" Value="False"/>
-                                                                    <Condition Binding="{Binding Status}" Value="Disabled"/>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.ShowDisabled}" 
+                                                                               Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" 
+                                                                               Value="Disabled"/>
                                                                 </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Setter Property="Visibility" 
+                                                                        Value="Collapsed"/>
                                                             </MultiDataTrigger>
+                                                            
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
-                                                                    <Condition Binding="{Binding Status}" Value="Failed"/>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" 
+                                                                               Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" 
+                                                                               Value="Failed"/>
                                                                 </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Setter Property="Visibility" 
+                                                                        Value="Collapsed"/>
                                                             </MultiDataTrigger>
+                                                            
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
-                                                                    <Condition Binding="{Binding Status}" Value="FailMismatch"/>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" 
+                                                                               Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" 
+                                                                               Value="FailMismatch"/>
                                                                 </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Setter Property="Visibility" 
+                                                                        Value="Collapsed"/>
                                                             </MultiDataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -592,35 +700,49 @@
                             </DataGrid>
                         </ScrollViewer>
                     </Grid>
+                    
                     <StackPanel Orientation="Horizontal"
                                     Grid.Row="2" 
                                     Margin="0 10 0 0"
                                     VerticalAlignment="Center">
-                        <Image Source="/Icons/Fatal.png" Width="20"/>
-                        <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" Foreground="{DynamicResource validationReportErrorColor}" Margin="5 0 50 0"/>
-                        <Image Source="/Icons/Warning.png" Width="20"/>
-                        <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Fatal.png" 
+                               Width="20"/>
+                        <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" 
+                                   Foreground="{DynamicResource validationReportErrorColor}" 
+                                   Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Warning.png" 
+                               Width="20"/>
+                        <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" 
+                                   Foreground="{DynamicResource validationReportDisabledColor}" 
+                                   Margin="5 0 50 0"/>
                         <Image Source="/Icons/Validation.png" Width="20"/>
-                        <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="LawnGreen" Margin="5 0 50 0"/>
-                        <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
+                        <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" 
+                                   Foreground="LawnGreen" 
+                                   Margin="5 0 50 0"/>
+                        <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" 
+                                   Foreground="{DynamicResource validationReportNormalColor}" 
+                                   Margin="0 0 50 0"/>
                     </StackPanel>
+                    
                     <StackPanel Orientation="Horizontal"
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Grid.ColumnSpan="2"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right">
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right">
                         <TextBlock Text="Last modified: "
-                                       Foreground="White"/>
-                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A',StringFormat=dd/HH HH:mm:ss}"
-                                       Foreground="White"/>
+                                   Foreground="White"/>
+                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A', StringFormat=dd/HH HH:mm:ss}"
+                                   Foreground="White"/>
                     </StackPanel>
+                    
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                 </Grid>
+                
                 <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
@@ -654,45 +776,46 @@
                                 </Grid.ColumnDefinitions>
                             </Grid>
                         </Border>
+                        
                         <Button Name="ButtonHealthReportDetach"
                                 Click="DetachHealthReportButtonClick"
                                 Grid.Column="2"
                                 Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
+                    
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                           Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                             BorderThickness="1">
-                            <idd:Chart Name="IddChartHealthReportGraph"
-                                       IsVerticalNavigationEnabled="False"
-                                       Background="{DynamicResource CanvasColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}">
-                                <Grid Name="GridHealthReportChartGridChartGrid"/>
-                            </idd:Chart>
+                            <!--Insert Chart here-->
                         </Border>
                     </Grid>
+                    
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>

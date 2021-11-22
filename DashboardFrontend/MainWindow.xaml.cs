@@ -19,9 +19,6 @@ namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
-        private ChartViewModel? _chartVm;
-        private bool _isStarted;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -76,17 +73,6 @@ namespace DashboardFrontend
             //dialogPopup.ShowDialog();
 
             /* Should be moved to OnConnected */
-            if (!_isStarted)
-            {
-                _chartVm = new();
-                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-                _isStarted = true;
-            }
-            else
-            {
-                _chartVm?.Dispose();
-                _isStarted = false;
-            }
         }
 
         //Detach window events
@@ -127,19 +113,12 @@ namespace DashboardFrontend
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportDetached expandHr = new();
-            _chartVm = new ChartViewModel();
-
-            if (_isStarted)
-            {
-                _chartVm.Dispose();
-            }
+            
 
             ButtonHealthReportDetach.IsEnabled = false;
             expandHr.Closing += OnHealthWindowClosing;
             
             expandHr.Show();
-            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
-            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
@@ -165,11 +144,6 @@ namespace DashboardFrontend
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            ButtonHealthReportDetach.IsEnabled = true;
-            _chartVm?.Dispose();
-            _chartVm = new ChartViewModel();
-            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-
             ButtonHealthReportDetach.IsEnabled = true;
         }
 

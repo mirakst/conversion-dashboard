@@ -3,13 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Health report monitoring"
         Height="450"
-        Width="800"
-        >
+        Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TabControl Background="{DynamicResource BackgroundColor}"
@@ -42,23 +40,18 @@
                                      Foreground="{DynamicResource ForegroundColor}"
                                      Grid.Column="3"
                                      Grid.Row="0"/>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="3" Grid.Column="0"
-                                       Grid.Row="1"/>
-                            <idd:Chart Name="IddChartHealthReport"
-                                       Background="{StaticResource CanvasColor}"
-                                       Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}"
+                            <Rectangle Stroke="{StaticResource BorderColor}" 
+                                       Grid.ColumnSpan="3" 
                                        Grid.Column="0"
-                                       Grid.ColumnSpan="4"
-                                       Grid.Row="1">
-                                <Grid Name="GridHealthReportChartGrid"/>
-                            </idd:Chart>
+                                       Grid.Row="1"/>
+                            <!--Insert CPU/RAM chart here-->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
+                            
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
@@ -66,6 +59,7 @@
                         </Grid>
                     </Border>
                 </TabItem>
+                
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemNetwork"
                          Header="Network">
@@ -85,6 +79,7 @@
                                 Received delta:<LineBreak/>
                                 Received speed:<LineBreak/>
                             </TextBlock>
+                            
                             <TextBlock Name="TextBlockNetworkData"
                                        FontSize="15"
                                        Grid.Column="1"
@@ -101,6 +96,7 @@
                                 12 KB<LineBreak/>
                                 13 MB<LineBreak/>
                             </TextBlock>
+                            
                             <ComboBox Name="ComboBoxNetworkChartInterval"
                                       FontSize="20"
                                       Margin="0,0,0,5"
@@ -114,22 +110,19 @@
                                 <ComboBoxItem Content="12 Hour"/>
                                 <ComboBoxItem Content="24 Hour"/>
                             </ComboBox>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
-                            <idd:Chart Name="IddChartNetwork"
-                                       Background="{StaticResource CanvasColor}"
-                                       Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}"
-                                       Grid.Column="2"
-                                       Grid.ColumnSpan="2"
-                                       Grid.Row="1">
-                                <Grid Name="GridNetworkChartGrid"/>
-                            </idd:Chart>
+                            
+                            <Rectangle Stroke="{StaticResource BorderColor}" 
+                                       Grid.Column="2" 
+                                       Grid.ColumnSpan="2" 
+                                       Grid.Row="1"/>
+                            <!--Insert network chart here-->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="7*"/>
                                 <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
+                            
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="*"/>
