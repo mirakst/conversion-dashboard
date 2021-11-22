@@ -9,9 +9,10 @@
     <SolidColorBrush x:Key="CanvasColor" Color="#2f3136"/>
 
     <!-- Validation Report -->
-    <SolidColorBrush x:Key="ValidationReportNormalColor" Color="White"/>
-    <SolidColorBrush x:Key="ValidationReportDisabledColor" Color="Yellow"/>
-    <SolidColorBrush x:Key="ValidationReportErrorColor" Color="Red"/>
+    <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
+    <SolidColorBrush x:Key="validationReportOkColor" Color="Green"/>
+    <SolidColorBrush x:Key="validationReportDisabledColor" Color="Yellow"/>
+    <SolidColorBrush x:Key="validationReportErrorColor" Color="Red"/>
 
     <Style x:Key="SearchBox" TargetType="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>

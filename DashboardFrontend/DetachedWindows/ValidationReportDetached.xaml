@@ -4,125 +4,240 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:adorners="http://gu.se/Adorners"
+        xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Validation report monitoring" Height="450" Width="800"
+        Title="Validation report" Height="800" Width="1000"
+
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
         FontSize="15">
+    <Window.Resources>
+        <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
+        <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
+        <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
+        <ContextMenu x:Key="ValidationTestContextMenu" DataContext="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.DataContext}">
+            <MenuItem Header="Copy source SQL" Click="MenuItem_SrcSql_Click" IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
+            <MenuItem Header="Copy destination SQL" Click="MenuItem_DstSql_Click" IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
+        </ContextMenu>
+    </Window.Resources>
     <Border BorderThickness="10"
             Background="{DynamicResource BackgroundColor}">
         <Grid>
-            <TextBox Name="TextBoxValidationReportSearchBar"
-                     adorners:Watermark.Text="Search"
-                     Margin="0,0,5,5"
-                     Grid.Column="0"
-                     Grid.Row="0"/>
-            <Button Name="ButtonValidationReportSearch"
-                    Content="Search"
-                    Margin="5,0,5,5"
-                    Grid.Column="1"
+            <TextBox Name="textBoxValidationReportSearchBar"
+                     Text="{Binding NameFilter,UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,5,5"/>
+
+            <ToggleButton Grid.Column="1"
+                          Margin="4 0 4 5"
+                          Style="{DynamicResource DefaultToggleButton}"
+                          IsChecked="{Binding ShowSuccessfulManagers}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Show all"/>
+                </StackPanel>
+            </ToggleButton>
+            
+            <Button Content="Refresh"
+                    Style="{DynamicResource DefaultButton}"
+                    Margin="5,0,0,5"
+                    Grid.Column="3"
                     Grid.Row="0"/>
-            <Button Name="ButtonValidationReportFilter"
-                    Content="Filter"
-                    Margin="5,0,5,5"
-                    Grid.Column="2"
-                    Grid.Row="0"/>
-            <ToggleButton Name="ToggleButtonValidationReportRefreshToggle"
-                          Content="Refresh"
-                          Margin="5,0,0,5"
-                          Grid.Column="3"
-                          Grid.Row="0"/>
-            <DataGrid Name="DataGridValidationReport"
-                      Background="{DynamicResource BackgroundColor}"
-                      ToolTip="Click to expand"
-                      AutoGenerateColumns="False"
-                      Grid.Column="0"
-                      Grid.ColumnSpan="4"
-                      Grid.Row="1" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Manager name"
-                                        Binding="{Binding ManagerName}"
-                                        IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Validations OK"
-                                        Binding="{Binding ValidationsOK}"
-                                        IsReadOnly="True">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Validations total"
-                                        Binding="{Binding ValidationsTotal}"
-                                        IsReadOnly="True">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Score"
-                                        Binding="{Binding ManagerScore, StringFormat={}{0:n2}}"
-                                        IsReadOnly="True">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <DockPanel>
-                            <Grid>
-                                <ListBox ItemsSource="{Binding ValidationReportList}"
-                                     Grid.Column="0"/>
-                                <ListBox ItemsSource="{Binding ValidationReportStatus}"
-                                     Grid.Column="1"/>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                </Grid.ColumnDefinitions>
-                            </Grid>
-                        </DockPanel>
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-            </DataGrid>
-            <Grid Grid.Column="0"
-                  Grid.ColumnSpan="4"
-                  Grid.Row="2">
-                <TextBlock Name="TextBlockValidationReportStatsTotal"
-                       Text="{Binding ValidationReportStatsTotal}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="0"/>
-                <TextBlock Name="TextBlockValidationReportStatsFailed"
-                       Text="{Binding ValidationReportStatsFailed}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="1"/>
-                <TextBlock Name="TextBlockValidationReportStatsDisabled"
-                       Text="{Binding ValidationReportStatsDisabled}"
-                       Background="White"
-                       TextAlignment="Center"
-                       Grid.Column="2"/>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
+            <ScrollViewer Grid.Row="1" 
+                          Grid.ColumnSpan="3"
+                          HorizontalScrollBarVisibility="Auto">
+                <DataGrid ItemsSource="{Binding Data}"
+                          x:Name="DataGridValidations"
+                          PreviewMouseWheel="validationsDataGrid_PreviewMouseWheel"
+                          AutoGenerateColumns="False"
+                          ScrollViewer.CanContentScroll="False"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserResizeRows="False"
+                          IsReadOnly="True"
+                          CanUserReorderColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Manager"
+                                            Binding="{Binding ManagerName}"
+                                            Width="*"/>
+                        <DataGridTemplateColumn Header="Score"
+                                                SortMemberPath="Score"
+                                                Width="85">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
+                                               Width="26"/>
+                                        <TextBlock Text="{Binding Score,StringFormat=N0}"
+                                                   Margin="5 0 0 0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Disabled"
+                                            Binding="{Binding DisabledCount}"
+                                            Width="70"/>
+                        <DataGridTextColumn Header="Failed"
+                                            Binding="{Binding FailedCount}"
+                                            Width="70"/>
+                        <DataGridTextColumn Header="Total"
+                                            Binding="{Binding TotalCount}"
+                                            Width="70"/>
+                    </DataGrid.Columns>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="WhiteSmoke"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="LightBlue"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical"
+                                        Margin="10 5 10 20">
+                                <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                    <CheckBox Content="Show Failed" 
+                                              IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"/>
+                                    <CheckBox Content="Show Disabled" 
+                                              IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="10 0 0 0"/>
+                                    <CheckBox Content="Show Ok" 
+                                              IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="10 0 0 0"/>
+                                </StackPanel>
+                                <DataGrid ItemsSource="{Binding Tests}"
+                                          GridLinesVisibility="None"
+                                          IsReadOnly="True"
+                                          MinHeight="56"
+                                          AutoGenerateColumns="False"
+                                          ScrollViewer.CanContentScroll="False"
+                                          PreviewMouseWheel="DetailsDataGrid_PreviewMouseWheel"
+                                          HeadersVisibility="Column"
+                                          BorderBrush="{x:Null}"
+                                          CanUserReorderColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Date" 
+                                                            Binding="{Binding Date,StringFormat=dd/MM HH:mm:ss}" 
+                                                            Width="120">
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Toolkit"
+                                                            Binding="{Binding ToolkitId}">
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Description" Binding="{Binding Name}" 
+                                                            Width="450">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTemplateColumn Header="Status"
+                                                                SortMemberPath="Status"
+                                                                Width="125">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" 
+                                                               Width="24" 
+                                                               Margin="0 0 5 0"
+                                                               VerticalAlignment="Top"/>
+                                                        <TextBlock Text="{Binding Status}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Source" 
+                                                            Binding="{Binding SrcCount,TargetNullValue='N/A'}"
+                                                            Width="80">
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dest" 
+                                                            Binding="{Binding DstCount,TargetNullValue='N/A'}"
+                                                            Width="80">
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="ContextMenu" Value="{StaticResource ValidationTestContextMenu}"/>
+                                            <Setter Property="ToolTip" Value="Right-click to copy SQL queries to the clipboard"/>
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowOk}" Value="False"/>
+                                                        <Condition Binding="{Binding Status}" Value="Ok"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowDisabled}" Value="False"/>
+                                                        <Condition Binding="{Binding Status}" Value="Disabled"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
+                                                        <Condition Binding="{Binding Status}" Value="Failed"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
+                                                        <Condition Binding="{Binding Status}" Value="FailMismatch"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                </DataGrid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+            </ScrollViewer>
+
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="2" 
+                        Margin="0 10 0 0"
+                        VerticalAlignment="Center">
+                <Image Source="/Icons/Fatal.png" Width="20"/>
+                <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" Foreground="{DynamicResource validationReportErrorColor}" Margin="5 0 50 0"/>
+                <Image Source="/Icons/Warning.png" Width="20"/>
+                <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="5 0 50 0"/>
+                <Image Source="/Icons/Validation.png" Width="20"/>
+                <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="LawnGreen" Margin="5 0 50 0"/>
+                <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right">
+                <TextBlock Text="Last modified: "
+                           Foreground="White"/>
+                <TextBlock Text="{Binding LastModified,StringFormat=dd/HH HH:mm:ss}"
+                           Foreground="White"/>
+            </StackPanel>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="7*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
         </Grid>
     </Border>

@@ -1,4 +1,4 @@
-using DashboardBackend.Database;
+﻿using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
@@ -15,7 +15,6 @@ namespace DashboardBackend
 
         //Set SQL minimum DateTime as default.
         public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
-
 
         /// <summary>
         /// Queries the state database for executions newer than minDate, 
@@ -55,13 +54,14 @@ namespace DashboardBackend
             return (from item in queryResult
                     let date = item.Afstemtdato
                     let name = item.Description
+                    let managerName = item.Manager
                     let status = GetValidationStatus(item)
                     let srcCount = item.Srcantal
                     let dstCount = item.Dstantal
                     let toolkitId = item.ToolkitId
                     let srcSql = item.SrcSql
                     let dstSql = item.DstSql
-                    select new ValidationTest(date, name, status, name, srcCount, dstCount, toolkitId, srcSql, dstSql))
+                    select new ValidationTest(date, name, status, managerName, srcCount, dstCount, toolkitId, srcSql, dstSql))
                     .ToList();
         }
 

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Threading;
@@ -25,13 +26,19 @@ namespace DashboardFrontend
         {
             InitializeComponent();
             DataUtilities.DatabaseHandler = new SqlDatabase();
+            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+
             TryLoadUserSettings();
-            ViewModel = new(Log);
+            
+            ViewModel = new(Log, ValidationReport, DataGridValidations);
             DataContext = ViewModel;
         }
 
         private UserSettings UserSettings { get; } = new();
-
+        public ValidationReport ValidationReport { get; set; } = new();
+        public Log Log { get; set; } = new();
+        public MainWindowViewModel ViewModel { get; }
+        
         private void TryLoadUserSettings()
         {
             try
@@ -40,7 +47,7 @@ namespace DashboardFrontend
             }
             catch (System.IO.FileNotFoundException ex)
             {
-                DisplayGeneralError("Could not find configuration file", ex);
+                // Configuration file was not found, possibly first time setup
             }
             catch (System.Text.Json.JsonException ex)
             {
@@ -56,10 +63,6 @@ namespace DashboardFrontend
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
-        
-
-        public Log Log { get; set; } = new();
-        public MainWindowViewModel ViewModel { get; }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
@@ -114,11 +117,11 @@ namespace DashboardFrontend
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
-        {
-            ValidationReportDetached detachVr = new();
-            detachVr.Closing += OnValidationWindowClosing;
-            ButtonValidationReportDetach.IsEnabled = false;
-            detachVr.Show();
+        {            
+            ValidationReportDetached detachVR = new(ValidationReport);
+            detachVR.Closing += OnValidationWindowClosing;
+            buttonValidationReportDetach.IsEnabled = false;
+            detachVR.Show();
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
@@ -157,16 +160,55 @@ namespace DashboardFrontend
 
         private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            ButtonValidationReportDetach.IsEnabled = true;
+            buttonValidationReportDetach.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
+            ButtonHealthReportDetach.IsEnabled = true;
             _chartVm?.Dispose();
             _chartVm = new ChartViewModel();
             _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
 
             ButtonHealthReportDetach.IsEnabled = true;
+        }
+
+        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = MouseWheelEvent,
+                Source = DataGridValidations
+            };
+            DataGridValidations.RaiseEvent(eventArgs);
+        }
+
+        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = MouseWheelEvent,
+                Source = DataGridValidations
+            };
+            DataGridValidations.RaiseEvent(eventArgs);
+        }
+
+        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.SrcSql ?? "");
+            }
+        }
+
+        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql ?? "");
+            }
         }
     }
 }

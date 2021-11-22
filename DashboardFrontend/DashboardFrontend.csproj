@@ -26,6 +26,8 @@
     <None Remove="Icons\Settings4.png" />
     <None Remove="Icons\Start.png" />
     <None Remove="Icons\Stop.png" />
+    <None Remove="Icons\Validation report.png" />
+    <None Remove="Icons\ValidationDisabled.png" />
     <None Remove="Icons\Validation.png" />
     <None Remove="Icons\ValidationAlt.png" />
     <None Remove="Icons\Warn.png" />
@@ -37,6 +39,11 @@
     <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
@@ -73,9 +80,15 @@
     <Resource Include="Icons\Stop.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\Validation report.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\Validation.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+	<Resource Include="Icons\ValidationDisabled.png">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Resource>
     <Resource Include="Icons\ValidationAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
