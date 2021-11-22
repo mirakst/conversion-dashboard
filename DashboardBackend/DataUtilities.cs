@@ -61,7 +61,7 @@ namespace DashboardBackend
                     let toolkitId = item.ToolkitId
                     let srcSql = item.SrcSql
                     let dstSql = item.DstSql
-                    select new ValidationTest(date, name, status, name, srcCount, dstCount, toolkitId, srcSql, dstSql))
+                    select new ValidationTest(date, name, status, managerName, srcCount, dstCount, toolkitId, srcSql, dstSql))
                     .ToList();
         }
 

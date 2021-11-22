@@ -50,7 +50,16 @@ namespace DashboardFrontend.ViewModels
                 Filter();
             }
         }
-        public int TotalCount => OkCount + DisabledCount + FailedCount;
+        private int _totalCount;
+        public int TotalCount
+        {
+            get => _totalCount;
+            set
+            {
+                _totalCount = value;
+                OnPropertyChanged(nameof(TotalCount));
+            }
+        }
         private int _okCount;
         public int OkCount
         {
@@ -101,14 +110,14 @@ namespace DashboardFrontend.ViewModels
             FailedCount = 0;
             foreach (ValidationTest test in _validationReport.ValidationTests)
             {
-                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerNameFull);
+                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
                 {
                     dataEntry.AddTest(test);
                 }
                 else
                 {
-                    dataEntry = new(test.ManagerNameFull);
+                    dataEntry = new(test.ManagerName);
                     dataEntry.AddTest(test);
                     Data.Add(dataEntry);
                 }
@@ -150,7 +159,10 @@ namespace DashboardFrontend.ViewModels
                 case ValidationStatus.FailMismatch:
                     FailedCount++;
                     break;
+                default: 
+                    break;
             }
+            TotalCount++;
         }
     }
 }

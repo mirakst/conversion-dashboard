@@ -15,7 +15,6 @@
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
-        <converters:ValidationTestCountToStateConverter x:Key="CountToStateConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <ContextMenu x:Key="ValidationTestContextMenu" DataContext="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.DataContext}">
             <MenuItem Header="Copy source SQL" Click="MenuItem_SrcSql_Click" IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
@@ -380,6 +379,7 @@
                     </Grid.RowDefinitions>
                 </Grid>
                 <Grid Name="gridValidationReport"
+                      DataContext="{Binding ValidationReportViewModel}"
                       Margin="0,20,20,0"
                       Grid.Column="0"
                       Grid.Row="1">
@@ -413,9 +413,9 @@
                                 Grid.Column="2"
                                 Grid.Row="0"/>
                         <Button Name="buttonValidationReportDetach"
-                        Click="DetachValidationReportButtonClick"
-                        Grid.Column="3"
-                        Style="{StaticResource DetachButton}">
+                                Click="DetachValidationReportButtonClick"
+                                Grid.Column="3"
+                                Style="{StaticResource DetachButton}">      
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
@@ -426,8 +426,8 @@
                         </Grid.ColumnDefinitions>
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
-                           Grid.Row="1"
-                           x:Name="ValidationReportComponent">
+                          Grid.Row="1"
+                          x:Name="ValidationReportComponent">
                         <ScrollViewer Grid.Row="1" 
                                       Grid.ColumnSpan="3"
                                       HorizontalScrollBarVisibility="Auto">
@@ -462,14 +462,14 @@
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Disabled"
-                                        Binding="{Binding DisabledCount}"
-                                        Width="70"/>
+                                                        Binding="{Binding DisabledCount}"
+                                                        Width="70"/>
                                     <DataGridTextColumn Header="Failed"
-                                        Binding="{Binding FailedCount}"
-                                        Width="70"/>
+                                                        Binding="{Binding FailedCount}"
+                                                        Width="70"/>
                                     <DataGridTextColumn Header="Total"
-                                        Binding="{Binding TotalCount}"
-                                        Width="70"/>
+                                                        Binding="{Binding TotalCount}"
+                                                        Width="70"/>
                                 </DataGrid.Columns>
 
                                 <DataGrid.RowStyle>

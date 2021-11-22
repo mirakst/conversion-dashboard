@@ -14,7 +14,6 @@
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
-        <converters:ValidationTestCountToStateConverter x:Key="CountToStateConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <ContextMenu x:Key="ValidationTestContextMenu" DataContext="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.DataContext}">
             <MenuItem Header="Copy source SQL" Click="MenuItem_SrcSql_Click" IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>

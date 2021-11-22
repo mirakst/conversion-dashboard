@@ -86,8 +86,9 @@
     <Resource Include="Icons\Validation.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\ValidationDisabled.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	<Resource Include="Icons\ValidationDisabled.png">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Resource>
     <Resource Include="Icons\ValidationAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

@@ -26,18 +26,16 @@ namespace DashboardFrontend
         {
             InitializeComponent();
             DataUtilities.DatabaseHandler = new SqlDatabase();
-            
+            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+
             TryLoadUserSettings();
             
-            ViewModel = new(Log);
+            ViewModel = new(Log, ValidationReport, validationsDataGrid);
             DataContext = ViewModel;
-            ValidationReport = new();
-            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
-            gridValidationReport.DataContext = new ValidationReportViewModel(ValidationReport, validationsDataGrid);
         }
 
         private UserSettings UserSettings { get; } = new();
-        public ValidationReport ValidationReport { get; set; }
+        public ValidationReport ValidationReport { get; set; } = new();
         public Log Log { get; set; } = new();
         public MainWindowViewModel ViewModel { get; }
         
@@ -162,12 +160,12 @@ namespace DashboardFrontend
 
         private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            ButtonValidationReportDetach.IsEnabled = true;
+            buttonValidationReportDetach.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonHealthReportDetach.IsEnabled = true;
+            ButtonHealthReportDetach.IsEnabled = true;
             _chartVm?.Dispose();
             _chartVm = new ChartViewModel();
             _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
