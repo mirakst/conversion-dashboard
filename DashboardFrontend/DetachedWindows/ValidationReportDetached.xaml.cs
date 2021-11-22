@@ -25,7 +25,7 @@ namespace DashboardFrontend.DetachedWindows
         {
             InitializeComponent();
             ValidationReport = validationReport;
-            ViewModel = new(validationReport, validationsDataGrid);
+            ViewModel = new(validationReport, DataGridValidations);
             DataContext = ViewModel;
         }
         
@@ -36,16 +36,16 @@ namespace DashboardFrontend.DetachedWindows
         {
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
             eventArgs.RoutedEvent = MouseWheelEvent;
-            eventArgs.Source = validationsDataGrid;
-            validationsDataGrid.RaiseEvent(eventArgs);
+            eventArgs.Source = DataGridValidations;
+            DataGridValidations.RaiseEvent(eventArgs);
         }
 
         private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
             eventArgs.RoutedEvent = MouseWheelEvent;
-            eventArgs.Source = validationsDataGrid;
-            validationsDataGrid.RaiseEvent(eventArgs);
+            eventArgs.Source = DataGridValidations;
+            DataGridValidations.RaiseEvent(eventArgs);
         }
 
         private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)

@@ -30,7 +30,7 @@ namespace DashboardFrontend
 
             TryLoadUserSettings();
             
-            ViewModel = new(Log, ValidationReport, validationsDataGrid);
+            ViewModel = new(Log, ValidationReport, DataGridValidations);
             DataContext = ViewModel;
         }
 
@@ -47,7 +47,7 @@ namespace DashboardFrontend
             }
             catch (System.IO.FileNotFoundException ex)
             {
-                DisplayGeneralError("Could not find configuration file", ex);
+                // Configuration file was not found, possibly first time setup
             }
             catch (System.Text.Json.JsonException ex)
             {
@@ -178,9 +178,9 @@ namespace DashboardFrontend
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
             {
                 RoutedEvent = MouseWheelEvent,
-                Source = validationsDataGrid
+                Source = DataGridValidations
             };
-            validationsDataGrid.RaiseEvent(eventArgs);
+            DataGridValidations.RaiseEvent(eventArgs);
         }
 
         private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -188,9 +188,9 @@ namespace DashboardFrontend
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
             {
                 RoutedEvent = MouseWheelEvent,
-                Source = validationsDataGrid
+                Source = DataGridValidations
             };
-            validationsDataGrid.RaiseEvent(eventArgs);
+            DataGridValidations.RaiseEvent(eventArgs);
         }
 
         private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)

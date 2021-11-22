@@ -30,36 +30,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ValidationExpandButton" TargetType="ToggleButton">
-        <Setter Property="FontFamily" Value="Wingdings 3"/>
-        <Setter Property="FontSize" Value="22"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Width" Value="30"/>
-        <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource Self},Path=Width}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <ContentPresenter/>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}" Value="True">
-                            <Setter Property="Content" Value="q"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}" Value="False">
-                            <Setter Property="Content" Value="u"/>
-                        </DataTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonOnHoverColor}"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="False">
-                            <Setter Property="Foreground" Value="Black"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="FilterButton" TargetType="Button" >
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>

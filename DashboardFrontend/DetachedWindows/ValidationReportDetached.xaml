@@ -45,7 +45,7 @@
                           Grid.ColumnSpan="3"
                           HorizontalScrollBarVisibility="Auto">
                 <DataGrid ItemsSource="{Binding Data}"
-                          x:Name="validationsDataGrid"
+                          x:Name="DataGridValidations"
                           PreviewMouseWheel="validationsDataGrid_PreviewMouseWheel"
                           AutoGenerateColumns="False"
                           ScrollViewer.CanContentScroll="False"
