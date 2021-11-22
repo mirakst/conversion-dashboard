@@ -1,17 +1,27 @@
-﻿<Window x:Class="DashboardInterface.MainWindow"
+﻿<Window x:Class="DashboardFrontend.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         xmlns:adorners="http://gu.se/Adorners"
+        xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         Title="Conversion dashboard"
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
-
+    <Window.Resources>
+        <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
+        <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
+        <converters:ValidationTestCountToStateConverter x:Key="CountToStateConverter"/>
+        <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
+        <ContextMenu x:Key="ValidationTestContextMenu" DataContext="{Binding RelativeSource={RelativeSource Self},Path=PlacementTarget.DataContext}">
+            <MenuItem Header="Copy source SQL" Click="MenuItem_SrcSql_Click" IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
+            <MenuItem Header="Copy destination SQL" Click="MenuItem_DstSql_Click" IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
+        </ContextMenu>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
@@ -271,69 +281,245 @@
                     </Grid.RowDefinitions>
                 </Grid>
                 <Grid Name="gridValidationReport"
-                  Margin="0,20,20,0"
-                  Grid.Column="0"
-                  Grid.Row="1">
+                      Margin="0,20,20,0"
+                      Grid.Column="0"
+                      Grid.Row="1">
                     <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
+                          Grid.Row="0">
                         <TextBox Name="textBoxValidationReportSearchBox"
-                             Grid.Column="0"
-                             Style="{DynamicResource SearchBox}"/>
+                                 Grid.Column="0"
+                                 Text="{Binding NameFilter,UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{DynamicResource SearchBox}"/>
                         <DockPanel Name="dockpanelValidationReportSearchbutton"
-                           LastChildFill="False">
+                                   LastChildFill="False">
                             <Button Name="buttonValidationReportSearch"
-                                Style="{DynamicResource SearchButton}"
-                                Grid.Row="0"
-                                DockPanel.Dock="Right">
+                                    Style="{DynamicResource SearchButton}"
+                                    Grid.Row="0"
+                                    DockPanel.Dock="Right">
                                 <Image Source="../Icons/magnifyingglass.png"/>
                             </Button>
                         </DockPanel>
-                        <Button Name="buttonValidationReportFilter"
-                            Grid.Column="1"
-                            Style="{StaticResource FilterButton}">
-                            <Image Source="Icons/Filter.png"/>
-                        </Button>
+                        <ToggleButton Grid.Column="1"
+                                      Margin="4 0 4 0"
+                                      Style="{DynamicResource DefaultToggleButton}"
+                                      IsChecked="{Binding ShowSuccessfulManagers}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Show all"/>
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <Button Content="R"
+                                Style="{DynamicResource DefaultButton}"
+                                Margin="4,0,0,4"
+                                Grid.Column="2"
+                                Grid.Row="0"/>
                         <Button Name="buttonValidationReportDetach"
                         Click="DetachValidationReportButtonClick"
-                        Grid.Column="2"
+                        Grid.Column="3"
                         Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                     <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
-                        <ListView x:Name="listViewValidationReport"
-                          Grid.Column="0"
-                          Grid.ColumnSpan="5" 
-                          Grid.Row="1"
-                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                          AlternationCount="2"
-                          Background="{StaticResource CanvasColor}"
-                          Foreground="{StaticResource ForegroundColor}"
-                          BorderBrush="{StaticResource BorderColor}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Manager name"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerName}"/>
-                                    <GridViewColumn Header="Validations OK"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
-                                    <GridViewColumn Header="Status"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                           Grid.Row="1"
+                           x:Name="ValidationReportComponent">
+                        <ScrollViewer Grid.Row="1" 
+                                      Grid.ColumnSpan="3"
+                                      HorizontalScrollBarVisibility="Auto">
+                            <DataGrid ItemsSource="{Binding Data}"
+                                      x:Name="validationsDataGrid"
+                                      PreviewMouseWheel="validationsDataGrid_PreviewMouseWheel"
+                                      AutoGenerateColumns="False"
+                                      ScrollViewer.CanContentScroll="False"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      CanUserResizeRows="False"
+                                      IsReadOnly="True"
+                                      CanUserReorderColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Manager"
+                                                        Binding="{Binding ManagerName}"
+                                                        Width="*"/>
+                                    <DataGridTemplateColumn Header="Score"
+                                                            SortMemberPath="Score"
+                                                            Width="85">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
+                                                           Width="26"/>
+                                                    <TextBlock Text="{Binding Score,StringFormat=N0}"
+                                                               Margin="5 0 0 0"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Disabled"
+                                        Binding="{Binding DisabledCount}"
+                                        Width="70"/>
+                                    <DataGridTextColumn Header="Failed"
+                                        Binding="{Binding FailedCount}"
+                                        Width="70"/>
+                                    <DataGridTextColumn Header="Total"
+                                        Binding="{Binding TotalCount}"
+                                        Width="70"/>
+                                </DataGrid.Columns>
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="WhiteSmoke"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="LightBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.RowDetailsTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical"
+                                                    Margin="10 5 10 20">
+                                            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                                <CheckBox Content="Show Failed" 
+                                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <CheckBox Content="Show Disabled" 
+                                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                                          Margin="10 0 0 0"/>
+                                                <CheckBox Content="Show Ok" 
+                                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                                          Margin="10 0 0 0"/>
+                                            </StackPanel>
+                                            <DataGrid ItemsSource="{Binding Tests}"
+                                                      GridLinesVisibility="None"
+                                                      IsReadOnly="True"
+                                                      MinHeight="56"
+                                                      AutoGenerateColumns="False"
+                                                      ScrollViewer.CanContentScroll="False"
+                                                      PreviewMouseWheel="DetailsDataGrid_PreviewMouseWheel"
+                                                      HeadersVisibility="Column"
+                                                      BorderBrush="{x:Null}"
+                                                      CanUserReorderColumns="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Date" 
+                                                                        Binding="{Binding Date,StringFormat=dd/MM HH:mm:ss}" 
+                                                                        Width="120">
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Toolkit"
+                                                                        Binding="{Binding ToolkitId}">
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Description" Binding="{Binding Name}" 
+                                                                        Width="450">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+                                                    <DataGridTemplateColumn Header="Status"
+                                                                            SortMemberPath="Status"
+                                                                            Width="125">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" 
+                                                                           Width="24" 
+                                                                           Margin="0 0 5 0"
+                                                                           VerticalAlignment="Top"/>
+                                                                    <TextBlock Text="{Binding Status}"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn Header="Source" 
+                                                        Binding="{Binding SrcCount,TargetNullValue='N/A'}"
+                                                        Width="80">
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Dest" 
+                                                        Binding="{Binding DstCount,TargetNullValue='N/A'}"
+                                                        Width="80">
+                                                    </DataGridTextColumn>
+                                                </DataGrid.Columns>
+                                                <DataGrid.RowStyle>
+                                                    <Style TargetType="DataGridRow">
+                                                        <Setter Property="ContextMenu" Value="{StaticResource ValidationTestContextMenu}"/>
+                                                        <Setter Property="ToolTip" Value="Right-click to copy SQL queries to the clipboard"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowOk}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Ok"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowDisabled}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Disabled"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Failed"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},Path=DataContext.ShowFailed}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="FailMismatch"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </DataGrid.RowStyle>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGrid.RowDetailsTemplate>
+                            </DataGrid>
+                        </ScrollViewer>
                     </Grid>
+                    <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2" 
+                                    Margin="0 10 0 0"
+                                    VerticalAlignment="Center">
+                        <Image Source="/Icons/Fatal.png" Width="20"/>
+                        <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" Foreground="{DynamicResource validationReportErrorColor}" Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Warning.png" Width="20"/>
+                        <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" Foreground="{DynamicResource validationReportDisabledColor}" Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Validation.png" Width="20"/>
+                        <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" Foreground="LawnGreen" Margin="5 0 50 0"/>
+                        <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" Foreground="{DynamicResource validationReportNormalColor}" Margin="0 0 50 0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right">
+                        <TextBlock Text="Last modified: "
+                                       Foreground="White"/>
+                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A',StringFormat=dd/HH HH:mm:ss}"
+                                       Foreground="White"/>
+                    </StackPanel>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                 </Grid>
                 <Grid Name="gridHealthReportChartGrid"

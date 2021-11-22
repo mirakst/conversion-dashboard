@@ -1,13 +1,15 @@
 using DashboardBackend;
 using DashboardBackend.Database;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.ViewModels;
 using Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace DashboardInterface
+namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
@@ -17,6 +19,7 @@ namespace DashboardInterface
             DataUtilities.DatabaseHandler = new SqlDatabase();
             ValidationReport = new();
             ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+            gridValidationReport.DataContext = new ValidationReportViewModel(ValidationReport, validationsDataGrid);
         }
 
         public ValidationReport ValidationReport { get; set; }
@@ -54,7 +57,7 @@ namespace DashboardInterface
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogDetached detachLog = new();
-            detachLog.Closing += OnLogWindowClosing;
+            //detachLog.Closing += OnLogWindowClosing;
             buttonLogDetach.IsEnabled = false;
             detachLog.Show();
         }
@@ -100,6 +103,44 @@ namespace DashboardInterface
         private void OnHealthWindowClosing(object sender, CancelEventArgs e)
         {
             buttonHealthReportDetach.IsEnabled = true;
+        }
+
+        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = MouseWheelEvent,
+                Source = validationsDataGrid
+            };
+            validationsDataGrid.RaiseEvent(eventArgs);
+        }
+
+        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = MouseWheelEvent,
+                Source = validationsDataGrid
+            };
+            validationsDataGrid.RaiseEvent(eventArgs);
+        }
+
+        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.SrcSql ?? "");
+            }
+        }
+
+        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql ?? "");
+            }
         }
     }
 }

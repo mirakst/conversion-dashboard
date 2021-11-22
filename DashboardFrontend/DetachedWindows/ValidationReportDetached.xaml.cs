@@ -32,15 +32,38 @@ namespace DashboardFrontend.DetachedWindows
         public ValidationReport ValidationReport { get; set; }
         public ValidationReportViewModel ViewModel { get; set; }
 
-        private void ExpandRow_Click(object sender, RoutedEventArgs e)
+        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
-                if (vis is DataGridRow)
-                {
-                    var row = (DataGridRow)vis;
-                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                    break;
-                }
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            eventArgs.RoutedEvent = MouseWheelEvent;
+            eventArgs.Source = validationsDataGrid;
+            validationsDataGrid.RaiseEvent(eventArgs);
+        }
+
+        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            eventArgs.RoutedEvent = MouseWheelEvent;
+            eventArgs.Source = validationsDataGrid;
+            validationsDataGrid.RaiseEvent(eventArgs);
+        }
+
+        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.SrcSql ?? "");
+            }
+        }
+
+        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            if (menuItem.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql ?? "");
+            }
         }
     }
 }

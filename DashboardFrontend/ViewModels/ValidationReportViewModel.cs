@@ -23,15 +23,22 @@ namespace DashboardFrontend.ViewModels
             UpdateData();
         }
 
-
-
-
         #region Properties
         private ValidationReport _validationReport;
         private DataGrid _dataGrid;
 
         public ObservableCollection<ValidationTestViewModel> Data { get; set; } = new();
 
+        private DateTime _lastModified;
+        public DateTime LastModified
+        {
+            get => _lastModified;
+            set
+            {
+                _lastModified = value;
+                OnPropertyChanged(nameof(LastModified));
+            }
+        }
         private string _nameFilter = string.Empty;
         public string NameFilter
         {
@@ -107,6 +114,7 @@ namespace DashboardFrontend.ViewModels
                 }
                 UpdateCounter(test);
             }
+            LastModified = _validationReport.LastModified;
         }
 
         /// <summary>
@@ -114,7 +122,7 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void Filter()
         {
-            foreach (var item in Data)
+            foreach (ValidationTestViewModel item in Data)
             {
                 DataGridRow row = (DataGridRow)_dataGrid.ItemContainerGenerator.ContainerFromItem(item);
                 if (!item.ManagerName.Contains(NameFilter) || (item.OkCount == item.TotalCount && !ShowSuccessfulManagers))
@@ -144,6 +152,5 @@ namespace DashboardFrontend.ViewModels
                     break;
             }
         }
-
     }
 }
