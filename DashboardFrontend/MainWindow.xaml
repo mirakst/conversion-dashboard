@@ -106,7 +106,7 @@
                             Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        <Button Name="ButtonDetachManager"
+                        <Button Name="ButtonManagerDetach"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
                             Style="{StaticResource DetachButton}">

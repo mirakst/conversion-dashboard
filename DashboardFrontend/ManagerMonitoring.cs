@@ -1,13 +1,10 @@
-﻿using System;
+﻿using InteractiveDataDisplay.Core;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using InteractiveDataDisplay.Core;
-using DashboardFrontend.DetachedWindows;
-using Model;
 using System.Threading;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace DashboardFrontend
@@ -66,8 +63,8 @@ namespace DashboardFrontend
                 Stroke = new SolidColorBrush(Color.FromArgb((byte)r.Next(256), (byte)r.Next(256), (byte)r.Next(265), 0))
             };
 
-                chart.Children.Add(line);
-                _dataCollections.Add(new DataClass(_timeList, _readingsList, line));
+            chart.Children.Add(line);
+            _dataCollections.Add(new DataClass(_timeList, _readingsList, line));
         }
 
         public async void GenerateData(PeriodicTimer _timer, Chart _chartCpu, Chart _chartRam, Chart _chartRead, Chart _chartWritten)

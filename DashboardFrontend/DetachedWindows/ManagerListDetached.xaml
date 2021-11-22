@@ -43,11 +43,11 @@
                 <TextBox Name="textboxSearchbar"
                          TextChanged="textboxSearchbar_TextChanged"
                          Margin="0,0,0,5"
+                         ToolTip="Search by manager Name or ID"
                          Style="{DynamicResource SearchBox}">
                 </TextBox>
 
-                <DockPanel Name="dockpanelSearchbutton"
-                           LastChildFill="False">
+                <DockPanel LastChildFill="False">
                     <Image Source="../Icons/magnifyingglassgray.png"
                                Margin="0,2,2,7"
                                DockPanel.Dock="Right"/>
@@ -55,6 +55,7 @@
 
                 <Button Name="buttonResetManagers"
                         Click="ResetManagers_Click"
+                        ToolTip="Clear the chosen managers"
                         Grid.Column="1"
                         Margin="5,0,0,5"
                         Content="Reset"
@@ -64,12 +65,12 @@
                 <DataGrid x:Name="datagridManagers"
                           Grid.Row="1"
                           Grid.ColumnSpan="2"
-                          Style="{DynamicResource DefaultDatagrid}">
+                          Style="{DynamicResource DefaultDatagrid}"
+                          BorderBrush="{DynamicResource BorderColor}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Id}"
                                             Width="30pt"/>
-                        <!--May be too low, its hardcoded to have some similarity between the selection and comparison datagrids-->
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Name}"
                                             Width="10*"/>
@@ -84,6 +85,7 @@
                                 <DataTemplate>
                                     <Button Name="buttonAddManager"
                                             Click="AddManager_Click"
+                                            ToolTip="Add manager to detailed view"
                                             Content="g"
                                             FontFamily="wingdings 3"
                                             Tag="{Binding}"
@@ -111,9 +113,9 @@
                               Margin="-4,-6,-3,-3">
                             <DataGrid x:Name="datagridManagerDetails"
                                       Margin = "0, 3, 0, 0"
-                                      Style="{DynamicResource DefaultDatagrid}">
+                                      Style="{DynamicResource DefaultDatagrid}"
+                                      BorderBrush="{DynamicResource BorderColor}">
                                 <DataGrid.Columns>
-                                    <!--All of these properties are necessary to move a manager from on datagrid to the other-->
                                     <DataGridTextColumn Header="ID"
                                                         Binding="{Binding Id}"
                                                         Width="30pt"/>
@@ -141,6 +143,7 @@
                                             <DataTemplate>
                                                 <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
+                                                        ToolTip="Remove manager from detailed view"
                                                         Content='f'
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
@@ -170,9 +173,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
-                            
-                            
-                            
+
                             <idd:Chart Name="chartCPUload"
                                        LeftTitle="CPU Usage"
                                        BottomTitle="Time"
@@ -245,6 +246,7 @@
                                             <DataTemplate>
                                                 <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
+                                                        ToolTip="Remove manager from detailed view"
                                                         Content='f'
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"

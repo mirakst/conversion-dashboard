@@ -1,13 +1,11 @@
-﻿using System;
+﻿using DashboardBackend;
+using DashboardBackend.Database;
+using Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Model;
-using DashboardBackend;
-using DashboardBackend.Database;
-using DashboardFrontend;
-using System.Threading;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -16,8 +14,6 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
-        
-
         public ManagerListDetached()
         {
             InitializeComponent();
@@ -51,7 +47,7 @@ namespace DashboardFrontend.DetachedWindows
 
             if (datagridManagers.SelectedItems.Count > 1)
             {
-                
+
                 foreach (Manager manager in datagridManagers.SelectedItems)
                 {
                     managers.Add(manager);
@@ -86,7 +82,7 @@ namespace DashboardFrontend.DetachedWindows
         {
             Manager? selectedManager = ((Button)sender).Tag as Manager;
             List<Manager> managers = new() { };
-            
+
             if (datagridManagerDetails.SelectedItems.Count > 1 || datagridManagerCharts.SelectedItems.Count > 1)
             {
                 foreach (Manager manager in TabInfo.IsSelected == true ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)

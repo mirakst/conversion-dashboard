@@ -57,7 +57,7 @@ namespace DashboardInterface
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
             ManagerListDetached expandmanager = new();
-            ButtonDetachManager.IsEnabled = false;
+            ButtonManagerDetach.IsEnabled = false;
             expandmanager.Closing += OnHealthWindowClosing;
             expandmanager.Show();
         }
@@ -104,7 +104,7 @@ namespace DashboardInterface
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            ButtonDetachManager.IsEnabled = true;
+            ButtonManagerDetach.IsEnabled = true;
         }
 
         private void OnLogWindowClosing(object? sender, CancelEventArgs e)
