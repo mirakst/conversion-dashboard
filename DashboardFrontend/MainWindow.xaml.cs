@@ -30,7 +30,7 @@ namespace DashboardFrontend
 
             TryLoadUserSettings();
             
-            ViewModel = new(Log, ValidationReport, DataGridValidations);
+            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations);
             DataContext = ViewModel;
         }
 

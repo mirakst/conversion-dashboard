@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using DashboardFrontend.Settings;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,13 +12,15 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(Log log, ValidationReport validationReport, DataGrid validationsDataGrid)
+        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid)
         {
             LogViewModel = new(log);
             ValidationReportViewModel = new(validationReport, validationsDataGrid);
+            UserSettings = userSettings;
         }
 
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
+        public UserSettings UserSettings { get; }
     }
 }

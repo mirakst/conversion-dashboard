@@ -28,14 +28,28 @@
                 <Grid Name="GridControlPanel"
                       Margin="30,30,30,0"
                       Grid.Row="0">
-                    <Button Name="ButtonStartStop"
+                    <ToggleButton Name="ButtonStartStop"
                         Click="ButtonStartStopClick"
                         Grid.Column="0"
                         Grid.Row="0"
-                        Grid.RowSpan="2" 
+                        Grid.RowSpan="2"
+                        Background="Transparent"
                         BorderBrush="Transparent">
-                        <Image Source="Icons/Start.png"/>
-                    </Button>
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=IsChecked}" Value="True">
+                                            <Setter Property="Source" Value="/Icons/Stop.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=IsChecked}" Value="False">
+                                            <Setter Property="Source" Value="/Icons/Start.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
                     <Button Name="ButtonSettings" 
                         Click="ButtonSettingsClick" 
                         Grid.Column="1" 
@@ -54,9 +68,9 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                Foreground="{DynamicResource ForegroundColor}"
-                               Text="Conversion"/>
+                               Text="{Binding UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
-                      Grid.Row="0">
+                          Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
                                  Margin="2"
                                  Grid.Row="0"
