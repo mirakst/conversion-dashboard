@@ -11,21 +11,23 @@ namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
-        private PeriodicTimer _performanceTimer;
+        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
+        public LiveChartViewModel LiveChartViewModel { get; private set; } = new();
+
+        private readonly PeriodicTimer LiveChartsQuerryTimer;
         private bool _isStarted;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _performanceTimer = new(TimeSpan.FromSeconds(1));
-            PerformanceViewModel.StartPerformanceGraph(_performanceTimer);
-            PerformanceViewModel.AutoFocusOn();
+            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(5));
+
+            LiveChartViewModel.NewChart(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxes, PerformanceViewModel.YAxes);
+            LiveChartViewModel.StartGraph(LiveChartsQuerryTimer);
 
             DataContext = this;
         }
-
-        public PerformanceMonitoringViewModel PerformanceViewModel { get; set; } = new();
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
@@ -45,7 +47,7 @@ namespace DashboardInterface
             }
             else
             {
-                _performanceTimer.Dispose();
+                LiveChartsQuerryTimer.Dispose();
                 _isStarted = false;
             }
         }
@@ -124,13 +126,13 @@ namespace DashboardInterface
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            PerformanceViewModel.AutoFocusOn();
+            LiveChartViewModel.AutoFocusOn();
 
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            PerformanceViewModel.AutoFocusOff();
+            LiveChartViewModel.AutoFocusOff();
         }
     }
 }
