@@ -4,8 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
         xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
-        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
         x:Class="DashboardFrontend.DetachedWindows.ManagerListDetached"
         mc:Ignorable="d"
         Title="Manager statistics" 
@@ -174,57 +175,65 @@
                                 <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
 
-                            <idd:Chart Name="chartCPUload"
-                                       LeftTitle="CPU Usage"
-                                       BottomTitle="Time"
-                                       LegendVisibility="Visible"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Margin="0,5,0,0"
-                                       Grid.Column="0"
-                                       Grid.Row="0"
-                                       PlotHeight="103">
-                                <Grid x:Name="gridChartCPUload"/>
-                            </idd:Chart>
+                            <Grid Grid.Row="0"
+                                  Margin="0,5,0,5">
+                                <Border BorderBrush="{DynamicResource BorderColor}">
+                                    <lvc:CartesianChart DataContext="{Binding CPUChart}"
+                                                        Series="{Binding Series}"
+                                                        ZoomMode="X"
+                                                        XAxes="{Binding XAxis}"
+                                                        YAxes="{Binding YAxis}"
+                                                        TooltipPosition="Top"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                </Border>
+                            </Grid>
 
-                            <idd:Chart Name="chartRAMusage"
-                                       LeftTitle="RAM Usage"
-                                       BottomTitle="Time"
-                                       LegendVisibility="Hidden"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Margin="0,5,0,0"
-                                       Grid.Column="0"
-                                       Grid.Row="1"
-                                       PlotHeight="103">
-                                <Grid x:Name="gridChartRAMusage"/>
-                            </idd:Chart>
+                            <Grid Grid.Row="1"
+                                  Margin="0,5,0,5">
+                                <Border BorderBrush="{DynamicResource BorderColor}">
+                                    <lvc:CartesianChart DataContext="{Binding RAMChart}"
+                                                        Series="{Binding Series}"
+                                                        ZoomMode="X"
+                                                        XAxes="{Binding XAxis}"
+                                                        YAxes="{Binding YAxis}"
+                                                        TooltipPosition="Top"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                </Border>
+                            </Grid>
 
-                            <idd:Chart Name="chartRowsRead"
-                                       LeftTitle="Rows read"
-                                       BottomTitle="Time"
-                                       LegendVisibility="Hidden"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Margin="0,5,0,0"
-                                       Grid.Column="0"
-                                       Grid.Row="2"
-                                       PlotHeight="103">
-                                <Grid x:Name="gridChartRowsRead"/>
-                            </idd:Chart>
+                            <Grid Grid.Row="2"
+                                  Margin="0,5,0,5">
+                                <Border BorderBrush="{DynamicResource BorderColor}">
+                                    <lvc:CartesianChart DataContext="{Binding ReadChart}"
+                                                        Series="{Binding Series}"
+                                                        ZoomMode="X"
+                                                        XAxes="{Binding XAxis}"
+                                                        YAxes="{Binding YAxis}"
+                                                        TooltipPosition="Top"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                </Border>
+                            </Grid>
 
-                            <idd:Chart Name="chartRowsWritten"
-                                       LeftTitle="Rows written"
-                                       BottomTitle="Time"
-                                       LegendVisibility="Hidden"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Margin="0,5,0,0"
-                                       Grid.Column="0"
-                                       Grid.Row="3"
-                                       PlotHeight="103">
-                                <Grid x:Name="gridChartRowsWritten"/>
-                            </idd:Chart>
+                            <Grid Grid.Row="3"
+                                  Margin="0,5,0,5">
+                                <Border BorderBrush="{DynamicResource BorderColor}">
+                                    <lvc:CartesianChart DataContext="{Binding WrittenChart}"
+                                                        Series="{Binding Series}"
+                                                        ZoomMode="X"
+                                                        XAxes="{Binding XAxis}"
+                                                        YAxes="{Binding YAxis}"
+                                                        TooltipPosition="Top"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                </Border>
+                            </Grid>
 
                             <DataGrid Name="datagridManagerCharts"
                                       Grid.Row="0"
