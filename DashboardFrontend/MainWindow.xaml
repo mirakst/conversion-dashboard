@@ -338,12 +338,12 @@
                                   VerticalAlignment="Center"
                                   Grid.Column="1"
                                   SelectionChanged="ComboBox_SelectionChanged">
-                            <ComboBoxItem Content="30 Min"/>
-                            <ComboBoxItem Content="1 Hour" IsSelected="True"/>
-                            <ComboBoxItem Content="2 Hours"/>
-                            <ComboBoxItem Content="6 Hours"/>
-                            <ComboBoxItem Content="12 Hours"/>
-                            <ComboBoxItem Content="24 Hours"/>
+                            <ComboBoxItem Content="30 Min" Tag="30"/>
+                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                            <ComboBoxItem Content="2 Hours" Tag="120"/>
+                            <ComboBoxItem Content="6 Hours" Tag="360"/>
+                            <ComboBoxItem Content="12 Hours" Tag="720"/>
+                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
                         </ComboBox>
                         <Button Name="ButtonHealthReportDetach"
                                 Click="DetachHealthReportButtonClick"

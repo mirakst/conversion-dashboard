@@ -14,41 +14,37 @@ namespace DashboardFrontend.ViewModels
     /// </summary>
     public class LiveChartViewModel
     {
-        public List<ObservableCollection<ObservablePoint>> Values { get; private set; }
-        public List<ISeries> Series { get; private set; }
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
+        public List<ObservableCollection<ObservablePoint>> Values { get; private set; } = new();
+        public List<ISeries> Series { get; private set; } = new();
+        public List<Axis> XAxis { get; private set; } = new();
+        public List<Axis> YAxis { get; private set; } = new();
 
         private PeriodicTimer? autoFocusTimer;
         private readonly Random random = new();
         private bool isAutoFocusTimer = false;
         private int maxView = 10;
 
-        public LiveChartViewModel()
+        public LiveChartViewModel(List<ISeries> charts, List<ObservableCollection<ObservablePoint>> data, List<Axis> xAxis, List<Axis> yAxis)
         {
-            XAxis = new();
-            YAxis = new();
-            Series = new();
-            Values = new();
-
+            AddChart(charts, data, xAxis, yAxis);
             AutoFocusOn();
         }
 
         /// <summary>
         /// Add a new chart to the Graph.
         /// </summary>
-        /// <param name="Charts">List of charts.</param>
-        /// <param name="Data">List of data</param>
-        public void NewChart(List<ISeries> Charts, List<ObservableCollection<ObservablePoint>> Data, List<Axis> xAxis, List<Axis> yAxis)
+        /// <param name="charts">List of charts.</param>
+        /// <param name="data">List of data</param>
+        public void AddChart(List<ISeries> charts, List<ObservableCollection<ObservablePoint>> data, List<Axis> xAxis, List<Axis> yAxis)
         {
-            foreach (var collection in Data)
+            foreach (var collection in data)
             {
                 Values.Add(collection);
             }
 
-            for (int i = 0; i < Charts.Count; i++)
+            for (int i = 0; i < charts.Count; i++)
             {
-                Series.Add(Charts[i]);
+                Series.Add(charts[i]);
                 Series[i].Values = Values[i];
             }
 
@@ -64,21 +60,21 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Calls <see cref="QuerryList"/> at a set interval.
+        /// Calls <see cref="QueryList"/> at a set interval.
         /// </summary>
         /// <param name="querryTimer"></param>
         public async void StartGraph(PeriodicTimer querryTimer)
         {
             while (await querryTimer.WaitForNextTickAsync())
             {
-                QuerryList();
+                QueryList();
             }
         }
 
         /// <summary>
-        /// Function der skal querry for data.
+        /// Function qurying data (generates data currently).
         /// </summary>
-        private void QuerryList()
+        private void QueryList()
         {
             foreach (var item in Values)
             {
@@ -110,13 +106,14 @@ namespace DashboardFrontend.ViewModels
                 {
                     if (Values.Count > 0 && Values.First().Count > 0)
                     {
-                        XAxis[0].MinLimit = Values.First().Count >= maxView ? Values.First().ElementAt(Values.First().Count - maxView).X.Value : 
-                                                                              Values.First().First().X.Value;
+                        XAxis[0].MinLimit = Values.First().Count >= maxView ? Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromSeconds(maxView).Ticks).ToOADate() :
+                                                                              Values.First().First().X.Value; /* skal ændres fra .FromSeconds til .FromMinutes*/
                         XAxis[0].MaxLimit = Values.First().Last().X.Value;
                     }
                 }
             }
         }
+
         #endregion
 
         #region Settings Functions
