@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
@@ -374,14 +375,16 @@
                     <Grid Style="{DynamicResource ComponentSubWindow}"
                           Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
-                            BorderThickness="1">
-                            <idd:Chart Name="IddChartHealthReportGraph"
-                                       IsVerticalNavigationEnabled="False"
-                                       Background="{DynamicResource CanvasColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}">
-                                <Grid Name="GridHealthReportChartGridChartGrid"/>
-                            </idd:Chart>
+                                BorderThickness="1">
+                            <lvc:CartesianChart DataContext="{Binding LiveChartViewModel}"
+                                                Series="{Binding Series}"
+                                                ZoomMode="X"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter">
+                            </lvc:CartesianChart>
                         </Border>
                     </Grid>
                     <Grid.RowDefinitions>

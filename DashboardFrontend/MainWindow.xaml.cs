@@ -1,8 +1,9 @@
 using DashboardFrontend;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,15 +11,22 @@ namespace DashboardInterface
 {
     public partial class MainWindow : Window
     {
-        private ChartViewModel? _chartVm;
+        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
+        public LiveChartViewModel LiveChartViewModel { get; private set; } = new();
+
+        private readonly PeriodicTimer LiveChartsQuerryTimer;
         private bool _isStarted;
 
         public MainWindow()
         {
             InitializeComponent();
-            IddChartHealthReportGraph.PlotOriginX = DateTime.Now.Ticks;
-            IddChartHealthReportGraph.PlotWidth = TimeSpan.FromMinutes(6).Ticks;
-            IddChartHealthReportGraph.PlotHeight = 105;
+
+            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(5));
+
+            LiveChartViewModel.NewChart(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxes, PerformanceViewModel.YAxes);
+            LiveChartViewModel.StartGraph(LiveChartsQuerryTimer);
+
+            DataContext = this;
         }
 
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
@@ -35,13 +43,11 @@ namespace DashboardInterface
             /* Should be moved to OnConnected */
             if (!_isStarted)
             {
-                _chartVm = new();
-                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
                 _isStarted = true;
             }
             else
             {
-                _chartVm?.Dispose();
+                LiveChartsQuerryTimer.Dispose();
                 _isStarted = false;
             }
         }
@@ -81,19 +87,15 @@ namespace DashboardInterface
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportDetached expandHr = new();
-            _chartVm = new ChartViewModel();
 
             if (_isStarted)
             {
-                _chartVm.Dispose();
             }
 
             ButtonHealthReportDetach.IsEnabled = false;
             expandHr.Closing += OnHealthWindowClosing;
             
             expandHr.Show();
-            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
-            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
@@ -119,11 +121,18 @@ namespace DashboardInterface
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            _chartVm?.Dispose();
-            _chartVm = new ChartViewModel();
-            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-
             ButtonHealthReportDetach.IsEnabled = true;
+        }
+
+        private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOn();
+
+        }
+
+        private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOff();
         }
     }
 }

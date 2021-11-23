@@ -7,7 +7,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="StyleResources/DictionaryButtons.xaml"/>
-                <ResourceDictionary Source="StyleResources/DictionaryChart.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryGeneral.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryListView.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryTab.xaml"/>
