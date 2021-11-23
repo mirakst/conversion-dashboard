@@ -10,7 +10,20 @@
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
+        SnapsToDevicePixels="True"
+        WindowStyle="None"
+        MouseDown="DraggableGrid"
+        ResizeMode="CanResizeWithGrip">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    <!--Command bindings for window controls-->
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
+    </Window.CommandBindings>
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
@@ -28,7 +41,15 @@
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
-                  Grid.Row="0">
+                  Grid.Row="0"
+                  Grid.ColumnSpan="2">
+                <TextBlock x:Name="TextBlockWindowTitle"
+                           FontSize="14"
+                           MinWidth="200"
+                           TextAlignment="Center"
+                           Margin="0, 5, 0, 0"
+                           Foreground="{DynamicResource ForegroundColor}"
+                           Text="Conversion Dashboard"/>
                 <Grid Name="GridControlPanel"
                       Margin="30,30,30,0"
                       Grid.Row="0">
@@ -41,7 +62,7 @@
                             Background="Transparent">
                         <Image Source="Icons/Start.png"/>
                     </Button>
-                    
+
                     <Button Name="ButtonSettings" 
                             Click="ButtonSettingsClick" 
                             Grid.Column="1" 
@@ -75,20 +96,24 @@
                                    HorizontalAlignment="Center" 
                                    VerticalAlignment="Center"/>
                     </Grid>
-                    
+
                     <Grid Grid.Column="3" 
                           Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="555*"/>
+                            <ColumnDefinition Width="346*"/>
+                        </Grid.ColumnDefinitions>
                         <ProgressBar Name="ProgressBarConversionProgress" 
-                                     Margin="2" 
+                                     Margin="2,2,2,2" 
                                      Minimum="0" 
                                      Maximum="100" 
-                                     Value="15"/>
+                                     Value="15" Grid.ColumnSpan="2"/>
                         <TextBlock Text="{Binding ElementName=ProgressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
                                    FontSize="15" 
-                                   HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center"/>
+                                   HorizontalAlignment="Left" 
+                                   VerticalAlignment="Center" Margin="395,0,0,0"/>
                     </Grid>
-                    
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
@@ -101,10 +126,11 @@
                     </Grid.RowDefinitions>
                 </Grid>
             </Grid>
-            
+
             <Grid Margin="30,20,30,30" 
                   Background="{DynamicResource BackgroundColor}"
-                  Grid.Row="1">
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2">
                 <Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
@@ -122,27 +148,27 @@
                                        Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
-                        
+
                         <Button Name="ButtonManagerFilter"
                                 Grid.Column="1"
                                 Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        
+
                         <Button Name="ButtonDetachManager"
                                 Click="DetachManagerButtonClick"
                                 Grid.Column="2"
                                 Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    
+
                     <Grid Grid.Row="1">
                         <ListView x:Name="ListViewManagerList"
                                   Grid.Column="0"
@@ -166,7 +192,7 @@
                             </ListView.View>
                         </ListView>
                     </Grid>
-                    
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -175,7 +201,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                
+
                 <Grid Name="GridLog" 
                       Margin="20,0,0,20"
                       Grid.Column="1" 
@@ -209,7 +235,7 @@
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
-                        
+
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="3"/>
@@ -225,7 +251,7 @@
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
-                        
+
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="5"/>
@@ -241,7 +267,7 @@
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
-                        
+
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="7"/>
@@ -257,20 +283,20 @@
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
-                        
+
                         <Button Name="buttonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        
+
                         <Button Name="ButtonLogDetach" 
                                 Click="DetachLogButtonClick" 
                                 Grid.Column="10"
                                 Style="{DynamicResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2"/>
@@ -285,7 +311,7 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    
+
                     <Grid Grid.Row="1">
                         <ListView x:Name="listViewLogEntry"
                                   ItemsSource="{Binding LogViewModel.Messages}"
@@ -314,7 +340,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-                                    
+
                                     <GridViewColumn Header="Timestamp" 
                                                     DisplayMemberBinding="{Binding Date}"
                                                     Width="auto"/>
@@ -335,14 +361,14 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-                            
+
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
-                                        
+
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="INFO"/>
@@ -351,11 +377,11 @@
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        
+
                                         <DataTrigger Binding="{Binding Type}" Value="Warning">
                                             <Setter Property="Background" Value="#FCE283"/>
                                         </DataTrigger>
-                                        
+
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="WARNING"/>
@@ -364,11 +390,11 @@
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        
+
                                         <DataTrigger Binding="{Binding Type}" Value="Error">
                                             <Setter Property="Background" Value="#ED4F47"/>
                                         </DataTrigger>
-                                        
+
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="ERROR"/>
@@ -377,11 +403,11 @@
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        
+
                                         <DataTrigger Binding="{Binding Type}" Value="Fatal">
                                             <Setter Property="Background" Value="#CFCFCF"/>
                                         </DataTrigger>
-                                        
+
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="FATAL"/>
@@ -391,11 +417,11 @@
                                             <Setter Property="Visibility" 
                                                     Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        
+
                                         <DataTrigger Binding="{Binding Type}" Value="Validation">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
-                                        
+
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="VALIDATION"/>
@@ -404,7 +430,7 @@
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
-                                        
+
                                         <Trigger Property="Control.IsMouseOver" Value="True">
                                             <Setter Property="Control.Background" Value="Transparent" />
                                             <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
@@ -414,13 +440,13 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                
+
                 <Grid Name="gridValidationReport"
                       DataContext="{Binding ValidationReportViewModel}"
                       Margin="0,20,20,0"
@@ -441,7 +467,7 @@
                                        Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
-                        
+
                         <ToggleButton Grid.Column="1"
                                       Margin="4 0 4 0"
                                       Style="{DynamicResource DefaultToggleButton}"
@@ -459,10 +485,10 @@
                         <Button Name="buttonValidationReportDetach"
                                 Click="DetachValidationReportButtonClick"
                                 Grid.Column="3"
-                                Style="{StaticResource DetachButton}">      
+                                Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="60"/>
@@ -470,7 +496,7 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    
+
                     <Grid Grid.Row="1"
                           x:Name="ValidationReportComponent">
                         <ScrollViewer Grid.Row="1" 
@@ -545,7 +571,7 @@
                                                           IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
                                                           Margin="10 0 0 0"/>
                                             </StackPanel>
-                                            
+
                                             <DataGrid ItemsSource="{Binding Tests}"
                                                       GridLinesVisibility="None"
                                                       IsReadOnly="True"
@@ -561,11 +587,11 @@
                                                                         Binding="{Binding Date,StringFormat=dd/MM HH:mm:ss}" 
                                                                         Width="120">
                                                     </DataGridTextColumn>
-                                                    
+
                                                     <DataGridTextColumn Header="Toolkit"
                                                                         Binding="{Binding ToolkitId}">
                                                     </DataGridTextColumn>
-                                                    
+
                                                     <DataGridTextColumn Header="Description" 
                                                                         Binding="{Binding Name}" 
                                                                         Width="450">
@@ -575,7 +601,7 @@
                                                             </Style>
                                                         </DataGridTextColumn.ElementStyle>
                                                     </DataGridTextColumn>
-                                                    
+
                                                     <DataGridTemplateColumn Header="Status"
                                                                             SortMemberPath="Status"
                                                                             Width="125">
@@ -591,18 +617,18 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                    
+
                                                     <DataGridTextColumn Header="Source" 
                                                                         Binding="{Binding SrcCount,TargetNullValue='N/A'}"
                                                                         Width="80">
                                                     </DataGridTextColumn>
-                                                    
+
                                                     <DataGridTextColumn Header="Dest" 
                                                                         Binding="{Binding DstCount,TargetNullValue='N/A'}"
                                                                         Width="80">
                                                     </DataGridTextColumn>
                                                 </DataGrid.Columns>
-                                                
+
                                                 <DataGrid.RowStyle>
                                                     <Style TargetType="DataGridRow">
                                                         <Setter Property="ContextMenu" Value="{StaticResource ValidationTestContextMenu}"/>
@@ -616,7 +642,7 @@
                                                                 </MultiDataTrigger.Conditions>
                                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                             </MultiDataTrigger>
-                                                            
+
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
                                                                     <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, 
@@ -625,7 +651,7 @@
                                                                 </MultiDataTrigger.Conditions>
                                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                             </MultiDataTrigger>
-                                                            
+
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
                                                                     <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},
@@ -634,7 +660,7 @@
                                                                 </MultiDataTrigger.Conditions>
                                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                             </MultiDataTrigger>
-                                                            
+
                                                             <MultiDataTrigger>
                                                                 <MultiDataTrigger.Conditions>
                                                                     <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},
@@ -653,7 +679,7 @@
                             </DataGrid>
                         </ScrollViewer>
                     </Grid>
-                    
+
                     <StackPanel Orientation="Horizontal"
                                     Grid.Row="2" 
                                     Margin="0 10 0 0"
@@ -676,7 +702,7 @@
                                    Foreground="{DynamicResource validationReportNormalColor}" 
                                    Margin="0 0 50 0"/>
                     </StackPanel>
-                    
+
                     <StackPanel Orientation="Horizontal"
                                 Grid.Row="2"
                                 Grid.Column="1"
@@ -688,14 +714,14 @@
                         <TextBlock Text="{Binding LastModified,FallbackValue='N/A', StringFormat=dd/HH HH:mm:ss}"
                                    Foreground="White"/>
                     </StackPanel>
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                
+
                 <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
@@ -728,45 +754,79 @@
                                 </Grid.ColumnDefinitions>
                             </Grid>
                         </Border>
-                        
+
                         <Button Name="ButtonHealthReportDetach"
                                 Click="DetachHealthReportButtonClick"
                                 Grid.Column="2"
                                 Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    
+
                     <Grid Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                                 BorderThickness="1">
-                                <!--Insert Chart here-->
+                            <!--Insert Chart here-->
                         </Border>
                     </Grid>
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
-                
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-            
+            <Grid Name="WindowControlGrid"
+                  Grid.Column="5"
+                  Grid.Row="0"
+                  Margin="5,5,5,70">
+                <Button Name="ButtonMinimize" 
+                        Grid.Column="0" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="0"
+                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                <Button Name="ButtonMaximize" 
+                        Grid.Column="1" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="1"
+                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
+                <Button Name="ButtonRestore" 
+                        Grid.Column="1" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="2"
+                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
+                        Visibility="Collapsed"/>
+                <Button Name="ButtonClose" 
+                        Grid.Column="2" 
+                        Content="r"
+                        Style="{DynamicResource CloseWindowButton}"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
