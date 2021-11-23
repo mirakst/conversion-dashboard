@@ -3,8 +3,10 @@ using DashboardFrontend.DetachedWindows;
 using DashboardFrontend.ViewModels;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace DashboardInterface
@@ -21,7 +23,7 @@ namespace DashboardInterface
         {
             InitializeComponent();
 
-            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(5));
+            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(2));
 
             LiveChartViewModel.NewChart(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxes, PerformanceViewModel.YAxes);
             LiveChartViewModel.StartGraph(LiveChartsQuerryTimer);
@@ -133,6 +135,34 @@ namespace DashboardInterface
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
             LiveChartViewModel.AutoFocusOff();
+        }
+
+        //Skal ændres kære på "antal elementer vist på samme tid"
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            switch (comboBoxMaxView.SelectedIndex.ToString())
+            {
+                case "0":
+                    LiveChartViewModel.ChangeMaxView(2);
+                    break;
+                case "1":
+                    LiveChartViewModel.ChangeMaxView(5);
+                    break;
+                case "2":
+                    LiveChartViewModel.ChangeMaxView(10);
+                    break;
+                case "3":
+                    LiveChartViewModel.ChangeMaxView(20);
+                    break;
+                case "4":
+                    LiveChartViewModel.ChangeMaxView(50);
+                    break;
+                case "5":
+                    LiveChartViewModel.ChangeMaxView(100);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

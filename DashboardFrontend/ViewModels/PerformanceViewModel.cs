@@ -51,20 +51,26 @@ namespace DashboardFrontend.ViewModels
                 new LineSeries<ObservablePoint>
                 {
                     Name = "RAM",
-                    Stroke = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
-                    GeometryFill = new SolidColorPaint(new SKColor(133, 222, 118)),
-                    GeometryStroke = new SolidColorPaint(new SKColor(133, 222, 118)),
-                    GeometrySize = 0.4,
+                    GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
+                    GeometryStroke = new SolidColorPaint(new SKColor(92, 84, 219)),
+                    GeometrySize = 3,
+                    TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 e.PrimaryValue.ToString("P"),
                 },
                 new LineSeries<ObservablePoint> 
                 {
                     Name = "CPU",
-                    Stroke = new SolidColorPaint(new SKColor(245, 88, 47)),
+                    Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometryStroke = new SolidColorPaint(new SKColor(245, 88, 47)),
-                    GeometrySize = 0.4,
+                    GeometrySize = 3,
+                    TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 e.PrimaryValue.ToString("P"),
                 }
             };
 
