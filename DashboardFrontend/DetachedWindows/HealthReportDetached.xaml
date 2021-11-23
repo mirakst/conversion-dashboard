@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Health report monitoring"
+        Title="Health Report Monitoring"
         Height="450"
         Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
@@ -44,7 +44,7 @@
                                        Grid.ColumnSpan="3" 
                                        Grid.Column="0"
                                        Grid.Row="1"/>
-                            <!--Insert CPU/RAM chart here-->
+                                       <!--Insert CPU/RAM chart here-->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
@@ -71,13 +71,13 @@
                                        Grid.Row="1"
                                        Background="{DynamicResource BackgroundColor}"
                                        Foreground="{DynamicResource ForegroundColor}">
-                                Send:<LineBreak/>
-                                Send delta:<LineBreak/>
-                                Send speed:<LineBreak/>
-                                <LineBreak/>
-                                Received:<LineBreak/>
-                                Received delta:<LineBreak/>
-                                Received speed:<LineBreak/>
+                                            Send:<LineBreak/>
+                                            Send delta:<LineBreak/>
+                                            Send speed:<LineBreak/>
+                                            <LineBreak/>
+                                            Received:<LineBreak/>
+                                            Received delta:<LineBreak/>
+                                            Received speed:<LineBreak/>
                             </TextBlock>
                             
                             <TextBlock Name="TextBlockNetworkData"
@@ -88,13 +88,13 @@
                                        Background="{DynamicResource BackgroundColor}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        TextAlignment="Right">
-                                102 KB<LineBreak/>
-                                932 KB<LineBreak/>
-                                123 MB<LineBreak/>
-                                <LineBreak/>
-                                43 KB<LineBreak/>
-                                12 KB<LineBreak/>
-                                13 MB<LineBreak/>
+                                            102 KB<LineBreak/>
+                                            932 KB<LineBreak/>
+                                            123 MB<LineBreak/>
+                                            <LineBreak/>
+                                            43 KB<LineBreak/>
+                                            12 KB<LineBreak/>
+                                            13 MB<LineBreak/>
                             </TextBlock>
                             
                             <ComboBox Name="ComboBoxNetworkChartInterval"
@@ -115,7 +115,7 @@
                                        Grid.Column="2" 
                                        Grid.ColumnSpan="2" 
                                        Grid.Row="1"/>
-                            <!--Insert network chart here-->
+                                       <!--Insert network chart here-->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="1*"/>

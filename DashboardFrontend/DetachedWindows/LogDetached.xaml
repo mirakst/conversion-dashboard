@@ -5,100 +5,101 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Log monitoring" Height="450" Width="800">
+        Title="Log monitoring" 
+        Height="450" 
+        Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Name ="gridLog"
-              Margin="10,10,10,10"
-              Style="{DynamicResource ComponentControlBar}">
+              Margin="10,10,10,10">
             <ToggleButton Name="toggleButtonLogInfo"
                           Grid.Column="0"
                           IsChecked="{Binding ShowInfo}"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="../Icons/Info.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                           Width="13"
+                           Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding InfoCount}"/>
                     <TextBlock Text=" Messages"/>
                 </StackPanel>
             </ToggleButton>
             <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="1"/>
+                       Fill="{DynamicResource BorderColor}"
+                       Grid.Column="1"/>
             <ToggleButton Name="toggleButtonlogWarning"
                           Grid.Column="2"
                           IsChecked="{Binding ShowWarn}"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="../Icons/Warning.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                           Width="13"
+                           Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding WarnCount}"/>
                     <TextBlock Text=" Warnings"/>
                 </StackPanel>
             </ToggleButton>
             <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="3"/>
+                       Fill="{DynamicResource BorderColor}"
+                       Grid.Column="3"/>
             <ToggleButton Name="toggleButtonLogError"
                           IsChecked="{Binding ShowError}"
                           Grid.Column="4"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="../Icons/Error.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                           Width="13"
+                           Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding ErrorCount}"/>
                     <TextBlock Text=" Errors"/>
                 </StackPanel>
             </ToggleButton>
             <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="5"/>
+                       Fill="{DynamicResource BorderColor}"
+                       Grid.Column="5"/>
             <ToggleButton Name="toggleButtonLogFatal"
                           IsChecked="{Binding ShowFatal}"
                           Grid.Column="6"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
                 <Image Source="../Icons/Fatal.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
+                       Width="13"
+                       Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding FatalCount}"/>
                 <TextBlock Text=" Fatal"/>
                 </StackPanel>
             </ToggleButton>
             <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="7"/>
+                       Fill="{DynamicResource BorderColor}"
+                       Grid.Column="7"/>
             <ToggleButton Name="toggleButtonLogValidation"
                           IsChecked="{Binding ShowValidation}"
                           Grid.Column="8"
                           Style="{DynamicResource DefaultToggleButton}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="../Icons/Validation.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/> 
+                           Width="13"
+                           Margin="0,0,5,0"/> 
                     <TextBlock Text="{Binding ValidationCount}"/>
                     <TextBlock Text=" Validation"/>
                 </StackPanel>
             </ToggleButton>
             <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="9"/>
+                       Fill="{DynamicResource BorderColor}"
+                       Grid.Column="9"/>
             <Button Name="buttonFilter"
                     Grid.Column="10"
                     Style="{DynamicResource DefaultButton}">
                 <Image Source="../Icons/Filter.png"/>
             </Button>
             <ListView x:Name="listViewLogEntry"
-                        Grid.Row="2"
-                        Grid.ColumnSpan="11"
-                        ItemsSource="{Binding Messages}"
-                        Background="White"
-                        Foreground="Black"
-                        BorderBrush="{StaticResource BorderColor}"
-                        ScrollViewer.CanContentScroll="False"
-                        MaxHeight="5000">
+                      Grid.Row="2"
+                      Grid.ColumnSpan="11"
+                      ItemsSource="{Binding Messages}"
+                      Background="White"
+                      Foreground="Black"
+                      BorderBrush="{StaticResource BorderColor}"
+                      ScrollViewer.CanContentScroll="False"
+                      MaxHeight="5000">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel>
@@ -120,20 +121,20 @@
                             </Style>
                         </GridView.ColumnHeaderContainerStyle>
                         <GridViewColumn Header="Timestamp" 
-                                                    DisplayMemberBinding="{Binding Date}"
-                                                    Width="auto"/>
+                                        DisplayMemberBinding="{Binding Date}"
+                                        Width="auto"/>
                         <GridViewColumn Header="Type" 
-                                                    DisplayMemberBinding="{Binding Type}"
-                                                    Width="auto"/>
+                                        DisplayMemberBinding="{Binding Type}"
+                                        Width="auto"/>
                         <GridViewColumn Header="Manager" 
-                                                    DisplayMemberBinding="{Binding ContextId}"
-                                                    Width="auto"/>
+                                        DisplayMemberBinding="{Binding ContextId}"
+                                        Width="auto"/>
                         <GridViewColumn Header="Content" 
-                                                    Width="1000">
+                                        Width="1000">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock TextWrapping="Wrap"
-                                                    Text="{Binding Content}"/>
+                                               Text="{Binding Content}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -148,7 +149,8 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding Type}" Value="INFO"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowInfo}" Value="False"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                         Path=DataContext.ShowInfo}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </MultiDataTrigger>
@@ -158,7 +160,8 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding Type}" Value="WARNING"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowWarn}" Value="False"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                         Path=DataContext.ShowWarn}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </MultiDataTrigger>
@@ -168,7 +171,8 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding Type}" Value="ERROR"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowError}" Value="False"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                         Path=DataContext.ShowError}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </MultiDataTrigger>
@@ -178,7 +182,8 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding Type}" Value="FATAL"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowFatal}" Value="False"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                         Path=DataContext.ShowFatal}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </MultiDataTrigger>
@@ -188,7 +193,8 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding Type}" Value="VALIDATION"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, Path=DataContext.ShowValidation}" Value="False"/>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                         Path=DataContext.ShowValidation}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </MultiDataTrigger>
