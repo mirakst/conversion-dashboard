@@ -5,16 +5,12 @@ using DashboardFrontend.Settings;
 using DashboardBackend;
 using DashboardBackend.Database;
 using Model;
-using DashboardFrontend.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System;
-using System.Threading;
-using System.Windows.Media;
 
 namespace DashboardFrontend
 {
@@ -33,7 +29,7 @@ namespace DashboardFrontend
 
             TryLoadUserSettings();
             
-            ViewModel = new(Log, ValidationReport, DataGridValidations);
+            ViewModel = new(Log, ValidationReport, DataGridValidations, LiveChartViewModel);
             DataContext = ViewModel;
         }
 
