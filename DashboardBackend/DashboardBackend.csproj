@@ -22,6 +22,7 @@
     <None Update="Database\hostinfo.meta">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+	  <ProjectReference Include="..\Model\Model.csproj"></ProjectReference>
   </ItemGroup>
 
 </Project>

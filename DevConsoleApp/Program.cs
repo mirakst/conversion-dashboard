@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using DashboardBackend;
 using DashboardBackend.Database;
-using DashboardBackend.Database.Models;
+using Model;
 
 namespace DevConsoleApp
 {
@@ -9,13 +8,32 @@ namespace DevConsoleApp
     {
         static void Main(string[] args)
         {
-            IDatabaseHandler databaseHandler = new SqlDatabase();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
 
-            var logs = databaseHandler.GetLogMessages();
-            foreach (var item in logs)
+            //**** CONV AND EXECUTION TESTING ****
+            Conversion conv = new();
+            conv.Executions = DataUtilities.GetExecutions();
+            Console.WriteLine(DateTime.Now);
+            DataUtilities.AddManagers(conv.Executions);
+            Console.WriteLine(DateTime.Now);
+            DataUtilities.AddManagerReadings(conv.ActiveExecution);
+            conv.ActiveExecution.Log.Messages = DataUtilities.GetLogMessages(conv.ActiveExecution.Id); //Maybe automatically populate this? When executions are made, query messages that match Id and populate log.
+            Console.WriteLine(DateTime.Now);
+            conv.ActiveExecution.ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+            Console.WriteLine(DateTime.Now);
+            conv.HealthReport = DataUtilities.BuildHealthReport();
+            Console.WriteLine(DateTime.Now);
+            DataUtilities.AddHealthReportReadings(conv.HealthReport);
+            Console.WriteLine(DateTime.Now);
+
+
+
+            foreach (var manager in conv.ActiveExecution.Managers)
             {
-                Console.WriteLine($"[{item.Created}]: {item.ContextId}");
+                Console.WriteLine(manager.ToString());
             }
+
+            Console.ReadKey();
         }
     }
 }

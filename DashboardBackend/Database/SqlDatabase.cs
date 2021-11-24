@@ -1,7 +1,4 @@
 ﻿using DashboardBackend.Database.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Data.SqlTypes;
 
 namespace DashboardBackend.Database
 {   
@@ -12,51 +9,96 @@ namespace DashboardBackend.Database
         {
         }
 
-        public DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
-        
         /// <inheritdoc/>
-        public List<Afstemning> GetAfstemninger(DateTime minDate)
+        public List<AfstemningEntry> QueryAfstemninger(DateTime minDate)
         {
             using NetcompanyDbContext db = new();
-            var queryResult = db.Afstemnings.Where(e => e.Afstemtdato > minDate)
-                                            .OrderBy(e => e.Afstemtdato);
+            var queryResult = db.Afstemnings
+                                .Where(e => e.Afstemtdato > minDate)
+                                .OrderBy(e => e.Afstemtdato);
+            
             return queryResult.ToList();
         }
 
-        /// <inheritdoc/>
-        public List<Afstemning> GetAfstemninger()
-        {
-            return GetAfstemninger(SqlMinDateTime);
-        }
 
         /// <inheritdoc />
-        public List<Execution> GetExecutions(DateTime minDate)
+        public List<ExecutionEntry> QueryExecutions(DateTime minDate)
         {
             using NetcompanyDbContext db = new();
-            var queryResult = db.Executions.Where(e => e.Created > minDate)
-                                           .OrderBy(e => e.Created);
-            return queryResult.ToList();
-        }
+            var queryResult = db.Executions
+                                .Where(e => e.Created > minDate)
+                                .OrderBy(e => e.Created);
 
-        /// <inheritdoc />
-        public List<Execution> GetExecutions()
-        {
-            return GetExecutions(SqlMinDateTime);
-        }
-
-        /// <inheritdoc/>
-        public List<Logging> GetLogMessages(DateTime minDate)
-        {
-            using NetcompanyDbContext db = new();
-            var queryResult = db.Loggings.Where(e => e.Created > minDate)
-                                         .OrderBy(e => e.Created);
             return queryResult.ToList();
         }
 
         /// <inheritdoc/>
-        public List<Logging> GetLogMessages()
+        public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
         {
-            return GetLogMessages(SqlMinDateTime);
+            using NetcompanyDbContext db = new();
+            var queryResult = db.Loggings
+                                .Where(e => e.Created > minDate)
+                                .Where(e => e.ExecutionId == executionId)
+                                .OrderBy(e => e.Created);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<LoggingEntry> QueryLogMessages(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.Loggings
+                                .Where(e => e.Created > minDate)
+                                .OrderBy(e => e.Created);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<LoggingContextEntry> QueryManagers()
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.LoggingContexts
+                                .Where(e => e.ContextId > 0)
+                                .OrderBy(e => e.ContextId);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<HealthReportEntry> QueryHealthReport()
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.HealthReports
+                                .Where(e => e.ReportType.EndsWith("INIT"))
+                                .OrderBy(e => e.LogTime);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.HealthReports
+                                .Where(e => e.ReportType == "CPU"
+                                         || e.ReportType == "NETWORK"
+                                         || e.ReportType == "MEMORY")
+                                .OrderBy(e => e.LogTime);
+
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new();
+            var queryResult = db.EngineProperties
+                                .Where(e => e.Timestamp > minDate)
+                                .OrderBy(e => e.Timestamp);
+
+            return queryResult.ToList();
         }
     }
 }
