@@ -53,16 +53,28 @@
                            Foreground="{DynamicResource ForegroundColor}"
                            Text="Conversion Dashboard"/>
                 <Grid Name="GridControlPanel"
-                      Margin="30,30,30,0"
+                      Margin="20,20,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
-                            Click="ButtonStartStopClick"
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            Grid.RowSpan="2" 
-                            BorderBrush="Transparent"
-                            Background="Transparent">
-                        <Image Source="Icons/Start.png"/>
+                        Click="ButtonStartStopClick"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Style="{StaticResource DefaultButton}">
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter Property="Source" Value="/Icons/Stop.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                            <Setter Property="Source" Value="/Icons/Start.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </Button>
 
                     <Button Name="ButtonSettings" 
@@ -84,7 +96,7 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                Foreground="{DynamicResource ForegroundColor}"
-                               Text="Conversion"/>
+                               Text="{Binding UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
                           Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
@@ -320,12 +332,11 @@
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
-                                  ScrollViewer.CanContentScroll="False"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   MaxHeight="5000">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel>
-                                    </VirtualizingStackPanel>
+                                    <VirtualizingStackPanel/>
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
                             <ListView.View>
@@ -342,9 +353,8 @@
                                             </Style.Triggers>
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-
-                                    <GridViewColumn Header="Timestamp" 
-                                                    DisplayMemberBinding="{Binding Date}"
+                                    <GridViewColumn Header="Date"
+                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
                                                     Width="auto"/>
                                     <GridViewColumn Header="Type" 
                                                     DisplayMemberBinding="{Binding Type}"
@@ -366,73 +376,23 @@
 
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
+                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="INFO"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </MultiDataTrigger>
-
                                         <DataTrigger Binding="{Binding Type}" Value="Warning">
                                             <Setter Property="Background" Value="#FCE283"/>
                                         </DataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="WARNING"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </MultiDataTrigger>
-
                                         <DataTrigger Binding="{Binding Type}" Value="Error">
                                             <Setter Property="Background" Value="#ED4F47"/>
                                         </DataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="ERROR"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowError}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </MultiDataTrigger>
-
                                         <DataTrigger Binding="{Binding Type}" Value="Fatal">
                                             <Setter Property="Background" Value="#CFCFCF"/>
                                         </DataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="FATAL"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" 
-                                                    Value="Collapsed"/>
-                                        </MultiDataTrigger>
-
                                         <DataTrigger Binding="{Binding Type}" Value="Validation">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Type}" Value="VALIDATION"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </MultiDataTrigger>
-
                                         <Trigger Property="Control.IsMouseOver" Value="True">
                                             <Setter Property="Control.Background" Value="Transparent" />
                                             <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
@@ -479,11 +439,12 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Content="R"
-                                Style="{DynamicResource DefaultButton}"
-                                Margin="4,0,0,4"
+                        <Button Style="{DynamicResource DefaultButton}"
+                                Margin="0 3 0 1"
                                 Grid.Column="2"
-                                Grid.Row="0"/>
+                                Grid.Row="0">
+                            <Image Source="/Icons/Refresh.png"/>
+                        </Button>
                         <Button Name="buttonValidationReportDetach"
                                 Click="DetachValidationReportButtonClick"
                                 Grid.Column="3"

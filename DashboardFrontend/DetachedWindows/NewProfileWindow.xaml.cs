@@ -46,6 +46,12 @@ namespace DashboardFrontend.DetachedWindows
                 timeout.GetBindingExpression(TextBox.TextProperty)
             };
 
+            if (Profile.Equals(UserSettings.ActiveProfile))
+            {
+                Profile.HasReceivedCredentials = false;
+                UserSettings.ActiveProfile = Profile;
+            }
+
             foreach(BindingExpression binding in bindings)
             {
                 binding.UpdateSource();

@@ -8,7 +8,7 @@
         Height="200" 
         Width="350"
         Background="{DynamicResource BackgroundColor}"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize">
     <Border Margin="10">
@@ -49,12 +49,14 @@
                 <Button Name="ButtonBack"
                         Content="Back"
                         Click="OnButtonBackClick"
+                        IsCancel="True"
                         MinWidth="100"
                         Margin="0,0,20,0"
                         Grid.Column="0"
                         HorizontalAlignment="Right"/>
                 <Button Name="ButtonConnectDb"
                         Content="Connect"
+                        IsDefault="True"
                         Click="OnButtonConnectDBClick"
                         MinWidth="100"
                         Margin="20,0,0,0"

@@ -108,6 +108,8 @@ namespace DashboardFrontend.ViewModels
             OkCount = 0;
             DisabledCount = 0;
             FailedCount = 0;
+            TotalCount = 0;
+            Data.Clear();
             foreach (ValidationTest test in _validationReport.ValidationTests)
             {
                 ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
