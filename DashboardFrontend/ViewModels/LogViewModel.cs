@@ -13,13 +13,11 @@ namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel(Log log)
+        public LogViewModel()
         {
-            _log = log;
-            UpdateData();
+            _messages = new();
         }
 
-        private Log _log;
         private ObservableCollection<LogMessage> _messages;
         public ObservableCollection<LogMessage> Messages 
         {
@@ -140,32 +138,24 @@ namespace DashboardFrontend.ViewModels
         /// <summary>
         /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed
         /// </summary>
-        public void UpdateData()
+        public void UpdateData(Log log)
         {
-            Messages = new(_log.Messages.Where(x =>
-            {
-                return x.Type == LogMessageType.Info && ShowInfo
-                    || x.Type == LogMessageType.Warning && ShowWarn
-                    || x.Type == LogMessageType.Error && ShowError
-                    || x.Type == LogMessageType.Fatal && ShowFatal
-                    || x.Type == LogMessageType.Validation && ShowValidation;
-            }));
-            UpdateCounters();
+            Messages = new(log.Messages);
+            UpdateCounters(Messages);
         }
 
         /// <summary>
         /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
         /// </summary>
         /// <param name="msg">LogMessage whose type counter should be updated</param>
-        private void UpdateCounters()
+        private void UpdateCounters(ObservableCollection<LogMessage> log)
         {
             InfoCount = 0;
             WarnCount = 0;
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
-            foreach(var msg in _log.Messages)
-            {
+            foreach(var msg in log)
                 switch (msg.Type)
                 {
                     case LogMessageType.Info:

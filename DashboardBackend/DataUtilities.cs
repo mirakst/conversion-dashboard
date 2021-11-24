@@ -202,7 +202,7 @@ namespace DashboardBackend
         {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryPerformanceReadings(minDate);
             List<CpuLoad> cpuRes = new();
-            List<RamUsage> ramRes = new();
+            List<RamLoad> ramRes = new();
             List<NetworkUsage> netRes = new();
             List<HealthReportEntry> cpuAndRamEntries = queryResult
                                                        .Where(e => e.ReportType != "NETWORK")
@@ -219,7 +219,7 @@ namespace DashboardBackend
                         cpuRes.Add(GetCpuReading(item));
                         break;
                     case "MEMORY":
-                        ramRes.Add(GetRamReading(item));
+                        ramRes.Add(GetRamReading(hr.Ram.Total, item));
                         break;
                     default:
                         throw new FormatException(nameof(item));
@@ -247,7 +247,7 @@ namespace DashboardBackend
         public static CpuLoad GetCpuReading(HealthReportEntry item)
         {
             int executionId = item.ExecutionId.Value;
-            long reportNumValue = item.ReportNumericValue.Value;
+            double reportNumValue = Convert.ToDouble(item.ReportNumericValue) / 100;
             DateTime logTime = item.LogTime.Value;
             CpuLoad cpuReading = new(executionId, reportNumValue, logTime);
             return cpuReading;
@@ -258,12 +258,14 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="item">A state database entry with cpu load readings</param>
         /// <returns>A RAM usage reading.</returns>
-        public static RamUsage GetRamReading(HealthReportEntry item)
+        public static RamLoad GetRamReading(long totalRam, HealthReportEntry item)
         {
             int executionId = (int)item.ExecutionId.Value;
             long reportNumValue = item.ReportNumericValue.Value;
+            double load = Convert.ToDouble(reportNumValue)/Convert.ToDouble(totalRam);
+            long available = item.ReportNumericValue.Value;
             DateTime logTime = item.LogTime.Value;
-            RamUsage ramReading = new(executionId, reportNumValue, logTime);
+            RamLoad ramReading = new(executionId, load, available, logTime);
             return ramReading;
         }
 

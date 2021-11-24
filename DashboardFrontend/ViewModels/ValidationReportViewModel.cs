@@ -16,17 +16,13 @@ namespace DashboardFrontend.ViewModels
 {
     public class ValidationReportViewModel : BaseViewModel
     {
-        public ValidationReportViewModel(ValidationReport validationReport, DataGrid dataGrid)
+        public ValidationReportViewModel(DataGrid dataGrid)
         {
             _dataGrid = dataGrid;
-            _validationReport = validationReport;
-            UpdateData();
         }
 
         #region Properties
-        private ValidationReport _validationReport;
         private DataGrid _dataGrid;
-
         public ObservableCollection<ValidationTestViewModel> Data { get; set; } = new();
 
         private DateTime _lastModified;
@@ -103,14 +99,14 @@ namespace DashboardFrontend.ViewModels
         }
         #endregion
 
-        public void UpdateData()
+        public void UpdateData(ValidationReport validationReport)
         {
             OkCount = 0;
             DisabledCount = 0;
             FailedCount = 0;
             TotalCount = 0;
             Data.Clear();
-            foreach (ValidationTest test in _validationReport.ValidationTests)
+            foreach (ValidationTest test in validationReport.ValidationTests)
             {
                 ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
@@ -125,7 +121,7 @@ namespace DashboardFrontend.ViewModels
                 }
                 UpdateCounter(test);
             }
-            LastModified = _validationReport.LastModified;
+            LastModified = validationReport.LastModified;
         }
 
         /// <summary>

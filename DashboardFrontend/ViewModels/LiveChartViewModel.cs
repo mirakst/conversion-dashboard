@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using Model;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -38,11 +39,10 @@ namespace DashboardFrontend.ViewModels
         /// <param name="dataList">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
         /// <param name="xAxisList">A list of <see cref="Axis"/> for the X axis.</param>
         /// <param name="yAxisList">A list of <see cref="Axis"/> for the Y axis.</param>
-        public LiveChartViewModel(List<ISeries> linesList, List<ObservableCollection<ObservablePoint>> dataList, List<Axis> xAxisList, List<Axis> yAxisList)
+        public LiveChartViewModel(BaseChart chart)
         {
-            AddLine(linesList, dataList, xAxisList, yAxisList);
+            AddLine(chart.Series, chart.Data, chart.XAxis, chart.YAxis);
             AutoFocusOn();
-            StartGraph();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-        /// <summary>
+/*        /// <summary>
         /// Calls <see cref="QueryList"/> at a set interval.
         /// </summary>
         /// <param name="querryTimer"></param>
@@ -104,24 +104,33 @@ namespace DashboardFrontend.ViewModels
             if (!isGraphRunning) 
             {
                 isGraphRunning = true;
-                queryTimer = new(TimeSpan.FromSeconds(queryTimerInterval));
+                queryTimer = new(TimeSpan.FromMinutes(queryTimerInterval));
 
                 while (await queryTimer.WaitForNextTickAsync())
                 {
                     QueryList();
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Function qurying data (generates data currently).
         /// </summary>
-        private void QueryList()
+        public void UpdateData(Ram ram, Cpu cpu)
         {
-            foreach (var item in Values)
+            foreach (var item in ram.Readings)
             {
-                item.Add(new ObservablePoint(DateTime.Now.ToOADate(), random.NextDouble()));
+                Values[0].Add(CreatePoint(item));       
             }
+            foreach (var item in cpu.Readings)
+            {
+                Values[1].Add(CreatePoint(item));
+            }
+        }
+
+        private ObservablePoint CreatePoint(PerformanceMetric pointData)
+        {
+            return new ObservablePoint(pointData.Date.ToOADate(), pointData.Load);
         }
 
         #region AutoFocus Functions
@@ -148,8 +157,8 @@ namespace DashboardFrontend.ViewModels
                 {
                     if (Values.Count > 0 && Values.First().Count > 0)
                     {
-                        XAxis[0].MinLimit = Values.First().Count >= maxView ? Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromSeconds(maxView).Ticks).ToOADate() :
-                                                                              Values.First().First().X.Value; /* skal ændres fra .FromSeconds til .FromMinutes*/
+                        XAxis[0].MinLimit = Values.First().Count >= maxView ? Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(maxView).Ticks).ToOADate() :
+                                                                              Values.First().First().X.Value; /* skal ændres fra .FromMinutes til .FromMinutes*/
                         XAxis[0].MaxLimit = Values.First().Last().X.Value;
                     }
                 }
@@ -204,7 +213,6 @@ namespace DashboardFrontend.ViewModels
         {
             queryTimerInterval = input;
             StopGraph();
-            StartGraph();
         }
         #endregion
     }

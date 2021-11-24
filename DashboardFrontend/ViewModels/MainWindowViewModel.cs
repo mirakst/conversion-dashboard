@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,22 +20,16 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
+        public MainWindowViewModel(DataGrid dataGridValidations, UserSettings userSettings)
         {
-            _uiContext = SynchronizationContext.Current;
-
-            _log = log;
-            _validationReport = validationReport;
-            LogViewModel = new(log);
-            ValidationReportViewModel = new(validationReport, validationsDataGrid);
+            Controller = new(this);
+            Controller.Initialize(dataGridValidations);
             UserSettings = userSettings;
-            LiveChartViewModel = liveChartViewModel;
         }
 
+        public Controller Controller { get; set; }
         private List<Timer> _timers = new();
         private SynchronizationContext? _uiContext;
-        private ValidationReport _validationReport = new();
-        private Log _log = new();
         private bool _isRunning;
         public bool IsRunning
         {

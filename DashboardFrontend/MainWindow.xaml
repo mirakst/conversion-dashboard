@@ -14,7 +14,6 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
-        MouseDown="DraggableGrid"
         ResizeMode="CanResizeWithGrip">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
@@ -44,7 +43,8 @@
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0"
-                  Grid.ColumnSpan="2">
+                  Grid.ColumnSpan="2"
+                  MouseDown="DraggableGrid">
                 <TextBlock x:Name="TextBlockWindowTitle"
                            FontSize="14"
                            MinWidth="200"
@@ -332,7 +332,6 @@
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   MaxHeight="5000">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>

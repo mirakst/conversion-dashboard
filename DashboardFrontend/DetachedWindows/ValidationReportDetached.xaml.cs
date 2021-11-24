@@ -21,12 +21,10 @@ namespace DashboardFrontend.DetachedWindows
 {
     public partial class ValidationReportDetached
     {
-        public ValidationReportDetached(ValidationReport validationReport)
+        public ValidationReportDetached(ValidationReportViewModel validationReportViewModel)
         {
             InitializeComponent();
-            ValidationReport = validationReport;
-            ViewModel = new(validationReport, DataGridValidations);
-            DataContext = ViewModel;
+            DataContext = validationReportViewModel;
         }
         
         public ValidationReport ValidationReport { get; set; }

@@ -7,7 +7,6 @@ using DashboardBackend.Database;
 using Model;
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,25 +15,19 @@ namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
-        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
-        public LiveChartViewModel LiveChartViewModel { get; private set; }
-
         public MainWindow()
         {
-            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
-
-            InitializeComponent();
+            DataUtilities.DatabaseHandler = new SqlDatabase();
             TryLoadUserSettings();
-            
-            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
+            InitializeComponent();
         }
 
-        private UserSettings UserSettings { get; } = new();
-        public ValidationReport ValidationReport { get; set; } = new();
-        public Log Log { get; set; } = new();
+
         public MainWindowViewModel ViewModel { get; }
-        
+        private UserSettings UserSettings { get; } = new();
+
         private void TryLoadUserSettings()
         {
             try
@@ -93,8 +86,8 @@ namespace DashboardFrontend
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
-        {            
-            ValidationReportDetached detachVR = new(ValidationReport);
+        {
+            ValidationReportDetached detachVR = new(ViewModel.ValidationReportViewModel);
             detachVR.Closing += OnValidationWindowClosing;
             buttonValidationReportDetach.IsEnabled = false;
             detachVR.Show();
@@ -211,19 +204,19 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            LiveChartViewModel.AutoFocusOn();
+            ViewModel.LiveChartViewModel.AutoFocusOn();
 
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            LiveChartViewModel.AutoFocusOff();
+            ViewModel.LiveChartViewModel.AutoFocusOff();
         }
 
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+            ViewModel.LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

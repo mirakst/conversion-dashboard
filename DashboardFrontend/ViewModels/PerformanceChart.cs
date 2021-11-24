@@ -1,39 +1,36 @@
-﻿using LiveChartsCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+
 
 namespace DashboardFrontend.ViewModels
 {
-    public class NetworkViewModel
+    /// <summary>
+    /// The ViewModel class for Performance monitoring.
+    /// </summary>
+    public class PerformanceChart : BaseChart
     {
-        public List<ObservableCollection<ObservablePoint>> NetworkData { get; set; }
-        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> RecivedValues { get; private set; } = new();
-        public List<ISeries> Series { get; private set; }
-
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
-
-        public NetworkViewModel()
+        public ObservableCollection<ObservablePoint> RAMValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> CPUValues { get; private set; } = new();
+        public PerformanceChart()
         {
-
-            NetworkData = new()
+            Data = new()
             {
-                SendValues,
-                RecivedValues,
+                RAMValues,
+                CPUValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Send",
+                    Name = "RAM",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
@@ -41,11 +38,11 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 (e.PrimaryValue * 1000).ToString() + "MB",
+                                                 e.PrimaryValue.ToString("P"),
                 },
-                new LineSeries<ObservablePoint>
+                new LineSeries<ObservablePoint> 
                 {
-                    Name = "Recive",
+                    Name = "CPU",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
@@ -53,7 +50,7 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "MB",
+                                                 e.PrimaryValue.ToString("P"),
                 }
             };
 
@@ -73,10 +70,14 @@ namespace DashboardFrontend.ViewModels
             {
                 new Axis
                 {
-                    Name = "Mega Bytes",
-                    Labeler  = (value) => (value * 1000).ToString("N0") + "MB",
+                    Name = "Load",
+                    Labeler  = (value) => value.ToString("P0"),
+                    MaxLimit = 1,
+                    MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    MinStep = 0.25,
+                    ForceStepToMin = true,
                 }
             };
         }
