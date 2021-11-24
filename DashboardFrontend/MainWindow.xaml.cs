@@ -12,19 +12,15 @@ namespace DashboardInterface
     public partial class MainWindow : Window
     {
         public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
-        public LiveChartViewModel LiveChartViewModel { get; private set; } = new();
+        public LiveChartViewModel LiveChartViewModel { get; private set; }
 
-        private readonly PeriodicTimer LiveChartsQuerryTimer;
         private bool _isStarted;
 
         public MainWindow()
         {
+            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
+
             InitializeComponent();
-
-            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(5));
-
-            LiveChartViewModel.NewChart(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxes, PerformanceViewModel.YAxes);
-            LiveChartViewModel.StartGraph(LiveChartsQuerryTimer);
 
             DataContext = this;
         }
@@ -47,7 +43,6 @@ namespace DashboardInterface
             }
             else
             {
-                LiveChartsQuerryTimer.Dispose();
                 _isStarted = false;
             }
         }
@@ -133,6 +128,12 @@ namespace DashboardInterface
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
             LiveChartViewModel.AutoFocusOff();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Health report monitoring"
@@ -34,33 +35,30 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <Border BorderBrush="{DynamicResource BorderColor}"
-                                    BorderThickness="1"
-                                    Grid.Column="3">
-                                <Grid>
-                                    <TextBlock Text="Hours: "
-                                             FontSize="15"
-                                             VerticalAlignment="Center"
-                                             Background="{DynamicResource BackgroundColor}"
-                                             Foreground="{DynamicResource ForegroundColor}"
-                                     Grid.Column="0"/>
-                                    <TextBox Name="textBoxPerformanceTimeInterval"
-                                             Text="6"
-                                             MaxLength="20"
-                                             VerticalAlignment="Center"
-                                             FontSize="15"
-                                             BorderThickness="0"
-                                             Background="{DynamicResource BackgroundColor}"
-                                             Foreground="{DynamicResource ForegroundColor}"
-                                             Grid.Column="1"/>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </Border>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="1000" Grid.Row="1"/>
-                            <!-- Graph -->
+                            <ComboBox Name="ComboBoxPerformanceMaxView"
+                                  Margin="0,0,0,0"
+                                  VerticalAlignment="Center"
+                                  Grid.Column="3"
+                                  SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                            </ComboBox>
+                            <lvc:CartesianChart DataContext="{Binding PerformanceChart}"
+                                                Series="{Binding Series}"
+                                                ZoomMode="X"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
+                            </lvc:CartesianChart>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
@@ -127,39 +125,33 @@
                                     </Grid.ColumnDefinitions>
                                 </Grid>
                             </Border>
-                            <Border BorderBrush="{DynamicResource BorderColor}"
-                                    HorizontalAlignment="Right"
-                                    Margin="0,0,0,5"
-                                    BorderThickness="1"
-                                    Grid.Column="2">
-                                <Grid Margin="5">
-                                    <TextBlock Text="Hours: "
-                                             FontSize="15"
-                                             VerticalAlignment="Center"
-                                             Background="{DynamicResource BackgroundColor}"
-                                             Foreground="{DynamicResource ForegroundColor}"
-                                     Grid.Column="0"/>
-                                    <TextBox Name="textBoxNetworkTimeInterval"
-                                             Text="6"
-                                             MaxLength="20"
-                                             VerticalAlignment="Center"
-                                             FontSize="15"
-                                             BorderThickness="0"
-                                             Background="{DynamicResource BackgroundColor}"
-                                             Foreground="{DynamicResource ForegroundColor}"
-                                             Grid.Column="1"/>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </Border>
+                            <ComboBox Name="ComboBoxNetworkMaxView"
+                                      MaxWidth="70"
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Grid.Column="3"
+                                      SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                            </ComboBox>
                             <Border BorderBrush="{DynamicResource BorderColor}"
                                     BorderThickness="1"
-                                       Grid.Column="1"
-                                       Grid.ColumnSpan="2"
-                                       Grid.Row="1">
-                                <!-- Graph -->
+                                    Grid.Column="1"
+                                    Grid.Row="1">
+                                <lvc:CartesianChart DataContext="{Binding NetworkChart}"
+                                                Series="{Binding Series}"
+                                                ZoomMode="Both"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
                             </Border>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>

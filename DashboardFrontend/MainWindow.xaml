@@ -333,33 +333,18 @@
                       Grid.Row="1">
                     <Grid Style="{DynamicResource ComponentControlBar}"
                           Grid.Row="0">
-                        <Border BorderBrush="{DynamicResource BorderColor}"
-                                BorderThickness="1"
-                                MaxHeight="25"
-                                Margin="0,0,5,0"
-                                Grid.Column="1">
-                            <Grid>
-                                <TextBlock Text="Hours: "
-                                           FontSize="15"
-                                           VerticalAlignment="Center"
-                                           Background="{DynamicResource BackgroundColor}"
-                                           Foreground="{DynamicResource ForegroundColor}"
-                                           Grid.Column="0"/>
-                                <TextBox Name="TextBoxChartTimeInterval"
-                                         Text="6"
-                                         FontSize="15"
-                                         MaxLength="20"
-                                         VerticalAlignment="Center"
-                                         BorderThickness="0"
-                                         Background="{DynamicResource BackgroundColor}"
-                                         Foreground="{DynamicResource ForegroundColor}"
-                                         Grid.Column="1"/>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                            </Grid>
-                        </Border>
+                        <ComboBox Name="comboBoxMaxView"
+                                  Margin="0,0,0,0"
+                                  VerticalAlignment="Center"
+                                  Grid.Column="1"
+                                  SelectionChanged="ComboBox_SelectionChanged">
+                            <ComboBoxItem Content="30 Min" Tag="30"/>
+                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                            <ComboBoxItem Content="2 Hours" Tag="120"/>
+                            <ComboBoxItem Content="6 Hours" Tag="360"/>
+                            <ComboBoxItem Content="12 Hours" Tag="720"/>
+                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                        </ComboBox>
                         <Button Name="ButtonHealthReportDetach"
                                 Click="DetachHealthReportButtonClick"
                                 Grid.Column="2"
