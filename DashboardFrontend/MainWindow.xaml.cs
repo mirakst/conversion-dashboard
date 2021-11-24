@@ -5,9 +5,10 @@ using DashboardFrontend.Settings;
 using DashboardBackend;
 using DashboardBackend.Database;
 using Model;
+using DashboardFrontend.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,8 +20,13 @@ namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
+        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
+        public LiveChartViewModel LiveChartViewModel { get; private set; }
+
         public MainWindow()
         {
+            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
+
             InitializeComponent();
             DataUtilities.DatabaseHandler = new SqlDatabase();
             ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
@@ -211,6 +217,23 @@ namespace DashboardFrontend
         private void DraggableGrid(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOn();
+
+        }
+
+        private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOff();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
         }
     }
 }
