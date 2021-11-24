@@ -19,7 +19,6 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        private SynchronizationContext? _uiContext;
         public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid)
         {
             _uiContext = SynchronizationContext.Current;
@@ -31,9 +30,10 @@ namespace DashboardFrontend.ViewModels
             UserSettings = userSettings;
         }
 
+        private List<Timer> _timers = new();
+        private SynchronizationContext? _uiContext;
         private ValidationReport _validationReport = new();
         private Log _log = new();
-
         private bool _isRunning;
         public bool IsRunning
         {
@@ -48,79 +48,117 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public UserSettings UserSettings { get; }
-        private List<Timer> _timers = new();
 
+        /// <summary>
+        /// Ensures that there is an active profile with database credentials, and then starts the monitoring process.
+        /// If the process is already running, it is ended.
+        /// </summary>
         public void OnStartPressed()
         {
             if (UserSettings.ActiveProfile is null)
             {
                 MessageBox.Show("Please select a profile.");
             }
-            else if(!IsRunning && !UserSettings.ActiveProfile.HasReceivedCredentials)
+            else if (!IsRunning)
             {
-                ConnectDBDialog dialogPopup = new(UserSettings);
-                dialogPopup.ShowDialog();
+                if (!UserSettings.ActiveProfile.HasReceivedCredentials)
+                {
+                    GetCredentials();
+                }
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DataUtilities.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    StartQueryTimers();
-                    IsRunning = true;
+                    StartMonitoring();
                 }
-            }
-            else if (!IsRunning)
-            {
-                StartQueryTimers();
-                IsRunning = true;
-                MessageBox.Show("Started");
             }
             else
             {
-                IsRunning = false;
-                StopQueryTimers();
-                MessageBox.Show("Stopped");
+                StopMonitoring();
             }
         }
 
-        private void StartQueryTimers()
+        /// <summary>
+        /// Gets database credentials for the current profile and builds its connection string.
+        /// </summary>
+        private void GetCredentials()
+        {
+            ConnectDBDialog dialogPopup = new(UserSettings);
+            dialogPopup.ShowDialog();
+        }
+
+        /// <summary>
+        /// Sets up the necessary query timers that gather and update information in the system.
+        /// </summary>
+        private void StartMonitoring()
         {
             if (UserSettings.SynchronizeAllQueries)
             {
-                _timers.Add(new((a) => Trace.WriteLine("querying all"), null, 1000, UserSettings.AllQueryInterval * 1000));
+                _timers.Add(new(x => 
+                {
+                    //Task.Run(() => QueryHealthReport());
+                    //Task.Run(() => QueryManagers());
+                    Task.Run(() => QueryLogs());
+                    //Task.Run(() => QueryValidations());
+
+                }, null, 500, UserSettings.AllQueryInterval * 1000));
             }
             else
             {
-                //_timers.Add(new((a) => Trace.WriteLine("querying health report"), null, 1000, UserSettings.HealthReportQueryInterval * 1000));
-                _timers.Add(new((a) => QueryLogging(), null, 1000, UserSettings.LoggingQueryInterval * 1000));
-                //_timers.Add(new((a) => Trace.WriteLine("querying managers"), null, 1000, UserSettings.ManagerQueryInterval * 1000));
-                //_timers.Add(new((a) => Trace.WriteLine("querying validations"), null, 1000, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new(x => QueryHealthReport(), null, 500, UserSettings.HealthReportQueryInterval * 1000));
+                _timers.Add(new(x => QueryLogs(), null, 500, UserSettings.LoggingQueryInterval * 1000));
+                _timers.Add(new(x => QueryManagers(), null, 500, UserSettings.ManagerQueryInterval * 1000));
+                _timers.Add(new(x => QueryValidations(), null, 500, UserSettings.ValidationQueryInterval * 1000));
             }
+            IsRunning = true;
         }
 
-        private void StopQueryTimers()
+        private void StopMonitoring()
         {
-            foreach (var timer in _timers)
+            foreach (Timer timer in _timers)
             {
                 timer.Dispose();
             }
             _timers.Clear();
+            IsRunning = false;
         }
 
-        private DateTime lastModified = DateTime.Now.AddMonths(-24);
-
-        private void QueryLogging()
+        private DateTime _logLastModified = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+        private void QueryLogs()
         {
-            Trace.WriteLine("log jeje");
-            //_log.Messages.AddRange(DataUtilities.GetLogMessages(lastModified));
-            //LogViewModel.UpdateData();
-            //lastModified = DateTime.Now;
-            var q = DataUtilities.GetAfstemninger(_validationReport.LastModified);
-            Trace.WriteLine("found " + q.Count + " validation tests");
-            if (q.Count > 0)
+            var result = DataUtilities.GetLogMessages(_logLastModified);
+#if DEBUG
+            Trace.WriteLine($"found {result.Count} log messages");
+#endif
+            if (result.Count > 0)
             {
-                _validationReport.ValidationTests = q;
-                //ValidationReportViewModel.UpdateData();
-                _uiContext?.Send(x => ValidationReportViewModel.UpdateData(q), null);
+                _log.Messages.AddRange(result);
+                _uiContext?.Send(x => LogViewModel.UpdateData(), null);
             }
+            _logLastModified = DateTime.Now;
+            Trace.WriteLine("done");
+        }
+
+        private void QueryValidations()
+        {
+            var result = DataUtilities.GetAfstemninger(_validationReport.LastModified);
+#if DEBUG
+            Trace.WriteLine("Found " + result.Count + " validation tests");
+#endif
+            if (result.Count > 0)
+            {
+                _validationReport.ValidationTests = result;
+                _uiContext?.Send(x => ValidationReportViewModel.UpdateData(), null);
+            }
+        }
+
+        private void QueryHealthReport()
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void QueryManagers()
+        {
+            //throw new NotImplementedException();
         }
     }
 }

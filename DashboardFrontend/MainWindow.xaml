@@ -282,15 +282,8 @@
                                           Background="White"
                                           Foreground="Black"
                                           BorderBrush="{StaticResource BorderColor}"
-                                          ScrollViewer.CanContentScroll="False"
                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                           MaxHeight="5000">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel>
-                                    </VirtualizingStackPanel>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>

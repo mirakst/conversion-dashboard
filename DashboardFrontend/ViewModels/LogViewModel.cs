@@ -16,14 +16,10 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel(Log log)
         {
             _log = log;
-            log.Messages = DataUtilities.GetLogMessages().TakeLast(1000).ToList();
-            UpdateCounters();
             UpdateData();
         }
 
         private Log _log;
-        /*        private List<LogMessage> _messages = new();
-        */
         private ObservableCollection<LogMessage> _messages;
         public ObservableCollection<LogMessage> Messages { 
             get 
@@ -144,6 +140,7 @@ namespace DashboardFrontend.ViewModels
         public void UpdateData()
         {
             Messages = new(_log.Messages);
+            UpdateCounters();
         }
 
         /// <summary>
@@ -152,26 +149,33 @@ namespace DashboardFrontend.ViewModels
         /// <param name="msg">LogMessage whose type counter should be updated</param>
         private void UpdateCounters()
         {
+            InfoCount = 0;
+            WarnCount = 0;
+            ErrorCount = 0;
+            FatalCount = 0;
+            ValidationCount = 0;
             foreach(var msg in _log.Messages)
-            switch (msg.Type)
             {
-                case LogMessageType.Info:
-                    InfoCount++;
-                    break;
-                case LogMessageType.Warning:
-                    WarnCount++;
-                    break;
-                case LogMessageType.Error:
-                    ErrorCount++;
-                    break;
-                case LogMessageType.Fatal:
-                    FatalCount++;
-                    break;
-                case LogMessageType.Validation:
-                    ValidationCount++;
-                    break;
-                default:
-                    break;
+                switch (msg.Type)
+                {
+                    case LogMessageType.Info:
+                        InfoCount++;
+                        break;
+                    case LogMessageType.Warning:
+                        WarnCount++;
+                        break;
+                    case LogMessageType.Error:
+                        ErrorCount++;
+                        break;
+                    case LogMessageType.Fatal:
+                        FatalCount++;
+                        break;
+                    case LogMessageType.Validation:
+                        ValidationCount++;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
