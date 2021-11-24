@@ -1,7 +1,4 @@
 ﻿using DashboardFrontend.ViewModels;
-using System;
-using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 
 namespace DashboardFrontend.DetachedWindows
@@ -13,9 +10,6 @@ namespace DashboardFrontend.DetachedWindows
         public LiveChartViewModel PerformanceChart { get; private set; }
         public LiveChartViewModel NetworkChart { get; private set; }
 
-        public PeriodicTimer PerformanceTimer;
-        public PeriodicTimer NetworkTimer;
-
         public HealthReportDetached()
         {
             PerformanceChart = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
@@ -23,19 +17,10 @@ namespace DashboardFrontend.DetachedWindows
 
             InitializeComponent();
 
-            PerformanceTimer = new(TimeSpan.FromSeconds(2));
-            PerformanceChart.StartGraph(PerformanceTimer);
-
-            NetworkTimer = new(TimeSpan.FromSeconds(2));
-            NetworkChart.StartGraph(NetworkTimer);
+            PerformanceChart.StartGraph();
+            NetworkChart.StartGraph();
 
             DataContext = this;
-        }
-
-        private void OnClosing(object? sender, CancelEventArgs e)
-        {
-            PerformanceTimer.Dispose();
-            NetworkTimer.Dispose();
         }
 
         private void ComboBoxPerformanceMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

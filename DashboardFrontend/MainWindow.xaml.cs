@@ -14,7 +14,6 @@ namespace DashboardInterface
         public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
         public LiveChartViewModel LiveChartViewModel { get; private set; }
 
-        private readonly PeriodicTimer LiveChartsQuerryTimer;
         private bool _isStarted;
 
         public MainWindow()
@@ -22,9 +21,6 @@ namespace DashboardInterface
             LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
 
             InitializeComponent();
-
-            LiveChartsQuerryTimer = new(TimeSpan.FromSeconds(2));
-            LiveChartViewModel.StartGraph(LiveChartsQuerryTimer);
 
             DataContext = this;
         }
@@ -47,7 +43,6 @@ namespace DashboardInterface
             }
             else
             {
-                LiveChartsQuerryTimer.Dispose();
                 _isStarted = false;
             }
         }

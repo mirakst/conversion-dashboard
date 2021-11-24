@@ -10,24 +10,39 @@ using System.Threading;
 namespace DashboardFrontend.ViewModels
 {
     /// <summary>
-    /// TODO
+    /// A class for the creating and controlling charts
     /// </summary>
     public class LiveChartViewModel
     {
+        #region public
         public List<ObservableCollection<ObservablePoint>> Values { get; private set; } = new();
         public List<ISeries> Series { get; private set; } = new();
         public List<Axis> XAxis { get; private set; } = new();
         public List<Axis> YAxis { get; private set; } = new();
+        #endregion
 
+        #region private
+        private PeriodicTimer? queryTimer;
+        private int queryTimerInterval = 2;
         private PeriodicTimer? autoFocusTimer;
         private readonly Random random = new();
+        private bool isGraphRunning = false;
         private bool isAutoFocusTimer = false;
         private int maxView = 10;
+        #endregion
 
+        /// <summary>
+        /// Creates a new Chart, with given data and starts it with auto focus on.
+        /// </summary>
+        /// <param name="charts">A list of <see cref="ISeries"/>.</param>
+        /// <param name="data">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
+        /// <param name="xAxis">A list of <see cref="Axis"/> for the X axis.</param>
+        /// <param name="yAxis">A list of <see cref="Axis"/> for the Y axis.</param>
         public LiveChartViewModel(List<ISeries> charts, List<ObservableCollection<ObservablePoint>> data, List<Axis> xAxis, List<Axis> yAxis)
         {
             AddChart(charts, data, xAxis, yAxis);
             AutoFocusOn();
+            StartGraph();
         }
 
         /// <summary>
@@ -60,14 +75,41 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
+        /// Removes the chart from the list of charts.
+        /// </summary>
+        /// <param name="chartToRemove">The chart number to remove</param>
+        public void RemoveChart(int chartToRemove)
+        {
+            Series.RemoveAt(chartToRemove);
+        }
+
+        /// <summary>
+        /// Stops the graph, if it is running.
+        /// </summary>
+        public void StopGraph()
+        {
+            if (isGraphRunning)
+            {
+                queryTimer.Dispose();
+                isGraphRunning = false;
+            }
+        }
+
+        /// <summary>
         /// Calls <see cref="QueryList"/> at a set interval.
         /// </summary>
         /// <param name="querryTimer"></param>
-        public async void StartGraph(PeriodicTimer querryTimer)
+        public async void StartGraph()
         {
-            while (await querryTimer.WaitForNextTickAsync())
+            if (!isGraphRunning) 
             {
-                QueryList();
+                isGraphRunning = true;
+                queryTimer = new(TimeSpan.FromSeconds(queryTimerInterval));
+
+                while (await queryTimer.WaitForNextTickAsync())
+                {
+                    QueryList();
+                }
             }
         }
 
@@ -113,18 +155,16 @@ namespace DashboardFrontend.ViewModels
                 }
             }
         }
-
         #endregion
 
         #region Settings Functions
-
         /// <summary>
-        /// Change max view.
+        /// Change max viewable timespan on the graph while auto focusing.
         /// </summary>
-        /// <param name="i"></param>
-        public void ChangeMaxView(int i)
+        /// <param name="input"></param>
+        public void ChangeMaxView(int input)
         {
-            maxView = i;
+            maxView = input;
         }
 
         /// <summary>
@@ -155,6 +195,17 @@ namespace DashboardFrontend.ViewModels
             {
                 line.GeometrySize = input;
             }
+        }
+
+        /// <summary>
+        /// Change how often the query should run.
+        /// </summary>
+        /// <param name="input">The number of minutes between queryes.</param>
+        public void ChangeQueryTimer(int input)
+        {
+            queryTimerInterval = input;
+            StopGraph();
+            StartGraph();
         }
         #endregion
     }
