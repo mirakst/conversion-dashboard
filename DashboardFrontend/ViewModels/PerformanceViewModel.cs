@@ -1,21 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
-using LiveChartsCore.Drawing;
-using LiveChartsCore.Kernel;
-using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Drawing;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries.Segments;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 

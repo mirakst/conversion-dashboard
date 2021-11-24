@@ -10,7 +10,7 @@ using System.Threading;
 namespace DashboardFrontend.ViewModels
 {
     /// <summary>
-    /// A class for the creating and controlling charts
+    /// A class for the creating and controlling <see cref="ISeries"/>
     /// </summary>
     public class LiveChartViewModel
     {
@@ -32,59 +32,59 @@ namespace DashboardFrontend.ViewModels
         #endregion
 
         /// <summary>
-        /// Creates a new Chart, with given data and starts it with auto focus on.
+        /// Creates a new <see cref="ISeries"/>, with given data and starts it with auto focus on.
         /// </summary>
-        /// <param name="charts">A list of <see cref="ISeries"/>.</param>
-        /// <param name="data">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
-        /// <param name="xAxis">A list of <see cref="Axis"/> for the X axis.</param>
-        /// <param name="yAxis">A list of <see cref="Axis"/> for the Y axis.</param>
-        public LiveChartViewModel(List<ISeries> charts, List<ObservableCollection<ObservablePoint>> data, List<Axis> xAxis, List<Axis> yAxis)
+        /// <param name="linesList">A list of <see cref="ISeries"/>.</param>
+        /// <param name="dataList">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
+        /// <param name="xAxisList">A list of <see cref="Axis"/> for the X axis.</param>
+        /// <param name="yAxisList">A list of <see cref="Axis"/> for the Y axis.</param>
+        public LiveChartViewModel(List<ISeries> linesList, List<ObservableCollection<ObservablePoint>> dataList, List<Axis> xAxisList, List<Axis> yAxisList)
         {
-            AddChart(charts, data, xAxis, yAxis);
+            AddLine(linesList, dataList, xAxisList, yAxisList);
             AutoFocusOn();
             StartGraph();
         }
 
         /// <summary>
-        /// Add a new chart to the Graph.
+        /// Adds one or more new elements to the <see cref="ISeries"/> list.
         /// </summary>
-        /// <param name="charts">List of charts.</param>
-        /// <param name="data">List of data</param>
-        public void AddChart(List<ISeries> charts, List<ObservableCollection<ObservablePoint>> data, List<Axis> xAxis, List<Axis> yAxis)
+        /// <param name="linesList">List of <see cref="ISeries"/>.</param>
+        /// <param name="dataList">List of <see cref="ObservableCollection{ObservablePoint}"/></param>
+        public void AddLine(List<ISeries> linesList, List<ObservableCollection<ObservablePoint>> dataList, List<Axis> xAxisList, List<Axis> yAxisList)
         {
-            foreach (var collection in data)
+            foreach (var collection in dataList)
             {
                 Values.Add(collection);
             }
 
-            for (int i = 0; i < charts.Count; i++)
+            for (int i = 0; i < linesList.Count; i++)
             {
-                Series.Add(charts[i]);
+                Series.Add(linesList[i]);
                 Series[i].Values = Values[i];
             }
 
-            foreach (var axis in xAxis)
+            foreach (var axis in xAxisList)
             {
                 XAxis.Add(axis);
             }
 
-            foreach (var axis in yAxis)
+            foreach (var axis in yAxisList)
             {
                 YAxis.Add(axis);
             }
         }
 
         /// <summary>
-        /// Removes the chart from the list of charts.
+        /// Removes the given element from the list of <see cref="ISeries"/>.
         /// </summary>
-        /// <param name="chartToRemove">The chart number to remove</param>
-        public void RemoveChart(int chartToRemove)
+        /// <param name="lineToRemove">The <see cref="ISeries"/> number to remove</param>
+        public void RemoveLine(int lineToRemove)
         {
-            Series.RemoveAt(chartToRemove);
+            Series.RemoveAt(lineToRemove);
         }
 
         /// <summary>
-        /// Stops the graph, if it is running.
+        /// Stops the <see cref="List{ISeries}"/> from updating, if it is running.
         /// </summary>
         public void StopGraph()
         {
@@ -135,7 +135,7 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Aync function that focus the chart on the most resent entries.
+        /// Aync function that focus the chart on the most resent entries, within a given time span.
         /// </summary>
         public async void AutoFocusOn()
         {
@@ -159,7 +159,7 @@ namespace DashboardFrontend.ViewModels
 
         #region Settings Functions
         /// <summary>
-        /// Change max viewable timespan on the graph while auto focusing.
+        /// Change max viewable time span on the graph while auto focusing.
         /// </summary>
         /// <param name="input"></param>
         public void ChangeMaxView(int input)
@@ -168,7 +168,7 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Sets the smoothness of curves on all lines.
+        /// Sets the smoothness of curves on all <see cref="ISeries"/>.
         /// </summary>
         /// <param name = "input">A number between 0 and 1. Standart is 1.</param>
         public void ChangeLineSmoothness(double input)
@@ -183,7 +183,7 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Sets the size of line points on all lines.
+        /// Sets the size of line points on all <see cref="ISeries"/>.
         /// </summary>
         /// <param name="input">A number between 0 and 60. less is smaller. Standart is 10.</param>
         public void ChangePointSize(int input)
