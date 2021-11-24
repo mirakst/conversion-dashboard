@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-
 namespace DashboardFrontend.ViewModels
 {
     public class UserSettingsViewModel : BaseViewModel, IUserSettings

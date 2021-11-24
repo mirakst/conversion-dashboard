@@ -11,7 +11,8 @@
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
+        SnapsToDevicePixels="True"
+        Icon="/Icons/ProgramIconPlaceholder.png">
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
@@ -26,37 +27,35 @@
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0">
                 <Grid Name="GridControlPanel"
-                      Margin="30,30,30,0"
+                      Margin="20,20,20,0"
                       Grid.Row="0">
-                    <ToggleButton Name="ButtonStartStop"
+                    <Button Name="ButtonStartStop"
                         Click="ButtonStartStopClick"
                         Grid.Column="0"
                         Grid.Row="0"
                         Grid.RowSpan="2"
-                        Background="Transparent"
-                        BorderBrush="Transparent">
+                        Style="{StaticResource DefaultButton}">
                         <Image>
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                             <Setter Property="Source" Value="/Icons/Stop.png"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=IsChecked}" Value="False">
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="False">
                                             <Setter Property="Source" Value="/Icons/Start.png"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Image.Style>
                         </Image>
-                    </ToggleButton>
+                    </Button>
                     <Button Name="ButtonSettings" 
                         Click="ButtonSettingsClick" 
                         Grid.Column="1" 
                         Grid.Row="0" 
-                        Grid.RowSpan="2" 
-                        Background="Transparent" 
-                        BorderBrush="Transparent">
+                        Grid.RowSpan="2"
+                        Style="{DynamicResource DefaultButton}">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
                     <TextBlock x:Name="TextBlockConversionName"
@@ -121,7 +120,7 @@
                             <Button Name="ButtonManagerSearch"
                                 Style="{DynamicResource SearchButton}"
                                 DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"/>
+                                <Image Source="../Icons/Magnifyingglass.png"/>
                             </Button>
                         </DockPanel>
                         <Button Name="ButtonManagerFilter"
@@ -284,6 +283,7 @@
                                           Foreground="Black"
                                           BorderBrush="{StaticResource BorderColor}"
                                           ScrollViewer.CanContentScroll="False"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                           MaxHeight="5000">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -305,8 +305,8 @@
                                             </Style.Triggers>
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-                                    <GridViewColumn Header="Timestamp" 
-                                                    DisplayMemberBinding="{Binding Date}"
+                                    <GridViewColumn Header="Timestamp"
+                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
                                                     Width="auto"/>
                                     <GridViewColumn Header="Type" 
                                                     DisplayMemberBinding="{Binding Type}"
@@ -327,6 +327,7 @@
                             </ListView.View>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
+                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Background" Value="#FFFFFF"/>
@@ -421,11 +422,12 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Content="R"
-                                Style="{DynamicResource DefaultButton}"
-                                Margin="4,0,0,4"
+                        <Button Style="{DynamicResource DefaultButton}"
+                                Margin="0 3 0 1"
                                 Grid.Column="2"
-                                Grid.Row="0"/>
+                                Grid.Row="0">
+                            <Image Source="/Icons/Refresh.png"/>
+                        </Button>
                         <Button Name="buttonValidationReportDetach"
                                 Click="DetachValidationReportButtonClick"
                                 Grid.Column="3"

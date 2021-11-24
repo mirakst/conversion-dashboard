@@ -7,6 +7,9 @@
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         Title="Create new profile" Height="300" Width="340" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
+    <Window.Icon>
+        <DrawingImage />
+    </Window.Icon>
     <Window.Resources>
         <valueConverters:StringToIntConverter x:Key="StringToIntConverter"/>
     </Window.Resources>

@@ -20,6 +20,8 @@
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
+    <None Remove="Icons\ProgramIconPlaceholder.png" />
+    <None Remove="Icons\Refresh.png" />
     <None Remove="Icons\Settings.png" />
     <None Remove="Icons\Settings2.png" />
     <None Remove="Icons\Settings3.png" />
@@ -74,6 +76,8 @@
     <Resource Include="Icons\MagnifyingglassAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\ProgramIconPlaceholder.png" />
+    <Resource Include="Icons\Refresh.png" />
     <Resource Include="Icons\Start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

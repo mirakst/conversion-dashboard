@@ -25,8 +25,6 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
-            DataUtilities.DatabaseHandler = new SqlDatabase();
-            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
 
             TryLoadUserSettings();
             
@@ -71,22 +69,23 @@ namespace DashboardFrontend
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
+            ViewModel.OnStartPressed();
             //ConnectDBDialog dialogPopup = new();
             //dialogPopup.Owner = Application.Current.MainWindow;
             //dialogPopup.ShowDialog();
 
             /* Should be moved to OnConnected */
-            if (!_isStarted)
-            {
-                _chartVm = new();
-                _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-                _isStarted = true;
-            }
-            else
-            {
-                _chartVm?.Dispose();
-                _isStarted = false;
-            }
+            //if (!_isStarted)
+            //{
+            //    _chartVm = new();
+            //    _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
+            //    _isStarted = true;
+            //}
+            //else
+            //{
+            //    _chartVm?.Dispose();
+            //    _isStarted = false;
+            //}
         }
 
         //Detach window events
@@ -145,7 +144,7 @@ namespace DashboardFrontend
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            ButtonSettings.IsEnabled = true;
+            //ButtonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)

@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:adorners="http://gu.se/Adorners"
         mc:Ignorable="d"
-        Title="ConnectDBDialog" Height="200" Width="350"
+        Title="" Height="200" Width="350"
         Background="{DynamicResource BackgroundColor}"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize">
     <Border Margin="10">
@@ -18,12 +18,12 @@
                        Foreground="{DynamicResource ForegroundColor}"
                        FontSize="30"
                        Grid.Row="0"/>
-            <TextBox Name="TextBoxConversionName"
-                     adorners:Watermark.Text="Conversion name"
+            <TextBox Name="TextBoxUserId"
+                     adorners:Watermark.Text="User ID"
                      Margin="10"
                      Grid.Row="1"/>
-            <TextBox Name="TextBoxDbConnectionString"
-                     adorners:Watermark.Text="Database connection string"
+            <PasswordBox Name="TextBoxPassword"
+                     adorners:Watermark.Text="Password"
                      Margin="10"
                      Grid.Row="2"/>
             <Grid MaxHeight="20"
@@ -32,12 +32,14 @@
                 <Button Name="ButtonBack"
                         Content="Back"
                         Click="OnButtonBackClick"
+                        IsCancel="True"
                         MinWidth="100"
                         Margin="0,0,20,0"
                         Grid.Column="0"
                         HorizontalAlignment="Right"/>
                 <Button Name="ButtonConnectDb"
                         Content="Connect"
+                        IsDefault="True"
                         Click="OnButtonConnectDBClick"
                         MinWidth="100"
                         Margin="20,0,0,0"

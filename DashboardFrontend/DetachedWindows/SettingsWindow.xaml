@@ -6,6 +6,9 @@
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         Title="Settings" Height="500" Width="420" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
+    <Window.Icon>
+        <DrawingImage />
+    </Window.Icon>
     <Window.Resources>
         <valueConverters:ProfileConverter x:Key="ProfileConverter"/>
     </Window.Resources>
