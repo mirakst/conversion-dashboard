@@ -6,14 +6,18 @@
         xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
-        Title="Create new profile" Height="300" Width="340" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
-    <Window.Icon>
-        <DrawingImage />
-    </Window.Icon>
+        Title="Create new profile" 
+        Height="300" 
+        Width="340" 
+        WindowStartupLocation="CenterOwner" 
+        ShowInTaskbar="False" 
+        ResizeMode="NoResize">
     <Window.Resources>
         <valueConverters:StringToIntConverter x:Key="StringToIntConverter"/>
     </Window.Resources>
-    <Grid Margin="8" FocusManager.FocusedElement="{Binding ElementName=name}">
+    <Grid Margin="8" 
+          FocusManager.FocusedElement="{Binding ElementName=name}">
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="*"/>
@@ -30,24 +34,71 @@
             <RowDefinition Height="42"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Profile name" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Text="Conversion" VerticalAlignment="Center"/>
-
-        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Text="Database connection" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>
-        <TextBlock Grid.Row="4" Text="Data source" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="5" Text="Database" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="6" Text="Timeout (sec)" VerticalAlignment="Center"/>
+        <TextBlock Text="Profile name" 
+                   VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" 
+                   Text="Conversion" 
+                   VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" 
+                   Grid.ColumnSpan="2" 
+                   Text="Database connection"
+                   VerticalAlignment="Center" 
+                   FontSize="14" 
+                   FontWeight="Bold"/>
+        <TextBlock Grid.Row="4" 
+                   Text="Data source" 
+                   VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="5" 
+                   Text="Database" 
+                   VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="6" 
+                   Text="Timeout (sec)" 
+                   VerticalAlignment="Center"/>
         
         <!-- TODO: Add validation to all text fields -->
-        <TextBox x:Name="name" Grid.Column="1" Height="22" VerticalAlignment="Center" Text="{Binding Path=Name,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="conversion" Grid.Row="1" Grid.Column="1" Height="22" VerticalAlignment="Center" Text="{Binding Path=Conversion,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="dataSrc" Grid.Row="4" Grid.Column="1" Height="22" VerticalAlignment="Center" Text="{Binding Path=DataSource,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="database" Grid.Row="5" Grid.Column="1" Height="22" VerticalAlignment="Center" Text="{Binding Path=Database,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="timeout" Grid.Row="6" Grid.Column="1" Height="22" VerticalAlignment="Center" Text="{Binding Path=Timeout,UpdateSourceTrigger=Explicit,Converter={StaticResource StringToIntConverter}}"/>
+        <TextBox x:Name="name" 
+                 Grid.Column="1" 
+                 Height="22" 
+                 VerticalAlignment="Center" 
+                 Text="{Binding Path=Name,UpdateSourceTrigger=Explicit}"/>
+        <TextBox x:Name="conversion" 
+                 Grid.Row="1" 
+                 Grid.Column="1" 
+                 Height="22" 
+                 VerticalAlignment="Center" 
+                 Text="{Binding Path=Conversion,UpdateSourceTrigger=Explicit}"/>
+        <TextBox x:Name="dataSrc" 
+                 Grid.Row="4" 
+                 Grid.Column="1" 
+                 Height="22" 
+                 VerticalAlignment="Center" 
+                 Text="{Binding Path=DataSource,UpdateSourceTrigger=Explicit}"/>
+        <TextBox x:Name="database" 
+                 Grid.Row="5" 
+                 Grid.Column="1" 
+                 Height="22" 
+                 VerticalAlignment="Center" 
+                 Text="{Binding Path=Database,UpdateSourceTrigger=Explicit}"/>
+        <TextBox x:Name="timeout" 
+                 Grid.Row="6" 
+                 Grid.Column="1" 
+                 Height="22" 
+                 VerticalAlignment="Center" 
+                 Text="{Binding Path=Timeout,UpdateSourceTrigger=Explicit,Converter={StaticResource StringToIntConverter}}"/>
 
-        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Cancel" Width="100" Margin="0 0 10 0" IsCancel="True" Click="Button_Cancel"/>
-            <Button Content="OK" Width="100" IsDefault="True" Click="Button_Save"/>
+        <StackPanel Grid.Row="8" 
+                    Grid.ColumnSpan="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center">
+            <Button Content="Cancel" 
+                    Width="100" 
+                    Margin="0 0 10 0" 
+                    IsCancel="True" 
+                    Click="Button_Cancel"/>
+            <Button Content="OK" 
+                    Width="100" 
+                    IsDefault="True" 
+                    Click="Button_Save"/>
         </StackPanel>
     </Grid>
 </Window>

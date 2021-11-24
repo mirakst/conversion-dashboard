@@ -19,7 +19,7 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid)
+        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
         {
             _uiContext = SynchronizationContext.Current;
 
@@ -28,6 +28,7 @@ namespace DashboardFrontend.ViewModels
             LogViewModel = new(log);
             ValidationReportViewModel = new(validationReport, validationsDataGrid);
             UserSettings = userSettings;
+            LiveChartViewModel = liveChartViewModel;
         }
 
         private List<Timer> _timers = new();
@@ -48,6 +49,7 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public UserSettings UserSettings { get; }
+        public LiveChartViewModel LiveChartViewModel { get; set; }
 
         /// <summary>
         /// Ensures that there is an active profile with database credentials, and then starts the monitoring process.
@@ -126,24 +128,17 @@ namespace DashboardFrontend.ViewModels
         private void QueryLogs()
         {
             var result = DataUtilities.GetLogMessages(_logLastModified);
-#if DEBUG
-            Trace.WriteLine($"found {result.Count} log messages");
-#endif
             if (result.Count > 0)
             {
                 _log.Messages.AddRange(result);
                 _uiContext?.Send(x => LogViewModel.UpdateData(), null);
             }
             _logLastModified = DateTime.Now;
-            Trace.WriteLine("done");
         }
 
         private void QueryValidations()
         {
             var result = DataUtilities.GetAfstemninger(_validationReport.LastModified);
-#if DEBUG
-            Trace.WriteLine("Found " + result.Count + " validation tests");
-#endif
             if (result.Count > 0)
             {
                 _validationReport.ValidationTests = result;

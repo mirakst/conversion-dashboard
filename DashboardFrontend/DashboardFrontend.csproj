@@ -20,8 +20,6 @@
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
-    <None Remove="Icons\ProgramIconPlaceholder.png" />
-    <None Remove="Icons\Refresh.png" />
     <None Remove="Icons\Settings.png" />
     <None Remove="Icons\Settings2.png" />
     <None Remove="Icons\Settings3.png" />
@@ -35,12 +33,6 @@
     <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Gu.Wpf.Adorners" Version="2.1.1" />
-    <PackageReference Include="InteractiveDataDisplay.Core" Version="1.0.0" />
-    <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
@@ -49,6 +41,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.80" />
   </ItemGroup>
 
   <ItemGroup>
@@ -76,8 +69,6 @@
     <Resource Include="Icons\MagnifyingglassAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\ProgramIconPlaceholder.png" />
-    <Resource Include="Icons\Refresh.png" />
     <Resource Include="Icons\Start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

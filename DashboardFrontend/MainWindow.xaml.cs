@@ -6,29 +6,27 @@ using DashboardBackend;
 using DashboardBackend.Database;
 using Model;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System;
-using System.Threading;
-using System.Windows.Media;
 
 namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
-        private ChartViewModel? _chartVm;
-        private bool _isStarted;
+        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
+        public LiveChartViewModel LiveChartViewModel { get; private set; }
 
         public MainWindow()
         {
-            InitializeComponent();
+            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
 
+            InitializeComponent();
             TryLoadUserSettings();
             
-            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations);
+            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
             DataContext = ViewModel;
         }
 
@@ -43,7 +41,7 @@ namespace DashboardFrontend
             {
                 UserSettings.LoadFromFile();
             }
-            catch (System.IO.FileNotFoundException ex)
+            catch (System.IO.FileNotFoundException)
             {
                 // Configuration file was not found, possibly first time setup
             }
@@ -61,31 +59,10 @@ namespace DashboardFrontend
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
-
-        private void DraggableGrid(object sender, MouseButtonEventArgs e)
-        {
-            this.DragMove();
-        }
-
+        
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
             ViewModel.OnStartPressed();
-            //ConnectDBDialog dialogPopup = new();
-            //dialogPopup.Owner = Application.Current.MainWindow;
-            //dialogPopup.ShowDialog();
-
-            /* Should be moved to OnConnected */
-            //if (!_isStarted)
-            //{
-            //    _chartVm = new();
-            //    _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-            //    _isStarted = true;
-            //}
-            //else
-            //{
-            //    _chartVm?.Dispose();
-            //    _isStarted = false;
-            //}
         }
 
         //Detach window events
@@ -126,25 +103,18 @@ namespace DashboardFrontend
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportDetached expandHr = new();
-            _chartVm = new ChartViewModel();
-
-            if (_isStarted)
-            {
-                _chartVm.Dispose();
-            }
+            
 
             ButtonHealthReportDetach.IsEnabled = false;
             expandHr.Closing += OnHealthWindowClosing;
             
             expandHr.Show();
-            _chartVm.PerformanceMonitoringStart(expandHr.IddChartHealthReport, expandHr.GridHealthReportChartGrid, expandHr.TextBoxChartTimeInterval);
-            _chartVm.NetworkMonitoringStart(expandHr.IddChartNetwork, expandHr.GridNetworkChartGrid, expandHr.TextBoxChartTimeInterval);
         }
 
         //OnWindowClosing events
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
-            //ButtonSettings.IsEnabled = true;
+            ButtonSettings.IsEnabled = true;
         }
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
@@ -164,11 +134,6 @@ namespace DashboardFrontend
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            ButtonHealthReportDetach.IsEnabled = true;
-            _chartVm?.Dispose();
-            _chartVm = new ChartViewModel();
-            _chartVm.PerformanceMonitoringStart(IddChartHealthReportGraph, GridHealthReportChartGridChartGrid, TextBoxChartTimeInterval);
-
             ButtonHealthReportDetach.IsEnabled = true;
         }
 
@@ -208,6 +173,57 @@ namespace DashboardFrontend
             {
                 Clipboard.SetText(test.DstSql ?? "");
             }
+        }
+
+        private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MaximizeWindow(this);
+            this.ButtonMaximize.Visibility = Visibility.Collapsed;
+            this.ButtonRestore.Visibility = Visibility.Visible;
+        }
+
+        private void CommandBinding_Executed_3(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.RestoreWindow(this);
+            this.ButtonMaximize.Visibility = Visibility.Visible;
+            this.ButtonRestore.Visibility = Visibility.Collapsed;
+        }
+
+        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOn();
+
+        }
+
+        private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
+        {
+            LiveChartViewModel.AutoFocusOff();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

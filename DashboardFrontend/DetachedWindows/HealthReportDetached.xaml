@@ -3,13 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:idd="clr-namespace:InteractiveDataDisplay.Core;assembly=InteractiveDataDisplay.Core"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Health report monitoring"
+        Title="Health Report Monitoring"
         Height="450"
-        Width="800"
-        >
+        Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <TabControl Background="{DynamicResource BackgroundColor}"
@@ -35,30 +34,37 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <TextBox Name="TextBoxChartTimeInterval"
-                                     Text="6 Hours"
-                                     FontSize="15"
-                                     Background="{DynamicResource BackgroundColor}"
-                                     Foreground="{DynamicResource ForegroundColor}"
-                                     Grid.Column="3"
-                                     Grid.Row="0"/>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.ColumnSpan="3" Grid.Column="0"
-                                       Grid.Row="1"/>
-                            <idd:Chart Name="IddChartHealthReport"
-                                       Background="{StaticResource CanvasColor}"
-                                       Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}"
-                                       Grid.Column="0"
-                                       Grid.ColumnSpan="4"
-                                       Grid.Row="1">
-                                <Grid Name="GridHealthReportChartGrid"/>
-                            </idd:Chart>
+                            <ComboBox Name="ComboBoxPerformanceMaxView"
+                                  Margin="0,0,0,0"
+                                  VerticalAlignment="Center"
+                                  Grid.Column="3"
+                                  SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                            </ComboBox>
+                            <lvc:CartesianChart DataContext="{Binding PerformanceChart}"
+                                                Series="{Binding Series}"
+                                                ZoomMode="X"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
+                            </lvc:CartesianChart>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
+                            
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
@@ -66,70 +72,93 @@
                         </Grid>
                     </Border>
                 </TabItem>
+                
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemNetwork"
                          Header="Network">
                     <Border Margin="10">
                         <Grid>
-                            <TextBlock Name="TextBlockNetwork"
-                                       FontSize="15"
-                                       Grid.Column="0"
-                                       Grid.Row="1"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}">
-                                Send:<LineBreak/>
-                                Send delta:<LineBreak/>
-                                Send speed:<LineBreak/>
-                                <LineBreak/>
-                                Received:<LineBreak/>
-                                Received delta:<LineBreak/>
-                                Received speed:<LineBreak/>
-                            </TextBlock>
-                            <TextBlock Name="TextBlockNetworkData"
-                                       FontSize="15"
-                                       Grid.Column="1"
-                                       Grid.Row="1"
-                                       Margin="0,0,10,0"
-                                       Background="{DynamicResource BackgroundColor}"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       TextAlignment="Right">
-                                102 KB<LineBreak/>
-                                932 KB<LineBreak/>
-                                123 MB<LineBreak/>
-                                <LineBreak/>
-                                43 KB<LineBreak/>
-                                12 KB<LineBreak/>
-                                13 MB<LineBreak/>
-                            </TextBlock>
-                            <ComboBox Name="ComboBoxNetworkChartInterval"
-                                      FontSize="20"
-                                      Margin="0,0,0,5"
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Margin="0,0,10,0"
+                                    Grid.Column="0"
+                                    Grid.Row="1">
+                                <Grid Margin="5">
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Send:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Send delta:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Send speed:"
+                                                   FontSize="14"/>
+                                        <TextBlock/>
+                                        <TextBlock Text="Recived"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Recived delta:"
+                                                   FontSize="14"/>
+                                        <TextBlock Text="Recived speed:"
+                                                   FontSize="14"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="102 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="932 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="123 MB"
+                                                   FontSize="14"/>
+                                        <TextBlock/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="43 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="12 KB"
+                                                   FontSize="14"/>
+                                        <TextBlock TextAlignment="Right"
+                                                   Text="13 MB"
+                                                   FontSize="14"/>
+                                    </StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </Border>
+                            <ComboBox Name="ComboBoxNetworkMaxView"
+                                      MaxWidth="70"
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,0,0"
                                       VerticalAlignment="Center"
                                       Grid.Column="3"
-                                      Grid.Row="0">
-                                <ComboBoxItem Content="30 min"/>
-                                <ComboBoxItem Content="1 Hour"/>
-                                <ComboBoxItem Content="6 Hour"
-                                              IsSelected="True"/>
-                                <ComboBoxItem Content="12 Hour"/>
-                                <ComboBoxItem Content="24 Hour"/>
+                                      SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
                             </ComboBox>
-                            <Rectangle Stroke="{StaticResource BorderColor}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
-                            <idd:Chart Name="IddChartNetwork"
-                                       Background="{StaticResource CanvasColor}"
-                                       Foreground="{StaticResource ForegroundColor}"
-                                       Style="{StaticResource HealthReportChart}"
-                                       Grid.Column="2"
-                                       Grid.ColumnSpan="2"
-                                       Grid.Row="1">
-                                <Grid Name="GridNetworkChartGrid"/>
-                            </idd:Chart>
+                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Grid.Column="1"
+                                    Grid.Row="1">
+                                <lvc:CartesianChart DataContext="{Binding NetworkChart}"
+                                                Series="{Binding Series}"
+                                                ZoomMode="Both"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </Border>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="7*"/>
-                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
+                            
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="*"/>
