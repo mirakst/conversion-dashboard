@@ -1,18 +1,22 @@
 ﻿using DashboardBackend.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DashboardBackend.Database
 {   
     /// <inheritdoc />
     public class SqlDatabase : IDatabaseHandler
     {
-        public SqlDatabase() : base()
+        public SqlDatabase(string connString)
         {
+            ConnectionString = connString;
         }
+
+        public string ConnectionString {  get; set; }
 
         /// <inheritdoc/>
         public List<AfstemningEntry> QueryAfstemninger(DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.Afstemnings
                                 .Where(e => e.Afstemtdato > minDate)
                                 .OrderBy(e => e.Afstemtdato);
@@ -24,7 +28,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc />
         public List<ExecutionEntry> QueryExecutions(DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.Executions
                                 .Where(e => e.Created > minDate)
                                 .OrderBy(e => e.Created);
@@ -35,7 +39,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.Loggings
                                 .Where(e => e.Created > minDate)
                                 .Where(e => e.ExecutionId == executionId)
@@ -47,7 +51,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<LoggingEntry> QueryLogMessages(DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.Loggings
                                 .Where(e => e.Created > minDate)
                                 .OrderBy(e => e.Created);
@@ -58,7 +62,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<LoggingContextEntry> QueryManagers()
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.LoggingContexts
                                 .Where(e => e.ContextId > 0)
                                 .OrderBy(e => e.ContextId);
@@ -69,7 +73,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<HealthReportEntry> QueryHealthReport()
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.HealthReports
                                 .Where(e => e.ReportType.EndsWith("INIT"))
                                 .OrderBy(e => e.LogTime);
@@ -80,7 +84,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.HealthReports
                                 .Where(e => e.ReportType == "CPU"
                                          || e.ReportType == "NETWORK"
@@ -93,7 +97,7 @@ namespace DashboardBackend.Database
         /// <inheritdoc/>
         public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
         {
-            using NetcompanyDbContext db = new();
+            using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.EngineProperties
                                 .Where(e => e.Timestamp > minDate)
                                 .OrderBy(e => e.Timestamp);

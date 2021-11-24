@@ -10,7 +10,7 @@
         #endregion Constructors
 
         #region Properties
-        public DateTime LastModified { get; private set; }
+        public DateTime LastModified { get; private set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
 
         private readonly List<ValidationTest> _validationTests = new();
         public List<ValidationTest> ValidationTests

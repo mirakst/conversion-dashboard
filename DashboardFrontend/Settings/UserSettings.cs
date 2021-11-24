@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using DashboardFrontend.ViewModels;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
 namespace DashboardFrontend.Settings
 {
-    public class UserSettings : IUserSettings
+    public class UserSettings : BaseViewModel, IUserSettings
     {
         public UserSettings()
         {
@@ -13,7 +14,16 @@ namespace DashboardFrontend.Settings
         private readonly string _fileName = "UserSettings.json";
 
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
-        public Profile? ActiveProfile { get; set; }
+        private Profile? _activeProfile;
+        public Profile? ActiveProfile
+        {
+            get => _activeProfile;
+            set
+            {
+                _activeProfile = value;
+                OnPropertyChanged(nameof(ActiveProfile));
+            }
+        }
         public int LoggingQueryInterval { get; set; } = 15; // seconds
         public int HealthReportQueryInterval { get; set; } = 30;
         public int ValidationQueryInterval { get; set; } = 120;

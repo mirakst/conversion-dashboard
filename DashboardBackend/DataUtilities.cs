@@ -11,7 +11,7 @@ namespace DashboardBackend
     public static class DataUtilities
     {
         //The class that handles the state database queries. Default is SQL.
-        public static IDatabaseHandler DatabaseHandler { get; set; } = new SqlDatabase();
+        public static IDatabaseHandler DatabaseHandler { get; set; }
 
         //Set SQL minimum DateTime as default.
         public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;

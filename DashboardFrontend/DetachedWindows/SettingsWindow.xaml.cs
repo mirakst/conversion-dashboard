@@ -54,7 +54,7 @@ namespace DashboardFrontend.DetachedWindows
             Profile? profile = SettingsViewModel.SelectedProfile;
             if (profile is not null && Confirm($"Delete profile [{profile.Name}]?"))
             {
-                if (SettingsViewModel.ActiveProfile == profile)
+                if (SettingsViewModel.ActiveProfile?.Equals(profile) == true)
                 {
                     SettingsViewModel.ActiveProfile = null;
                 }

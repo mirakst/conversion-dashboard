@@ -24,12 +24,9 @@ namespace DashboardFrontend
             LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
 
             InitializeComponent();
-            DataUtilities.DatabaseHandler = new SqlDatabase();
-            ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
-
             TryLoadUserSettings();
             
-            ViewModel = new(Log, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
             DataContext = ViewModel;
         }
 
@@ -44,7 +41,7 @@ namespace DashboardFrontend
             {
                 UserSettings.LoadFromFile();
             }
-            catch (System.IO.FileNotFoundException ex)
+            catch (System.IO.FileNotFoundException)
             {
                 // Configuration file was not found, possibly first time setup
             }
@@ -62,13 +59,10 @@ namespace DashboardFrontend
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
+        
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            //ConnectDBDialog dialogPopup = new();
-            //dialogPopup.Owner = Application.Current.MainWindow;
-            //dialogPopup.ShowDialog();
-
-            /* Should be moved to OnConnected */
+            ViewModel.OnStartPressed();
         }
 
         //Detach window events
