@@ -10,7 +10,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-using Model;
+using System.Drawing;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -18,24 +18,13 @@ namespace DashboardFrontend.ViewModels
     {
         public List<ObservableCollection<ObservablePoint>> ManagerData { get; set; }
         public List<ISeries> Series { get; private set; }
-        public LiveChartViewModel LineChart { get; private set; }
-
         public List<Axis> XAxis { get; private set; }
         public List<Axis> YAxis { get; private set; }
 
         public ManagerPerformanceViewModel(string YAxisLabel)
         {
-            LineChart = new();
-
-            ManagerData = new()
-            {
-
-            };
-
-            Series = new()
-            {
-
-            };
+            ManagerData = new();
+            Series = new();
 
             XAxis = new()
             {
@@ -45,6 +34,7 @@ namespace DashboardFrontend.ViewModels
                     Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
+                    LabelsPaint = new SolidColorPaint(new SKColor(255,255,255)),
                 }
             };
 
@@ -56,6 +46,10 @@ namespace DashboardFrontend.ViewModels
                     Labeler = (value) => value.ToString("P"),
                     MaxLimit = 1,
                     MinLimit = 0,
+                    LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    MinStep = 0.25,
+                    ForceStepToMin = true,
                 }
             };
         }

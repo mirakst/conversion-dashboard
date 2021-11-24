@@ -9,6 +9,8 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,13 +22,6 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
-        #region Timers
-        private readonly PeriodicTimer CPUTimer;
-        private readonly PeriodicTimer RAMTimer;
-        private readonly PeriodicTimer ReadTimer;
-        private readonly PeriodicTimer WrittenTimer;
-        public List<PeriodicTimer> Timers;
-        #endregion
 
         #region Performance objects
         public ManagerPerformanceViewModel CPUPerformance { get; private set; } = new("load");
@@ -37,15 +32,22 @@ namespace DashboardFrontend.DetachedWindows
         #endregion
 
         #region Chart objects
-        public LiveChartViewModel CPUChart { get; private set; } = new();
-        public LiveChartViewModel RAMChart { get; private set; } = new();
-        public LiveChartViewModel ReadChart { get; private set; } = new();
-        public LiveChartViewModel WrittenChart { get; private set; } = new();
+        public LiveChartViewModel CPUChart { get; private set; }
+        public LiveChartViewModel RAMChart { get; private set; }
+        public LiveChartViewModel ReadChart { get; private set; }
+        public LiveChartViewModel WrittenChart { get; private set; }
         public List<LiveChartViewModel> Charts { get; private set; } = new();
         #endregion
 
         public ManagerListDetached()
         {
+            #region Charts
+            CPUChart = new(CPUPerformance.Series, CPUPerformance.ManagerData, CPUPerformance.XAxis, CPUPerformance.YAxis);
+            RAMChart = new(RAMPerformance.Series, RAMPerformance.ManagerData, RAMPerformance.XAxis, RAMPerformance.YAxis);
+            ReadChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
+            WrittenChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
+            #endregion
+
             InitializeComponent();
 
             DataUtilities.DatabaseHandler = new SqlDatabase();                                                                          // Remove later once the Start monitoring functions has been made
@@ -60,28 +62,12 @@ namespace DashboardFrontend.DetachedWindows
             {                                                                                                                           //
                 manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now));    //
                 datagridManagers.Items.Add(manager);                                                                                    //
-            }                                                                                                                           // Down to here
-
-            #region Timers
-            CPUTimer = new(TimeSpan.FromSeconds(1));
-            RAMTimer = new(TimeSpan.FromSeconds(1));
-            ReadTimer = new(TimeSpan.FromSeconds(1));
-            WrittenTimer = new(TimeSpan.FromSeconds(1));
-            #endregion
+            }                                                                                                                           //
 
             #region Lists
             Charts = new List<LiveChartViewModel> { CPUChart, RAMChart, ReadChart, WrittenChart };
             DataCollections = new List<ManagerPerformanceViewModel> { CPUPerformance, RAMPerformance, ReadPerformance, WrittenPerformance };
-            Timers = new List<PeriodicTimer> { CPUTimer, RAMTimer, ReadTimer, WrittenTimer };
             #endregion
-
-            int i = 0;
-            foreach (LiveChartViewModel chart in Charts)
-            {
-                chart.NewChart(DataCollections[i].Series, DataCollections[i].ManagerData, DataCollections[i].XAxis, DataCollections[i].YAxis);
-                chart.StartGraph(Timers[i]);
-                i++;
-            }
 
             DataContext = this;
         }
@@ -89,15 +75,11 @@ namespace DashboardFrontend.DetachedWindows
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
             Manager? selectedManager = datagridManagers.SelectedItem as Manager;
-            List<Manager> managers = new();
 
             if (datagridManagers.SelectedItems.Count > 1)
             {
-
                 foreach (Manager manager in datagridManagers.SelectedItems)
                 {
-                    managers.Add(manager);
-
                     if (!datagridManagerDetails.Items.Contains(manager))
                     {
                         DatagridManagerMover("Add", manager);
@@ -135,10 +117,9 @@ namespace DashboardFrontend.DetachedWindows
         private void ResetManagers_Click(object sender, RoutedEventArgs e)
         {
             DatagridManagerMover("Clear", null);
-            CPUChart.Series.Clear();
         }
 
-        private void textboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
         {
             datagridManagers.SelectedItems.Clear();
             if (textboxSearchbar.Text != null)
@@ -180,19 +161,27 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         public void AddChartLinesHelper(Manager manager)
-        {   
+        {
+            Random rand = new();
+            int r = rand.Next(255);
+            int g = rand.Next(255);
+            int b = rand.Next(255);
+
             foreach (LiveChartViewModel chart in Charts)
             {
                 var managerValues = new ObservableCollection<ObservablePoint>();
 
                 chart.AddData(new LineSeries<ObservablePoint>
                 {
-                    Name = $"{manager.Name}",
-                    Stroke = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    Name = $"{manager.Name.Split(".").Last()}",
                     Fill = null,
-                    GeometryFill = new SolidColorPaint(new SKColor(133, 222, 118)),
-                    GeometryStroke = new SolidColorPaint(new SKColor(133, 222, 118)),
+                    Stroke = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b), 3),
+                    GeometryFill = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b)),
+                    GeometryStroke = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b)),
                     GeometrySize = 0.4,
+                    TooltipLabelFormatter = e => manager.Name.Split(".").Last() + ": Execution " + manager.ExecutionId + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 e.PrimaryValue.ToString("P"),
                 }, managerValues);
             }
         }
@@ -216,18 +205,18 @@ namespace DashboardFrontend.DetachedWindows
 
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            CPUChart.AutoFocusOn();
-            RAMChart.AutoFocusOn();
-            ReadChart.AutoFocusOn();
-            WrittenChart.AutoFocusOn();
+            foreach (LiveChartViewModel chart in Charts)
+            {
+                chart.AutoFocusOn();
+            }
         }
 
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            CPUChart.AutoFocusOff();
-            RAMChart.AutoFocusOff();
-            ReadChart.AutoFocusOff();
-            WrittenChart.AutoFocusOff();
+            foreach (LiveChartViewModel chart in Charts)
+            {
+                chart.AutoFocusOff();
+            }
         }
     }
 }

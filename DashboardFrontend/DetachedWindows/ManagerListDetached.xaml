@@ -16,8 +16,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="*"
-                                  MaxWidth="640"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="15"/>
@@ -27,7 +26,15 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="15"/>
             </Grid.RowDefinitions>
-            
+
+            <GridSplitter Grid.Column="2" 
+                          Grid.Row="1"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Height="100"
+                          Width="5"
+                          Background="{DynamicResource CanvasColor}"/>
+
             <Grid x:Name="gridManagerList"
                   Grid.Row="1"
                   Grid.Column="1">
@@ -42,7 +49,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBox Name="textboxSearchbar"
-                         TextChanged="textboxSearchbar_TextChanged"
+                         TextChanged="TextboxSearchbar_TextChanged"
                          Margin="0,0,0,5"
                          ToolTip="Search by manager Name or ID"
                          Style="{DynamicResource SearchBox}">
@@ -177,62 +184,97 @@
 
                             <Grid Grid.Row="0"
                                   Margin="0,5,0,5">
-                                <Border BorderBrush="{DynamicResource BorderColor}">
-                                    <lvc:CartesianChart DataContext="{Binding CPUChart}"
-                                                        Series="{Binding Series}"
-                                                        ZoomMode="X"
-                                                        XAxes="{Binding XAxis}"
-                                                        YAxes="{Binding YAxis}"
-                                                        TooltipPosition="Top"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                    </lvc:CartesianChart>
-                                </Border>
+                                <StackPanel>
+                                    <Label Content="CPU Usage"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+                                <lvc:CartesianChart DataContext="{Binding CPUChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                             </Grid>
 
                             <Grid Grid.Row="1"
                                   Margin="0,5,0,5">
-                                <Border BorderBrush="{DynamicResource BorderColor}">
-                                    <lvc:CartesianChart DataContext="{Binding RAMChart}"
-                                                        Series="{Binding Series}"
-                                                        ZoomMode="X"
-                                                        XAxes="{Binding XAxis}"
-                                                        YAxes="{Binding YAxis}"
-                                                        TooltipPosition="Top"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                    </lvc:CartesianChart>
-                                </Border>
+                                <StackPanel>
+                                    <Label Content="RAM Usage"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+                                <lvc:CartesianChart DataContext="{Binding RAMChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                                
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                             </Grid>
 
                             <Grid Grid.Row="2"
                                   Margin="0,5,0,5">
-                                <Border BorderBrush="{DynamicResource BorderColor}">
-                                    <lvc:CartesianChart DataContext="{Binding ReadChart}"
-                                                        Series="{Binding Series}"
-                                                        ZoomMode="X"
-                                                        XAxes="{Binding XAxis}"
-                                                        YAxes="{Binding YAxis}"
-                                                        TooltipPosition="Top"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                    </lvc:CartesianChart>
-                                </Border>
+                                <StackPanel >
+                                    <Label Content="Rows Read"
+                                        Style="{DynamicResource ChartLabels}"/>
+                                        
+                                </StackPanel>
+
+                                <lvc:CartesianChart DataContext="{Binding ReadChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                             </Grid>
 
                             <Grid Grid.Row="3"
                                   Margin="0,5,0,5">
-                                <Border BorderBrush="{DynamicResource BorderColor}">
-                                    <lvc:CartesianChart DataContext="{Binding WrittenChart}"
-                                                        Series="{Binding Series}"
-                                                        ZoomMode="X"
-                                                        XAxes="{Binding XAxis}"
-                                                        YAxes="{Binding YAxis}"
-                                                        TooltipPosition="Top"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                    </lvc:CartesianChart>
-                                </Border>
+                                <StackPanel>
+                                    <Label Content="Rows Written"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+                                <lvc:CartesianChart Name="chartWritten"
+                                                    DataContext="{Binding WrittenChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                             </Grid>
 
                             <DataGrid Name="datagridManagerCharts"
@@ -244,6 +286,18 @@
                                       Style="{DynamicResource DefaultDatagrid}"
                                       Background="{DynamicResource BackgroundColor}">
                                 <DataGrid.Columns>
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Rectangle Name="lineColor"
+                                                           Height="auto"
+                                                           Width="auto"
+                                                           Stroke="White"
+                                                           Fill="{Binding Colors, ElementName=chartWritten}">
+                                                </Rectangle>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                     <DataGridTextColumn Binding="{Binding Id}"
                                                         Header="ID"
                                                         Width="30pt"/>

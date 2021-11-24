@@ -82,21 +82,12 @@ namespace DashboardFrontend.ViewModels
             Series[Series.IndexOf(Line)].Values = Values[Series.IndexOf(Line)];
         }
 
-        public void RemoveData(String managername, ObservableCollection<ObservablePoint> data)
+        public void RemoveData(String dataName, ObservableCollection<ObservablePoint> data)
         {
             Values.Remove(data);
 
-            int managerIndex = Series.FindIndex(e => e.Name == managername);
+            int managerIndex = Series.FindIndex(e => e.Name == dataName) + 1;
             Series.RemoveAt(managerIndex);
-        }
-
-        /// <summary>
-        /// Removes the given element from the list of <see cref="ISeries"/>.
-        /// </summary>
-        /// <param name="lineToRemove">The <see cref="ISeries"/> number to remove</param>
-        public void RemoveLine(int lineToRemove)
-        {
-            Series.RemoveAt(lineToRemove);
         }
 
         /// <summary>
@@ -114,7 +105,7 @@ namespace DashboardFrontend.ViewModels
         /// <summary>
         /// Calls <see cref="QueryList"/> at a set interval.
         /// </summary>
-        /// <param name="querryTimer"></param>
+        /// <param name="queryTimer"></param>
         public async void StartGraph()
         {
             if (!isGraphRunning) 
