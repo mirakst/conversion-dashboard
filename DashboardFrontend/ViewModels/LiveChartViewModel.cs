@@ -173,8 +173,7 @@ namespace DashboardFrontend.ViewModels
         /// <param name = "input">A number between 0 and 1. Standart is 1.</param>
         public void ChangeLineSmoothness(double input)
         {
-            if (input > 1) { return; }
-            else if (input < 0) { return; }
+            if (input < 0 || input > 1} { return; }
 
             foreach (LineSeries<ObservablePoint> line in Series)
             {
