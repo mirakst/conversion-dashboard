@@ -76,6 +76,14 @@ namespace DashboardFrontend.ViewModels
             Series[Series.IndexOf(Line)].Values = Values[Series.IndexOf(Line)];
         }
 
+        public void RemoveData(String managername, ObservableCollection<ObservablePoint> data)
+        {
+            Values.Remove(data);
+
+            int managerIndex = Series.FindIndex(e => e.Name == managername);
+            Series.RemoveAt(managerIndex);
+        }
+
         /// <summary>
         /// Calls <see cref="QuerryList"/> at a set interval.
         /// </summary>

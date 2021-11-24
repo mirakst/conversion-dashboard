@@ -108,7 +108,6 @@ namespace DashboardFrontend.DetachedWindows
             {
                 DatagridManagerMover("Add", selectedManager);
             }
-            datagridManagers.SelectedItems.Clear();
         }
 
         private void RemoveManager_Click(object sender, RoutedEventArgs e)
@@ -125,13 +124,11 @@ namespace DashboardFrontend.DetachedWindows
                 foreach (Manager manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
                 {
                     DatagridManagerMover("Remove", manager);
-                    //Remove multiple lines from charts here
                 }
             }
             else
             {
                 DatagridManagerMover("Remove", selectedManager);
-                //Remove line from charts here
             }
         }
 
@@ -171,11 +168,13 @@ namespace DashboardFrontend.DetachedWindows
                 case "Remove":
                     datagridManagerDetails.Items.Remove(manager);
                     datagridManagerCharts.Items.Remove(manager);
+                    RemoveChartLinesHelper(manager);
                     break;
 
                 case "Clear":
                     datagridManagerDetails.Items.Clear();
                     datagridManagerCharts.Items.Clear();
+                    ClearChartLinesHelper();
                     break;
             }
         }
@@ -195,6 +194,23 @@ namespace DashboardFrontend.DetachedWindows
                     GeometryStroke = new SolidColorPaint(new SKColor(133, 222, 118)),
                     GeometrySize = 0.4,
                 }, managerValues);
+            }
+        }
+
+        public void RemoveChartLinesHelper(Manager manager)
+        {
+            foreach (LiveChartViewModel chart in Charts)
+            {
+                var managerValues = new ObservableCollection<ObservablePoint>();
+                chart.RemoveData(manager.Name, managerValues);
+            }
+        }
+
+        public void ClearChartLinesHelper()
+        {
+            foreach (LiveChartViewModel chart in Charts)
+            {
+                chart.Series.Clear();
             }
         }
 
