@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DashboardFrontend
 {
@@ -37,7 +38,6 @@ namespace DashboardFrontend
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            
             //ManagerWindow detachManager = new();
             //detachManager.Closing += OnManagerWindowClosing;
             //buttonDetachManager.IsEnabled = false;
@@ -46,26 +46,38 @@ namespace DashboardFrontend
          
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached detachLog = new(ViewModel.LogViewModel);
-            detachLog.Closing += OnLogWindowClosing;
-            ButtonLogDetach.IsEnabled = false;
+            LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
+            LogDetached detachLog = new(detachedLogViewModel);
             detachLog.Show();
+            detachLog.Closed += delegate
+            {
+                ViewModel.Controller._logViewModels.Remove(detachedLogViewModel);
+            };
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportDetached detachVR = new(ViewModel.ValidationReportViewModel);
-            detachVR.Closing += OnValidationWindowClosing;
-            ButtonValidationReportDetach.IsEnabled = false;
-            detachVR.Show();
+            ValidationReportViewModel detachedValidationReportViewModel =
+                ViewModel.Controller.CreateValidationReportViewModel();
+            ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
+            detachedValidationReportViewModel.DataGrid = detachVr.DataGridValidations;
+            detachVr.Show();
+            detachVr.Closed += delegate
+            {
+                ViewModel.Controller._validationReportViewModels.Remove(detachedValidationReportViewModel);
+            };
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHr = new(ViewModel.LiveChartViewModel);
-            ButtonHealthReportDetach.IsEnabled = false;
-            expandHr.Closing += OnHealthWindowClosing;
-            expandHr.Show();
+            HealthReportViewModel detachedHealthReportViewModel = ViewModel.Controller.CreateHealthReportViewModel();
+            ViewModel.Controller._healthReportViewModels.Add(detachedHealthReportViewModel);
+            HealthReportDetached detachHr = new(detachedHealthReportViewModel);
+            detachHr.Show();
+            detachHr.Closed += delegate
+            {
+                ViewModel.Controller._healthReportViewModels.Remove(detachedHealthReportViewModel);
+            };
         }
 
         //OnWindowClosing events
@@ -77,21 +89,6 @@ namespace DashboardFrontend
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
             ButtonDetachManager.IsEnabled = true;
-        }
-
-        private void OnLogWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonLogDetach.IsEnabled = true;
-        }
-
-        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonValidationReportDetach.IsEnabled = true;
-        }
-
-        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonHealthReportDetach.IsEnabled = true;
         }
 
         private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -171,19 +168,19 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            ViewModel.LiveChartViewModel.AutoFocusOn();
+            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
 
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            ViewModel.LiveChartViewModel.AutoFocusOff();
+            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOff();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             /*_=int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.LiveChartViewModel.ChangeMaxView(comboBoxItemValue);*/
+            ViewModel.DataChart.ChangeMaxView(comboBoxItemValue);*/
         }
     }
 }

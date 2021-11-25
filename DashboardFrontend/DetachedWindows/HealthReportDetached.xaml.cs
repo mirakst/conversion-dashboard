@@ -5,10 +5,10 @@ namespace DashboardFrontend.DetachedWindows
 {
     public partial class HealthReportDetached
     {
-        public LiveChartViewModel Vm { get; set; }
-        public HealthReportDetached(LiveChartViewModel liveChartViewModel)
+        public HealthReportViewModel Vm { get; set; }
+        public HealthReportDetached(HealthReportViewModel healthReportViewModel)
         {
-            Vm = liveChartViewModel;
+            Vm = healthReportViewModel;
             InitializeComponent();
         }
 
@@ -26,13 +26,13 @@ namespace DashboardFrontend.DetachedWindows
 
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Vm.AutoFocusOn();
+            Vm.SystemLoadChart.AutoFocusOn();
             /*_netVm.AutoFocusOn();*/
         }
 
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Vm.AutoFocusOff();
+            Vm.SystemLoadChart.AutoFocusOff();
             /*_netVm.AutoFocusOff();*/
 
         }

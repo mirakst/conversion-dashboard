@@ -14,7 +14,6 @@ namespace DashboardFrontend.ViewModels
             set
             {
                 _messages = value;
-                UpdateCounters(Messages);
                 OnPropertyChanged(nameof(Messages));
             }
         }
@@ -126,42 +125,11 @@ namespace DashboardFrontend.ViewModels
         public void UpdateData(Log log)
         {
             Messages = new(log.Messages);
-        }
-
-        /// <summary>
-        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
-        /// </summary>
-        /// <param name="msg">LogMessage whose type counter should be updated</param>
-        private void UpdateCounters(ObservableCollection<LogMessage> log)
-        {
-            InfoCount = 0;
-            WarnCount = 0;
-            ErrorCount = 0;
-            FatalCount = 0;
-            ValidationCount = 0;
-            foreach (var msg in log)
-            {
-                switch (msg.Type)
-                {
-                    case LogMessageType.Info:
-                        InfoCount++;
-                        break;
-                    case LogMessageType.Warning:
-                        WarnCount++;
-                        break;
-                    case LogMessageType.Error:
-                        ErrorCount++;
-                        break;
-                    case LogMessageType.Fatal:
-                        FatalCount++;
-                        break;
-                    case LogMessageType.Validation:
-                        ValidationCount++;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            InfoCount = log.InfoCount;
+            WarnCount = log.WarnCount;
+            ErrorCount = log.ErrorCount;
+            FatalCount = log.FatalCount;
+            ValidationCount = log.ValidationCount;
         }
     }
 }

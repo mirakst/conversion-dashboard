@@ -10,13 +10,17 @@ namespace DashboardFrontend.ViewModels
 {
     public class ValidationReportViewModel : BaseViewModel
     {
-        public ValidationReportViewModel(DataGrid dataGrid)
+        public ValidationReportViewModel()
         {
-            _dataGrid = dataGrid;
+            
         }
 
+        public ValidationReportViewModel(DataGrid dataGridValidations)
+        {
+            DataGrid = dataGridValidations;
+        }
         #region Properties
-        private DataGrid _dataGrid;
+        public DataGrid DataGrid { get; set; }
         public ObservableCollection<ValidationTestViewModel> Data { get; set; } = new();
 
         private DateTime _lastModified;
@@ -125,7 +129,7 @@ namespace DashboardFrontend.ViewModels
         {
             foreach (ValidationTestViewModel item in Data)
             {
-                DataGridRow row = (DataGridRow)_dataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                DataGridRow row = (DataGridRow)DataGrid.ItemContainerGenerator.ContainerFromItem(item);
                 if (!item.ManagerName.Contains(NameFilter) || (item.OkCount == item.TotalCount && !ShowSuccessfulManagers))
                 {
                     row.Visibility = Visibility.Collapsed;

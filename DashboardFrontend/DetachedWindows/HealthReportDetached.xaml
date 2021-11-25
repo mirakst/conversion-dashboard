@@ -21,8 +21,8 @@
                     <Border Margin="10">
                         <Grid>
                             <TextBlock Name="TextBlockCurrentCpuLoad"
-                                       Text="{Binding LastCpuReading,
-                                              StringFormat=CPU Usage: {0}%}"
+                                       Text="{Binding Vm.SystemLoadChart.LastCpuReading,
+                                              StringFormat=CPU Usage: {0:0}%}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
                                        VerticalAlignment="Center"
@@ -30,8 +30,8 @@
                                        Grid.Row="0"
                                        Margin="0,0,40,5"/>
                             <TextBlock Name="TextBlockCurrentRamUsage"
-                                       Text="{Binding LastRamReading,
-                                              StringFormat=RAM Usage: {0}%}"
+                                       Text="{Binding Vm.SystemLoadChart.LastRamReading,
+                                              StringFormat=RAM Usage: {0:0}%}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
                                        VerticalAlignment="Center"
@@ -50,7 +50,7 @@
                                 <ComboBoxItem Content="12 Hours" Tag="720"/>
                                 <ComboBoxItem Content="24 Hours" Tag="1440"/>
                             </ComboBox>
-                            <lvc:CartesianChart DataContext="{Binding Vm, Mode=OneTime}"
+                            <lvc:CartesianChart DataContext="{Binding Vm.SystemLoadChart}"
                                                 Series="{Binding Series}"
                                                 XAxes="{Binding XAxis}"
                                                 YAxes="{Binding YAxis}"

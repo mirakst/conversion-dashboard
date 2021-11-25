@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,9 +20,12 @@ namespace DashboardFrontend
         private readonly MainWindowViewModel _vm;
         private readonly Log _log;
         private readonly ValidationReport _validationReport;
-        private HealthReport _healthReport = null!;
+        private readonly HealthReport _healthReport;
         private readonly List<Timer> _timers;
         private readonly SynchronizationContext? _uiContext;
+        public readonly List<HealthReportViewModel> _healthReportViewModels = new();
+        public readonly List<LogViewModel> _logViewModels = new();
+        public readonly List<ValidationReportViewModel> _validationReportViewModels = new();
         public UserSettings UserSettings { get; set; } = new UserSettings();
 
         public Controller(MainWindowViewModel viewModel)
@@ -31,6 +35,7 @@ namespace DashboardFrontend
             _vm = viewModel;
             _log = new Log();
             _validationReport = new ValidationReport();
+            _healthReport = new HealthReport(null, null);
             _timers = new List<Timer>();
         }
 
@@ -40,8 +45,37 @@ namespace DashboardFrontend
         public void Initialize(DataGrid dataGridValidations)
         {
             _vm.LogViewModel = new LogViewModel();
+            _logViewModels.Add(_vm.LogViewModel);
+
             _vm.ValidationReportViewModel = new ValidationReportViewModel(dataGridValidations);
-            _vm.LiveChartViewModel = new LiveChartViewModel(new PerformanceChart());
+            _validationReportViewModels.Add(_vm.ValidationReportViewModel);
+
+            _vm.HealthReportViewModel = new HealthReportViewModel(_healthReport);
+            _healthReportViewModels.Add(_vm.HealthReportViewModel);
+        }
+
+        public LogViewModel CreateLogViewModel()
+        {
+            LogViewModel result = new();
+            result.UpdateData(_log);
+            _logViewModels.Add(result);
+            return result;
+        }
+
+        public ValidationReportViewModel CreateValidationReportViewModel()
+        {
+            ValidationReportViewModel result = new();
+            result.UpdateData(_validationReport);
+            _validationReportViewModels.Add(result);
+            return result;
+        }
+
+        public HealthReportViewModel CreateHealthReportViewModel()
+        {
+            HealthReportViewModel result = new(_healthReport);
+            result.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
+            _healthReportViewModels.Add(result);
+            return result;
         }
 
         /// <summary>
@@ -50,7 +84,10 @@ namespace DashboardFrontend
         public void UpdateLog(DateTime timestamp)
         {
             _log.Messages = DU.GetLogMessages(timestamp);
-            _uiContext?.Send(x => _vm.LogViewModel.UpdateData(_log), null);
+            foreach (var vm in _logViewModels)
+            {
+                _uiContext?.Send(x => vm.UpdateData(_log), null);
+            }
         }
 
         /// <summary>
@@ -59,7 +96,10 @@ namespace DashboardFrontend
         public void UpdateValidationReport(DateTime timestamp)
         {
             _validationReport.ValidationTests = DU.GetAfstemninger(timestamp);
-            _uiContext?.Send(x => _vm.ValidationReportViewModel.UpdateData(_validationReport), null);
+            foreach (var vm in _validationReportViewModels)
+            {
+                _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+            }
         }
 
         /// <summary>
@@ -70,11 +110,14 @@ namespace DashboardFrontend
             if (_healthReport.IsInitialized)
             {
                 DU.AddHealthReportReadings(_healthReport, timestamp);
-                _uiContext?.Send(x => _vm.LiveChartViewModel.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+                foreach (var vm in _healthReportViewModels)
+                {
+                    _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+                }
             }
             else
             {
-                _healthReport = DU.BuildHealthReport();
+                DU.BuildHealthReport(_healthReport);
             }
         }
 
@@ -97,7 +140,7 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    _healthReport = DU.BuildHealthReport();
+                    DU.BuildHealthReport(_healthReport);
                     StartMonitoring();
                 }
             }

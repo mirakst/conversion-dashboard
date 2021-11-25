@@ -16,7 +16,6 @@
         public int Cores { get; } //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'LogicalCores or PhysicalCores'. Cores is too abstract, and this should be discussed later!!
         public long MaxFrequency { get; } //Hz //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'CPU Max frequency'.
                                           //The properties above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'CPU_INIT'.
-        public DateTime LastPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
         private readonly List<CpuLoad> _readings = new();
 
         public List<CpuLoad> Readings

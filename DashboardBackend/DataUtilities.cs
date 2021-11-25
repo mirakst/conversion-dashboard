@@ -316,7 +316,7 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="entries">A list of Health Report entries from the state database.</param>
         /// <returns>A Health Report initialized with system info.</returns>
-        public static HealthReport BuildHealthReport()
+        public static void BuildHealthReport(HealthReport hr)
         {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryHealthReport();
 
@@ -345,16 +345,12 @@ namespace DashboardBackend
                     (long) queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed").ReportNumericValue;
                 Network network = new(networkName, networkMacAddress, networkSpeed);
 
-                HealthReport result = new(hostName, monitorName, cpu, network, ram);
-                result.IsInitialized = true;
-
-                return result;
+                hr.Build(hostName, monitorName, cpu, network, ram);
             }
             catch (System.InvalidOperationException ex)
             {
                 Trace.WriteLine(ex.Message);
             }
-            return new HealthReport(null, null, null, null, null);
         }
 
         /// <summary>

@@ -4,9 +4,12 @@ using LiveChartsCore.SkiaSharpView;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using DashboardFrontend.Annotations;
 using Model;
 
 namespace DashboardFrontend.ViewModels
@@ -14,15 +17,35 @@ namespace DashboardFrontend.ViewModels
     /// <summary>
     /// A class for the creating and controlling <see cref="ISeries"/>
     /// </summary>
-    public class LiveChartViewModel
+    public class DataChart : BaseViewModel
     {
         #region public
         public List<ObservableCollection<ObservablePoint>> Values { get; private set; } = new();
         public List<ISeries> Series { get; private set; } = new();
         public List<Axis> XAxis { get; private set; } = new();
         public List<Axis> YAxis { get; private set; } = new();
-        public double? LastRamReading { get; private set; } = 0;
-        public double? LastCpuReading { get; private set; } = 0;
+        private double? _lastRamReading = 0;
+        public double? LastRamReading
+        {
+            get => _lastRamReading;
+            set
+            {
+                _lastRamReading = value;
+                OnPropertyChanged(nameof(LastRamReading));
+            }
+        }
+        private DateTime _lastRamPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+        private double? _lastCpuReading = 0;
+        public double? LastCpuReading
+        {
+            get => _lastCpuReading;
+            set
+            {
+                _lastCpuReading = value;
+                OnPropertyChanged(nameof(LastCpuReading));
+            }
+        }
+        private DateTime _lastCpuPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
         #endregion
 
         #region private
@@ -40,7 +63,7 @@ namespace DashboardFrontend.ViewModels
         /// <param name="dataList">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
         /// <param name="xAxisList">A list of <see cref="Axis"/> for the X axis.</param>
         /// <param name="yAxisList">A list of <see cref="Axis"/> for the Y axis.</param>
-        public LiveChartViewModel(BaseChart chart)
+        public DataChart(BaseChart chart, Cpu cpu, Ram ram)
         {
             AddLine(chart.Series, chart.Data, chart.XAxis, chart.YAxis);
             AutoFocusOn();
@@ -99,21 +122,27 @@ namespace DashboardFrontend.ViewModels
         /// <summary>
         /// Adds points to the chart.
         /// </summary>
-        public void UpdateData(Ram ram, Cpu cpu)
+        public void UpdateData(Ram? ram, Cpu? cpu)
         {
-            LastRamReading = ram.Readings.Last()?.Load;
-            LastCpuReading = cpu.Readings.Last()?.Load;
-            foreach (var item in ram.Readings.Where(e => e.Date > ram.LastPlot))
+            if (ram is null || cpu is null) return;
+            LastRamReading = ram.Readings.Last().Load * 100;
+            LastCpuReading = cpu.Readings.Last().Load * 100;
+            foreach (var item in ram.Readings.Where(e => e.Date > _lastRamPlot))
             {
                 Values[0].Add(CreatePoint(item));       
             }
-            ram.LastPlot = ram.Readings.Last().Date;
 
-            foreach (var item in cpu.Readings.Where(e => e.Date > cpu.LastPlot))
+            foreach (var item in cpu.Readings.Where(e => e.Date > _lastCpuPlot))
             {
                 Values[1].Add(CreatePoint(item));
             }
-            cpu.LastPlot = cpu.Readings.Last().Date;
+            UpdatePlots(ram.Readings.Last().Date, cpu.Readings.Last().Date);
+        }
+
+        private void UpdatePlots(DateTime ramDate, DateTime cpuDate)
+        {
+            _lastRamPlot = ramDate;
+            _lastCpuPlot = cpuDate;
         }
 
         /// <summary>

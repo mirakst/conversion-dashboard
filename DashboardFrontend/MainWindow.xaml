@@ -730,7 +730,7 @@
                                 HorizontalAlignment="Right">
                         <TextBlock Text="Last modified: "
                                    Foreground="White"/>
-                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A', StringFormat=dd/HH HH:mm:ss}"
+                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A', StringFormat=dd/MM HH:mm:ss}"
                                    Foreground="White"/>
                     </StackPanel>
 
@@ -774,7 +774,7 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <Border BorderBrush="{DynamicResource BorderColor}"
+                        <!--<Border BorderBrush="{DynamicResource BorderColor}"
                                 BorderThickness="1">
                             <lvc:CartesianChart DataContext="{Binding LiveChartViewModel, Mode=OneTime}"
                                                 Series="{Binding Series}"
@@ -785,7 +785,165 @@
                                                 MouseLeave="CartesianChart_MouseLeave"
                                                 MouseEnter="CartesianChart_MouseEnter">
                             </lvc:CartesianChart>
-                        </Border>
+                        </Border>-->
+                        <TabControl Background="{DynamicResource BackgroundColor}"
+                        BorderBrush="{DynamicResource BorderColor}"
+                        DataContext="{Binding HealthReportViewModel.SystemLoadChart}">
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemCpuRam"
+                                     Header="CPU &amp; RAM">
+                                <Border Margin="10">
+                                    <Grid>
+                                        <TextBlock Name="TextBlockCurrentCpuLoad"
+                                                   Text="{Binding LastCpuReading,
+                                                          StringFormat='CPU Usage: {0:0}%'}"
+                                                   Foreground="{DynamicResource ForegroundColor}"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0"
+                                                   Grid.Row="0"
+                                                   Margin="0,0,40,5"/>
+                                        <TextBlock Name="TextBlockCurrentRamUsage"
+                                                   Text="{Binding LastRamReading,
+                                                          StringFormat='RAM Usage: {0:0}%'}"
+                                                   Foreground="{DynamicResource ForegroundColor}"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1"
+                                                   Grid.Row="0"
+                                                   Margin="5,0,0,5"/>
+                                        <ComboBox Name="ComboBoxPerformanceMaxView"
+                                  Margin="0,0,0,0"
+                                  VerticalAlignment="Center"
+                                  Grid.Column="3">
+                                        <!--SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">-->
+                                            <ComboBoxItem Content="30 Min" Tag="30"/>
+                                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                            <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                            <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                            <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                                        </ComboBox>
+                                        <lvc:CartesianChart
+                                                Series="{Binding Series}"
+                                                XAxes="{Binding XAxis}"
+                                                YAxes="{Binding YAxis}"
+                                                ZoomMode="X"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
+                                        </lvc:CartesianChart>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                </Border>
+                            </TabItem>
+
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                         Name="TabItemNetwork"
+                         Header="Network">
+                                <Border Margin="10">
+                                    <Grid>
+                                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Margin="0,0,10,0"
+                                    Grid.Column="0"
+                                    Grid.Row="1">
+                                            <Grid Margin="5">
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="Send:"
+                                                   FontSize="14"/>
+                                                    <TextBlock Text="Send delta:"
+                                                   FontSize="14"/>
+                                                    <TextBlock Text="Send speed:"
+                                                   FontSize="14"/>
+                                                    <TextBlock/>
+                                                    <TextBlock Text="Received"
+                                                   FontSize="14"/>
+                                                    <TextBlock Text="Received delta:"
+                                                   FontSize="14"/>
+                                                    <TextBlock Text="Received speed:"
+                                                   FontSize="14"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="102 KB"
+                                                   FontSize="14"/>
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="932 KB"
+                                                   FontSize="14"/>
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="123 MB"
+                                                   FontSize="14"/>
+                                                    <TextBlock/>
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="43 KB"
+                                                   FontSize="14"/>
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="12 KB"
+                                                   FontSize="14"/>
+                                                    <TextBlock TextAlignment="Right"
+                                                   Text="13 MB"
+                                                   FontSize="14"/>
+                                                </StackPanel>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                            </Grid>
+                                        </Border>
+                                        <ComboBox Name="ComboBoxNetworkMaxView"
+                                      MaxWidth="70"
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Grid.Column="1">
+                                      <!--SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">-->
+                                      <ComboBoxItem Content="30 Min" Tag="30"/>
+                                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                            <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                            <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                            <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                                        </ComboBox>
+                                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                    BorderThickness="1"
+                                    Grid.Column="1"
+                                    Grid.Row="1">
+                                            <!--<lvc:CartesianChart Series="{Binding Series}"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>-->
+                                        </Border>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="7*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="40"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                </Border>
+                            </TabItem>
+                        </TabControl>
                     </Grid>
 
                     <Grid.RowDefinitions>
