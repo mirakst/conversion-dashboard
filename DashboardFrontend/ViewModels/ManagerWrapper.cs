@@ -1,11 +1,12 @@
 using System;
 using Model;
 using System.Windows.Media;
-using SkiaSharp;
-using LiveChartsCore.SkiaSharpView.Painting;
 
 namespace DashboardFrontend
 {
+    /// <summary>
+    /// Wrapper class for manager to store a color associated with the manager
+    /// </summary>
     public class ManagerWrapper
     {
         public Manager Manager {  get; set; }
@@ -17,6 +18,10 @@ namespace DashboardFrontend
             LineColor = new(RandomColor());
         }
 
+        /// <summary>
+        /// Assigns the managerwrapper with a random color using RGB.
+        /// </summary>
+        /// <returns></returns>
         public Color RandomColor()
         {
             Random rand = new();

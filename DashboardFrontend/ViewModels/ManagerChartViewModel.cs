@@ -42,12 +42,16 @@ namespace DashboardFrontend.ViewModels
             #endregion
         }
 
+        /// <summary>
+        /// Adds a line to all manager charts based on the data stored in the manager.
+        /// </summary>
+        /// The manager to be added to the chart <param name="manager"></param>
         public void AddChartLinesHelper(ManagerWrapper manager)
         {
             
             foreach (LiveChartViewModel chart in Charts)
             {
-                var managerValues = new ObservableCollection<ObservablePoint>();
+                var managerValues = new ObservableCollection<ObservablePoint>(); // DELETE LATER: Exchange with the data stored in the manager.
 
                 chart.AddData(new LineSeries<ObservablePoint>
                 {
@@ -65,6 +69,10 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Removes a manager from the charts.
+        /// </summary>
+        /// The manager to be removed <param name="manager"></param>
         public void RemoveChartLinesHelper(ManagerWrapper manager)
         {
             foreach (LiveChartViewModel chart in Charts)
@@ -74,6 +82,9 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Clears the charts of all managers.
+        /// </summary>
         public void ClearChartLinesHelper()
         {
             foreach (LiveChartViewModel chart in Charts)

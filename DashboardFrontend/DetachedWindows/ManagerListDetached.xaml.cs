@@ -40,6 +40,11 @@ namespace DashboardFrontend.DetachedWindows
             DataContext = this;
         }
 
+        /// <summary>
+        /// Adds managers to the from the manager overview by calling the manager mover method for every manager selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
             ManagerWrapper? selectedManager = datagridManagers.SelectedItem as ManagerWrapper;
@@ -60,6 +65,11 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Removes managers to the from the manager details overview and charts by calling the manager mover method for every manager selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RemoveManager_Click(object sender, RoutedEventArgs e)
         {
             ManagerWrapper? selectedManager = ((Button)sender).Tag as ManagerWrapper;
@@ -84,11 +94,21 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Resets the details overview and charts by calling the manager mover method.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ResetManagers_Click(object sender, RoutedEventArgs e)
         {
             DatagridManagerMover("Clear", null);
         }
 
+        /// <summary>
+        /// Searches through the manager overview based on the text present in the searchbar.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
         {
             datagridManagers.SelectedItems.Clear();
@@ -106,6 +126,11 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Helper function assembling all the manager mover functionality.
+        /// </summary>
+        /// The function to be done to the manager <param name="method"></param>
+        /// The manager that is being moved <param name="manager"></param>
         private void DatagridManagerMover(string method, ManagerWrapper? manager)
         {
             switch (method)
@@ -131,6 +156,11 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Event freezing the charts if the mouse is hovering over them.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             foreach (LiveChartViewModel chart in ManagerCharts.Charts)
@@ -139,6 +169,11 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Event for unfreezing the charts when the mouse leaves.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             foreach (LiveChartViewModel chart in ManagerCharts.Charts)

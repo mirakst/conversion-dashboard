@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Model;
 using LiveChartsCore.Defaults;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-using System.Windows.Media;
 
 namespace DashboardFrontend.ViewModels
 {
+    /// <summary>
+    /// Empty chart class to add manager data to.
+    /// </summary>
     public class ManagerPerformanceViewModel
     {
         public List<ObservableCollection<ObservablePoint>> ManagerData { get; set; }
