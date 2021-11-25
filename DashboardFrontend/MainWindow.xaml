@@ -145,7 +145,72 @@
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-                <Grid Name="GridManager"
+
+                <Grid x:Name="gridManagerList"
+                  Grid.Row="0"
+                  Grid.Column="0"
+                  Margin="0,0,20,20">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20pt"/>
+                        <ColumnDefinition Width="20pt"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="22*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Name="textboxSearchbar"
+                             ToolTip="Search by manager Name or ID"
+                             Style="{DynamicResource SearchBox}"
+                             BorderBrush="{DynamicResource BorderColor}">
+                    </TextBox>
+
+                    <DockPanel LastChildFill="False">
+                        <Image Source="Icons/MagnifyingglassAlt.png"
+                               Margin="0,5,10,5"
+                               DockPanel.Dock="Right"/>
+                    </DockPanel>
+
+                    <Button Name="ButtonManagerFilter"
+                                Grid.Column="1"
+                                Style="{DynamicResource FilterButton}">
+                        <Image Source="Icons/Filter.png"/>
+                    </Button>
+
+                    <Button Name="ButtonDetachManager"
+                                Click="DetachManagerButtonClick"
+                                Grid.Column="2"
+                                Style="{StaticResource DetachButton}">
+                        <Image Source="Icons/Detach.png"/>
+                    </Button>
+
+                    <!-- The manager overview datagrid -->
+                    <DataGrid x:Name="datagridManagers"
+                          Grid.Row="1"
+                          Grid.ColumnSpan="3"
+                          Style="{DynamicResource DefaultDatagrid}"
+                          BorderBrush="{DynamicResource BorderColor}">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" 
+                                            Binding="{Binding Manager.ContextId}"
+                                            Width="25pt"/>
+                            <DataGridTextColumn Header="Manager name" 
+                                            Binding="{Binding Manager.Name}"
+                                            Width="8*"/>
+                            <DataGridTextColumn Header="Score" 
+                                            Binding="{Binding Manager.Score}"
+                                            Width="*"/>
+                            <DataGridTextColumn Header="Status" 
+                                            Binding="{Binding Manager.Status}"
+                                            Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <!--<Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
                       Grid.Row="0">
@@ -214,7 +279,7 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                </Grid>
+                </Grid>-->
 
                 <Grid Name="GridLog" 
                       Margin="20,0,0,20"

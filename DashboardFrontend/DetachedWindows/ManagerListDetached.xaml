@@ -55,7 +55,7 @@
                 </TextBox>
 
                 <DockPanel LastChildFill="False">
-                    <Image Source="../Icons/magnifyingglassgray.png"
+                    <Image Source="../Icons/MagnifyingglassAlt.png"
                                Margin="0,2,2,7"
                                DockPanel.Dock="Right"/>
                 </DockPanel>
@@ -78,7 +78,7 @@
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding Manager.Id}"
+                                            Binding="{Binding Manager.ContextId}"
                                             Width="25pt"/>
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Manager.Name}"
@@ -133,7 +133,7 @@
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding Manager.Id}"
+                                                        Binding="{Binding Manager.ContextId}"
                                                         Width="25pt"/>
                                     <DataGridTextColumn Header="Execution #"
                                                         Binding="{Binding Manager.ExecutionId}"
@@ -314,7 +314,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding Manager.Id, FallbackValue='N/A'}"
+                                    <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
                                     <DataGridTextColumn Binding="{Binding Manager.ExecutionId}"

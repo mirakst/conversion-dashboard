@@ -1,4 +1,4 @@
-﻿using DashboardBackend;
+using DashboardBackend;
 using DashboardBackend.Database;
 using DashboardFrontend.ViewModels;
 using Model;
@@ -24,15 +24,13 @@ namespace DashboardFrontend.DetachedWindows
 
             DataUtilities.DatabaseHandler = new SqlDatabase();                                                                          // Remove later once the Start monitoring functions has been made
             Conversion conv = new();                                                                                                    
-            conv.Executions = DataUtilities.GetExecutions();                                                                            
-            conv.ActiveExecution.Managers = DataUtilities.GetManagers();                                                                
+            conv.Executions = DataUtilities.GetExecutions();                    
+            DataUtilities.AddManagers(conv.Executions);
             conv.HealthReport = DataUtilities.BuildHealthReport();                                                                      
             DataUtilities.AddHealthReportReadings(conv.HealthReport);                                                                   // To here
 
-            Random random = new(5);
             foreach (Manager manager in conv.ActiveExecution.Managers)
             {
-                manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now));    // Also delete this
                 var wrapper = new ManagerWrapper(manager);
                 datagridManagers.Items.Add(wrapper);
             }
@@ -117,7 +115,7 @@ namespace DashboardFrontend.DetachedWindows
                 List<ManagerWrapper> foundmanagers = new();
                 foreach (ManagerWrapper manager in datagridManagers.Items)
                 {
-                    if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.Manager.Id.ToString() == textboxSearchbar.Text)
+                    if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.Manager.ContextId.ToString() == textboxSearchbar.Text)
                     {
                         foundmanagers.Add(manager);
                         datagridManagers.SelectedItems.Add(manager);
