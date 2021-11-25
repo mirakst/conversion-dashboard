@@ -13,43 +13,27 @@ namespace DevConsoleApp
             //**** CONV AND EXECUTION TESTING ****
             Conversion conv = new();
             conv.Executions = DataUtilities.GetExecutions();
-            conv.ActiveExecution.Managers = DataUtilities.GetManagers();
+            Console.WriteLine(DateTime.Now);
+            DataUtilities.AddManagers(conv.Executions);
+            Console.WriteLine(DateTime.Now);
+            DataUtilities.AddManagerReadings(conv.ActiveExecution);
             conv.ActiveExecution.Log.Messages = DataUtilities.GetLogMessages(conv.ActiveExecution.Id); //Maybe automatically populate this? When executions are made, query messages that match Id and populate log.
+            Console.WriteLine(DateTime.Now);
             conv.ActiveExecution.ValidationReport.ValidationTests = DataUtilities.GetAfstemninger();
+            Console.WriteLine(DateTime.Now);
             conv.HealthReport = DataUtilities.BuildHealthReport();
+            Console.WriteLine(DateTime.Now);
             DataUtilities.AddHealthReportReadings(conv.HealthReport);
+            Console.WriteLine(DateTime.Now);
 
-            foreach (var item in conv.Executions)
+
+
+            foreach (var manager in conv.ActiveExecution.Managers)
             {
-                Console.WriteLine(item);
-            }
-            foreach (var item in conv.ActiveExecution.Managers)
-            {
-                Console.WriteLine(item);
-            }
-            foreach (var item in conv.ActiveExecution.Log.Messages)
-            {
-                Console.WriteLine(item);
-            }
-            foreach (var item in conv.ActiveExecution.ValidationReport.ValidationTests)
-            {
-                Console.WriteLine(item);
+                Console.WriteLine(manager.ToString());
             }
 
-            Console.WriteLine(conv.HealthReport.ToString());
-
-            foreach (var item in conv.HealthReport.Cpu.Readings)
-            {
-                Console.WriteLine(item.ToString());
-            }
-            foreach (var item in conv.HealthReport.Network.Readings)
-            {
-                Console.WriteLine(item.ToString());
-            }
-            foreach (var item in conv.HealthReport.Ram.Readings)
-            {
-                Console.WriteLine(item.ToString());
-            }
+            Console.ReadKey();
         }
     }
 }

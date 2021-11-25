@@ -1,8 +1,9 @@
-﻿<Window x:Class="DashboardInterface.MainWindow"
+﻿<Window x:Class="DashboardFrontend.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
         mc:Ignorable="d"
@@ -11,32 +12,81 @@
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
-
+        SnapsToDevicePixels="True"
+        WindowStyle="None"
+        MouseDown="DraggableGrid"
+        ResizeMode="CanResizeWithGrip">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    <!--Command bindings for window controls-->
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
+    </Window.CommandBindings>
+    <Window.Resources>
+        <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
+        <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
+        <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
+        <ContextMenu x:Key="ValidationTestContextMenu" 
+                     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+            <MenuItem Header="Copy source SQL" 
+                      Click="MenuItem_SrcSql_Click" 
+                      IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
+            <MenuItem Header="Copy destination SQL" 
+                      Click="MenuItem_DstSql_Click" 
+                      IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
+        </ContextMenu>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
-                  Grid.Row="0">
+                  Grid.Row="0"
+                  Grid.ColumnSpan="2">
+                <TextBlock x:Name="TextBlockWindowTitle"
+                           FontSize="14"
+                           MinWidth="200"
+                           TextAlignment="Center"
+                           Margin="0, 5, 0, 0"
+                           Foreground="{DynamicResource ForegroundColor}"
+                           Text="Conversion Dashboard"/>
                 <Grid Name="GridControlPanel"
-                      Margin="30,30,30,0"
+                      Margin="20,20,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
                         Click="ButtonStartStopClick"
                         Grid.Column="0"
                         Grid.Row="0"
-                        Grid.RowSpan="2" 
-                        BorderBrush="Transparent">
-                        <Image Source="Icons/Start.png"/>
+                        Grid.RowSpan="2"
+                        Style="{StaticResource DefaultButton}">
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter Property="Source" Value="/Icons/Stop.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                            <Setter Property="Source" Value="/Icons/Start.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
                     </Button>
+
                     <Button Name="ButtonSettings" 
-                        Click="ButtonSettingsClick" 
-                        Grid.Column="1" 
-                        Grid.Row="0" 
-                        Grid.RowSpan="2" 
-                        Background="Transparent" 
-                        BorderBrush="Transparent">
+                            Click="ButtonSettingsClick" 
+                            Grid.Column="1" 
+                            Grid.Row="0" 
+                            Grid.RowSpan="2" 
+                            Background="Transparent" 
+                            BorderBrush="Transparent">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
+
                     <TextBlock x:Name="TextBlockConversionName"
                                FontSize="28"
                                MinWidth="200"
@@ -46,32 +96,38 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                Foreground="{DynamicResource ForegroundColor}"
-                               Text="Conversion"/>
+                               Text="{Binding UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
-                      Grid.Row="0">
+                          Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
-                                 Margin="2"
-                                 Grid.Row="0"
-                                 Minimum="0"
-                                 Maximum="100"
-                                 Value="85"/>
+                                     Margin="2"
+                                     Grid.Row="0"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="85"/>
                         <TextBlock Text="{Binding ElementName=ProgressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
-                               FontSize="15" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"/>
+                                   FontSize="15" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
                     </Grid>
+
                     <Grid Grid.Column="3" 
-                      Grid.Row="1">
+                          Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="555*"/>
+                            <ColumnDefinition Width="346*"/>
+                        </Grid.ColumnDefinitions>
                         <ProgressBar Name="ProgressBarConversionProgress" 
-                                 Margin="2" 
-                                 Minimum="0" 
-                                 Maximum="100" 
-                                 Value="15"/>
+                                     Margin="2,2,2,2" 
+                                     Minimum="0" 
+                                     Maximum="100" 
+                                     Value="15" Grid.ColumnSpan="2"/>
                         <TextBlock Text="{Binding ElementName=ProgressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
-                               FontSize="15" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"/>
+                                   FontSize="15" 
+                                   HorizontalAlignment="Left" 
+                                   VerticalAlignment="Center" Margin="395,0,0,0"/>
                     </Grid>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="50"/>
@@ -84,65 +140,73 @@
                     </Grid.RowDefinitions>
                 </Grid>
             </Grid>
-            <Grid Margin="30,20,30,30" Background="{DynamicResource BackgroundColor}"
-                  Grid.Row="1">
+
+            <Grid Margin="30,20,30,30" 
+                  Background="{DynamicResource BackgroundColor}"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2">
                 <Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
                       Grid.Row="0">
-                    <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
+                    <Grid Grid.Row="0">
                         <TextBox Name="TextBoxManagerSearchBox"
-                             Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Grid.Column="0" Name="DockPanelSearchButton"
+                                 Style="{DynamicResource SearchBox}"/>
+                        <DockPanel Name="DockPanelSearchButton"
+                                   Grid.Column="0" 
                                    LastChildFill="False">
                             <Button Name="ButtonManagerSearch"
-                                Style="{DynamicResource SearchButton}"
-                                DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"/>
+                                    Style="{DynamicResource SearchButton}"
+                                    DockPanel.Dock="Right">
+                                <Image Source="../Icons/magnifyingglass.png"
+                                       Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
+
                         <Button Name="ButtonManagerFilter"
-                            Grid.Column="1"
-                            Style="{DynamicResource FilterButton}">
+                                Grid.Column="1"
+                                Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
-                        <Button Name="ButtonManagerDetach"
-                            Click="DetachManagerButtonClick"
-                            Grid.Column="2"
-                            Style="{StaticResource DetachButton}">
+
+                        <Button Name="ButtonDetachManager"
+                                Click="DetachManagerButtonClick"
+                                Grid.Column="2"
+                                Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
+
+                    <Grid Grid.Row="1">
                         <ListView x:Name="ListViewManagerList"
-                          Grid.Column="0"
-                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                          AlternationCount="2"
-                          Background="{StaticResource CanvasColor}"
-                          Foreground="{StaticResource ForegroundColor}"
-                          BorderBrush="{StaticResource BorderColor}">
+                                  Grid.Column="0"
+                                  ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
+                                  AlternationCount="2"
+                                  Background="{StaticResource CanvasColor}"
+                                  Foreground="{StaticResource ForegroundColor}"
+                                  BorderBrush="{StaticResource BorderColor}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Manager name"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerName}"/>
+                                                    Width="auto"
+                                                    DisplayMemberBinding="{Binding ManagerName}"/>
                                     <GridViewColumn Header="Score"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerScore}"/>
+                                                    Width="auto"
+                                                    DisplayMemberBinding="{Binding ManagerScore}"/>
                                     <GridViewColumn Header="Status"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
+                                                    Width="auto"
+                                                    DisplayMemberBinding="{Binding ManagerStatus}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                     </Grid>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -151,78 +215,105 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+
                 <Grid Name="GridLog" 
-                  Margin="20,0,0,20"
-                  Grid.Column="1" 
-                  Grid.Row="0">
-                    <Grid Grid.Row="0"
-                      Style="{DynamicResource ComponentControlBar}">
-                        <ToggleButton Name="ToggleButtonLogInfo"
-                                  Grid.Column="0" 
-                                  Style="{DynamicResource DefaultToggleButton}">
+                      Margin="20,0,0,20"
+                      Grid.Column="1" 
+                      Grid.Row="0">
+                    <Grid Grid.Row="0">
+                        <ToggleButton Name="toggleButtonLogInfo"
+                                      Grid.Column="0"
+                                      IsChecked="{Binding LogViewModel.ShowInfo}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="1"/>
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="1"/>
                         <ToggleButton Name="ToggleButtonLogWarning"
-                              Grid.Column="2"
-                              Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="2"
+                                      IsChecked="{Binding LogViewModel.ShowWarn}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="3"/>
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="3"/>
                         <ToggleButton Name="ToggleButtonLogError"
-                                  Grid.Column="4"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                      Grid.Column="4"
+                                      IsChecked="{Binding LogViewModel.ShowError}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <Rectangle Width="1"
-                               Fill="{DynamicResource BorderColor}"
-                               Grid.Column="5"/>
-                        <ToggleButton Name="ToggleButtonLogFatal"
-                                  IsChecked="True"
-                                  Grid.Column="6"
-                                  Style="{DynamicResource DefaultToggleButton}">
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="5"/>
+                        <ToggleButton Name="toggleButtonLogFatal"
+                                      Grid.Column="6"
+                                      IsChecked="{Binding LogViewModel.ShowFatal}"
+                                      Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
-                                   Width="13"
-                                   Margin="0,0,5,0"/>
-                                <TextBlock Text="0"/>
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
-                        <Button  Name="ButtonLogFilter"
-                              Grid.Column="7"
-                              Style="{DynamicResource FilterButton}">
+
+                        <Rectangle Width="1"
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="7"/>
+                        <ToggleButton Name="toggleButtonLogValidation"
+                                      Grid.Column="8"
+                                      IsChecked="{Binding LogViewModel.ShowValidation}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Icons/Validation.png" 
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
+                                <TextBlock Text=" Validation"/>
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <Button Name="buttonLogFilter"
+                                Grid.Column="9"
+                                Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
+
                         <Button Name="ButtonLogDetach" 
-                        Click="DetachLogButtonClick" 
-                        Grid.Column="8"
-                        Style="{DynamicResource DetachButton}">
+                                Click="DetachLogButtonClick" 
+                                Grid.Column="10"
+                                Style="{DynamicResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2"/>
                             <ColumnDefinition/>
@@ -234,99 +325,366 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
-                        <ScrollViewer Name="ScrollViewerLog"
-                                  Margin="0,0,1,0">
-                            <ListView x:Name="ListLogEntry"
-                                  Background="{StaticResource CanvasColor}"
-                                  Foreground="{StaticResource ForegroundColor}"
-                                  BorderBrush="{StaticResource BorderColor}">
-                                <GridView>
-                                    <GridViewColumn Header="Timestamp"
-                                                DisplayMemberBinding="{Binding Date}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Type"
-                                                DisplayMemberBinding="{Binding Type}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Manager"
-                                                DisplayMemberBinding="{Binding Manager}"
-                                                Width="auto"/>
-                                    <GridViewColumn Header="Log message"
-                                                DisplayMemberBinding="{Binding Content}"
-                                                Width="auto"/>
-                                </GridView>
-                            </ListView>
-                        </ScrollViewer>
-                    </Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                </Grid>
-                <Grid Name="GridValidationReport"
-                  Margin="0,20,20,0"
-                  Grid.Column="0"
-                  Grid.Row="1">
-                    <Grid Style="{DynamicResource ComponentControlBar}"
-                      Grid.Row="0">
-                        <TextBox Name="TextBoxValidationReportSearchBox"
-                             Grid.Column="0"
-                             Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Name="DockPanelValidationReportSearchButton"
-                           LastChildFill="False">
-                            <Button Name="ButtonValidationReportSearch"
-                                Style="{DynamicResource SearchButton}"
-                                DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"/>
-                            </Button>
-                        </DockPanel>
-                        <Button Name="ButtonValidationReportFilter"
-                            Grid.Column="1"
-                            Style="{StaticResource FilterButton}">
-                            <Image Source="Icons/Filter.png"/>
-                        </Button>
-                        <Button Name="ButtonValidationReportDetach"
-                        Click="DetachValidationReportButtonClick"
-                        Grid.Column="2"
-                        Style="{StaticResource DetachButton}">
-                            <Image Source="Icons/Detach.png"/>
-                        </Button>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                    <Grid Style="{DynamicResource ComponentSubWindow}"
-                      Grid.Row="1">
-                        <ListView x:Name="ListViewValidationReport"
-                          Grid.Column="0"
-                          ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                          AlternationCount="2"
-                          Background="{StaticResource CanvasColor}"
-                          Foreground="{StaticResource ForegroundColor}"
-                          BorderBrush="{StaticResource BorderColor}">
+
+                    <Grid Grid.Row="1">
+                        <ListView x:Name="listViewLogEntry"
+                                  ItemsSource="{Binding LogViewModel.Messages}"
+                                  Background="White"
+                                  Foreground="Black"
+                                  BorderBrush="{StaticResource BorderColor}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  MaxHeight="5000">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Manager name"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerName}"/>
-                                    <GridViewColumn Header="Validations OK"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ValidationsOk}"/>
-                                    <GridViewColumn Header="Status"
-                                            Width="auto"
-                                            DisplayMemberBinding="{Binding ManagerStatus}"/>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="Padding" Value="5,0,5,0"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Date"
+                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Type" 
+                                                    DisplayMemberBinding="{Binding Type}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Manager" 
+                                                    DisplayMemberBinding="{Binding ContextId}"
+                                                    Width="auto"/>
+                                    <GridViewColumn Header="Content" 
+                                                    Width="1000">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock TextWrapping="Wrap"
+                                                           Text="{Binding Content}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
                                 </GridView>
                             </ListView.View>
+
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Info">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                            <Setter Property="Background" Value="#FCE283"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error">
+                                            <Setter Property="Background" Value="#ED4F47"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                            <Setter Property="Background" Value="#CFCFCF"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                        </DataTrigger>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                            <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+
+                <Grid Name="gridValidationReport"
+                      DataContext="{Binding ValidationReportViewModel}"
+                      Margin="0,20,20,0"
+                      Grid.Column="0"
+                      Grid.Row="1">
+                    <Grid Grid.Row="0">
+                        <TextBox Name="textBoxValidationReportSearchBox"
+                                 Grid.Column="0"
+                                 Text="{Binding NameFilter,UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{DynamicResource SearchBox}"/>
+                        <DockPanel Name="dockpanelValidationReportSearchbutton"
+                                   LastChildFill="False">
+                            <Button Name="buttonValidationReportSearch"
+                                    Style="{DynamicResource SearchButton}"
+                                    Grid.Row="0"
+                                    DockPanel.Dock="Right">
+                                <Image Source="../Icons/magnifyingglass.png"
+                                       Margin="0,5,0,5"/>
+                            </Button>
+                        </DockPanel>
+
+                        <ToggleButton Grid.Column="1"
+                                      Margin="4 0 4 0"
+                                      Style="{DynamicResource DefaultToggleButton}"
+                                      IsChecked="{Binding ShowSuccessfulManagers}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Show all"/>
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <Button Style="{DynamicResource DefaultButton}"
+                                Margin="0 3 0 1"
+                                Grid.Column="2"
+                                Grid.Row="0">
+                            <Image Source="/Icons/Refresh.png"/>
+                        </Button>
+                        <Button Name="buttonValidationReportDetach"
+                                Click="DetachValidationReportButtonClick"
+                                Grid.Column="3"
+                                Style="{StaticResource DetachButton}">
+                            <Image Source="Icons/Detach.png"/>
+                        </Button>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+
+                    <Grid Grid.Row="1"
+                          x:Name="ValidationReportComponent">
+                        <ScrollViewer Grid.Row="1" 
+                                      Grid.ColumnSpan="3"
+                                      HorizontalScrollBarVisibility="Auto">
+                            <DataGrid ItemsSource="{Binding Data}"
+                                      x:Name="DataGridValidations"
+                                      PreviewMouseWheel="validationsDataGrid_PreviewMouseWheel"
+                                      AutoGenerateColumns="False"
+                                      ScrollViewer.CanContentScroll="False"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      CanUserResizeRows="False"
+                                      IsReadOnly="True"
+                                      CanUserReorderColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Manager"
+                                                        Binding="{Binding ManagerName}"
+                                                        Width="*"/>
+                                    <DataGridTemplateColumn Header="Score"
+                                                            SortMemberPath="Score"
+                                                            Width="85">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
+                                                           Width="26"/>
+                                                    <TextBlock Text="{Binding Score,StringFormat=N0}"
+                                                               Margin="5 0 0 0"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Disabled"
+                                                        Binding="{Binding DisabledCount}"
+                                                        Width="70"/>
+                                    <DataGridTextColumn Header="Failed"
+                                                        Binding="{Binding FailedCount}"
+                                                        Width="70"/>
+                                    <DataGridTextColumn Header="Total"
+                                                        Binding="{Binding TotalCount}"
+                                                        Width="70"/>
+                                </DataGrid.Columns>
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="WhiteSmoke"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="LightBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.RowDetailsTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical"
+                                                    Margin="10 5 10 20">
+                                            <StackPanel Orientation="Horizontal" 
+                                                        Margin="0 0 0 5">
+                                                <CheckBox Content="Show Failed" 
+                                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <CheckBox Content="Show Disabled" 
+                                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                                          Margin="10 0 0 0"/>
+                                                <CheckBox Content="Show Ok" 
+                                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                                          Margin="10 0 0 0"/>
+                                            </StackPanel>
+
+                                            <DataGrid ItemsSource="{Binding Tests}"
+                                                      GridLinesVisibility="None"
+                                                      IsReadOnly="True"
+                                                      MinHeight="56"
+                                                      AutoGenerateColumns="False"
+                                                      ScrollViewer.CanContentScroll="False"
+                                                      PreviewMouseWheel="DetailsDataGrid_PreviewMouseWheel"
+                                                      HeadersVisibility="Column"
+                                                      BorderBrush="{x:Null}"
+                                                      CanUserReorderColumns="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Date" 
+                                                                        Binding="{Binding Date,StringFormat=dd/MM HH:mm:ss}" 
+                                                                        Width="120">
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Toolkit"
+                                                                        Binding="{Binding ToolkitId}">
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Description" 
+                                                                        Binding="{Binding Name}" 
+                                                                        Width="450">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTemplateColumn Header="Status"
+                                                                            SortMemberPath="Status"
+                                                                            Width="125">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" 
+                                                                           Width="24" 
+                                                                           Margin="0 0 5 0"
+                                                                           VerticalAlignment="Top"/>
+                                                                    <TextBlock Text="{Binding Status}"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+
+                                                    <DataGridTextColumn Header="Source" 
+                                                                        Binding="{Binding SrcCount,TargetNullValue='N/A'}"
+                                                                        Width="80">
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Dest" 
+                                                                        Binding="{Binding DstCount,TargetNullValue='N/A'}"
+                                                                        Width="80">
+                                                    </DataGridTextColumn>
+                                                </DataGrid.Columns>
+
+                                                <DataGrid.RowStyle>
+                                                    <Style TargetType="DataGridRow">
+                                                        <Setter Property="ContextMenu" Value="{StaticResource ValidationTestContextMenu}"/>
+                                                        <Setter Property="ToolTip" Value="Right-click to copy SQL queries to the clipboard"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, 
+                                                                                         Path=DataContext.ShowOk}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Ok"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, 
+                                                                                         Path=DataContext.ShowDisabled}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Disabled"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},
+                                                                                         Path=DataContext.ShowFailed}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="Failed"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid},
+                                                                                         Path=DataContext.ShowFailed}" Value="False"/>
+                                                                    <Condition Binding="{Binding Status}" Value="FailMismatch"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </DataGrid.RowStyle>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGrid.RowDetailsTemplate>
+                            </DataGrid>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2" 
+                                    Margin="0 10 0 0"
+                                    VerticalAlignment="Center">
+                        <Image Source="/Icons/Fatal.png" 
+                               Width="20"/>
+                        <TextBlock Text="{Binding FailedCount,StringFormat='\{0\} Failed'}" 
+                                   Foreground="{DynamicResource validationReportErrorColor}" 
+                                   Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Warning.png" 
+                               Width="20"/>
+                        <TextBlock Text="{Binding DisabledCount,StringFormat='\{0\} Disabled'}" 
+                                   Foreground="{DynamicResource validationReportDisabledColor}" 
+                                   Margin="5 0 50 0"/>
+                        <Image Source="/Icons/Validation.png" Width="20"/>
+                        <TextBlock Text="{Binding OkCount,StringFormat='\{0\} OK'}" 
+                                   Foreground="LawnGreen" 
+                                   Margin="5 0 50 0"/>
+                        <TextBlock Text="{Binding TotalCount,StringFormat='\{0\} Total'}" 
+                                   Foreground="{DynamicResource validationReportNormalColor}" 
+                                   Margin="0 0 50 0"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right">
+                        <TextBlock Text="Last modified: "
+                                   Foreground="White"/>
+                        <TextBlock Text="{Binding LastModified,FallbackValue='N/A', StringFormat=dd/HH HH:mm:ss}"
+                                   Foreground="White"/>
+                    </StackPanel>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                </Grid>
+
                 <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
@@ -351,14 +709,15 @@
                                 Style="{StaticResource DetachButton}">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <Grid Style="{DynamicResource ComponentSubWindow}"
-                          Grid.Row="1">
+
+                    <Grid Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                                 BorderThickness="1">
                             <lvc:CartesianChart DataContext="{Binding LiveChartViewModel}"
@@ -372,20 +731,58 @@
                             </lvc:CartesianChart>
                         </Border>
                     </Grid>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                 </Grid>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
+            <Grid Name="WindowControlGrid"
+                  Grid.Column="5"
+                  Grid.Row="0"
+                  Margin="5,5,5,70">
+                <Button Name="ButtonMinimize" 
+                        Grid.Column="0" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="0"
+                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                <Button Name="ButtonMaximize" 
+                        Grid.Column="1" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="1"
+                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
+                <Button Name="ButtonRestore" 
+                        Grid.Column="1" 
+                        Style="{DynamicResource DefaultWindowButton}"
+                        Content="2"
+                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
+                        Visibility="Collapsed"/>
+                <Button Name="ButtonClose" 
+                        Grid.Column="2" 
+                        Content="r"
+                        Style="{DynamicResource CloseWindowButton}"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>

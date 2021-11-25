@@ -5,6 +5,8 @@
     <SolidColorBrush x:Key="ButtonForegroundColor" Color="White"/>
     <SolidColorBrush x:Key="ButtonBorderColor" Color="Transparent"/>
     <SolidColorBrush x:Key="ButtonOnHoverColor" Color="#2f3136"/>
+    <SolidColorBrush x:Key="ButtonWindowOnHoverColor" Color="#3F464D"/>
+    <SolidColorBrush x:Key="ButtonCloseOnHoverColor" Color="#E81119"/>
 
     <!-- Special buttons -->
     <Style x:Key="DetachButton" TargetType="Button">
@@ -20,6 +22,49 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="{DynamicResource ButtonOnHoverColor}" TargetName="Border" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background" Value="Transparent" TargetName="Border" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultWindowButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="Webdings"/>
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundColor}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ButtonWindowOnHoverColor}" TargetName="Border" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background" Value="Transparent" TargetName="Border" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CloseWindowButton" TargetType="Button" BasedOn="{StaticResource DefaultWindowButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ButtonCloseOnHoverColor}" TargetName="Border" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="False">
                             <Setter Property="Background" Value="Transparent" TargetName="Border" />

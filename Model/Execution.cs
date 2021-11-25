@@ -7,7 +7,7 @@
         {
             Id = id;
             StartTime = startTime;
-            Status = ExecutionStatus.FINISHED;
+            Status = ExecutionStatus.Finished;
         }
 
         //Probably won't ever get to use this. [ENGINE_PROPERTIES] does not include [EXECUTION_ID], but is constantly overwritten.
@@ -24,21 +24,30 @@
         #region Enums
         public enum ExecutionStatus
         {
-            STARTED, FINISHED
+            Started, Finished
         }
         #endregion
 
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
-        public DateTime StartTime { get; private set; } //From [CREATED] in [dbo].[EXECUTIONS].
-        public DateTime EndTime { get; private set; } //DateTime.Now when an execution is registered as done (from log?).
-        public TimeSpan Runtime { get; private set; } //EndTime.Subtract(StartTime)
+        public DateTime StartTime { get; } //From [CREATED] in [dbo].[EXECUTIONS].
+        public DateTime EndTime { get; set; } //DateTime.Now when an execution is registered as done (from log?).
+        public TimeSpan Runtime => EndTime.Subtract(StartTime).Duration(); //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
-        public ExecutionStatus Status { get; set; } //This one is obvious. Private set when better solution is found?
+        public ExecutionStatus Status { get; set; } //Status of the manager.
+        private readonly Dictionary<int, Manager> _contextIdDictionary = new();
         public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
         public ValidationReport ValidationReport { get; set; } = new();
         public Log Log { get; set; } = new();
         #endregion
+
+        public void SetUpDictionaries()
+        {
+            foreach (var manager in Managers)
+            {
+                _contextIdDictionary.Add(manager.ContextId, manager);
+            }
+        }
 
         public override string ToString()
         {

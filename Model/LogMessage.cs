@@ -1,11 +1,13 @@
-﻿namespace Model
+﻿using System.Text.RegularExpressions;
+
+namespace Model
 {
     public class LogMessage
     {
         #region Constructors
         public LogMessage(string content, LogMessageType type, int contextId, DateTime date)
         {
-            Content = content;
+            Content = Regex.Replace(content, @"(\[\d+;\d+m)|(\[\d+m)", "");
             Type = type;
             Date = date;
             ContextId = contextId;    
@@ -15,7 +17,7 @@
         #region Enums
         public enum LogMessageType : byte
         {
-            INFO, WARNING, ERROR, FATAL, VALIDATION
+            Info, Warning, Error, Fatal, Validation
         }
         #endregion Enums
 
@@ -24,7 +26,7 @@
         public string Content { get; } //From [LOG_MESSAGE] in [dbo].[LOGGING].
         public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
         public int ContextId { get; } //From [CONTEXT_ID] in [dbo].[LOGGING].
-        public Manager Manager { get; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
+        public Manager Manager { get; set; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
         #endregion Properties
 
         public override string ToString()

@@ -17,6 +17,14 @@ namespace DashboardBackend.Database.Models
         {
         }
 
+        public NetcompanyDbContext(string connString)
+            : this()
+        {
+            ConnectionString = connString;
+        }
+
+        public string ConnectionString { get; set; }
+
         public virtual DbSet<AfstemningEntry> Afstemnings { get; set; }
         public virtual DbSet<AuditFkError> AuditFkErrors { get; set; }
         public virtual DbSet<AuditLogerror> AuditLogerrors { get; set; }
@@ -28,7 +36,7 @@ namespace DashboardBackend.Database.Models
         public virtual DbSet<ExecutionEntry> Executions { get; set; }
         public virtual DbSet<HealthReportEntry> HealthReports { get; set; }
         public virtual DbSet<LoggingEntry> Loggings { get; set; }
-        public virtual DbSet<LoggingContext> LoggingContexts { get; set; }
+        public virtual DbSet<LoggingContextEntry> LoggingContexts { get; set; }
         public virtual DbSet<ManagerEntry> Managers { get; set; }
         public virtual DbSet<ManagerTracking> ManagerTrackings { get; set; }
         public virtual DbSet<MigrationFile> MigrationFiles { get; set; }
@@ -48,8 +56,8 @@ namespace DashboardBackend.Database.Models
             if (!optionsBuilder.IsConfigured)
             {
                 // Connection string should be added to a ConfigurationManager at a later date (keep it out of the source code)
-                string connectionString = ReadConnectionStringFromFile();
-                optionsBuilder.UseSqlServer(connectionString);
+                //string connectionString = ReadConnectionStringFromFile();
+                optionsBuilder.UseSqlServer(ConnectionString);
             }
         }
 
