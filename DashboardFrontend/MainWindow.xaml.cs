@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -26,7 +27,7 @@ namespace DashboardFrontend
             InitializeComponent();
             TryLoadUserSettings();
             
-            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(UserSettings, Log, listViewLogEntry, ValidationReport, DataGridValidations, LiveChartViewModel);
             DataContext = ViewModel;
         }
 
@@ -224,6 +225,11 @@ namespace DashboardFrontend
         {
             _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
             LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+        }
+
+        private void listViewLogEntry_MouseOverChanged(object sender, MouseEventArgs e)
+        {
+            ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
         }
     }
 }

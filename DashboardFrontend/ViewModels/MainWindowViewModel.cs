@@ -19,13 +19,13 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
+        public MainWindowViewModel(UserSettings userSettings, Log log, ListView logListView, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
         {
             _uiContext = SynchronizationContext.Current;
 
             _log = log;
             _validationReport = validationReport;
-            LogViewModel = new(log);
+            LogViewModel = new(log, logListView);
             ValidationReportViewModel = new(validationReport, validationsDataGrid);
             UserSettings = userSettings;
             LiveChartViewModel = liveChartViewModel;

@@ -7,20 +7,24 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel(Log log)
+        public LogViewModel(Log log, ListView logListView)
         {
             _log = log;
+            LogListView = logListView;
             UpdateData();
         }
 
+        public bool DoAutoScroll { get; set; } = true;
+
         private Log _log;
-        private ObservableCollection<LogMessage> _messages;
+        private ObservableCollection<LogMessage> _messages = new();
         public ObservableCollection<LogMessage> Messages 
         {
             get => _messages;
@@ -28,6 +32,11 @@ namespace DashboardFrontend.ViewModels
             { 
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
+
+                if (DoAutoScroll && LogListView.Items.Count > 0)
+                {
+                    LogListView.ScrollIntoView(LogListView.Items[LogListView.Items.Count - 1]);
+                }
             } 
         }
 
@@ -136,6 +145,9 @@ namespace DashboardFrontend.ViewModels
                 UpdateData();
             }
         }
+
+        public ListView LogListView { get; }
+
 
         /// <summary>
         /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed

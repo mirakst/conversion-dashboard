@@ -333,7 +333,10 @@
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  MaxHeight="5000">
+                                  MaxHeight="5000"
+                                  MouseEnter="listViewLogEntry_MouseOverChanged"
+                                  MouseLeave="listViewLogEntry_MouseOverChanged"
+                                  ScrollViewer.CanContentScroll="True">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel/>
@@ -373,7 +376,6 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="VerticalContentAlignment" Value="Top"/>
