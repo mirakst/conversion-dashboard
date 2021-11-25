@@ -9,16 +9,17 @@ namespace DashboardFrontend.DetachedWindows
         public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
         public LiveChartViewModel PerformanceChart { get; private set; }
         public LiveChartViewModel NetworkChart { get; private set; }
+        public LiveChartViewModel NetworkDeltaChart { get; private set; }
+        public LiveChartViewModel NetworkSpeedChart { get; private set; }
 
         public HealthReportDetached()
         {
             PerformanceChart = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
-            NetworkChart = new(NetworkViewModel.Series, NetworkViewModel.NetworkData, NetworkViewModel.XAxis, NetworkViewModel.YAxis);
+            NetworkChart = new(NetworkViewModel.NetworkSeries, NetworkViewModel.NetworkData, NetworkViewModel.XAxis, NetworkViewModel.YAxis);
+            NetworkDeltaChart = new(NetworkViewModel.NetworkDeltaSeries, NetworkViewModel.NetworkDelta, NetworkViewModel.XAxis, NetworkViewModel.YAxisDelta);
+            NetworkSpeedChart = new(NetworkViewModel.NetworkSpeedSeries, NetworkViewModel.NetworkSpeed, NetworkViewModel.XAxis, NetworkViewModel.YAxisSpeed);
 
             InitializeComponent();
-
-            PerformanceChart.StartGraph();
-            NetworkChart.StartGraph();
 
             DataContext = this;
         }
