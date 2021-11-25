@@ -224,7 +224,7 @@
                       Grid.Column="1" 
                       Grid.Row="0">
                     <Grid Grid.Row="0">
-                        <ToggleButton Name="toggleButtonLogInfo"
+                        <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
                                       IsChecked="{Binding LogViewModel.ShowInfo}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -272,7 +272,7 @@
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="5"/>
-                        <ToggleButton Name="toggleButtonLogFatal"
+                        <ToggleButton Name="ToggleButtonLogFatal"
                                       Grid.Column="6"
                                       IsChecked="{Binding LogViewModel.ShowFatal}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -288,7 +288,7 @@
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="7"/>
-                        <ToggleButton Name="toggleButtonLogValidation"
+                        <ToggleButton Name="ToggleButtonLogValidation"
                                       Grid.Column="8"
                                       IsChecked="{Binding LogViewModel.ShowValidation}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -301,7 +301,7 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Name="buttonLogFilter"
+                        <Button Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
@@ -330,12 +330,16 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <ListView x:Name="listViewLogEntry"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="29*"/>
+                            <ColumnDefinition Width="266*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListView x:Name="ListViewLogEntry"
                                   ItemsSource="{Binding LogViewModel.Messages}"
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
-                                  MaxHeight="5000">
+                                  MaxHeight="5000" Grid.ColumnSpan="2">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel/>
@@ -360,7 +364,7 @@
                                                     Width="auto"/>
                                     <GridViewColumn Header="Type" 
                                                     DisplayMemberBinding="{Binding Type}"
-                                                    Width="auto"/>
+                                                    Width="70"/>
                                     <GridViewColumn Header="Manager" 
                                                     DisplayMemberBinding="{Binding ContextId}"
                                                     Width="auto"/>
@@ -378,23 +382,73 @@
 
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="INFO"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                                     Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+
                                         <DataTrigger Binding="{Binding Type}" Value="Warning">
                                             <Setter Property="Background" Value="#FCE283"/>
                                         </DataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="WARNING"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                                     Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+
                                         <DataTrigger Binding="{Binding Type}" Value="Error">
                                             <Setter Property="Background" Value="#ED4F47"/>
                                         </DataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="ERROR"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                                     Path=DataContext.LogViewModel.ShowError}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+
                                         <DataTrigger Binding="{Binding Type}" Value="Fatal">
                                             <Setter Property="Background" Value="#CFCFCF"/>
                                         </DataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="FATAL"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                                     Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" 
+                                                    Value="Collapsed"/>
+                                        </MultiDataTrigger>
+
                                         <DataTrigger Binding="{Binding Type}" Value="Validation">
                                             <Setter Property="Background" Value="#FFFFFF"/>
                                         </DataTrigger>
+
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Type}" Value="VALIDATION"/>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
+                                                                     Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+
                                         <Trigger Property="Control.IsMouseOver" Value="True">
                                             <Setter Property="Control.Background" Value="Transparent" />
                                             <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
@@ -411,19 +465,19 @@
                     </Grid.RowDefinitions>
                 </Grid>
 
-                <Grid Name="gridValidationReport"
+                <Grid Name="GridValidationReport"
                       DataContext="{Binding ValidationReportViewModel}"
                       Margin="0,20,20,0"
                       Grid.Column="0"
                       Grid.Row="1">
                     <Grid Grid.Row="0">
-                        <TextBox Name="textBoxValidationReportSearchBox"
+                        <TextBox Name="TextBoxValidationReportSearchBox"
                                  Grid.Column="0"
                                  Text="{Binding NameFilter,UpdateSourceTrigger=PropertyChanged}"
                                  Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Name="dockpanelValidationReportSearchbutton"
+                        <DockPanel Name="DockpanelValidationReportSearchbutton"
                                    LastChildFill="False">
-                            <Button Name="buttonValidationReportSearch"
+                            <Button Name="ButtonValidationReportSearch"
                                     Style="{DynamicResource SearchButton}"
                                     Grid.Row="0"
                                     DockPanel.Dock="Right">
@@ -447,7 +501,7 @@
                                 Grid.Row="0">
                             <Image Source="/Icons/Refresh.png"/>
                         </Button>
-                        <Button Name="buttonValidationReportDetach"
+                        <Button Name="ButtonValidationReportDetach"
                                 Click="DetachValidationReportButtonClick"
                                 Grid.Column="3"
                                 Style="{StaticResource DetachButton}">
@@ -693,7 +747,7 @@
                       Grid.Row="1">
                     <Grid Style="{DynamicResource ComponentControlBar}"
                           Grid.Row="0">
-                        <ComboBox Name="comboBoxMaxView"
+                        <ComboBox Name="ComboBoxMaxView"
                                   Margin="0,0,0,0"
                                   VerticalAlignment="Center"
                                   Grid.Column="1"
@@ -722,11 +776,11 @@
                     <Grid Grid.Row="1">
                         <Border BorderBrush="{DynamicResource BorderColor}"
                                 BorderThickness="1">
-                            <lvc:CartesianChart DataContext="{Binding LiveChartViewModel}"
+                            <lvc:CartesianChart DataContext="{Binding LiveChartViewModel, Mode=OneTime}"
                                                 Series="{Binding Series}"
-                                                ZoomMode="X"
                                                 XAxes="{Binding XAxis}"
                                                 YAxes="{Binding YAxis}"
+                                                ZoomMode="X"
                                                 TooltipPosition="Top"
                                                 MouseLeave="CartesianChart_MouseLeave"
                                                 MouseEnter="CartesianChart_MouseEnter">

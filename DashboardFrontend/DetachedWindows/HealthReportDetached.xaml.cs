@@ -5,43 +5,36 @@ namespace DashboardFrontend.DetachedWindows
 {
     public partial class HealthReportDetached
     {
-        public NetworkChart NetworkChart { get; set; } = new();
-        public PerformanceChart PerformanceChart { get; private set; } = new();
-        public LiveChartViewModel PerformanceViewModel { get; private set; }
-        public LiveChartViewModel NetworkViewModel { get; private set; }
-
-        public HealthReportDetached()
+        public LiveChartViewModel Vm { get; set; }
+        public HealthReportDetached(LiveChartViewModel liveChartViewModel)
         {
-            PerformanceViewModel = new(PerformanceChart);
-            NetworkViewModel = new(NetworkChart);
-
+            Vm = liveChartViewModel;
             InitializeComponent();
-
-            DataContext = this;
         }
 
         private void ComboBoxPerformanceMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            _=int.TryParse(((FrameworkElement)ComboBoxPerformanceMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            PerformanceViewModel.ChangeMaxView(comboBoxItemValue);
-        }
-
-        private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            PerformanceViewModel.AutoFocusOn();
-            NetworkViewModel.AutoFocusOn();
-        }
-
-        private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            PerformanceViewModel.AutoFocusOff();
-            NetworkViewModel.AutoFocusOff();
+            /*_ =int.TryParse(((FrameworkElement)ComboBoxPerformanceMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            Vm.ChangeMaxView(comboBoxItemValue);*/
         }
 
         private void ComboBoxNetworkMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            _=int.TryParse(((FrameworkElement)ComboBoxNetworkMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            NetworkViewModel.ChangeMaxView(comboBoxItemValue);
+            /*_ = int.TryParse(((FrameworkElement)ComboBoxNetworkMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            _netVm.ChangeMaxView(comboBoxItemValue);*/
+        }
+
+        private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Vm.AutoFocusOn();
+            /*_netVm.AutoFocusOn();*/
+        }
+
+        private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Vm.AutoFocusOff();
+            /*_netVm.AutoFocusOff();*/
+
         }
     }
 }

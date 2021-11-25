@@ -12,9 +12,9 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
+            InitializeComponent();
             ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
-            InitializeComponent();
         }
 
 
@@ -56,18 +56,15 @@ namespace DashboardFrontend
         {
             ValidationReportDetached detachVR = new(ViewModel.ValidationReportViewModel);
             detachVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportDetach.IsEnabled = false;
+            ButtonValidationReportDetach.IsEnabled = false;
             detachVR.Show();
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHr = new();
-            
-
+            HealthReportDetached expandHr = new(ViewModel.LiveChartViewModel);
             ButtonHealthReportDetach.IsEnabled = false;
             expandHr.Closing += OnHealthWindowClosing;
-            
             expandHr.Show();
         }
 
@@ -89,7 +86,7 @@ namespace DashboardFrontend
 
         private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonValidationReportDetach.IsEnabled = true;
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
@@ -185,8 +182,8 @@ namespace DashboardFrontend
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+            /*_=int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            ViewModel.LiveChartViewModel.ChangeMaxView(comboBoxItemValue);*/
         }
     }
 }

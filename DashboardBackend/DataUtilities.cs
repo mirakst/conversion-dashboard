@@ -2,6 +2,7 @@
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using static Model.LogMessage;
 using static Model.ValidationTest;
 
@@ -263,7 +264,7 @@ namespace DashboardBackend
         {
             int executionId = (int)item.ExecutionId.Value;
             long reportNumValue = item.ReportNumericValue.Value;
-            double load = Convert.ToDouble(reportNumValue)/Convert.ToDouble(totalRam);
+            double load = 1 - Convert.ToDouble(reportNumValue)/Convert.ToDouble(totalRam);
             long available = item.ReportNumericValue.Value;
             DateTime logTime = item.LogTime.Value;
             RamLoad ramReading = new(executionId, load, available, logTime);
@@ -318,31 +319,42 @@ namespace DashboardBackend
         public static HealthReport BuildHealthReport()
         {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryHealthReport();
-            HealthReport result;
 
-            //INIT
-            string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
-            string monitorName = queryResult.FindLast(e => e.ReportKey == "Monitor Name")?.ReportStringValue;
+            try
+            {
+                //INIT
+                string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
+                string monitorName = queryResult.FindLast(e => e.ReportKey == "Monitor Name")?.ReportStringValue;
 
-            //CPU INIT
-            string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
-            int cpuCores = (int)queryResult.FindLast(e => e.ReportKey == "PhysicalCores").ReportNumericValue;
-            long cpuMaxFreq = (long)queryResult.FindLast(e => e.ReportKey == "CPU Max frequency").ReportNumericValue;
-            Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
+                //CPU INIT
+                string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
+                int cpuCores = (int) queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
+                long cpuMaxFreq =
+                    (long) queryResult.FindLast(e => e.ReportKey == "CPU Max frequency")?.ReportNumericValue;
+                Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
 
-            //MEMORY INIT
-            long ramTotal = (long)queryResult.FindLast(e => e.ReportKey == "TOTAL").ReportNumericValue;
-            Ram ram = new(ramTotal);
+                //MEMORY INIT
+                long ramTotal = (long) queryResult.FindLast(e => e.ReportKey == "TOTAL").ReportNumericValue;
+                Ram ram = new(ramTotal);
 
-            //NETWORK INIT
-            string networkName = queryResult.FindLast(e => e.ReportKey == "Interface 0: Name")?.ReportStringValue;
-            string networkMacAddress = queryResult.FindLast(e => e.ReportKey == "Interface 0: MAC address")?.ReportStringValue;
-            long networkSpeed = (long)queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed").ReportNumericValue;
-            Network network = new(networkName, networkMacAddress, networkSpeed);
+                //NETWORK INIT
+                string networkName = queryResult.FindLast(e => e.ReportKey == "Interface 0: Name")?.ReportStringValue;
+                string networkMacAddress = queryResult.FindLast(e => e.ReportKey == "Interface 0: MAC address")
+                    ?.ReportStringValue;
+                long networkSpeed =
+                    (long) queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed").ReportNumericValue;
+                Network network = new(networkName, networkMacAddress, networkSpeed);
 
-            result = new HealthReport(hostName, monitorName, cpu, network, ram);
+                HealthReport result = new(hostName, monitorName, cpu, network, ram);
+                result.IsInitialized = true;
 
-            return result;
+                return result;
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                Trace.WriteLine(ex.Message);
+            }
+            return new HealthReport(null, null, null, null, null);
         }
 
         /// <summary>

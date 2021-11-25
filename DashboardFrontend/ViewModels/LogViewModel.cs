@@ -1,5 +1,6 @@
 ﻿using Model;
 using System.Collections.ObjectModel;
+using DashboardBackend;
 using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
@@ -13,6 +14,7 @@ namespace DashboardFrontend.ViewModels
             set
             {
                 _messages = value;
+                UpdateCounters(Messages);
                 OnPropertyChanged(nameof(Messages));
             }
         }
@@ -124,7 +126,6 @@ namespace DashboardFrontend.ViewModels
         public void UpdateData(Log log)
         {
             Messages = new(log.Messages);
-            UpdateCounters(Messages);
         }
 
         /// <summary>

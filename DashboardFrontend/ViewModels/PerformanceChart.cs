@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -35,8 +36,9 @@ namespace DashboardFrontend.ViewModels
                     GeometryStroke = new SolidColorPaint(new SKColor(92, 84, 219)),
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss", new CultureInfo("en-US")) + "\n" +
                                                  e.PrimaryValue.ToString("P"),
+                    LineSmoothness = 0,
                 },
                 new LineSeries<ObservablePoint> 
                 {
@@ -47,8 +49,9 @@ namespace DashboardFrontend.ViewModels
                     GeometryStroke = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss", new CultureInfo("en-US")) + "\n" +
                                                  e.PrimaryValue.ToString("P"),
+                    LineSmoothness = 0,
                 }
             };
 
@@ -57,7 +60,7 @@ namespace DashboardFrontend.ViewModels
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm", new CultureInfo("en-US")),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),

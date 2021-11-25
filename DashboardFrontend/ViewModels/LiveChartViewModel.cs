@@ -4,6 +4,7 @@ using LiveChartsCore.SkiaSharpView;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Model;
@@ -20,16 +21,16 @@ namespace DashboardFrontend.ViewModels
         public List<ISeries> Series { get; private set; } = new();
         public List<Axis> XAxis { get; private set; } = new();
         public List<Axis> YAxis { get; private set; } = new();
+        public double? LastRamReading { get; private set; } = 0;
+        public double? LastCpuReading { get; private set; } = 0;
         #endregion
 
         #region private
-        private PeriodicTimer? queryTimer;
-        private int queryTimerInterval = 2;
-        private PeriodicTimer? autoFocusTimer;
-        private readonly Random random = new();
-        private bool isGraphRunning = false;
-        private bool isAutoFocusTimer = false;
-        private int maxView = 10;
+        private PeriodicTimer? _queryTimer;
+        private PeriodicTimer? _autoFocusTimer;
+        private bool _isGraphRunning = false;
+        private bool _isAutoFocusTimer = false;
+        private int _maxView = 10;
         #endregion
 
         /// <summary>
@@ -88,10 +89,10 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void StopGraph()
         {
-            if (isGraphRunning)
+            if (_isGraphRunning)
             {
-                queryTimer.Dispose();
-                isGraphRunning = false;
+                _queryTimer.Dispose();
+                _isGraphRunning = false;
             }
         }
 
@@ -100,14 +101,19 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void UpdateData(Ram ram, Cpu cpu)
         {
-            foreach (var item in ram.Readings)
+            LastRamReading = ram.Readings.Last()?.Load;
+            LastCpuReading = cpu.Readings.Last()?.Load;
+            foreach (var item in ram.Readings.Where(e => e.Date > ram.LastPlot))
             {
                 Values[0].Add(CreatePoint(item));       
             }
-            foreach (var item in cpu.Readings)
+            ram.LastPlot = ram.Readings.Last().Date;
+
+            foreach (var item in cpu.Readings.Where(e => e.Date > cpu.LastPlot))
             {
                 Values[1].Add(CreatePoint(item));
             }
+            cpu.LastPlot = cpu.Readings.Last().Date;
         }
 
         /// <summary>
@@ -124,8 +130,8 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void AutoFocusOff()
         {
-            autoFocusTimer?.Dispose();
-            isAutoFocusTimer = false;
+            _autoFocusTimer?.Dispose();
+            _isAutoFocusTimer = false;
         }
 
         /// <summary>
@@ -133,17 +139,17 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public async void AutoFocusOn()
         {
-            if (!isAutoFocusTimer)
+            if (!_isAutoFocusTimer)
             {
-                autoFocusTimer = new(TimeSpan.FromMilliseconds(100));
-                isAutoFocusTimer = true;
+                _autoFocusTimer = new(TimeSpan.FromMilliseconds(100));
+                _isAutoFocusTimer = true;
 
-                while (await autoFocusTimer.WaitForNextTickAsync())
+                while (await _autoFocusTimer.WaitForNextTickAsync())
                 {
                     if (Values.Count > 0 && Values.First().Count > 0)
                     {
-                        XAxis[0].MinLimit = Values.First().Count >= maxView ? Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(maxView).Ticks).ToOADate() :
-                                                                              Values.First().First().X.Value; /* skal ændres fra .FromMinutes til .FromMinutes*/
+                        XAxis[0].MinLimit = Values.First().Count >= _maxView ? Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() :
+                                                                              Values.First().First().X.Value;
                         XAxis[0].MaxLimit = Values.First().Last().X.Value;
                     }
                 }
@@ -158,7 +164,7 @@ namespace DashboardFrontend.ViewModels
         /// <param name="input"></param>
         public void ChangeMaxView(int input)
         {
-            maxView = input;
+            _maxView = input;
         }
 
         /// <summary>
@@ -189,16 +195,16 @@ namespace DashboardFrontend.ViewModels
                 line.GeometrySize = input;
             }
         }
-
+/*
         /// <summary>
         /// Change how often the query should run.
         /// </summary>
         /// <param name="input">The number of minutes between queryes.</param>
         public void ChangeQueryTimer(int input)
         {
-            queryTimerInterval = input;
+            _queryTimerInterval = input;
             StopGraph();
-        }
+        }*/
         #endregion
     }
 }

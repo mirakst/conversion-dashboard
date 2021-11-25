@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -66,8 +67,15 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport(DateTime timestamp)
         {
-            DU.AddHealthReportReadings(_healthReport, timestamp);
-            _uiContext?.Send(x => _vm.LiveChartViewModel.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+            if (_healthReport.IsInitialized)
+            {
+                DU.AddHealthReportReadings(_healthReport, timestamp);
+                _uiContext?.Send(x => _vm.LiveChartViewModel.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+            }
+            else
+            {
+                _healthReport = DU.BuildHealthReport();
+            }
         }
 
         /// <summary>
@@ -121,7 +129,6 @@ namespace DashboardFrontend
                     Task.Run(() => UpdateLog(_log.LastModified));
                     Task.Run(() => UpdateValidationReport(_validationReport.LastModified));
                     //Task.Run(() => QueryManagers());
-
                 }, null, 500, UserSettings.AllQueryInterval * 1000));
             }
             else
