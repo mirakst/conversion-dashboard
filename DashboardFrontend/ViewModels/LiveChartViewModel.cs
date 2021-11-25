@@ -82,7 +82,7 @@ namespace DashboardFrontend.ViewModels
         public void AddData(ISeries Line, ObservableCollection<ObservablePoint> data)
         {
             Values.Add(data);
-
+            
             Series.Add(Line);
             Series[Series.IndexOf(Line)].Values = Values[Series.IndexOf(Line)];
         }

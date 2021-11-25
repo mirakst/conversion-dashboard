@@ -77,10 +77,10 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Manager.Id}"
-                                            Width="30pt"/>
+                                            Width="25pt"/>
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Manager.Name}"
-                                            Width="10*"/>
+                                            Width="9*"/>
                         <DataGridTextColumn Header="Score" 
                                             Binding="{Binding Manager.Score}"
                                             Width="*"/>
@@ -95,6 +95,7 @@
                                             ToolTip="Add manager to detailed view"
                                             Content="g"
                                             FontFamily="wingdings 3"
+                                            Width="20pt"
                                             Tag="{Binding}"
                                             Style="{DynamicResource DefaultButton}">
                                     </Button>
@@ -124,27 +125,27 @@
                                       BorderBrush="{DynamicResource BorderColor}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding Id}"
-                                                        Width="30pt"/>
+                                                        Binding="{Binding Manager.Id}"
+                                                        Width="25pt"/>
                                     <DataGridTextColumn Header="Execution #"
-                                                        Binding="{Binding ExecutionId}"
-                                                        Width="2*"/>
+                                                        Binding="{Binding Manager.ExecutionId}"
+                                                        Width="60pt"/>
                                     <!-- run # missing in manager class-->
                                     <DataGridTextColumn Header="Start time"
-                                                        Binding="{Binding StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="End time"
-                                                        Binding="{Binding EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Est. runtime"
-                                                        Binding="{Binding Runtime}"
+                                                        Binding="{Binding Manager.Runtime}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
-                                                        Binding="{Binding RowsRead}"
-                                                        Width="2*"/>
+                                                        Binding="{Binding Manager.RowsRead}"
+                                                        Width="1.5*"/>
                                     <DataGridTextColumn Header="Rows written"
-                                                        Binding="{Binding RowsWritten}"
-                                                        Width="2*"/>
+                                                        Binding="{Binding Manager.RowsWritten}"
+                                                        Width="1.5*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -153,6 +154,7 @@
                                                         ToolTip="Remove manager from detailed view"
                                                         Content='f'
                                                         FontFamily="wingdings 3"
+                                                        Width="20pt"
                                                         Tag="{Binding}"
                                                         Style="{DynamicResource DefaultButton}"/>
                                             </DataTemplate>
@@ -308,6 +310,7 @@
                                                         Click="RemoveManager_Click"
                                                         ToolTip="Remove manager from detailed view"
                                                         Content='f'
+                                                        Width="20pt"
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
                                                         Style="{DynamicResource DefaultButton}"/>

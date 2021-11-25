@@ -16,7 +16,7 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
                 <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
-                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontSize" Value="14"/>
                 <Style.Triggers>
                     <Trigger Property="IsSelected" Value="True">
                         <Setter Property="Background" Value="{DynamicResource TabItem.Selected.Background}"/>

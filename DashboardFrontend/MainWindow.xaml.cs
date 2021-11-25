@@ -59,7 +59,7 @@ namespace DashboardInterface
         {
             ManagerListDetached expandmanager = new();
             ButtonManagerDetach.IsEnabled = false;
-            expandmanager.Closing += OnHealthWindowClosing;
+            expandmanager.Closing += OnManagerWindowClosing;
             expandmanager.Show();
         }
 

@@ -1,19 +1,11 @@
 ﻿using DashboardBackend;
 using DashboardBackend.Database;
 using DashboardFrontend.ViewModels;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Painting;
 using Model;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -22,30 +14,11 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
-        #region Performance objects
-        public ManagerPerformanceViewModel CPUPerformance { get; private set; } = new("load");
-        public ManagerPerformanceViewModel RAMPerformance { get; private set; } = new("load");
-        public ManagerPerformanceViewModel ReadPerformance { get; private set; } = new("Rows");
-        public ManagerPerformanceViewModel WrittenPerformance { get; private set; } = new("Rows");
-        public List<ManagerPerformanceViewModel> DataCollections { get; private set; } = new();
-        #endregion
-
-        #region Chart objects
-        public LiveChartViewModel CPUChart { get; private set; }
-        public LiveChartViewModel RAMChart { get; private set; }
-        public LiveChartViewModel ReadChart { get; private set; }
-        public LiveChartViewModel WrittenChart { get; private set; }
-        public List<LiveChartViewModel> Charts { get; private set; } = new();
-        #endregion
+        public ManagerChartViewModel ManagerCharts { get; private set; }
 
         public ManagerListDetached()
         {
-            #region Charts
-            CPUChart = new(CPUPerformance.Series, CPUPerformance.ManagerData, CPUPerformance.XAxis, CPUPerformance.YAxis);
-            RAMChart = new(RAMPerformance.Series, RAMPerformance.ManagerData, RAMPerformance.XAxis, RAMPerformance.YAxis);
-            ReadChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
-            WrittenChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
-            #endregion
+            ManagerCharts = new();
 
             InitializeComponent();
 
@@ -55,21 +28,14 @@ namespace DashboardFrontend.DetachedWindows
             conv.ActiveExecution.Managers = DataUtilities.GetManagers();                                                                
             conv.HealthReport = DataUtilities.BuildHealthReport();                                                                      
             DataUtilities.AddHealthReportReadings(conv.HealthReport);                                                                   // To here
-            
-            
-            
-            Random random = new(5);                                                                                                     
-            foreach (Manager manager in conv.ActiveExecution.Managers)                                                                  
+
+            Random random = new(5);
+            foreach (Manager manager in conv.ActiveExecution.Managers)
             {
                 manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now));    // Also delete this
                 var wrapper = new ManagerWrapper(manager);
                 datagridManagers.Items.Add(wrapper);
             }
-
-            #region Lists
-            Charts = new List<LiveChartViewModel> { CPUChart, RAMChart, ReadChart, WrittenChart };
-            DataCollections = new List<ManagerPerformanceViewModel> { CPUPerformance, RAMPerformance, ReadPerformance, WrittenPerformance };
-            #endregion
 
             DataContext = this;
         }
@@ -101,6 +67,8 @@ namespace DashboardFrontend.DetachedWindows
 
             if (datagridManagerDetails.SelectedItems.Count > 1 || datagridManagerCharts.SelectedItems.Count > 1)
             {
+
+
                 foreach (ManagerWrapper manager in TabInfo.IsSelected == true ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
                 {
                     managers.Add(manager);
@@ -143,67 +111,29 @@ namespace DashboardFrontend.DetachedWindows
             switch (method)
             {
                 case "Add" when manager is not null:
-                    datagridManagerDetails.Items.Add(manager.Manager);
+                    datagridManagerDetails.Items.Add(manager);
                     datagridManagerCharts.Items.Add(manager);
-                    AddChartLinesHelper(manager);
+                    ManagerCharts.AddChartLinesHelper(manager);
+                    DataContext = ManagerCharts;
                     break;
 
                 case "Remove" when manager is not null:
                     datagridManagerDetails.Items.Remove(manager);
                     datagridManagerCharts.Items.Remove(manager);
-                    RemoveChartLinesHelper(manager);
+                    ManagerCharts.RemoveChartLinesHelper(manager);
                     break;
 
                 case "Clear":
                     datagridManagerDetails.Items.Clear();
                     datagridManagerCharts.Items.Clear();
-                    ClearChartLinesHelper();
+                    ManagerCharts.ClearChartLinesHelper();
                     break;
-            }
-        }
-
-        public void AddChartLinesHelper(ManagerWrapper manager)
-        {
-            foreach (LiveChartViewModel chart in Charts)
-            {
-                var managerValues = new ObservableCollection<ObservablePoint>();
-
-                chart.AddData(new LineSeries<ObservablePoint>
-                {
-                    Name = $"{manager.Manager.Name.Split(".").Last()}",
-                    Fill = null,
-                    Stroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString()), 3),
-                    GeometryFill = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
-                    GeometryStroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
-                    GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => manager.Manager.Name.Split(".").Last() + "\n" +
-                                                 "ID: " + manager.Manager.Id + " Execution " + manager.Manager.ExecutionId + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
-                }, managerValues);
-            }
-        }
-
-        public void RemoveChartLinesHelper(ManagerWrapper manager)
-        {
-            foreach (LiveChartViewModel chart in Charts)
-            {
-                var managerValues = new ObservableCollection<ObservablePoint>();
-                chart.RemoveData(manager.Manager.Name, managerValues);
-            }
-        }
-
-        public void ClearChartLinesHelper()
-        {
-            foreach (LiveChartViewModel chart in Charts)
-            {
-                chart.Series.Clear();
             }
         }
 
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            foreach (LiveChartViewModel chart in Charts)
+            foreach (LiveChartViewModel chart in ManagerCharts.Charts)
             {
                 chart.AutoFocusOn();
             }
@@ -211,7 +141,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            foreach (LiveChartViewModel chart in Charts)
+            foreach (LiveChartViewModel chart in ManagerCharts.Charts)
             {
                 chart.AutoFocusOff();
             }
