@@ -223,7 +223,8 @@
                       Margin="20,0,0,20"
                       Grid.Column="1" 
                       Grid.Row="0">
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="0"
+                          Margin="-4, 0, 0, 0">
                         <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
                                       IsChecked="{Binding LogViewModel.ShowInfo}"
@@ -487,7 +488,7 @@
                         </DockPanel>
 
                         <ToggleButton Grid.Column="1"
-                                      Margin="4 0 4 0"
+                                      Margin="4 2 4 3"
                                       Style="{DynamicResource DefaultToggleButton}"
                                       IsChecked="{Binding ShowSuccessfulManagers}">
                             <StackPanel Orientation="Horizontal">
@@ -496,7 +497,7 @@
                         </ToggleButton>
 
                         <Button Style="{DynamicResource DefaultButton}"
-                                Margin="0 3 0 1"
+                                Margin="0,2,0,3"
                                 Grid.Column="2"
                                 Grid.Row="0">
                             <Image Source="/Icons/Refresh.png"/>
@@ -504,7 +505,8 @@
                         <Button Name="ButtonValidationReportDetach"
                                 Click="DetachValidationReportButtonClick"
                                 Grid.Column="3"
-                                Style="{StaticResource DetachButton}">
+                                Style="{StaticResource DetachButton}"
+                                Margin="0,0,0,1">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
 
@@ -745,53 +747,17 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
-                    <Grid Style="{DynamicResource ComponentControlBar}"
-                          Grid.Row="0">
-                        <ComboBox Name="ComboBoxMaxView"
-                                  Margin="0,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Grid.Column="1"
-                                  SelectionChanged="ComboBox_SelectionChanged">
-                            <ComboBoxItem Content="30 Min" Tag="30"/>
-                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                            <ComboBoxItem Content="2 Hours" Tag="120"/>
-                            <ComboBoxItem Content="6 Hours" Tag="360"/>
-                            <ComboBoxItem Content="12 Hours" Tag="720"/>
-                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                        </ComboBox>
-                        <Button Name="ButtonHealthReportDetach"
-                                Click="DetachHealthReportButtonClick"
-                                Grid.Column="2"
-                                Style="{StaticResource DetachButton}">
-                            <Image Source="Icons/Detach.png"/>
-                        </Button>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-
-                    <Grid Grid.Row="1">
-                        <!--<Border BorderBrush="{DynamicResource BorderColor}"
-                                BorderThickness="1">
-                            <lvc:CartesianChart DataContext="{Binding LiveChartViewModel, Mode=OneTime}"
-                                                Series="{Binding Series}"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
-                        </Border>-->
+                    <Grid Grid.Row="1"
+                          Margin="0,-7,0,0">
                         <TabControl Background="{DynamicResource BackgroundColor}"
                         BorderBrush="{DynamicResource BorderColor}"
-                        DataContext="{Binding HealthReportViewModel.SystemLoadChart}">
+                        DataContext="{Binding HealthReportViewModel.SystemLoadChart}"
+                        Grid.ColumnSpan="2">
                             <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                      Name="TabItemCpuRam"
-                                     Header="CPU &amp; RAM">
+                                     Header="CPU &amp; RAM"
+                                     FontSize="16"
+                                     Margin="-2,0,0,0">
                                 <Border Margin="10">
                                     <Grid>
                                         <TextBlock Name="TextBlockCurrentCpuLoad"
@@ -812,18 +778,6 @@
                                                    Grid.Column="1"
                                                    Grid.Row="0"
                                                    Margin="5,0,0,5"/>
-                                        <ComboBox Name="ComboBoxPerformanceMaxView"
-                                  Margin="0,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Grid.Column="3">
-                                        <!--SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">-->
-                                            <ComboBoxItem Content="30 Min" Tag="30"/>
-                                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                            <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                            <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                            <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                                        </ComboBox>
                                         <lvc:CartesianChart
                                                 Series="{Binding Series}"
                                                 XAxes="{Binding XAxis}"
@@ -853,7 +807,8 @@
 
                             <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemNetwork"
-                         Header="Network">
+                         Header="Network"
+                         FontSize="16">
                                 <Border Margin="10">
                                     <Grid>
                                         <Border BorderBrush="{DynamicResource BorderColor}"
@@ -904,24 +859,10 @@
                                                 </Grid.ColumnDefinitions>
                                             </Grid>
                                         </Border>
-                                        <ComboBox Name="ComboBoxNetworkMaxView"
-                                      MaxWidth="70"
-                                      HorizontalAlignment="Right"
-                                      Margin="0,0,0,0"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="1">
-                                      <!--SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">-->
-                                      <ComboBoxItem Content="30 Min" Tag="30"/>
-                                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                            <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                            <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                            <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                                        </ComboBox>
                                         <Border BorderBrush="{DynamicResource BorderColor}"
-                                    BorderThickness="1"
-                                    Grid.Column="1"
-                                    Grid.Row="1">
+                                                BorderThickness="1"
+                                                Grid.Column="1"
+                                                Grid.Row="1">
                                             <!--<lvc:CartesianChart Series="{Binding Series}"
                                                     XAxes="{Binding XAxis}"
                                                     YAxes="{Binding YAxis}"
@@ -944,6 +885,38 @@
                                 </Border>
                             </TabItem>
                         </TabControl>
+                        <Grid
+                              VerticalAlignment="Top"
+                              Grid.Column="1"
+                              Margin="0,-5,0,0">
+                            <ComboBox Name="ComboBoxMaxView"
+                                      VerticalAlignment="Center"
+                                      Grid.Column="1"
+                                      SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                            </ComboBox>
+                            <Button Name="ButtonHealthReportDetach"
+                                    Click="DetachHealthReportButtonClick"
+                                    Grid.Column="2"
+                                    Style="{StaticResource DetachButton}">
+                                <Image Source="Icons/Detach.png"/>
+                            </Button>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
                     </Grid>
 
                     <Grid.RowDefinitions>

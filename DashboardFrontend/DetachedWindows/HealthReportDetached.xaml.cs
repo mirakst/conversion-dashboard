@@ -12,28 +12,23 @@ namespace DashboardFrontend.DetachedWindows
             InitializeComponent();
         }
 
-        private void ComboBoxPerformanceMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBoxMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            /*_ =int.TryParse(((FrameworkElement)ComboBoxPerformanceMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            Vm.ChangeMaxView(comboBoxItemValue);*/
-        }
-
-        private void ComboBoxNetworkMaxView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            /*_ = int.TryParse(((FrameworkElement)ComboBoxNetworkMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            _netVm.ChangeMaxView(comboBoxItemValue);*/
+            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            Vm.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            Vm.NetworkUsageChart.ChangeMaxView(comboBoxItemValue);
         }
 
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Vm.SystemLoadChart.AutoFocusOn();
-            /*_netVm.AutoFocusOn();*/
+            Vm.NetworkUsageChart.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Vm.SystemLoadChart.AutoFocusOff();
-            /*_netVm.AutoFocusOff();*/
+            Vm.NetworkUsageChart.AutoFocusOff();
 
         }
     }

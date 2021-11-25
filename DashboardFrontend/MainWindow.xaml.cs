@@ -13,9 +13,9 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
-            InitializeComponent();
             ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
+            InitializeComponent();
         }
 
 
@@ -179,8 +179,9 @@ namespace DashboardFrontend
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*_=int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.DataChart.ChangeMaxView(comboBoxItemValue);*/
+            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkUsageChart.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

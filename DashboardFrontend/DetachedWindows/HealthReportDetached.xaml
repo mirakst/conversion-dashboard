@@ -11,13 +11,15 @@
         Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Border Background="{DynamicResource BackgroundColor}">
-        <Grid>
+        <Grid Margin="10">
             <TabControl Background="{DynamicResource BackgroundColor}"
                         BorderBrush="{DynamicResource BorderColor}"
-                        >
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="2">
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemCpuRam"
-                         Header="CPU &amp; RAM">
+                         Header="CPU &amp; RAM"
+                         FontSize="16">
                     <Border Margin="10">
                         <Grid>
                             <TextBlock Name="TextBlockCurrentCpuLoad"
@@ -38,18 +40,6 @@
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <ComboBox Name="ComboBoxPerformanceMaxView"
-                                  Margin="0,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Grid.Column="3"
-                                  SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">
-                                <ComboBoxItem Content="30 Min" Tag="30"/>
-                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                            </ComboBox>
                             <lvc:CartesianChart DataContext="{Binding Vm.SystemLoadChart}"
                                                 Series="{Binding Series}"
                                                 XAxes="{Binding XAxis}"
@@ -79,7 +69,8 @@
                 
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemNetwork"
-                         Header="Network">
+                         Header="Network"
+                         FontSize="16">
                     <Border Margin="10">
                         <Grid>
                             <Border BorderBrush="{DynamicResource BorderColor}"
@@ -130,20 +121,6 @@
                                     </Grid.ColumnDefinitions>
                                 </Grid>
                             </Border>
-                            <ComboBox Name="ComboBoxNetworkMaxView"
-                                      MaxWidth="70"
-                                      HorizontalAlignment="Right"
-                                      Margin="0,0,0,0"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="1"
-                                      SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">
-                                <ComboBoxItem Content="30 Min" Tag="30"/>
-                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                            </ComboBox>
                             <Border BorderBrush="{DynamicResource BorderColor}"
                                     BorderThickness="1"
                                     Grid.Column="1"
@@ -170,6 +147,26 @@
                     </Border>
                 </TabItem>
             </TabControl>
+            <ComboBox Name="ComboBoxMaxView"
+                      Margin="0,0,0,5"
+                      VerticalAlignment="Center"
+                      Grid.Column="1"
+                      SelectionChanged="ComboBoxMaxView_SelectionChanged">
+                <ComboBoxItem Content="30 Min" Tag="30"/>
+                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+            </ComboBox>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
         </Grid>
     </Border>
 </Window>

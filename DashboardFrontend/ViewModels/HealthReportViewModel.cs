@@ -14,7 +14,7 @@ namespace DashboardFrontend.ViewModels
             SystemLoadChart = new DataChart(new PerformanceChart(), hr.Cpu, hr.Ram);
         }
         public DataChart SystemLoadChart { get; set; }
-        /*public DataChart NetworkUsageChart { get; set; } = new DataChart(new NetworkChart());*/
+        public DataChart NetworkUsageChart { get; set; } = new DataChart(new NetworkChart(), null, null);
         public DataChart ManagerChart { get; set; }
     }
 }
