@@ -76,16 +76,16 @@
                           BorderBrush="{DynamicResource BorderColor}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding Id}"
+                                            Binding="{Binding Manager.Id}"
                                             Width="30pt"/>
                         <DataGridTextColumn Header="Manager name" 
-                                            Binding="{Binding Name}"
+                                            Binding="{Binding Manager.Name}"
                                             Width="10*"/>
                         <DataGridTextColumn Header="Score" 
-                                            Binding="{Binding Score}"
+                                            Binding="{Binding Manager.Score}"
                                             Width="*"/>
                         <DataGridTextColumn Header="Status" 
-                                            Binding="{Binding Status}"
+                                            Binding="{Binding Manager.Status}"
                                             Width="*"/>
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.CellTemplate>
@@ -290,15 +290,15 @@
                                             <DataTemplate>
                                                 <Rectangle Height="auto"
                                                            Width="auto"
-                                                           Fill="{Binding lineColor}">
+                                                           Fill="{Binding LineColor}">
                                                 </Rectangle>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding manager.Id, FallbackValue='N/A'}"
+                                    <DataGridTextColumn Binding="{Binding Manager.Id, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
-                                    <DataGridTextColumn Binding="{Binding manager.ExecutionId}"
+                                    <DataGridTextColumn Binding="{Binding Manager.ExecutionId}"
                                                         Header="Exec ID"
                                                         Width="*"/>
                                     <DataGridTemplateColumn>
