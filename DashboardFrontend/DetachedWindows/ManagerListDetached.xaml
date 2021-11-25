@@ -1,5 +1,4 @@
 ﻿<Window
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -289,19 +288,17 @@
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Rectangle Name="lineColor"
-                                                           Height="auto"
+                                                <Rectangle Height="auto"
                                                            Width="auto"
-                                                           Stroke="White"
-                                                           Fill="{Binding Colors, ElementName=chartWritten}">
+                                                           Fill="{Binding lineColor}">
                                                 </Rectangle>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding Id}"
+                                    <DataGridTextColumn Binding="{Binding manager.Id, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
-                                    <DataGridTextColumn Binding="{Binding ExecutionId}"
+                                    <DataGridTextColumn Binding="{Binding manager.ExecutionId}"
                                                         Header="Exec ID"
                                                         Width="*"/>
                                     <DataGridTemplateColumn>

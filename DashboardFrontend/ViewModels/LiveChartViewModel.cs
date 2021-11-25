@@ -74,6 +74,11 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Adds a line to the chart and assigns a list of values to this line
+        /// </summary>
+        /// The line to be added <param name="Line"></param>
+        /// The associated data to the line <param name="data"></param>
         public void AddData(ISeries Line, ObservableCollection<ObservablePoint> data)
         {
             Values.Add(data);
@@ -82,6 +87,11 @@ namespace DashboardFrontend.ViewModels
             Series[Series.IndexOf(Line)].Values = Values[Series.IndexOf(Line)];
         }
 
+        /// <summary>
+        /// Removes a line from the chart but keeps its data in storage
+        /// </summary>
+        /// The line to be removed <param name="dataName"></param>
+        /// The data associated with the line <param name="data"></param>
         public void RemoveData(String dataName, ObservableCollection<ObservablePoint> data)
         {
             Values.Remove(data);

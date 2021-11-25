@@ -9,11 +9,11 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -51,18 +51,19 @@ namespace DashboardFrontend.DetachedWindows
             InitializeComponent();
 
             DataUtilities.DatabaseHandler = new SqlDatabase();                                                                          // Remove later once the Start monitoring functions has been made
-            Conversion conv = new();                                                                                                    //
-            conv.Executions = DataUtilities.GetExecutions();                                                                            //
-            conv.ActiveExecution.Managers = DataUtilities.GetManagers();                                                                //
-            conv.HealthReport = DataUtilities.BuildHealthReport();                                                                      //
-            DataUtilities.AddHealthReportReadings(conv.HealthReport);                                                                   //
-                                                                                                                                        //
-            Random random = new(5);                                                                                                     //
-            foreach (Manager manager in conv.ActiveExecution.Managers)                                                                  //
-            {                                                                                                                           //
-                manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now));    //
-                datagridManagers.Items.Add(manager);                                                                                    //
-            }                                                                                                                           //
+            Conversion conv = new();                                                                                                    
+            conv.Executions = DataUtilities.GetExecutions();                                                                            
+            conv.ActiveExecution.Managers = DataUtilities.GetManagers();                                                                
+            conv.HealthReport = DataUtilities.BuildHealthReport();                                                                      
+            DataUtilities.AddHealthReportReadings(conv.HealthReport);                                                                   // To here
+                                                                                                                                        
+            Random random = new(5);                                                                                                     
+            foreach (Manager manager in conv.ActiveExecution.Managers)                                                                  
+            {
+                manager.Readings.Add(new ManagerUsage(random.Next() % 100, random.Next() % 100, random.Next() % 100, DateTime.Now));    // Also delete this
+                
+                datagridManagers.Items.Add(manager);                                                                                    
+            }                                                                                                                           
 
             #region Lists
             Charts = new List<LiveChartViewModel> { CPUChart, RAMChart, ReadChart, WrittenChart };
@@ -142,7 +143,7 @@ namespace DashboardFrontend.DetachedWindows
             {
                 case "Add":
                     datagridManagerDetails.Items.Add(manager);
-                    datagridManagerCharts.Items.Add(manager);
+                    datagridManagerCharts.Items.Add(new ManagerWrapper(manager));
                     AddChartLinesHelper(manager);
                     break;
 
@@ -162,10 +163,7 @@ namespace DashboardFrontend.DetachedWindows
 
         public void AddChartLinesHelper(Manager manager)
         {
-            Random rand = new();
-            int r = rand.Next(255);
-            int g = rand.Next(255);
-            int b = rand.Next(255);
+            ManagerWrapper wrappedManager = new(manager);
 
             foreach (LiveChartViewModel chart in Charts)
             {
@@ -173,13 +171,14 @@ namespace DashboardFrontend.DetachedWindows
 
                 chart.AddData(new LineSeries<ObservablePoint>
                 {
-                    Name = $"{manager.Name.Split(".").Last()}",
+                    Name = $"{wrappedManager.manager.Name.Split(".").Last()}",
                     Fill = null,
-                    Stroke = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b), 3),
-                    GeometryFill = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b)),
-                    GeometryStroke = new SolidColorPaint(new SKColor((byte)r, (byte)g, (byte)b)),
+                    Stroke = new SolidColorPaint(new SKColor(wrappedManager.R, wrappedManager.G, wrappedManager.B), 3),
+                    GeometryFill = new SolidColorPaint(new SKColor(wrappedManager.R, wrappedManager.G, wrappedManager.B)),
+                    GeometryStroke = new SolidColorPaint(new SKColor(wrappedManager.R, wrappedManager.G, wrappedManager.B)),
                     GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => manager.Name.Split(".").Last() + ": Execution " + manager.ExecutionId + "\n" +
+                    TooltipLabelFormatter = e => manager.Name.Split(".").Last() + "\n" +
+                                                 "ID: " + manager.Id + " Execution " + manager.ExecutionId + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
                                                  e.PrimaryValue.ToString("P"),
                 }, managerValues);
