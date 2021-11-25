@@ -1,32 +1,20 @@
-﻿using DashboardBackend;
-using Model;
-using System;
-using System.Collections.Generic;
+﻿using Model;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel()
-        {
-            _messages = new();
-        }
-
-        private ObservableCollection<LogMessage> _messages;
-        public ObservableCollection<LogMessage> Messages 
+        private ObservableCollection<LogMessage> _messages = new();
+        public ObservableCollection<LogMessage> Messages
         {
             get => _messages;
-            set 
-            { 
+            set
+            {
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
-            } 
+            }
         }
 
         private int _infoCount;
@@ -87,7 +75,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
-                UpdateData();
             }
         }
         private bool _showWarn = true;
@@ -98,7 +85,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
-                UpdateData();
             }
         }
         private bool _showError = true;
@@ -109,7 +95,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showError = value;
                 OnPropertyChanged(nameof(ShowError));
-                UpdateData();
             }
         }
         private bool _showFatal = true;
@@ -120,7 +105,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
-                UpdateData();
             }
         }
         private bool _showValidation = true;
@@ -131,7 +115,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showValidation = value;
                 OnPropertyChanged(nameof(ShowValidation));
-                UpdateData();
             }
         }
 
@@ -155,7 +138,8 @@ namespace DashboardFrontend.ViewModels
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
-            foreach(var msg in log)
+            foreach (var msg in log)
+            {
                 switch (msg.Type)
                 {
                     case LogMessageType.Info:

@@ -49,11 +49,14 @@
                            FontSize="14"
                            MinWidth="200"
                            TextAlignment="Center"
-                           Margin="0, 5, 0, 0"
-                           Foreground="{DynamicResource ForegroundColor}"
-                           Text="Conversion Dashboard"/>
+                           Margin="0, 8, 0, 0"
+                           Foreground="{DynamicResource ForegroundColor}">
+                    <TextBlock.Inlines>
+                        <Run FontWeight="Bold" FontSize="14" Text="Conversion Dashboard" />
+                    </TextBlock.Inlines>
+                </TextBlock>
                 <Grid Name="GridControlPanel"
-                      Margin="20,20,20,0"
+                      Margin="20,35,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
                         Click="ButtonStartStopClick"

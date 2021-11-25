@@ -1,11 +1,6 @@
-using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.Settings;
-using DashboardBackend;
-using DashboardBackend.Database;
 using Model;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,8 +12,6 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
-            DataUtilities.DatabaseHandler = new SqlDatabase();
-            TryLoadUserSettings();
             ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
             InitializeComponent();
@@ -26,42 +19,16 @@ namespace DashboardFrontend
 
 
         public MainWindowViewModel ViewModel { get; }
-        private UserSettings UserSettings { get; } = new();
 
-        private void TryLoadUserSettings()
-        {
-            try
-            {
-                UserSettings.LoadFromFile();
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                // Configuration file was not found, possibly first time setup
-            }
-            catch (System.Text.Json.JsonException ex)
-            {
-                DisplayGeneralError("Failed to parse contents of UserSettings.json", ex);
-            }
-            catch (System.IO.IOException ex)
-            {
-                DisplayGeneralError("An unexpected problem occured while loading user settings", ex);
-            }
-        }
-
-        private void DisplayGeneralError(string message, Exception ex)
-        {
-            MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
-        }
-        
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.OnStartPressed();
+            ViewModel.Controller.OnStartPressed();
         }
 
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new(UserSettings);
+            SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
             //settingsWindow.Closing += OnSettingsWindowClosing;
             //settingsWindow.IsEnabled = false;
             //settingsWindow.Owner = Application.Current.MainWindow;
@@ -168,6 +135,7 @@ namespace DashboardFrontend
             }
         }
 
+        //Window handlling events
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -201,6 +169,8 @@ namespace DashboardFrontend
         {
             this.DragMove();
         }
+
+        //Performance events
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {

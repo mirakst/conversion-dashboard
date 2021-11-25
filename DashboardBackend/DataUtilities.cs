@@ -227,9 +227,10 @@ namespace DashboardBackend
             }
             netRes = BuildNetworkUsage(networkEntries);
 
-            hr.Cpu.Readings.AddRange(cpuRes);
-            hr.Ram.Readings.AddRange(ramRes);
-            hr.Network.Readings.AddRange(netRes);
+            hr.Cpu.Readings = cpuRes;
+            hr.Ram.Readings = ramRes;
+            hr.Network.Readings = netRes;
+            hr.LastModified = DateTime.Now;
         }
 
         /// <summary>

@@ -95,26 +95,8 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-/*        /// <summary>
-        /// Calls <see cref="QueryList"/> at a set interval.
-        /// </summary>
-        /// <param name="querryTimer"></param>
-        public async void StartGraph()
-        {
-            if (!isGraphRunning) 
-            {
-                isGraphRunning = true;
-                queryTimer = new(TimeSpan.FromMinutes(queryTimerInterval));
-
-                while (await queryTimer.WaitForNextTickAsync())
-                {
-                    QueryList();
-                }
-            }
-        }*/
-
         /// <summary>
-        /// Function qurying data (generates data currently).
+        /// Adds points to the chart.
         /// </summary>
         public void UpdateData(Ram ram, Cpu cpu)
         {
@@ -128,6 +110,9 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Creates a point from a performance metric.
+        /// </summary>
         private ObservablePoint CreatePoint(PerformanceMetric pointData)
         {
             return new ObservablePoint(pointData.Date.ToOADate(), pointData.Load);

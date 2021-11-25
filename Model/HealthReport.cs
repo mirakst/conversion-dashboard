@@ -23,6 +23,7 @@
         public Cpu Cpu { get; } //Described in Cpu.cs
         public Network Network {  get; } //Described in Network.cs
         public Ram Ram { get; } //Described in Ram.cs
+        public DateTime LastModified { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
         #endregion Properties
 
         public override string ToString()

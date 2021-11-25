@@ -21,8 +21,16 @@
         #endregion Enums
 
         #region Properties
-        public LogFilters Filters { get; set; }
-        public List<LogMessage> Messages { get; set; } = new(); //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id.
+        private readonly List<LogMessage> _messages = new();
+        public List<LogMessage> Messages
+        {
+            get => _messages;
+            set
+            {
+                _messages.AddRange(value);
+                LastModified = DateTime.Now;
+            } } //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id.
+        public DateTime LastModified { get; private set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
         #endregion Properties
     }
 }
