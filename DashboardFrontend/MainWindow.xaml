@@ -99,7 +99,7 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                Foreground="{DynamicResource ForegroundColor}"
-                               Text="{Binding UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
+                               Text="{Binding Controller.UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
                           Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
@@ -525,7 +525,7 @@
                                       HorizontalScrollBarVisibility="Auto">
                             <DataGrid ItemsSource="{Binding Data}"
                                       x:Name="DataGridValidations"
-                                      PreviewMouseWheel="validationsDataGrid_PreviewMouseWheel"
+                                      PreviewMouseWheel="ValidationsDataGrid_PreviewMouseWheel"
                                       AutoGenerateColumns="False"
                                       ScrollViewer.CanContentScroll="False"
                                       GridLinesVisibility="None"
@@ -779,9 +779,9 @@
                                                    Grid.Row="0"
                                                    Margin="5,0,0,5"/>
                                         <lvc:CartesianChart
-                                                Series="{Binding Series}"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
                                                 ZoomMode="X"
                                                 TooltipPosition="Top"
                                                 MouseLeave="CartesianChart_MouseLeave"

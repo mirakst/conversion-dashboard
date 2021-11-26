@@ -104,7 +104,7 @@ namespace DashboardFrontend.ViewModels
             FailedCount = 0;
             TotalCount = 0;
             Data.Clear();
-            foreach (ValidationTest test in validationReport.ValidationTests)
+            foreach(var test in validationReport.ValidationTests)
             {
                 ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
@@ -123,7 +123,7 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Filters the Data collection by setting the visibility property of their associated DataGridRow control
+        /// Filters the Values collection by setting the visibility property of their associated DataGridRow control
         /// </summary>
         public void Filter()
         {

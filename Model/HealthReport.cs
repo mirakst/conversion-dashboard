@@ -3,6 +3,11 @@
     public class HealthReport 
     {
         #region Constructors
+
+        public HealthReport()
+        {
+
+        }
         public HealthReport(string hostName, string monitorName)
         {
             HostName = hostName;
@@ -34,7 +39,10 @@
             Cpu = cpu;
             Network = network;
             Ram = ram;
-            IsInitialized = true;
+            if (ram.Total is not null)
+            {
+                IsInitialized = true;
+            }
         }
         public override string ToString()
         {

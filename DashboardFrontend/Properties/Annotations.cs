@@ -149,7 +149,22 @@ namespace DashboardFrontend.Annotations
 
   /// <summary>
   /// Use this annotation to specify a type that contains static or const fields
-  /// with values for the annotated property/field/parameter.
+  /// with
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  /// for the annotated property/field/parameter.
   /// The specified type will be used to improve completion suggestions.
   /// </summary>
   /// <example><code>

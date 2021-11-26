@@ -2,7 +2,6 @@
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
-using System.Diagnostics;
 using static Model.LogMessage;
 using static Model.ValidationTest;
 
@@ -27,9 +26,9 @@ namespace DashboardBackend
         {
             List<ExecutionEntry> queryResult = DatabaseHandler.QueryExecutions(minDate);
 
-            return (from item in queryResult 
-                    let executionId = (int) item.ExecutionId.Value 
-                    let created = item.Created.Value 
+            return (from item in queryResult
+                    let executionId = (int)item.ExecutionId.Value
+                    let created = item.Created.Value
                     select new Execution(executionId, created))
                     .ToList();
         }
@@ -90,11 +89,11 @@ namespace DashboardBackend
 
             List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(executionId, minDate);
 
-            return (from item in queryResult 
-                    let content = item.LogMessage 
-                    let type = GetLogMessageType(item) 
-                    let contextId = (int) item.ContextId.Value 
-                    let created = item.Created.Value 
+            return (from item in queryResult
+                    let content = item.LogMessage
+                    let type = GetLogMessageType(item)
+                    let contextId = (int)item.ContextId.Value
+                    let created = item.Created.Value
                     select new LogMessage(content, type, contextId, created))
                     .ToList();
         }
@@ -117,11 +116,11 @@ namespace DashboardBackend
         {
             List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(minDate);
 
-            return (from item in queryResult 
-                    let content = item.LogMessage 
-                    let type = GetLogMessageType(item) 
-                    let contextId = (int) item.ContextId.Value 
-                    let created = item.Created.Value 
+            return (from item in queryResult
+                    let content = item.LogMessage
+                    let type = GetLogMessageType(item)
+                    let contextId = (int)item.ContextId.Value
+                    let created = item.Created.Value
                     select new LogMessage(content, type, contextId, created))
                     .ToList();
         }
@@ -204,7 +203,7 @@ namespace DashboardBackend
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryPerformanceReadings(minDate);
             List<CpuLoad> cpuRes = new();
             List<RamLoad> ramRes = new();
-            List<NetworkUsage> netRes = new();
+            List<NetworkUsage> netRes;
             List<HealthReportEntry> cpuAndRamEntries = queryResult
                                                        .Where(e => e.ReportType != "NETWORK")
                                                        .ToList();
@@ -231,7 +230,6 @@ namespace DashboardBackend
             hr.Cpu.Readings = cpuRes;
             hr.Ram.Readings = ramRes;
             hr.Network.Readings = netRes;
-            hr.LastModified = DateTime.Now;
         }
 
         /// <summary>
@@ -260,11 +258,11 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="item">A state database entry with cpu load readings</param>
         /// <returns>A RAM usage reading.</returns>
-        public static RamLoad GetRamReading(long totalRam, HealthReportEntry item)
+        public static RamLoad GetRamReading(long? totalRam, HealthReportEntry item)
         {
             int executionId = (int)item.ExecutionId.Value;
             long reportNumValue = item.ReportNumericValue.Value;
-            double load = 1 - Convert.ToDouble(reportNumValue)/Convert.ToDouble(totalRam);
+            double load = 1 - Convert.ToDouble(reportNumValue) / Convert.ToDouble(totalRam);
             long available = item.ReportNumericValue.Value;
             DateTime logTime = item.LogTime.Value;
             RamLoad ramReading = new(executionId, load, available, logTime);
@@ -320,37 +318,28 @@ namespace DashboardBackend
         {
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryHealthReport();
 
-            try
-            {
-                //INIT
-                string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
-                string monitorName = queryResult.FindLast(e => e.ReportKey == "Monitor Name")?.ReportStringValue;
+            //INIT
+            string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
+            string monitorName = queryResult.FindLast(e => e.ReportKey == "Monitor Name")?.ReportStringValue;
 
-                //CPU INIT
-                string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
-                int cpuCores = (int) queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
-                long cpuMaxFreq =
-                    (long) queryResult.FindLast(e => e.ReportKey == "CPU Max frequency")?.ReportNumericValue;
-                Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
+            //CPU INIT
+            string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
+            int? cpuCores = (int?) queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
+            long? cpuMaxFreq = queryResult.FindLast(e => e.ReportKey == "CPU Max frequency")?.ReportNumericValue;
 
-                //MEMORY INIT
-                long ramTotal = (long) queryResult.FindLast(e => e.ReportKey == "TOTAL").ReportNumericValue;
-                Ram ram = new(ramTotal);
+            Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
 
-                //NETWORK INIT
-                string networkName = queryResult.FindLast(e => e.ReportKey == "Interface 0: Name")?.ReportStringValue;
-                string networkMacAddress = queryResult.FindLast(e => e.ReportKey == "Interface 0: MAC address")
-                    ?.ReportStringValue;
-                long networkSpeed =
-                    (long) queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed").ReportNumericValue;
-                Network network = new(networkName, networkMacAddress, networkSpeed);
+            //MEMORY INIT
+            long? ramTotal = queryResult.FindLast(e => e.ReportKey == "TOTAL")?.ReportNumericValue;
+            Ram ram = new(ramTotal);
 
-                hr.Build(hostName, monitorName, cpu, network, ram);
-            }
-            catch (System.InvalidOperationException ex)
-            {
-                Trace.WriteLine(ex.Message);
-            }
+            //NETWORK INIT
+            string networkName = queryResult.FindLast(e => e.ReportKey == "Interface 0: Name")?.ReportStringValue;
+            string networkMacAddress = queryResult.FindLast(e => e.ReportKey == "Interface 0: MAC address")?.ReportStringValue;
+            long? networkSpeed = queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed")?.ReportNumericValue;
+            Network network = new(networkName, networkMacAddress, networkSpeed);
+
+            hr.Build(hostName, monitorName, cpu, network, ram);
         }
 
         /// <summary>
@@ -369,15 +358,15 @@ namespace DashboardBackend
             }
 
             //Build system model network usage objects.
-            return (from item in distinctReports 
-                    let executionId = item.First().ExecutionId.Value 
-                    let logTime = item.First().LogTime.Value 
-                    let bytesSend = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Send").ReportNumericValue 
-                    let bytesSendDelta = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)").ReportNumericValue 
-                    let bytesSendSpeed = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)").ReportNumericValue 
-                    let bytesReceived = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Received").ReportNumericValue 
-                    let bytesReceivedDelta = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)").ReportNumericValue 
-                    let bytesReceivedSpeed = (long) item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)").ReportNumericValue 
+            return (from item in distinctReports
+                    let executionId = item.First().ExecutionId.Value
+                    let logTime = item.First().LogTime.Value
+                    let bytesSend = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send").ReportNumericValue
+                    let bytesSendDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)").ReportNumericValue
+                    let bytesSendSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)").ReportNumericValue
+                    let bytesReceived = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received").ReportNumericValue
+                    let bytesReceivedDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)").ReportNumericValue
+                    let bytesReceivedSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)").ReportNumericValue
                     select new NetworkUsage(executionId, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime))
                     .ToList();
         }
@@ -391,7 +380,7 @@ namespace DashboardBackend
         public static void BuildManagerData(Manager manager, List<EnginePropertyEntry> entries)
         {
             List<EnginePropertyEntry> managerDataEntries = entries
-                                                            .Where(e => 
+                                                            .Where(e =>
                                                             {
                                                                 string managerName = e.Manager;
                                                                 int index = e.Manager.IndexOf(",");

@@ -1,7 +1,5 @@
 ﻿using Model;
 using System.Collections.ObjectModel;
-using DashboardBackend;
-using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {

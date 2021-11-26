@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using DashboardFrontend.DetachedWindows;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -8,7 +7,7 @@ namespace DashboardFrontend.ViewModels
         public MainWindowViewModel(DataGrid dataGridValidations)
         {
             Controller = new(this);
-            Controller.Initialize(dataGridValidations);
+            Controller.InitializeViewModels(dataGridValidations);
         }
 
         public Controller Controller { get; set; }

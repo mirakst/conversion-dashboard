@@ -41,9 +41,9 @@
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
                             <lvc:CartesianChart DataContext="{Binding Vm.SystemLoadChart}"
-                                                Series="{Binding Series}"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
                                                 ZoomMode="X"
                                                 TooltipPosition="Top"
                                                 MouseLeave="CartesianChart_MouseLeave"

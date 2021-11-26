@@ -1,57 +1,53 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using LiveChartsCore.Defaults;
+﻿using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace DashboardFrontend.ViewModels
 {
-    /// <summary>
-    /// The ViewModel class for Performance monitoring.
-    /// </summary>
-    public class PerformanceChart : BaseChart
+    public class NetworkChart : BaseChart
     {
-        public ObservableCollection<ObservablePoint> RAMValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> CPUValues { get; private set; } = new();
-        public PerformanceChart()
+        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceivedValues { get; private set; } = new();
+        public NetworkChart()
         {
-            Data = new()
+
+            Values = new()
             {
-                RAMValues,
-                CPUValues,
+                SendValues,
+                ReceivedValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "RAM",
+                    Name = "Send",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
                     GeometryStroke = new SolidColorPaint(new SKColor(92, 84, 219)),
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss", new CultureInfo("en-US")) + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
-                    LineSmoothness = 0,
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 (e.PrimaryValue * 1000).ToString() + "MB",
+                    Values = SendValues,
                 },
-                new LineSeries<ObservablePoint> 
+                new LineSeries<ObservablePoint>
                 {
-                    Name = "CPU",
+                    Name = "Receive",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometryStroke = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss", new CultureInfo("en-US")) + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
-                    LineSmoothness = 0,
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 e.PrimaryValue.ToString() + "MB",
+                    Values = ReceivedValues,
                 }
             };
 
@@ -60,7 +56,7 @@ namespace DashboardFrontend.ViewModels
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm", new CultureInfo("en-US")),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
@@ -71,14 +67,10 @@ namespace DashboardFrontend.ViewModels
             {
                 new Axis
                 {
-                    Name = "Load",
-                    Labeler  = (value) => value.ToString("P0"),
-                    MaxLimit = 1,
-                    MinLimit = 0,
+                    Name = "Mega Bytes",
+                    Labeler  = (value) => (value * 1000).ToString("N0") + "MB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    MinStep = 0.25,
-                    ForceStepToMin = true,
                 }
             };
         }

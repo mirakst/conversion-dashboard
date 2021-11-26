@@ -29,7 +29,6 @@
             {
                 _messages.AddRange(value);
                 UpdateCounters(value);
-                LastModified = DateTime.Now;
             }
         } //From [dbo].[LOGGING], where [EXECUTION_ID] = someExecution.Id.
         public int InfoCount = 0;
@@ -37,7 +36,7 @@
         public int ErrorCount = 0;
         public int FatalCount = 0;
         public int ValidationCount = 0;
-        public DateTime LastModified { get; private set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
+        public DateTime LastModified { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
         #endregion Properties
 
         /// <summary>

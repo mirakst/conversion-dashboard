@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,10 +21,10 @@ namespace DashboardFrontend
         private readonly HealthReport _healthReport;
         private readonly List<Timer> _timers;
         private readonly SynchronizationContext? _uiContext;
-        public readonly List<HealthReportViewModel> _healthReportViewModels = new();
-        public readonly List<LogViewModel> _logViewModels = new();
-        public readonly List<ValidationReportViewModel> _validationReportViewModels = new();
-        public UserSettings UserSettings { get; set; } = new UserSettings();
+        public readonly List<HealthReportViewModel> HealthReportViewModels = new();
+        public readonly List<LogViewModel> LogViewModels = new();
+        public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
+        public UserSettings UserSettings { get; set; } = new();
 
         public Controller(MainWindowViewModel viewModel)
         {
@@ -35,30 +33,30 @@ namespace DashboardFrontend
             _vm = viewModel;
             _log = new Log();
             _validationReport = new ValidationReport();
-            _healthReport = new HealthReport(null, null);
+            _healthReport = new HealthReport();
             _timers = new List<Timer>();
         }
 
         /// <summary>
-        /// Initializes the view models in the controller.
+        /// Initializes the view models in the <see cref="Controller"/>.
         /// </summary>
-        public void Initialize(DataGrid dataGridValidations)
+        public void InitializeViewModels(DataGrid dataGridValidations)
         {
             _vm.LogViewModel = new LogViewModel();
-            _logViewModels.Add(_vm.LogViewModel);
+            LogViewModels.Add(_vm.LogViewModel);
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel(dataGridValidations);
-            _validationReportViewModels.Add(_vm.ValidationReportViewModel);
+            ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
 
-            _vm.HealthReportViewModel = new HealthReportViewModel(_healthReport);
-            _healthReportViewModels.Add(_vm.HealthReportViewModel);
+            _vm.HealthReportViewModel = new HealthReportViewModel();
+            HealthReportViewModels.Add(_vm.HealthReportViewModel);
         }
 
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
             result.UpdateData(_log);
-            _logViewModels.Add(result);
+            LogViewModels.Add(result);
             return result;
         }
 
@@ -66,15 +64,15 @@ namespace DashboardFrontend
         {
             ValidationReportViewModel result = new();
             result.UpdateData(_validationReport);
-            _validationReportViewModels.Add(result);
+            ValidationReportViewModels.Add(result);
             return result;
         }
 
         public HealthReportViewModel CreateHealthReportViewModel()
         {
-            HealthReportViewModel result = new(_healthReport);
+            HealthReportViewModel result = new();
             result.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
-            _healthReportViewModels.Add(result);
+            HealthReportViewModels.Add(result);
             return result;
         }
 
@@ -83,8 +81,9 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog(DateTime timestamp)
         {
+            _log.LastModified = DateTime.Now;
             _log.Messages = DU.GetLogMessages(timestamp);
-            foreach (var vm in _logViewModels)
+            foreach (var vm in LogViewModels)
             {
                 _uiContext?.Send(x => vm.UpdateData(_log), null);
             }
@@ -95,8 +94,9 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateValidationReport(DateTime timestamp)
         {
+            _validationReport.LastModified = DateTime.Now;
             _validationReport.ValidationTests = DU.GetAfstemninger(timestamp);
-            foreach (var vm in _validationReportViewModels)
+            foreach (var vm in ValidationReportViewModels)
             {
                 _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
             }
@@ -109,8 +109,9 @@ namespace DashboardFrontend
         {
             if (_healthReport.IsInitialized)
             {
+                _healthReport.LastModified = DateTime.Now;
                 DU.AddHealthReportReadings(_healthReport, timestamp);
-                foreach (var vm in _healthReportViewModels)
+                foreach (var vm in HealthReportViewModels)
                 {
                     _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
                 }
@@ -140,7 +141,10 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    DU.BuildHealthReport(_healthReport);
+                    if (!_healthReport.IsInitialized)
+                    {
+                        DU.BuildHealthReport(_healthReport);
+                    }
                     StartMonitoring();
                 }
             }
@@ -155,7 +159,7 @@ namespace DashboardFrontend
         /// </summary>
         private void GetCredentials()
         {
-            ConnectDBDialog dialogPopup = new ConnectDBDialog(UserSettings);
+            ConnectDBDialog dialogPopup = new(UserSettings);
             dialogPopup.ShowDialog();
         }
 
@@ -168,7 +172,11 @@ namespace DashboardFrontend
             {
                 _timers.Add(new Timer(x =>
                 {
-                    Task.Run(() => UpdateHealthReport(_healthReport.LastModified));
+                    Task.Run(() =>
+                    {
+                        UpdateHealthReport(_healthReport.LastModified);
+                        
+                    });
                     Task.Run(() => UpdateLog(_log.LastModified));
                     Task.Run(() => UpdateValidationReport(_validationReport.LastModified));
                     //Task.Run(() => QueryManagers());

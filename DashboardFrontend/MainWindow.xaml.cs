@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DashboardFrontend
 {
@@ -51,7 +50,7 @@ namespace DashboardFrontend
             detachLog.Show();
             detachLog.Closed += delegate
             {
-                ViewModel.Controller._logViewModels.Remove(detachedLogViewModel);
+                ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
             };
         }
 
@@ -64,19 +63,18 @@ namespace DashboardFrontend
             detachVr.Show();
             detachVr.Closed += delegate
             {
-                ViewModel.Controller._validationReportViewModels.Remove(detachedValidationReportViewModel);
+                ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
             };
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
             HealthReportViewModel detachedHealthReportViewModel = ViewModel.Controller.CreateHealthReportViewModel();
-            ViewModel.Controller._healthReportViewModels.Add(detachedHealthReportViewModel);
             HealthReportDetached detachHr = new(detachedHealthReportViewModel);
             detachHr.Show();
             detachHr.Closed += delegate
             {
-                ViewModel.Controller._healthReportViewModels.Remove(detachedHealthReportViewModel);
+                ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
             };
         }
 
@@ -91,7 +89,7 @@ namespace DashboardFrontend
             ButtonDetachManager.IsEnabled = true;
         }
 
-        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
             {
