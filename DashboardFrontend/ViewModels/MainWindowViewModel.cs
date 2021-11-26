@@ -1,25 +1,28 @@
-﻿using Model;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(Log log, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
+        public MainWindowViewModel(DataGrid dataGridValidations)
         {
-            LogViewModel = new(log);
-            ValidationReportViewModel = new(validationReport, validationsDataGrid);
-            LiveChartViewModel = liveChartViewModel;
+            Controller = new(this);
+            Controller.InitializeViewModels(dataGridValidations);
         }
 
+        public Controller Controller { get; set; }
+        private bool _isRunning;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
+            }
+        }
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
-        public LiveChartViewModel LiveChartViewModel { get; set; }
+        public HealthReportViewModel HealthReportViewModel { get; set; }
     }
 }

@@ -89,7 +89,7 @@
                                    VerticalAlignment="Center"/>
 
                         <TextBlock Grid.Row="1" 
-                                   Text="Data Source" 
+                                   Text="Values Source" 
                                    VerticalAlignment="Center"/>
                         <TextBlock Grid.Row="1" 
                                    Grid.Column="1" 

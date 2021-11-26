@@ -8,18 +8,23 @@
         WindowStartupLocation="CenterScreen"
         Title="Health Report Monitoring"
         Height="450"
-        Width="800">
+        Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Border Background="{DynamicResource BackgroundColor}">
-        <Grid>
+        <Grid Margin="10">
             <TabControl Background="{DynamicResource BackgroundColor}"
-                        BorderBrush="{DynamicResource BorderColor}">
+                        BorderBrush="{DynamicResource BorderColor}"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="2">
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemCpuRam"
-                         Header="CPU &amp; RAM">
+                         Header="CPU &amp; RAM"
+                         FontSize="16">
                     <Border Margin="10">
                         <Grid>
                             <TextBlock Name="TextBlockCurrentCpuLoad"
-                                       Text="CPU load: 0%"
+                                       Text="{Binding Vm.SystemLoadChart.LastCpuReading,
+                                              StringFormat=CPU Usage: {0:0}%}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
                                        VerticalAlignment="Center"
@@ -27,30 +32,19 @@
                                        Grid.Row="0"
                                        Margin="0,0,40,5"/>
                             <TextBlock Name="TextBlockCurrentRamUsage"
-                                       Text="RAM usage: 0%"
+                                       Text="{Binding Vm.SystemLoadChart.LastRamReading,
+                                              StringFormat=RAM Usage: {0:0}%}"
                                        Foreground="{DynamicResource ForegroundColor}"
                                        FontSize="20"
                                        VerticalAlignment="Center"
                                        Grid.Column="1"
                                        Grid.Row="0"
                                        Margin="5,0,0,5"/>
-                            <ComboBox Name="ComboBoxPerformanceMaxView"
-                                  Margin="0,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Grid.Column="3"
-                                  SelectionChanged="ComboBoxPerformanceMaxView_SelectionChanged">
-                                <ComboBoxItem Content="30 Min" Tag="30"/>
-                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                            </ComboBox>
-                            <lvc:CartesianChart DataContext="{Binding PerformanceChart}"
-                                                Series="{Binding Series}"
+                            <lvc:CartesianChart DataContext="{Binding Vm.SystemLoadChart}"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
                                                 ZoomMode="X"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
                                                 TooltipPosition="Top"
                                                 MouseLeave="CartesianChart_MouseLeave"
                                                 MouseEnter="CartesianChart_MouseEnter"
@@ -75,7 +69,8 @@
                 
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                          Name="TabItemNetwork"
-                         Header="Network">
+                         Header="Network"
+                         FontSize="16">
                     <Border Margin="10">
                         <Grid>
                             <Border BorderBrush="{DynamicResource BorderColor}"
@@ -92,11 +87,11 @@
                                         <TextBlock Text="Send speed:"
                                                    FontSize="14"/>
                                         <TextBlock/>
-                                        <TextBlock Text="Recived"
+                                        <TextBlock Text="Received"
                                                    FontSize="14"/>
-                                        <TextBlock Text="Recived delta:"
+                                        <TextBlock Text="Received delta:"
                                                    FontSize="14"/>
-                                        <TextBlock Text="Recived speed:"
+                                        <TextBlock Text="Received speed:"
                                                    FontSize="14"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
@@ -126,33 +121,18 @@
                                     </Grid.ColumnDefinitions>
                                 </Grid>
                             </Border>
-                            <ComboBox Name="ComboBoxNetworkMaxView"
-                                      MaxWidth="70"
-                                      HorizontalAlignment="Right"
-                                      Margin="0,0,0,0"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="3"
-                                      SelectionChanged="ComboBoxNetworkMaxView_SelectionChanged">
-                                <ComboBoxItem Content="30 Min" Tag="30"/>
-                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                            </ComboBox>
                             <Border BorderBrush="{DynamicResource BorderColor}"
                                     BorderThickness="1"
                                     Grid.Column="1"
                                     Grid.Row="1">
-                                <lvc:CartesianChart DataContext="{Binding NetworkChart}"
-                                                Series="{Binding Series}"
-                                                ZoomMode="Both"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
-                                                TooltipPosition="Top"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
+                                <!--<lvc:CartesianChart Series="{Binding Series}"
+                                                    XAxes="{Binding XAxis}"
+                                                    YAxes="{Binding YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>-->
                             </Border>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>
@@ -167,6 +147,26 @@
                     </Border>
                 </TabItem>
             </TabControl>
+            <ComboBox Name="ComboBoxMaxView"
+                      Margin="0,0,0,5"
+                      VerticalAlignment="Center"
+                      Grid.Column="1"
+                      SelectionChanged="ComboBoxMaxView_SelectionChanged">
+                <ComboBoxItem Content="30 Min" Tag="30"/>
+                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+            </ComboBox>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
         </Grid>
     </Border>
 </Window>

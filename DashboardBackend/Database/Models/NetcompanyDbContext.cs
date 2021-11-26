@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System.Linq;
 
 #nullable disable
 
@@ -16,6 +14,14 @@ namespace DashboardBackend.Database.Models
             : base(options)
         {
         }
+
+        public NetcompanyDbContext(string connString)
+            : this()
+        {
+            ConnectionString = connString;
+        }
+
+        public string ConnectionString { get; set; }
 
         public virtual DbSet<AfstemningEntry> Afstemnings { get; set; }
         public virtual DbSet<AuditFkError> AuditFkErrors { get; set; }
@@ -48,8 +54,8 @@ namespace DashboardBackend.Database.Models
             if (!optionsBuilder.IsConfigured)
             {
                 // Connection string should be added to a ConfigurationManager at a later date (keep it out of the source code)
-                string connectionString = ReadConnectionStringFromFile();
-                optionsBuilder.UseSqlServer(connectionString);
+                //string connectionString = ReadConnectionStringFromFile();
+                optionsBuilder.UseSqlServer(ConnectionString);
             }
         }
 

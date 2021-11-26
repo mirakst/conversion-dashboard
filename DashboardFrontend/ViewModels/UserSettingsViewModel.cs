@@ -1,12 +1,10 @@
 ﻿using DashboardFrontend.Settings;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-
 
 namespace DashboardFrontend.ViewModels
 {
-    public class UserSettingsViewModel : IUserSettings, INotifyPropertyChanged
+    public class UserSettingsViewModel : BaseViewModel, IUserSettings
     {
         public UserSettingsViewModel(UserSettings userSettings)
         {
@@ -19,8 +17,6 @@ namespace DashboardFrontend.ViewModels
             AllQueryInterval = userSettings.AllQueryInterval;
             SynchronizeAllQueries = userSettings.SynchronizeAllQueries;
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         public IList<Profile> Profiles { get; set; }
         public int LoggingQueryInterval { get; set; }
@@ -39,7 +35,7 @@ namespace DashboardFrontend.ViewModels
             set
             {
                 _synchronizeAllQueries = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SynchronizeAllQueries)));
+                OnPropertyChanged(nameof(SynchronizeAllQueries));
             }
         }
         private Profile? _activeProfile;
@@ -49,7 +45,7 @@ namespace DashboardFrontend.ViewModels
             set
             {
                 _activeProfile = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveProfile)));
+                OnPropertyChanged(nameof(ActiveProfile));
             }
         }
     }

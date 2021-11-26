@@ -1,7 +1,6 @@
 ﻿using DashboardFrontend.ViewModels;
 using DashboardFrontend.Settings;
 using System.Windows;
-using System.Diagnostics;
 using System;
 
 namespace DashboardFrontend.DetachedWindows
@@ -54,7 +53,7 @@ namespace DashboardFrontend.DetachedWindows
             Profile? profile = SettingsViewModel.SelectedProfile;
             if (profile is not null && Confirm($"Delete profile [{profile.Name}]?"))
             {
-                if (SettingsViewModel.ActiveProfile == profile)
+                if (SettingsViewModel.ActiveProfile?.Equals(profile) == true)
                 {
                     SettingsViewModel.ActiveProfile = null;
                 }

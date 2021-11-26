@@ -1,40 +1,19 @@
-﻿using DashboardBackend;
-using Model;
-using System;
-using System.Collections.Generic;
+﻿using Model;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel(Log log)
+        private ObservableCollection<LogMessage> _messages = new();
+        public ObservableCollection<LogMessage> Messages
         {
-            _log = log;
-            log.Messages = DataUtilities.GetLogMessages().TakeLast(1000).ToList();
-            UpdateCounters();
-            UpdateData();
-        }
-
-        private Log _log;
-        /*        private List<LogMessage> _messages = new();
-        */
-        private ObservableCollection<LogMessage> _messages;
-        public ObservableCollection<LogMessage> Messages { 
-            get 
+            get => _messages;
+            set
             {
-                return _messages;
-            } 
-            set 
-            { 
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
-            } 
+            }
         }
 
         private int _infoCount;
@@ -141,38 +120,14 @@ namespace DashboardFrontend.ViewModels
         /// <summary>
         /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed
         /// </summary>
-        public void UpdateData()
+        public void UpdateData(Log log)
         {
-            Messages = new(_log.Messages);
-        }
-
-        /// <summary>
-        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
-        /// </summary>
-        /// <param name="msg">LogMessage whose type counter should be updated</param>
-        private void UpdateCounters()
-        {
-            foreach(var msg in _log.Messages)
-            switch (msg.Type)
-            {
-                case LogMessageType.Info:
-                    InfoCount++;
-                    break;
-                case LogMessageType.Warning:
-                    WarnCount++;
-                    break;
-                case LogMessageType.Error:
-                    ErrorCount++;
-                    break;
-                case LogMessageType.Fatal:
-                    FatalCount++;
-                    break;
-                case LogMessageType.Validation:
-                    ValidationCount++;
-                    break;
-                default:
-                    break;
-            }
+            Messages = new(log.Messages);
+            InfoCount = log.InfoCount;
+            WarnCount = log.WarnCount;
+            ErrorCount = log.ErrorCount;
+            FatalCount = log.FatalCount;
+            ValidationCount = log.ValidationCount;
         }
     }
 }
