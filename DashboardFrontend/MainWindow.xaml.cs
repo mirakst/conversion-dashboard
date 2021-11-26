@@ -179,7 +179,7 @@ namespace DashboardFrontend
         {
             _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
             ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkUsageChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

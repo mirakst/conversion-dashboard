@@ -72,6 +72,9 @@ namespace DashboardFrontend
         {
             HealthReportViewModel result = new();
             result.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
+            result.NetworkChart.UpdateData(_healthReport.Network);
+            result.NetworkDeltaChart.UpdateData(_healthReport.Network);
+            result.NetworkSpeedChart.UpdateData(_healthReport.Network);
             HealthReportViewModels.Add(result);
             return result;
         }
@@ -114,6 +117,8 @@ namespace DashboardFrontend
                 foreach (var vm in HealthReportViewModels)
                 {
                     _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
+
                 }
             }
             else
@@ -172,11 +177,7 @@ namespace DashboardFrontend
             {
                 _timers.Add(new Timer(x =>
                 {
-                    Task.Run(() =>
-                    {
-                        UpdateHealthReport(_healthReport.LastModified);
-                        
-                    });
+                    Task.Run(() => UpdateHealthReport(_healthReport.LastModified));
                     Task.Run(() => UpdateLog(_log.LastModified));
                     Task.Run(() => UpdateValidationReport(_validationReport.LastModified));
                     //Task.Run(() => QueryManagers());

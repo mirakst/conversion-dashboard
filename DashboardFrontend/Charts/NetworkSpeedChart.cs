@@ -8,48 +8,48 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
-    public class NetworkChart : BaseChart
+    public class NetworkSpeedChart : BaseChart
     {
-        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> ReceiveValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> SendSpeedValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceiveSpeedValues { get; private set; } = new();
 
-        public NetworkChart()
+        public NetworkSpeedChart()
         {
             Type = ChartType.Network;
 
             Values = new()
             {
-                SendValues,
-                ReceiveValues,
+                SendSpeedValues,
+                ReceiveSpeedValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Send",
-                    Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
-                    Fill = null,
-                    GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
-                    GeometryStroke = new SolidColorPaint(new SKColor(92, 84, 219)),
-                    GeometrySize = 3,
-                    TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
-                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "GB",
-                    Values=SendValues,
-                },
-                new LineSeries<ObservablePoint>
-                {
-                    Name = "Receive",
+                    Name = "Send speed",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometryStroke = new SolidColorPaint(new SKColor(245, 88, 47)),
                     GeometrySize = 3,
+                    TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
+                                                 DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
+                                                 e.PrimaryValue.ToString() + "KBps",
+                    Values=SendSpeedValues,
+                },
+                new LineSeries<ObservablePoint>
+                {
+                    Name = "Receive speed",
+                    Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
+                    Fill = null,
+                    GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
+                    GeometryStroke = new SolidColorPaint(new SKColor(92, 84, 219)),
+                    GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "GB",
-                    Values=ReceiveValues,
+                                                 e.PrimaryValue.ToString() + "KBps",
+                    Values = ReceiveSpeedValues,
                 }
             };
 
@@ -64,13 +64,13 @@ namespace DashboardFrontend.Charts
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                 }
             };
-
-            YAxis = new()
+            
+            YAxis= new()
             {
                 new Axis
                 {
-                    Name = "SendReceived",
-                    Labeler = (value) => value.ToString("N0") + "GB",
+                    Name = "Speed",
+                    Labeler = (value) => value.ToString("N2") + "KBps",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                 }

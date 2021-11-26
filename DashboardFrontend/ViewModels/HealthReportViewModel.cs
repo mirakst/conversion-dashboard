@@ -1,13 +1,16 @@
-﻿namespace DashboardFrontend.ViewModels
+﻿using DashboardFrontend.Charts;
+
+namespace DashboardFrontend.ViewModels
 {
     public class HealthReportViewModel : BaseViewModel
     {
         public HealthReportViewModel()
         {
-            SystemLoadChart = new DataChart(new PerformanceChart());
         }
-        public DataChart SystemLoadChart { get; set; }
-        public DataChart NetworkUsageChart { get; set; } = new DataChart(new NetworkChart());
+        public DataChart SystemLoadChart { get; set; } = new DataChart(new PerformanceChart());
+        public DataChart NetworkChart { get; set; } = new DataChart(new NetworkChart());
+        public DataChart NetworkDeltaChart { get; set; } = new DataChart(new NetworkDeltaChart());
+        public DataChart NetworkSpeedChart { get; set; } = new DataChart(new NetworkSpeedChart());
         public DataChart ManagerChart { get; set; }
     }
 }

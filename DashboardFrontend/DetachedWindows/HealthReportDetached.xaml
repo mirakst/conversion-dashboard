@@ -125,14 +125,43 @@
                                     BorderThickness="1"
                                     Grid.Column="1"
                                     Grid.Row="1">
-                                <!--<lvc:CartesianChart Series="{Binding Series}"
-                                                    XAxes="{Binding XAxis}"
-                                                    YAxes="{Binding YAxis}"
-                                                    ZoomMode="Both"
-                                                    TooltipPosition="Top"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>-->
+                                <Grid>
+                                    <lvc:CartesianChart DataContext="{Binding Vm.NetworkChart}"
+                                                        Series="{Binding ChartData.Series}"
+                                                        XAxes="{Binding ChartData.XAxis}"
+                                                        YAxes="{Binding ChartData.YAxis}"
+                                                        ZoomMode="Both"
+                                                        TooltipPosition="Top"
+                                                        Grid.Row="0"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                    <lvc:CartesianChart DataContext="{Binding Vm.NetworkDeltaChart}"
+                                                        Series="{Binding ChartData.Series}"
+                                                        XAxes="{Binding ChartData.XAxis}"
+                                                        YAxes="{Binding ChartData.YAxis}"
+                                                        ZoomMode="Both"
+                                                        TooltipPosition="Top"
+                                                        Grid.Row="1"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                    <lvc:CartesianChart DataContext="{Binding Vm.NetworkSpeedChart}"
+                                                        Series="{Binding ChartData.Series}"
+                                                        XAxes="{Binding ChartData.XAxis}"
+                                                        YAxes="{Binding ChartData.YAxis}"
+                                                        ZoomMode="Both"
+                                                        TooltipPosition="Top"
+                                                        Grid.Row="2"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter">
+                                    </lvc:CartesianChart>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                </Grid>
                             </Border>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>

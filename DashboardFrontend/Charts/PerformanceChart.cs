@@ -7,8 +7,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
-
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
     /// <summary>
     /// The ViewModel class for Performance monitoring.
@@ -20,6 +19,8 @@ namespace DashboardFrontend.ViewModels
         public ObservableCollection<ObservablePoint> CpuValues { get; private set; } = new();
         public PerformanceChart()
         {
+            Type = ChartType.Performance;
+
             Values = new()
             {
                 RamValues,

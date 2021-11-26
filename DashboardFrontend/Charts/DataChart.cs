@@ -1,35 +1,35 @@
-﻿using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Linq;
 using System.Threading;
+using DashboardFrontend.ViewModels;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
 using Model;
 
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
     /// <summary>
     /// A class for the creating and controlling <see cref="ISeries"/>
     /// </summary>
     public class DataChart : BaseViewModel
     {
-        /// <summary>
-        /// Creates a new <see cref="ISeries"/>, with given data and starts it with auto focus on.
-        /// </summary>
-        /// <param name="linesList">A list of <see cref="ISeries"/>.</param>
-        /// <param name="dataList">A list of <see cref="ObservableCollection{ObservablePoint}"/>.</param>
-        /// <param name="xAxisList">A list of <see cref="Axis"/> for the X axis.</param>
-        /// <param name="yAxisList">A list of <see cref="Axis"/> for the Y axis.</param>
-        /// <param name="chart"></param>
-        public DataChart(BaseChart chart)
+
+        public DataChart()
         {
-            ChartData = chart;
             AutoFocusOn();
         }
+
+        public DataChart(BaseChart chart) : this()
+        {
+            ChartData = chart;
+            
+        }
+
         #region public
 
         public BaseChart ChartData { get; set; }
+
         private double? _lastRamReading = 0;
         public double? LastRamReading
         {
@@ -52,6 +52,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private DateTime LastCpuPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+        private DateTime LastNetPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
         #endregion
 
         #region private
@@ -59,15 +60,6 @@ namespace DashboardFrontend.ViewModels
         private bool _isAutoFocusTimer = false;
         private int _maxView = 10;
         #endregion
-
-        /// <summary>
-        /// Removes the given element from the list of <see cref="ISeries"/>.
-        /// </summary>
-        /// <param name="lineToRemove">The <see cref="ISeries"/> number to remove</param>
-        public void RemoveLine(int lineToRemove)
-        {
-            ChartData.Series.RemoveAt(lineToRemove);
-        }
 
         /// <summary>
         /// Adds points to the chart.
@@ -99,6 +91,46 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        public void UpdateData(Network? network)
+        {
+            if (network is null) return;
+            foreach (var item in network.Readings.Where(e => e.Date > LastNetPlot))
+            {
+                switch (ChartData.Type)
+                {
+                    case BaseChart.ChartType.Network:
+                        UpdateNetworkData(item);
+                        break;
+                    case BaseChart.ChartType.NetworkDelta:
+                        UpdateNetworkDeltaData(item);
+                        break;
+                    case BaseChart.ChartType.NetworkSpeed:
+                        UpdateNetworkSpeedData(item);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public void UpdateNetworkData(NetworkUsage reading)
+        {
+            ChartData.Values[0].Add(CreatePoint(reading.BytesSend, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(reading.BytesReceived, reading.Date));
+        }
+
+        public void UpdateNetworkDeltaData(NetworkUsage reading)
+        {
+            ChartData.Values[0].Add(CreatePoint(reading.BytesSendDelta, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(reading.BytesReceivedDelta, reading.Date));
+        }
+
+        public void UpdateNetworkSpeedData(NetworkUsage reading)
+        {
+            ChartData.Values[0].Add(CreatePoint(reading.BytesSendSpeed, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(reading.BytesReceivedSpeed, reading.Date));
+        }
+
         private void UpdatePlots(DateTime ramDate, DateTime cpuDate)
         {
             LastRamPlot = ramDate;
@@ -111,6 +143,17 @@ namespace DashboardFrontend.ViewModels
         private ObservablePoint CreatePoint(PerformanceMetric pointData)
         {
             return new ObservablePoint(pointData.Date.ToOADate(), pointData.Load);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ObservablePoint"/> from <see cref="NetworkUsage"/> data.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        private ObservablePoint CreatePoint(long bytes, DateTime time)
+        {
+            return new ObservablePoint(time.ToOADate(), Convert.ToDouble(bytes));
         }
 
         #region AutoFocus Functions
@@ -138,7 +181,7 @@ namespace DashboardFrontend.ViewModels
                     if (ChartData.Values.Count > 0 && ChartData.Values.First().Count > 0)
                     {
                         ChartData.XAxis[0].MinLimit = ChartData.Values.First().Count >= _maxView ? ChartData.Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() :
-                                                                              ChartData.Values.First().First().X.Value;
+                            ChartData.Values.First().First().X.Value;
                         ChartData.XAxis[0].MaxLimit = ChartData.Values.First().Last().X.Value;
                     }
                 }
