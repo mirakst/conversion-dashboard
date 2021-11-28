@@ -19,14 +19,14 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, DataGrid validationsDataGrid, LiveChartViewModel liveChartViewModel)
+        public MainWindowViewModel(UserSettings userSettings, Log log, ValidationReport validationReport, LiveChartViewModel liveChartViewModel)
         {
             _uiContext = SynchronizationContext.Current;
 
             _log = log;
             _validationReport = validationReport;
             LogViewModel = new(log);
-            ValidationReportViewModel = new(validationReport, validationsDataGrid);
+            ValidationReportViewModel = new(validationReport);
             UserSettings = userSettings;
             LiveChartViewModel = liveChartViewModel;
         }
@@ -99,9 +99,8 @@ namespace DashboardFrontend.ViewModels
                 {
                     //Task.Run(() => QueryHealthReport());
                     //Task.Run(() => QueryManagers());
-                    Task.Run(() => QueryLogs());
-                    //Task.Run(() => QueryValidations());
-
+                    //Task.Run(() => QueryLogs());
+                    Task.Run(() => QueryValidations());
                 }, null, 500, UserSettings.AllQueryInterval * 1000));
             }
             else
@@ -136,14 +135,19 @@ namespace DashboardFrontend.ViewModels
             _logLastModified = DateTime.Now;
         }
 
+        bool isQueryingValidations;
         private void QueryValidations()
         {
+            if (isQueryingValidations) return;
+
+            isQueryingValidations = true;
             var result = DataUtilities.GetAfstemninger(_validationReport.LastModified);
             if (result.Count > 0)
             {
                 _validationReport.ValidationTests = result;
                 _uiContext?.Send(x => ValidationReportViewModel.UpdateData(), null);
             }
+            isQueryingValidations = false;
         }
 
         private void QueryHealthReport()

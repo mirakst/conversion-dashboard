@@ -26,7 +26,7 @@ namespace DashboardFrontend
             InitializeComponent();
             TryLoadUserSettings();
             
-            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(UserSettings, Log, ValidationReport, LiveChartViewModel);
             DataContext = ViewModel;
         }
 
@@ -135,26 +135,6 @@ namespace DashboardFrontend
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
             ButtonHealthReportDetach.IsEnabled = true;
-        }
-
-        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-            {
-                RoutedEvent = MouseWheelEvent,
-                Source = DataGridValidations
-            };
-            DataGridValidations.RaiseEvent(eventArgs);
-        }
-
-        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-            {
-                RoutedEvent = MouseWheelEvent,
-                Source = DataGridValidations
-            };
-            DataGridValidations.RaiseEvent(eventArgs);
         }
 
         private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)

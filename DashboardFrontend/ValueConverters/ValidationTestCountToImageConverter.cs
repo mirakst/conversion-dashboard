@@ -13,7 +13,7 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ValidationTestViewModel entry)
+            if (value is ManagerValidationsWrapper entry)
             {
                 if (entry.FailedCount == 0 && entry.DisabledCount > 0)
                 {

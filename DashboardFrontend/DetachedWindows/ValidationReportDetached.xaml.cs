@@ -25,7 +25,7 @@ namespace DashboardFrontend.DetachedWindows
         {
             InitializeComponent();
             ValidationReport = validationReport;
-            ViewModel = new(validationReport, DataGridValidations);
+            ViewModel = new(validationReport);
             DataContext = ViewModel;
         }
         

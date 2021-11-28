@@ -19,7 +19,6 @@
         <Setter Property="TextAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Margin" Value="0,0,5,0"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}"/>
     </Style>

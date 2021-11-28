@@ -162,8 +162,8 @@
                             <Setter Property="BorderThickness" Value="1" TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="False">
-                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonOnHoverColor}" TargetName="Border" />
-                            <Setter Property="BorderThickness" Value="0" TargetName="Border"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundColor}" TargetName="Border" />
+                            <Setter Property="BorderThickness" Value="1" TargetName="Border"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

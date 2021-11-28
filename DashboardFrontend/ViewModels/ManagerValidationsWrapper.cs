@@ -3,60 +3,35 @@ using System.Linq;
 using System.Collections.Generic;
 using static Model.ValidationTest;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace DashboardFrontend.ViewModels
 {
-    public class ValidationTestViewModel : BaseViewModel
+    public class ManagerValidationsWrapper : BaseViewModel
     {
-        public ValidationTestViewModel(string manager)
+        public ManagerValidationsWrapper(ValidationReportViewModel vm, string manager)
         {
+            _vm = vm;
             ManagerName = manager;
         }
 
         #region Properties
         public string ManagerName { get; set; }
-        public ObservableCollection<ValidationTest> Tests { get; set; } = new();
 
-        private double _score;
-        public double Score
+        private ICollectionView _validationsView;
+        public ICollectionView Validations
         {
-            get => _score;
+            get => _validationsView;
             set
             {
-                _score = value;
-                OnPropertyChanged(nameof(Score));
+                _validationsView = value;
+                OnPropertyChanged(nameof(Validations));
             }
         }
-        private bool _showOk;
-        public bool ShowOk
-        {
-            get => _showOk;
-            set
-            {
-                _showOk = value;
-                OnPropertyChanged(nameof(ShowOk));
-            }
-        }
-        private bool _showDisabled = true;
-        public bool ShowDisabled
-        {
-            get => _showDisabled;
-            set
-            {
-                _showDisabled = value;
-                OnPropertyChanged(nameof(ShowDisabled));
-            }
-        }
-        private bool _showFailed = true;
-        public bool ShowFailed
-        {
-            get => _showFailed;
-            set
-            {
-                _showFailed = value;
-                OnPropertyChanged(nameof(ShowFailed));
-            }
-        }
+
+        private List<ValidationTest> _validationsData = new();
+
         private int _okCount;
         public int OkCount
         {
@@ -88,6 +63,8 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private int _totalCount;
+        private readonly ValidationReportViewModel _vm;
+
         public int TotalCount
         {
             get => _totalCount;
@@ -101,7 +78,7 @@ namespace DashboardFrontend.ViewModels
 
         public void AddTest(ValidationTest test)
         {
-            Tests.Add(test);
+            _validationsData.Add(test);
             TotalCount++;
             switch(test.Status)
             {
@@ -118,7 +95,13 @@ namespace DashboardFrontend.ViewModels
                 default:
                     return;
             }
-            Score = (double)OkCount / (double)(TotalCount - DisabledCount) * 100.0d;
+            UpdateView();
+        }
+
+        public void UpdateView()
+        {
+            _validationsView = CollectionViewSource.GetDefaultView(_validationsData.OrderBy(x => x.Status));
+            _validationsView.Filter = _vm.ValidationsFilter;
         }
     }
 }

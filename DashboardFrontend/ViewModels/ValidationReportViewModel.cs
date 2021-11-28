@@ -10,25 +10,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using static Model.ValidationTest;
 
 namespace DashboardFrontend.ViewModels
 {
     public class ValidationReportViewModel : BaseViewModel
     {
-        public ValidationReportViewModel(ValidationReport validationReport, DataGrid dataGrid)
+        public ValidationReportViewModel(ValidationReport validationReport)
         {
-            _dataGrid = dataGrid;
             _validationReport = validationReport;
             UpdateData();
         }
 
         #region Properties
         private ValidationReport _validationReport;
-        private DataGrid _dataGrid;
 
-        public ObservableCollection<ValidationTestViewModel> Data { get; set; } = new();
-
+        private ICollectionView _managerView;
+        public ICollectionView Managers
+        {
+            get => _managerView;
+            set
+            {
+                _managerView = value;
+                OnPropertyChanged(nameof(Managers));
+            }
+        }
+        
         private DateTime _lastModified;
         public DateTime LastModified
         {
@@ -47,7 +55,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
-                Filter();
+                Managers.Refresh();
             }
         }
         private int _totalCount;
@@ -90,14 +98,37 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(FailedCount));
             }
         }
-        private bool _showSuccessfulManagers = true;
-        public bool ShowSuccessfulManagers
+
+        private bool _showOk;
+        public bool ShowOk
         {
-            get => _showSuccessfulManagers;
+            get => _showOk;
             set
             {
-                _showSuccessfulManagers = value;
-                OnPropertyChanged(nameof(ShowSuccessfulManagers));
+                _showOk = value;
+                OnPropertyChanged(nameof(ShowOk));
+                Filter();
+            }
+        }
+        private bool _showDisabled = true;
+        public bool ShowDisabled
+        {
+            get => _showDisabled;
+            set
+            {
+                _showDisabled = value;
+                OnPropertyChanged(nameof(ShowDisabled));
+                Filter();
+            }
+        }
+        private bool _showFailed = true;
+        public bool ShowFailed
+        {
+            get => _showFailed;
+            set
+            {
+                _showFailed = value;
+                OnPropertyChanged(nameof(ShowFailed));
                 Filter();
             }
         }
@@ -105,66 +136,64 @@ namespace DashboardFrontend.ViewModels
 
         public void UpdateData()
         {
-            OkCount = 0;
-            DisabledCount = 0;
-            FailedCount = 0;
-            TotalCount = 0;
-            Data.Clear();
-            foreach (ValidationTest test in _validationReport.ValidationTests)
+            List<ManagerValidationsWrapper> list = new();
+            for (int i = 0; i < _validationReport.ValidationTests.Count; i++)
             {
-                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
+                ValidationTest test = _validationReport.ValidationTests[i];
+                ManagerValidationsWrapper? dataEntry = list.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
                 {
                     dataEntry.AddTest(test);
                 }
                 else
                 {
-                    dataEntry = new(test.ManagerName);
+                    dataEntry = new(this, test.ManagerName);
                     dataEntry.AddTest(test);
-                    Data.Add(dataEntry);
+                    list.Add(dataEntry);
                 }
-                UpdateCounter(test);
             }
+            UpdateCounters();
             LastModified = _validationReport.LastModified;
+            Managers = CollectionViewSource.GetDefaultView(list.OrderByDescending(x => x.FailedCount).ThenByDescending(x => x.DisabledCount));
+            Managers.Filter = ManagerFilter;
         }
 
-        /// <summary>
-        /// Filters the Data collection by setting the visibility property of their associated DataGridRow control
-        /// </summary>
-        public void Filter()
+        private bool ManagerFilter(object item)
         {
-            foreach (ValidationTestViewModel item in Data)
+            if (item is ManagerValidationsWrapper wrapper)
             {
-                DataGridRow row = (DataGridRow)_dataGrid.ItemContainerGenerator.ContainerFromItem(item);
-                if (!item.ManagerName.Contains(NameFilter) || (item.OkCount == item.TotalCount && !ShowSuccessfulManagers))
-                {
-                    row.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    row.Visibility = Visibility.Visible;
-                }
+                return wrapper.ManagerName.Contains(NameFilter);
+            }
+            return false;
+        }
+
+        public bool ValidationsFilter(object item)
+        {
+            if (item is ValidationTest val)
+            {
+                return val.Status == ValidationStatus.Ok && ShowOk
+                    || val.Status == ValidationStatus.Failed && ShowFailed
+                    || val.Status == ValidationStatus.FailMismatch && ShowFailed
+                    || val.Status == ValidationStatus.Disabled && ShowDisabled;
+            }
+            return false;
+        }
+
+        private void Filter()
+        {
+            foreach (var item in Managers)
+            {
+                var wrapper = (ManagerValidationsWrapper)item;
+                wrapper.Validations.Refresh();
             }
         }
 
-        private void UpdateCounter(ValidationTest test)
+        private void UpdateCounters()
         {
-            switch (test.Status)
-            {
-                case ValidationStatus.Ok:
-                    OkCount++;
-                    break;
-                case ValidationStatus.Disabled:
-                    DisabledCount++;
-                    break;
-                case ValidationStatus.Failed:
-                case ValidationStatus.FailMismatch:
-                    FailedCount++;
-                    break;
-                default: 
-                    break;
-            }
-            TotalCount++;
+            OkCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Ok);
+            DisabledCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Disabled);
+            FailedCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Failed || x.Status == ValidationStatus.FailMismatch);
+            TotalCount = _validationReport.ValidationTests.Count;
         }
     }
 }
