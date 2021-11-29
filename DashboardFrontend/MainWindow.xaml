@@ -56,11 +56,11 @@
                       Margin="20,20,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
-                        Click="ButtonStartStopClick"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Style="{StaticResource DefaultButton}">
+                            Click="ButtonStartStopClick"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Style="{StaticResource DefaultButton}">
                         <Image>
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
@@ -147,9 +147,9 @@
                   Grid.ColumnSpan="2">
 
                 <Grid x:Name="gridManagerList"
-                  Grid.Row="0"
-                  Grid.Column="0"
-                  Margin="0,0,20,20">
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      Margin="0,0,20,20">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -161,7 +161,8 @@
                         <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox Name="textboxSearchbar"
+                    <TextBox Name="textboxManagerSearchbar"
+                             Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
                              Style="{DynamicResource SearchBox}"
                              BorderBrush="{DynamicResource BorderColor}">
@@ -174,112 +175,41 @@
                     </DockPanel>
 
                     <Button Name="ButtonManagerFilter"
-                                Grid.Column="1"
-                                Style="{DynamicResource FilterButton}">
+                            Grid.Column="1"
+                            Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
                     </Button>
 
                     <Button Name="ButtonDetachManager"
-                                Click="DetachManagerButtonClick"
-                                Grid.Column="2"
-                                Style="{StaticResource DetachButton}">
+                            Click="DetachManagerButtonClick"
+                            Grid.Column="2"
+                            Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
                     </Button>
 
-                    <!-- The manager overview datagrid -->
                     <DataGrid x:Name="datagridManagers"
-                          Grid.Row="1"
-                          Grid.ColumnSpan="3"
-                          Style="{DynamicResource DefaultDatagrid}"
-                          BorderBrush="{DynamicResource BorderColor}">
+                              ItemsSource="{Binding Managers}"
+                              Grid.Row="1"
+                              Grid.ColumnSpan="3"
+                              Style="{DynamicResource DefaultDatagrid}"
+                              BorderBrush="{DynamicResource BorderColor}">
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding Manager.ContextId}"
-                                            Width="25pt"/>
+                                                Binding="{Binding ContextId}"
+                                                Width="25pt"/>
                             <DataGridTextColumn Header="Manager name" 
-                                            Binding="{Binding Manager.Name}"
-                                            Width="8*"/>
+                                                Binding="{Binding Name}"
+                                                Width="8*"/>
                             <DataGridTextColumn Header="Score" 
-                                            Binding="{Binding Manager.Score}"
-                                            Width="*"/>
+                                                Binding="{Binding Score}"
+                                                Width="*"/>
                             <DataGridTextColumn Header="Status" 
-                                            Binding="{Binding Manager.Status}"
-                                            Width="2*"/>
+                                                Binding="{Binding Status}"
+                                                Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
-
-                <!--<Grid Name="GridManager"
-                      Margin="0,0,20,20"
-                      Grid.Column="0"
-                      Grid.Row="0">
-                    <Grid Grid.Row="0">
-                        <TextBox Name="TextBoxManagerSearchBox"
-                                 Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Name="DockPanelSearchButton"
-                                   Grid.Column="0" 
-                                   LastChildFill="False">
-                            <Button Name="ButtonManagerSearch"
-                                    Style="{DynamicResource SearchButton}"
-                                    DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"
-                                       Margin="0,5,0,5"/>
-                            </Button>
-                        </DockPanel>
-
-                        <Button Name="ButtonManagerFilter"
-                                Grid.Column="1"
-                                Style="{DynamicResource FilterButton}">
-                            <Image Source="Icons/Filter.png"/>
-                        </Button>
-
-                        <Button Name="ButtonDetachManager"
-                                Click="DetachManagerButtonClick"
-                                Grid.Column="2"
-                                Style="{StaticResource DetachButton}">
-                            <Image Source="Icons/Detach.png"/>
-                        </Button>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-
-                    <Grid Grid.Row="1">
-                        <ListView x:Name="ListViewManagerList"
-                                  Grid.Column="0"
-                                  ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                                  AlternationCount="2"
-                                  Background="{StaticResource CanvasColor}"
-                                  Foreground="{StaticResource ForegroundColor}"
-                                  BorderBrush="{StaticResource BorderColor}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Manager name"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerName}"/>
-                                    <GridViewColumn Header="Score"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerScore}"/>
-                                    <GridViewColumn Header="Status"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerStatus}"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </Grid>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                </Grid>-->
 
                 <Grid Name="GridLog" 
                       Margin="20,0,0,20"

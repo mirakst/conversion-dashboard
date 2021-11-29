@@ -1,4 +1,4 @@
-using DashboardBackend;
+﻿using DashboardBackend;
 using DashboardBackend.Database;
 using DashboardFrontend.ViewModels;
 using Model;
@@ -22,7 +22,7 @@ namespace DashboardFrontend.DetachedWindows
 
             InitializeComponent();
 
-            DataUtilities.DatabaseHandler = new SqlDatabase();                                                                          // Remove later once the Start monitoring functions has been made
+            DataUtilities.DatabaseHandler = new SqlDatabase("Data Source=anderspc;Initial Catalog=ANS_CUSTOM;Integrated Security=True");                                                                          // Remove later once the Start monitoring functions has been made
             Conversion conv = new();                                                                                                    
             conv.Executions = DataUtilities.GetExecutions();                    
             DataUtilities.AddManagers(conv.Executions);

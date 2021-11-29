@@ -62,7 +62,7 @@ namespace DashboardFrontend.ViewModels
                     GeometryStroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
                     GeometrySize = 0.4,
                     TooltipLabelFormatter = e => manager.Manager.Name.Split(".").Last() + "\n" +
-                                                 "ID: " + manager.Manager.Id + " Execution " + manager.Manager.ExecutionId + "\n" +
+                                                 "ID: " + manager.Manager.ContextId + " Execution " + manager.Manager.ExecutionId + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
                                                  e.PrimaryValue.ToString("P"),
                 }, managerValues);
