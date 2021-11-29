@@ -8,35 +8,28 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
-
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
-    /// <summary>
-    /// The ViewModel class for Performance monitoring.
-    /// </summary>
-    public class PerformanceViewModel
+    public class NetworkDeltaChart : BaseChart
     {
-        public List<ObservableCollection<ObservablePoint>> PerformanceData { get; set; }
-        public ObservableCollection<ObservablePoint> RAMValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> CPUValues { get; private set; } = new();
-        public List<ISeries> Series { get; private set; }
+        public ObservableCollection<ObservablePoint> SendDeltaValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceiveDeltaValues { get; private set; } = new();
 
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
-        
-        public PerformanceViewModel()
+        public NetworkDeltaChart()
         {
-            PerformanceData = new()
+            Type = ChartType.Network;
+
+            Values = new()
             {
-                RAMValues,
-                CPUValues,
+                SendDeltaValues,
+                ReceiveDeltaValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "RAM",
+                    Name = "Send delta",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
@@ -44,11 +37,12 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
+                                                 e.PrimaryValue.ToString() + "MB",
+                    Values=SendDeltaValues,
                 },
-                new LineSeries<ObservablePoint> 
+                new LineSeries<ObservablePoint>
                 {
-                    Name = "CPU",
+                    Name = "Receive delta",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
@@ -56,9 +50,12 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
+                                                 e.PrimaryValue.ToString() + "MB",
+                    Values=ReceiveDeltaValues,
                 }
             };
+
+            
 
             XAxis = new()
             {
@@ -76,14 +73,10 @@ namespace DashboardFrontend.ViewModels
             {
                 new Axis
                 {
-                    Name = "Load",
-                    Labeler  = (value) => value.ToString("P0"),
-                    MaxLimit = 1,
-                    MinLimit = 0,
+                    Name = "Delta",
+                    Labeler = (value) => value.ToString("N0") + "MB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    MinStep = 0.25,
-                    ForceStepToMin = true,
                 }
             };
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Collections.Generic;
-using DashboardFrontend;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
 
 namespace DashboardFrontend.DetachedWindows
 {

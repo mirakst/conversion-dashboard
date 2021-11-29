@@ -46,7 +46,7 @@
                    FontSize="14" 
                    FontWeight="Bold"/>
         <TextBlock Grid.Row="4" 
-                   Text="Data source" 
+                   Text="Values source" 
                    VerticalAlignment="Center"/>
         <TextBlock Grid.Row="5" 
                    Text="Database" 

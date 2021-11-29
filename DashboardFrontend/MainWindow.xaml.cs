@@ -1,13 +1,7 @@
-using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.Settings;
-using DashboardBackend;
-using DashboardBackend.Database;
 using Model;
-using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,59 +10,25 @@ namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
-        public PerformanceViewModel PerformanceViewModel { get; private set; } = new();
-        public LiveChartViewModel LiveChartViewModel { get; private set; }
-
         public MainWindow()
         {
-            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
-
-            InitializeComponent();
-            TryLoadUserSettings();
-            
-            ViewModel = new(UserSettings, Log, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
+            InitializeComponent();
         }
 
-        private UserSettings UserSettings { get; } = new();
-        public ValidationReport ValidationReport { get; set; } = new();
-        public Log Log { get; set; } = new();
+
         public MainWindowViewModel ViewModel { get; }
-        
-        private void TryLoadUserSettings()
-        {
-            try
-            {
-                UserSettings.LoadFromFile();
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                // Configuration file was not found, possibly first time setup
-            }
-            catch (System.Text.Json.JsonException ex)
-            {
-                DisplayGeneralError("Failed to parse contents of UserSettings.json", ex);
-            }
-            catch (System.IO.IOException ex)
-            {
-                DisplayGeneralError("An unexpected problem occured while loading user settings", ex);
-            }
-        }
 
-        private void DisplayGeneralError(string message, Exception ex)
-        {
-            MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
-        }
-        
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.OnStartPressed();
+            ViewModel.Controller.OnStartPressed();
         }
 
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new(UserSettings);
+            SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
             //settingsWindow.Closing += OnSettingsWindowClosing;
             //settingsWindow.IsEnabled = false;
             //settingsWindow.Owner = Application.Current.MainWindow;
@@ -85,29 +45,37 @@ namespace DashboardFrontend
          
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogDetached detachLog = new(ViewModel.LogViewModel);
-            detachLog.Closing += OnLogWindowClosing;
-            ButtonLogDetach.IsEnabled = false;
+            LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
+            LogDetached detachLog = new(detachedLogViewModel);
             detachLog.Show();
+            detachLog.Closed += delegate
+            {
+                ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
+            };
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
-        {            
-            ValidationReportDetached detachVR = new(ValidationReport);
-            detachVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportDetach.IsEnabled = false;
-            detachVR.Show();
+        {
+            ValidationReportViewModel detachedValidationReportViewModel =
+                ViewModel.Controller.CreateValidationReportViewModel();
+            ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
+            detachedValidationReportViewModel.DataGrid = detachVr.DataGridValidations;
+            detachVr.Show();
+            detachVr.Closed += delegate
+            {
+                ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+            };
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportDetached expandHr = new();
-            
-
-            ButtonHealthReportDetach.IsEnabled = false;
-            expandHr.Closing += OnHealthWindowClosing;
-            
-            expandHr.Show();
+            HealthReportViewModel detachedHealthReportViewModel = ViewModel.Controller.CreateHealthReportViewModel();
+            HealthReportDetached detachHr = new(detachedHealthReportViewModel);
+            detachHr.Show();
+            detachHr.Closed += delegate
+            {
+                ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
+            };
         }
 
         //OnWindowClosing events
@@ -121,22 +89,7 @@ namespace DashboardFrontend
             ButtonManagerDetach.IsEnabled = true;
         }
 
-        private void OnLogWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonLogDetach.IsEnabled = true;
-        }
-
-        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
-        {
-            buttonValidationReportDetach.IsEnabled = true;
-        }
-
-        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonHealthReportDetach.IsEnabled = true;
-        }
-
-        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
             {
@@ -174,6 +127,7 @@ namespace DashboardFrontend
             }
         }
 
+        //Window handlling events
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -208,21 +162,24 @@ namespace DashboardFrontend
             this.DragMove();
         }
 
+        //Performance events
+
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            LiveChartViewModel.AutoFocusOn();
+            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
 
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            LiveChartViewModel.AutoFocusOff();
+            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOff();
         }
 
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using DashboardFrontend.Settings;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
