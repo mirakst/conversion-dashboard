@@ -138,8 +138,6 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-        public ListView LogListView { get; }
-
         /// <summary>
         /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
         /// </summary>
