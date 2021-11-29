@@ -327,15 +327,15 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <ListView x:Name="listViewLogEntry"
+                        <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding LogViewModel.Messages}"
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   MaxHeight="5000"
-                                  MouseEnter="listViewLogEntry_MouseOverChanged"
-                                  MouseLeave="listViewLogEntry_MouseOverChanged"
+                                  MouseEnter="ListViewLog_MouseOverChanged"
+                                  MouseLeave="ListViewLog_MouseOverChanged"
                                   ScrollViewer.CanContentScroll="True">
                             <ListView.View>
                                 <GridView>

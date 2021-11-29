@@ -91,13 +91,15 @@
                     Style="{DynamicResource DefaultButton}">
                 <Image Source="../Icons/Filter.png"/>
             </Button>
-            <ListView x:Name="listViewLogEntry"
+            <ListView x:Name="ListViewLog"
                         Grid.Row="2"
                         Grid.ColumnSpan="11"
                         ItemsSource="{Binding Messages}"
                         Background="White"
                         Foreground="Black"
                         BorderBrush="{StaticResource BorderColor}"
+                        MouseEnter="ListViewLog_MouseOverChanged"
+                        MouseLeave="ListViewLog_MouseOverChanged"
                         MaxHeight="5000">
                 <ListView.View>
                     <GridView>

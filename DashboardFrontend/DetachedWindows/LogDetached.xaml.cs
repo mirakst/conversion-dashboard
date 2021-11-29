@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Collections.Generic;
-using DashboardFrontend;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
+using System.Windows.Input;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -11,7 +8,14 @@ namespace DashboardFrontend.DetachedWindows
         public LogDetached(LogViewModel logViewModel)
         {
             InitializeComponent();
+            logViewModel.LogListView = ListViewLog;
             DataContext = logViewModel;
+        }
+
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
+        {
+            var vm = (LogViewModel)DataContext;
+            vm.DoAutoScroll = !vm.DoAutoScroll;
         }
     }
 }

@@ -14,16 +14,17 @@ namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel(Log log, ListView logListView)
+        public LogViewModel()
         {
-            _log = log;
-            LogListView = logListView;
-            UpdateData();
         }
 
+        public LogViewModel(ListView logListView)
+        {
+            LogListView = logListView;
+        }
+        
         public bool DoAutoScroll { get; set; } = true;
-
-        private Log _log;
+        public ListView LogListView { get; set; }
         private ObservableCollection<LogMessage> _messages = new();
         public ObservableCollection<LogMessage> Messages
         {
@@ -32,7 +33,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
-                if (DoAutoScroll && LogListView.Items.Count > 0)
+                if (DoAutoScroll && LogListView is not null && LogListView.Items.Count > 0)
                 {
                     LogListView.ScrollIntoView(LogListView.Items[^1]);
                 }
@@ -150,9 +151,9 @@ namespace DashboardFrontend.ViewModels
         /// <summary>
         /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
         /// </summary>
-        public void UpdateData()
+        public void UpdateData(Log log)
         {
-            Messages = new(_log.Messages.Where(x =>
+            Messages = new(log.Messages.Where(x =>
             {
                 return x.Type == LogMessageType.Info && ShowInfo
                     || x.Type == LogMessageType.Warning && ShowWarn
@@ -160,21 +161,21 @@ namespace DashboardFrontend.ViewModels
                     || x.Type == LogMessageType.Fatal && ShowFatal
                     || x.Type == LogMessageType.Validation && ShowValidation;
             }));
-            UpdateCounters();
+            UpdateCounters(log);
         }
 
         /// <summary>
         /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage.
         /// </summary>
         /// <param name="msg">LogMessage whose type counter should be updated.</param>
-        private void UpdateCounters()
+        private void UpdateCounters(Log log)
         {
             InfoCount = 0;
             WarnCount = 0;
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
-            foreach(LogMessage msg in _log.Messages)
+            foreach(LogMessage msg in log.Messages)
             {
                 switch (msg.Type)
                 {

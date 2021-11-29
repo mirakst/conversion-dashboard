@@ -22,18 +22,11 @@ namespace DashboardFrontend
 
         public MainWindow()
         {
-            LiveChartViewModel = new(PerformanceViewModel.Series, PerformanceViewModel.PerformanceData, PerformanceViewModel.XAxis, PerformanceViewModel.YAxis);
-
             InitializeComponent();
-            TryLoadUserSettings();
-            
-            ViewModel = new(UserSettings, Log, listViewLogEntry, ValidationReport, DataGridValidations, LiveChartViewModel);
+            ViewModel = new(DataGridValidations, ListViewLog);
             DataContext = ViewModel;
         }
 
-        private UserSettings UserSettings { get; } = new();
-        public ValidationReport ValidationReport { get; set; } = new();
-        public Log Log { get; set; } = new();
         public MainWindowViewModel ViewModel { get; }
         
         private void TryLoadUserSettings()
@@ -223,11 +216,15 @@ namespace DashboardFrontend
 
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+            if (ViewModel is not null)
+            {
+                _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+                ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+                ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            }
         }
-
-        private void listViewLogEntry_MouseOverChanged(object sender, MouseEventArgs e)
+        
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
         {
             ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
         }
