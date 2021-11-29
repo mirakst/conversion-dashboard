@@ -10,9 +10,9 @@ namespace DashboardFrontend.ViewModels
 {
     public class ManagerViewModel : BaseViewModel
     {
-        public ManagerViewModel()
+        public ManagerViewModel(HealthReport healthReport)
         {
-
+            ManagerChartViewModel = new(healthReport);
         }
 
         public ManagerViewModel(DataGrid dataGrid)
@@ -21,21 +21,32 @@ namespace DashboardFrontend.ViewModels
         }
 
         private DataGrid _datagrid;
-        private ObservableCollection<Manager> _managers;
-        public ObservableCollection<Manager> Managers
+        private ObservableCollection<ManagerWrapper> _managers = new();
+        public ManagerChartViewModel ManagerChartViewModel { get; set; }
+        public ObservableCollection<ManagerWrapper> Managers
         {
-            get { return _managers; }
+            get => _managers;
             set
             {
                 _managers = value;
                 OnPropertyChanged(nameof(Managers));
             }
         }
+        private ObservableCollection<ManagerWrapper> _wrappedManagers = new();
+        public ObservableCollection<ManagerWrapper> WrappedManagers
+        {
+            get => _wrappedManagers;
+            set
+            {
+                _wrappedManagers = value;
+                OnPropertyChanged(nameof(WrappedManagers));
+            }
+        }
 
         private string _managerSearch = string.Empty;
         public string ManagerSearch
         {
-            get { return _managerSearch; }
+            get => _managerSearch;
             set
             {
                 _managerSearch = value;
@@ -46,10 +57,10 @@ namespace DashboardFrontend.ViewModels
 
         public void SearchManagers()
         {
-            foreach (Manager manager in Managers)
+            foreach (ManagerWrapper manager in Managers)
             {
                 DataGridRow row = (DataGridRow)_datagrid.ItemContainerGenerator.ContainerFromItem(manager);
-                if (!manager.Name.Contains(ManagerSearch))
+                if (!manager.Manager.Name.Contains(ManagerSearch))
                 {
                     row.Visibility = Visibility.Collapsed;
                 }
@@ -65,7 +76,7 @@ namespace DashboardFrontend.ViewModels
             Managers.Clear();
             foreach (Manager manager in executionManagers)
             {
-                Managers.Add(manager);
+                Managers.Add(new ManagerWrapper(manager));
             }
         }
     }

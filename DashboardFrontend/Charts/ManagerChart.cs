@@ -1,29 +1,25 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Windows.Markup;
+using DashboardFrontend.Charts;
 using LiveChartsCore.Defaults;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
     /// <summary>
     /// Empty chart class to add manager data to.
     /// </summary>
-    public class ManagerPerformanceViewModel
+    public class ManagerChart : BaseChart
     {
-        public List<ObservableCollection<ObservablePoint>> ManagerData { get; set; }
-        public List<ISeries> Series { get; private set; }
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
-
-        public ManagerPerformanceViewModel(string YAxisLabel)
+        public ManagerChart(string YAxisLabel)
         {
-            ManagerData = new();
+            Values = new();
             Series = new();
-
             XAxis = new()
             {
                 new Axis

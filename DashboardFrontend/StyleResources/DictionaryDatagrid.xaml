@@ -9,6 +9,7 @@
         <Setter Property="IsReadOnly" Value="True"/>
         <Setter Property="CanUserReorderColumns" Value="False"/>
         <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="Background" Value="{DynamicResource HeaderColor}"/>
         <Style.Resources>

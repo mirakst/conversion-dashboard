@@ -40,7 +40,7 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="35pt"/>
+                    <ColumnDefinition Width="35"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28"/>
@@ -74,14 +74,16 @@
                           Grid.Row="1"
                           Grid.ColumnSpan="2"
                           Style="{DynamicResource DefaultDatagrid}"
-                          BorderBrush="{DynamicResource BorderColor}">
+                          BorderBrush="{DynamicResource BorderColor}"
+                          ItemsSource="{Binding Managers}" 
+                          SelectionChanged="datagridManagers_SelectionChanged">
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Manager.ContextId}"
                                             Width="25pt"/>
                         <DataGridTextColumn Header="Manager name" 
-                                            Binding="{Binding Manager.Name}"
+                                            Binding="{Binding Manager.ShortName}"
                                             Width="9*"/>
                         <DataGridTextColumn Header="Score" 
                                             Binding="{Binding Manager.Score}"
@@ -95,11 +97,13 @@
                                     <Button Name="buttonAddManager"
                                             Click="AddManager_Click"
                                             ToolTip="Add manager to detailed view"
-                                            Content="g"
                                             FontFamily="wingdings 3"
                                             Width="20pt"
                                             Tag="{Binding}"
-                                            Style="{DynamicResource DefaultButton}">
+                                            Style="{StaticResource DetachButton}"
+                                            Margin="0,0,4,0">
+                                        <Image Source="../Icons/Add.png"
+                                               Margin="8"/>
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -129,7 +133,7 @@
                             <DataGrid x:Name="datagridManagerDetails"
                                       Margin = "0, 3, 0, 0"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      BorderBrush="{DynamicResource BorderColor}">
+                                      ItemsSource="{Binding WrappedManagers}">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
@@ -159,11 +163,14 @@
                                                 <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
                                                         ToolTip="Remove manager from detailed view"
-                                                        Content='f'
                                                         FontFamily="wingdings 3"
                                                         Width="20pt"
                                                         Tag="{Binding}"
-                                                        Style="{DynamicResource DefaultButton}"/>
+                                                        Style="{StaticResource DetachButton}"
+                                                        Margin="0,0,4,0">
+                                                    <Image Source="../Icons/Remove.png"
+                                                           Margin="8"/>
+                                                </Button>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -201,12 +208,12 @@
                                            Style="{DynamicResource ChartLabels}"/>
                                 </StackPanel>
                                 
-                                <lvc:CartesianChart DataContext="{Binding CPUChart}"
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.CPUChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding Series}"
+                                                    Series="{Binding ChartData.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding XAxis}"
-                                                    YAxes="{Binding YAxis}"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
                                                     TooltipPosition="Top"
                                                     MouseLeave="CartesianChart_MouseLeave"
                                                     MouseEnter="CartesianChart_MouseEnter">
@@ -231,12 +238,12 @@
                                            Style="{DynamicResource ChartLabels}"/>
                                 </StackPanel>
 
-                                <lvc:CartesianChart DataContext="{Binding RAMChart}"
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.RAMChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding Series}"
+                                                    Series="{Binding ChartData.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding XAxis}"
-                                                    YAxes="{Binding YAxis}"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
                                                     TooltipPosition="Top"
                                                     MouseLeave="CartesianChart_MouseLeave"
                                                     MouseEnter="CartesianChart_MouseEnter">
@@ -257,12 +264,12 @@
                                         
                                 </StackPanel>
 
-                                <lvc:CartesianChart DataContext="{Binding ReadChart}"
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.ReadChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding Series}"
+                                                    Series="{Binding ChartData.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding XAxis}"
-                                                    YAxes="{Binding YAxis}"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
                                                     TooltipPosition="Top"
                                                     MouseLeave="CartesianChart_MouseLeave"
                                                     MouseEnter="CartesianChart_MouseEnter">
@@ -282,12 +289,12 @@
                                            Style="{DynamicResource ChartLabels}"/>
                                 </StackPanel>
                                 <lvc:CartesianChart Name="chartWritten"
-                                                    DataContext="{Binding WrittenChart}"
+                                                    DataContext="{Binding ManagerChartViewModel.WrittenChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding Series}"
+                                                    Series="{Binding ChartData.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding XAxis}"
-                                                    YAxes="{Binding YAxis}"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
                                                     TooltipPosition="Top"
                                                     MouseLeave="CartesianChart_MouseLeave"
                                                     MouseEnter="CartesianChart_MouseEnter">
@@ -295,13 +302,14 @@
                             </Grid>
 
                             <DataGrid Name="datagridManagerCharts"
+                                      ItemsSource="{Binding WrappedManagers}"
                                       Grid.Row="0"
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
                                       Margin="15,5,0,10"
                                       BorderBrush="Transparent"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      Background="{DynamicResource BackgroundColor}">
+                                      Background="{DynamicResource BackgroundColor}" SelectionChanged="datagridManagerCharts_SelectionChanged">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using DashboardFrontend.ViewModels;
@@ -60,6 +61,31 @@ namespace DashboardFrontend.Charts
         private bool _isAutoFocusTimer = false;
         private int _maxView = 10;
         #endregion
+
+        /// <summary>
+        /// Adds a line to the chart and assigns a list of values to this line
+        /// </summary>
+        /// The line to be added <param name="Line"></param>
+        /// The associated data to the line <param name="data"></param>
+        public void AddLine(ISeries Line, ObservableCollection<ObservablePoint> data)
+        {
+            ChartData.Values.Add(data);
+            ChartData.Series.Add(Line);
+            ChartData.Series[ChartData.Series.IndexOf(Line)].Values = ChartData.Values[ChartData.Series.IndexOf(Line)];
+        }
+
+        /// <summary>
+        /// Removes a line from the chart but keeps its data in storage
+        /// </summary>
+        /// The line to be removed <param name="dataName"></param>
+        /// The data associated with the line <param name="data"></param>
+        public void RemoveData(String dataName, ObservableCollection<ObservablePoint> data)
+        {
+            ChartData.Values.Remove(data);
+
+            int managerIndex = ChartData.Series.FindIndex(e => e.Name == dataName) + 1;
+            ChartData.Series.RemoveAt(managerIndex);
+        }
 
         /// <summary>
         /// Adds points to the chart.
@@ -178,7 +204,7 @@ namespace DashboardFrontend.Charts
 
                 while (await _autoFocusTimer.WaitForNextTickAsync())
                 {
-                    if (ChartData.Values.Count > 0 && ChartData.Values.First().Count > 0)
+                    if (ChartData.Values.Count > 0 && ChartData.Values.First()?.Count > 0)
                     {
                         ChartData.XAxis[0].MinLimit = ChartData.Values.First().Count >= _maxView ? ChartData.Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() :
                             ChartData.Values.First().First().X.Value;

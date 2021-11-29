@@ -1,4 +1,5 @@
-﻿using LiveChartsCore.Defaults;
+﻿using DashboardFrontend.Charts;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -6,40 +7,28 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Model;
 
 namespace DashboardFrontend.ViewModels
 {
     public class ManagerChartViewModel
     {
-        #region Performance objects
-        public ManagerPerformanceViewModel CPUPerformance { get; private set; } = new("load");
-        public ManagerPerformanceViewModel RAMPerformance { get; private set; } = new("load");
-        public ManagerPerformanceViewModel ReadPerformance { get; private set; } = new("Rows");
-        public ManagerPerformanceViewModel WrittenPerformance { get; private set; } = new("Rows");
-        public List<ManagerPerformanceViewModel> DataCollections { get; private set; } = new();
-        #endregion
 
         #region Chart objects
-        public LiveChartViewModel CPUChart { get; private set; }
-        public LiveChartViewModel RAMChart { get; private set; }
-        public LiveChartViewModel ReadChart { get; private set; }
-        public LiveChartViewModel WrittenChart { get; private set; }
-        public List<LiveChartViewModel> Charts { get; private set; } = new();
+
+        public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"));
+        public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"));
+        public DataChart ReadChart { get; private set; } = new(new ManagerChart("Rows"));
+        public DataChart WrittenChart { get; private set; } = new(new ManagerChart("Rows"));
+        public List<DataChart> Charts { get; private set; } = new();
         #endregion
 
-        public ManagerChartViewModel()
-        {
-            #region Charts
-            CPUChart = new(CPUPerformance.Series, CPUPerformance.ManagerData, CPUPerformance.XAxis, CPUPerformance.YAxis);
-            RAMChart = new(RAMPerformance.Series, RAMPerformance.ManagerData, RAMPerformance.XAxis, RAMPerformance.YAxis);
-            ReadChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
-            WrittenChart = new(ReadPerformance.Series, ReadPerformance.ManagerData, ReadPerformance.XAxis, ReadPerformance.YAxis);
-            #endregion
+        private HealthReport _healthReport { get; set; }
 
-            #region Lists
-            Charts = new List<LiveChartViewModel> { CPUChart, RAMChart, ReadChart, WrittenChart };
-            DataCollections = new List<ManagerPerformanceViewModel> { CPUPerformance, RAMPerformance, ReadPerformance, WrittenPerformance };
-            #endregion
+        public ManagerChartViewModel(HealthReport healthReport)
+        {
+            _healthReport = healthReport;
+            Charts.Add(CPUChart);
         }
 
         /// <summary>
@@ -48,11 +37,16 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be added to the chart <param name="manager"></param>
         public void AddChartLinesHelper(ManagerWrapper manager)
         {
-            foreach (LiveChartViewModel chart in Charts)
-            {
-                var managerValues = new ObservableCollection<ObservablePoint>(); // DELETE LATER: Exchange with the data stored in the manager.
+            List<ObservableCollection<ObservablePoint>> managerValues = new(4);
+            managerValues.Add(new ObservableCollection<ObservablePoint>(_healthReport.Cpu.Readings
+                .Where(e => e.Date >= manager.Manager.StartTime)
+                .Where(e => e.Date < manager.Manager.EndTime)
+                .Select(CreatePoint)));
 
-                chart.AddData(new LineSeries<ObservablePoint>
+            int index = 0;
+            foreach (DataChart chart in Charts)
+            {
+                chart.AddLine(new LineSeries<ObservablePoint>
                 {
                     Name = $"{manager.Manager.Name.Split(".").Last()}",
                     Fill = null,
@@ -64,8 +58,13 @@ namespace DashboardFrontend.ViewModels
                                                  "ID: " + manager.Manager.ContextId + " Execution " + manager.Manager.ExecutionId + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
                                                  e.PrimaryValue.ToString("P"),
-                }, managerValues);
+                }, managerValues[index++]);
             }
+        }
+
+        private ObservablePoint CreatePoint(PerformanceMetric pointData)
+        {
+            return new ObservablePoint(pointData.Date.ToOADate(), pointData.Load);
         }
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be removed <param name="manager"></param>
         public void RemoveChartLinesHelper(ManagerWrapper manager)
         {
-            foreach (LiveChartViewModel chart in Charts)
+            foreach (DataChart chart in Charts)
             {
                 var managerValues = new ObservableCollection<ObservablePoint>();
                 chart.RemoveData(manager.Manager.Name, managerValues);
@@ -86,9 +85,9 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void ClearChartLinesHelper()
         {
-            foreach (LiveChartViewModel chart in Charts)
+            foreach (DataChart chart in Charts)
             {
-                chart.Series.Clear();
+                chart.ChartData.Series.Clear();
             }
         }
     }

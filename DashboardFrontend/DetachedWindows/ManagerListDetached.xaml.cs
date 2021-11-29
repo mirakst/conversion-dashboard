@@ -1,9 +1,8 @@
-﻿using DashboardBackend;
-using DashboardBackend.Database;
+﻿using DashboardFrontend.Charts;
 using DashboardFrontend.ViewModels;
-using Model;
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,21 +13,16 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class ManagerListDetached : Window
     {
-        public ManagerChartViewModel ManagerCharts { get; private set; }
+        public ManagerViewModel Vm { get; set; }
+        public ObservableCollection<ManagerWrapper> Managers { get; set; } = new();
 
-        public ManagerListDetached() //Conversion parameter
+        public ManagerListDetached(ManagerViewModel managerViewModel) //Conversion parameter
         {
-            ManagerCharts = new();
+            Vm = managerViewModel;
 
             InitializeComponent();
 
-            foreach (Manager manager in conv.ActiveExecution.Managers) // Change conv
-            {
-                var wrapper = new ManagerWrapper(manager);
-                datagridManagers.Items.Add(wrapper);
-            }
-
-            DataContext = this;
+            DataContext = Vm;
         }
 
         /// <summary>
@@ -38,21 +32,12 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
-            ManagerWrapper? selectedManager = datagridManagers.SelectedItem as ManagerWrapper;
-
-            if (datagridManagers.SelectedItems.Count > 1)
+            foreach (ManagerWrapper manager in datagridManagers.SelectedItems)
             {
-                foreach (ManagerWrapper manager in datagridManagers.SelectedItems)
+                if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
                 {
-                    if (!datagridManagerDetails.Items.Contains(manager))
-                    {
-                        DatagridManagerMover("Add", manager);
-                    }
+                    DatagridManagerMover("Add", manager);
                 }
-            }
-            else if (!datagridManagerDetails.Items.Contains(selectedManager))
-            {
-                DatagridManagerMover("Add", selectedManager);
             }
         }
 
@@ -63,25 +48,14 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void RemoveManager_Click(object sender, RoutedEventArgs e)
         {
-            ManagerWrapper? selectedManager = ((Button)sender).Tag as ManagerWrapper;
             List<ManagerWrapper> managers = new() { };
-
-            if (datagridManagerDetails.SelectedItems.Count > 1 || datagridManagerCharts.SelectedItems.Count > 1)
+            foreach (ManagerWrapper manager in TabInfo.IsSelected ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
             {
-
-
-                foreach (ManagerWrapper manager in TabInfo.IsSelected == true ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
-                {
-                    managers.Add(manager);
-                }
-                foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
-                {
-                    DatagridManagerMover("Remove", manager);
-                }
+                managers.Add(manager);
             }
-            else
+            foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
             {
-                DatagridManagerMover("Remove", selectedManager);
+                DatagridManagerMover("Remove", manager);
             }
         }
 
@@ -105,12 +79,12 @@ namespace DashboardFrontend.DetachedWindows
             datagridManagers.SelectedItems.Clear();
             if (textboxSearchbar.Text != null)
             {
-                List<ManagerWrapper> foundmanagers = new();
+                List<ManagerWrapper> foundManagers = new();
                 foreach (ManagerWrapper manager in datagridManagers.Items)
                 {
                     if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.Manager.ContextId.ToString() == textboxSearchbar.Text)
                     {
-                        foundmanagers.Add(manager);
+                        foundManagers.Add(manager);
                         datagridManagers.SelectedItems.Add(manager);
                     }
                 }
@@ -127,22 +101,18 @@ namespace DashboardFrontend.DetachedWindows
             switch (method)
             {
                 case "Add" when manager is not null:
-                    datagridManagerDetails.Items.Add(manager);
-                    datagridManagerCharts.Items.Add(manager);
-                    ManagerCharts.AddChartLinesHelper(manager);
-                    DataContext = ManagerCharts;
+                    Vm.WrappedManagers.Add(manager);
+                    Vm.ManagerChartViewModel.AddChartLinesHelper(manager);
                     break;
 
                 case "Remove" when manager is not null:
-                    datagridManagerDetails.Items.Remove(manager);
-                    datagridManagerCharts.Items.Remove(manager);
-                    ManagerCharts.RemoveChartLinesHelper(manager);
+                    Vm.WrappedManagers.Remove(manager);
+                    Vm.ManagerChartViewModel.RemoveChartLinesHelper(manager);
                     break;
 
                 case "Clear":
-                    datagridManagerDetails.Items.Clear();
-                    datagridManagerCharts.Items.Clear();
-                    ManagerCharts.ClearChartLinesHelper();
+                    Vm.WrappedManagers.Clear();
+                    Vm.ManagerChartViewModel.ClearChartLinesHelper();
                     break;
             }
         }
@@ -154,7 +124,7 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            foreach (LiveChartViewModel chart in ManagerCharts.Charts)
+            foreach (DataChart chart in Vm.ManagerChartViewModel.Charts)
             {
                 chart.AutoFocusOn();
             }
@@ -167,10 +137,20 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            foreach (LiveChartViewModel chart in ManagerCharts.Charts)
+            foreach (DataChart chart in Vm.ManagerChartViewModel.Charts)
             {
                 chart.AutoFocusOff();
             }
+        }
+
+        private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void datagridManagerCharts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

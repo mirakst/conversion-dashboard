@@ -152,12 +152,13 @@
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
                       Grid.Column="0"
-                      Margin="0,0,20,20">
+                      Margin="0,0,20,20"
+                      DataContext="{Binding ManagerViewModel}">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20pt"/>
-                        <ColumnDefinition Width="20pt"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28"/>
@@ -195,20 +196,21 @@
                               Grid.Row="1"
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
-                              BorderBrush="{DynamicResource BorderColor}">
+                              BorderBrush="{DynamicResource BorderColor}" 
+                              SelectionChanged="datagridManagers_SelectionChanged">
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
-                                                Binding="{Binding ContextId}"
+                                                Binding="{Binding Manager.ContextId}"
                                                 Width="25pt"/>
                             <DataGridTextColumn Header="Manager name" 
-                                                Binding="{Binding Name}"
+                                                Binding="{Binding Manager.ShortName}"
                                                 Width="8*"/>
                             <DataGridTextColumn Header="Score" 
-                                                Binding="{Binding Score}"
+                                                Binding="{Binding Manager.Score}"
                                                 Width="*"/>
                             <DataGridTextColumn Header="Status" 
-                                                Binding="{Binding Status}"
+                                                Binding="{Binding Manager.Status}"
                                                 Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -217,18 +219,19 @@
                 <Grid Name="GridLog" 
                       Margin="20,0,0,20"
                       Grid.Column="1" 
-                      Grid.Row="0">
+                      Grid.Row="0"
+                      DataContext="{Binding LogViewModel}">
                     <Grid Grid.Row="0"
                           Margin="-4, 0, 0, 0">
                         <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
-                                      IsChecked="{Binding LogViewModel.ShowInfo}"
+                                      IsChecked="{Binding ShowInfo}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
+                                <TextBlock Text="{Binding InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
@@ -238,13 +241,13 @@
                                    Grid.Column="1"/>
                         <ToggleButton Name="ToggleButtonLogWarning"
                                       Grid.Column="2"
-                                      IsChecked="{Binding LogViewModel.ShowWarn}"
+                                      IsChecked="{Binding ShowWarn}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
+                                <TextBlock Text="{Binding WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
@@ -254,13 +257,13 @@
                                    Grid.Column="3"/>
                         <ToggleButton Name="ToggleButtonLogError"
                                       Grid.Column="4"
-                                      IsChecked="{Binding LogViewModel.ShowError}"
+                                      IsChecked="{Binding ShowError}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
+                                <TextBlock Text="{Binding ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
@@ -270,13 +273,13 @@
                                    Grid.Column="5"/>
                         <ToggleButton Name="ToggleButtonLogFatal"
                                       Grid.Column="6"
-                                      IsChecked="{Binding LogViewModel.ShowFatal}"
+                                      IsChecked="{Binding ShowFatal}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
+                                <TextBlock Text="{Binding FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
@@ -286,13 +289,13 @@
                                    Grid.Column="7"/>
                         <ToggleButton Name="ToggleButtonLogValidation"
                                       Grid.Column="8"
-                                      IsChecked="{Binding LogViewModel.ShowValidation}"
+                                      IsChecked="{Binding ShowValidation}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Validation.png" 
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
+                                <TextBlock Text="{Binding ValidationCount}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
@@ -331,7 +334,7 @@
                             <ColumnDefinition Width="266*"/>
                         </Grid.ColumnDefinitions>
                         <ListView x:Name="ListViewLogEntry"
-                                  ItemsSource="{Binding LogViewModel.Messages}"
+                                  ItemsSource="{Binding Messages}"
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
@@ -387,7 +390,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="INFO"/>
                                                 <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowInfo}" Value="False"/>
+                                                                     Path=DataContext.ShowInfo}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
@@ -400,7 +403,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="WARNING"/>
                                                 <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowWarn}" Value="False"/>
+                                                                     Path=DataContext.ShowWarn}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
@@ -413,7 +416,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="ERROR"/>
                                                 <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowError}" Value="False"/>
+                                                                     Path=DataContext.ShowError}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>
@@ -426,7 +429,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="FATAL"/>
                                                 <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowFatal}" Value="False"/>
+                                                                     Path=DataContext.ShowFatal}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" 
                                                     Value="Collapsed"/>
@@ -440,7 +443,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding Type}" Value="VALIDATION"/>
                                                 <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                                     Path=DataContext.LogViewModel.ShowValidation}" Value="False"/>
+                                                                     Path=DataContext.ShowValidation}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </MultiDataTrigger>

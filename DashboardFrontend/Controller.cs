@@ -16,9 +16,9 @@ namespace DashboardFrontend
     public class Controller
     {
         private readonly MainWindowViewModel _vm;
-        private readonly Log _log;
-        private readonly ValidationReport _validationReport;
-        private readonly HealthReport _healthReport;
+        private Log _log;
+        private ValidationReport _validationReport;
+        private HealthReport _healthReport;
         private readonly List<Timer> _timers;
         private readonly SynchronizationContext? _uiContext;
         public readonly Conversion _conversion;
@@ -35,14 +35,7 @@ namespace DashboardFrontend
             TryLoadUserSettings();
             _vm = viewModel;
             _conversion = new();
-            _conversion.Executions = DU.GetExecutions();
-            DU.AddManagers(_conversion.Executions);
-            DU.AddManagerReadings(_conversion.ActiveExecution);
-            _log = new Log();
-            _validationReport = new ValidationReport();
-            _healthReport = new HealthReport();
             _timers = new List<Timer>();
-
         }
 
         /// <summary>
@@ -59,7 +52,7 @@ namespace DashboardFrontend
             _vm.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels.Add(_vm.HealthReportViewModel);
 
-            _vm.ManagerViewModel = new ManagerViewModel();
+            _vm.ManagerViewModel = new ManagerViewModel(_healthReport);
             ManagerViewModels.Add(_vm.ManagerViewModel);
         }
 
@@ -92,7 +85,7 @@ namespace DashboardFrontend
 
         public ManagerViewModel CreateManagerViewModel()
         {
-            ManagerViewModel result = new();
+            ManagerViewModel result = new(_healthReport);
             result.UpdateData(_conversion.ActiveExecution.Managers);
             ManagerViewModels.Add(result);
             return result;
@@ -174,9 +167,15 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    if (!_healthReport.IsInitialized)
+                    if (!_conversion.IsInitialized)
                     {
+                        _conversion.Executions = DU.GetExecutions();
+                        _log = _conversion.ActiveExecution.Log;
+                        _validationReport = _conversion.ActiveExecution.ValidationReport;
+                        _healthReport = _conversion.HealthReport;
+                        DU.AddManagers(_conversion.Executions);
                         DU.BuildHealthReport(_healthReport);
+                        _conversion.IsInitialized = true;
                     }
                     StartMonitoring();
                 }

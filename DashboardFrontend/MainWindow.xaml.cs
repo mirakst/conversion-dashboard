@@ -12,9 +12,9 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
+            InitializeComponent();
             ViewModel = new(DataGridValidations);
             DataContext = ViewModel;
-            InitializeComponent();
         }
 
 
@@ -37,10 +37,13 @@ namespace DashboardFrontend
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            ManagerListDetached expandmanager = new();
-            ButtonDetachManager.IsEnabled = false;
-            expandmanager.Closing += OnManagerWindowClosing;
-            expandmanager.Show();
+            ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
+            ManagerListDetached detachManager = new(detachedManagerViewModel);
+            detachManager.Show();
+            detachManager.Closed += delegate
+            {
+                ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+            };
         }
          
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
@@ -82,11 +85,6 @@ namespace DashboardFrontend
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
             ButtonSettings.IsEnabled = true;
-        }
-
-        private void OnManagerWindowClosing(object sender, CancelEventArgs e)
-        {
-            ButtonDetachManager.IsEnabled = true;
         }
 
         private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -167,7 +165,6 @@ namespace DashboardFrontend
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
             ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
-
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
@@ -177,9 +174,17 @@ namespace DashboardFrontend
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            if (ViewModel is not null)
+            {
+                _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+                ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+                ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            }
+        }
+
+        private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
