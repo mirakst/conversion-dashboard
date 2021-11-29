@@ -132,7 +132,7 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="30,20,30,30" 
+            <Grid Margin="10" 
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
@@ -403,7 +403,7 @@
                 <!-- Validation Report Component -->
                 <Grid Name="gridValidationReport"
                       DataContext="{Binding ValidationReportViewModel}"
-                      Margin="0,20,20,0"
+                      Margin="0,0,20,0"
                       Grid.Column="0"
                       Grid.Row="1">
 
@@ -486,34 +486,43 @@
                                        Margin="0 0 5 0"
                                        Width="20"/>
 
-                                <TreeView Grid.Row="1" Background="Transparent" BorderBrush="Transparent" ItemsSource="{Binding Managers}">
+                                <TreeView Grid.Row="1"
+                                          Name="TreeViewValidations"
+                                          Background="Transparent"
+                                          BorderBrush="Transparent"
+                                          ItemsSource="{Binding ManagerView}"
+                                          VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.VirtualizationMode="Recycling"
+                                          TreeViewItem.Expanded="TreeViewValidations_Expanded"
+                                          TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
                                     <TreeView.ItemTemplate>
-                                        <HierarchicalDataTemplate ItemsSource="{Binding Validations}">
-                                            <StackPanel Orientation="Horizontal" Height="20">
+                                        <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
+                                            <StackPanel Orientation="Horizontal" 
+                                                        Height="20">
                                                 <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
                                                        Margin="0 0 4 0"/>
-                                                <TextBlock Text="{Binding ManagerName}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding ManagerName}" 
+                                                           VerticalAlignment="Center"/>
                                             </StackPanel>
                                             <HierarchicalDataTemplate.ItemTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Height="20" Margin="0 5 0 0">
+                                                    <StackPanel Orientation="Horizontal" 
+                                                                Height="20" 
+                                                                Margin="0 5 0 0">
                                                         <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}"
-                                                       Margin="10 0 5 0"/>
-                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                                               Margin="10 0 5 0"/>
+                                                        <TextBlock Text="{Binding Name}" 
+                                                                   VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </HierarchicalDataTemplate.ItemTemplate>
-                                            <HierarchicalDataTemplate.Triggers>
-                                                <DataTrigger Binding="{Binding Validations.IsEmpty}" Value="True">
-                                                    <Setter Property="TextBlock.Foreground" Value="Gray"/>
-                                                </DataTrigger>
-                                            </HierarchicalDataTemplate.Triggers>
                                         </HierarchicalDataTemplate>
                                     </TreeView.ItemTemplate>
                                     <TreeView.Resources>
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="Foreground" Value="White"/>
                                             <Setter Property="MinHeight" Value="25"/>
+                                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                         </Style>
                                     </TreeView.Resources>
                                 </TreeView>
@@ -522,16 +531,16 @@
 
                         <Grid Grid.Column="2">
                             <TextBlock Text="Summary"
-                                Margin="0 5 5 5"
-                                Foreground="LightGray"
-                                FontWeight="Bold"/>
+                                       Margin="0 5 5 5"
+                                       Foreground="LightGray"
+                                       FontWeight="Bold"/>
                             <Button Name="buttonValidationReportDetach" 
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource DetachButton}">
                                 <Image Source="Icons/Detach.png"/>
                             </Button>
                         </Grid>
-                        <ListView Grid.Row="1" Grid.Column="2" Background="{DynamicResource CanvasColor}" ItemsSource="{Binding ElementName=fisse,Path=SelectedItem}">
+                        <ListView Grid.Row="1" Grid.Column="2" Background="{DynamicResource CanvasColor}">
 
                         </ListView>
                     </Grid>
@@ -636,7 +645,7 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="80"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
         </Grid>

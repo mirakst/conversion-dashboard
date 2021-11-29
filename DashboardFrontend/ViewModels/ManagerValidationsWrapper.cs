@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace DashboardFrontend.ViewModels
 {
+    /// <summary>
+    /// A viewmodel used to wrap, or group, <see cref="ValidationTest"/> objects by their associated <see cref="Manager"/>.
+    /// </summary>
     public class ManagerValidationsWrapper : BaseViewModel
     {
         public ManagerValidationsWrapper(ValidationReportViewModel vm, string manager)
@@ -17,21 +20,20 @@ namespace DashboardFrontend.ViewModels
         }
 
         #region Properties
-        public string ManagerName { get; set; }
+        private readonly ValidationReportViewModel _vm;
 
-        private ICollectionView _validationsView;
-        public ICollectionView Validations
+        private ObservableCollection<ValidationTest> ValidationsList = new();
+        private CollectionView _validationView;
+        public CollectionView ValidationView
         {
-            get => _validationsView;
+            get => _validationView;
             set
             {
-                _validationsView = value;
-                OnPropertyChanged(nameof(Validations));
+                _validationView = value;
+                OnPropertyChanged(nameof(ValidationView));
             }
         }
-
-        private List<ValidationTest> _validationsData = new();
-
+        public string ManagerName { get; set; }
         private int _okCount;
         public int OkCount
         {
@@ -63,8 +65,6 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private int _totalCount;
-        private readonly ValidationReportViewModel _vm;
-
         public int TotalCount
         {
             get => _totalCount;
@@ -74,11 +74,25 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(TotalCount));
             }
         }
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                _isExpanded = value;
+                OnPropertyChanged(nameof(IsExpanded));
+            }
+        }
         #endregion
 
+        /// <summary>
+        /// Adds a test to the list of validations, and updates the counters and the view.
+        /// </summary>
+        /// <param name="test">The test to be added.</param>
         public void AddTest(ValidationTest test)
         {
-            _validationsData.Add(test);
+            ValidationsList.Add(test);
             TotalCount++;
             switch(test.Status)
             {
@@ -98,10 +112,29 @@ namespace DashboardFrontend.ViewModels
             UpdateView();
         }
 
+        /// <summary>
+        /// Sets the Valida
+        /// </summary>
         public void UpdateView()
         {
-            _validationsView = CollectionViewSource.GetDefaultView(_validationsData.OrderBy(x => x.Status));
-            _validationsView.Filter = _vm.ValidationsFilter;
+            ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(ValidationsList);
+            ValidationView.Filter = OnValidationsFilter;
+        }
+
+        /// <summary>
+        /// Used as a filter for the Validations CollectionView.
+        /// </summary>
+        /// <param name="item">A ValidationTest object.</param>
+        /// <returns>True if the object should be shown in the CollectionView, and false otherwise.</returns>
+        public bool OnValidationsFilter(object item)
+        {
+            if (item is ValidationTest val)
+            {
+                return val.Status is ValidationStatus.Ok && _vm.ShowOk
+                    || val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch && _vm.ShowFailed
+                    || val.Status is ValidationStatus.Disabled && _vm.ShowDisabled;
+            }
+            return false;
         }
     }
 }

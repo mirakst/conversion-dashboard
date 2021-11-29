@@ -15,6 +15,9 @@ using static Model.ValidationTest;
 
 namespace DashboardFrontend.ViewModels
 {
+    /// <summary>
+    /// View model for the <see cref="ValidationReport"/> class. 
+    /// </summary>
     public class ValidationReportViewModel : BaseViewModel
     {
         public ValidationReportViewModel(ValidationReport validationReport)
@@ -24,19 +27,20 @@ namespace DashboardFrontend.ViewModels
         }
 
         #region Properties
-        private ValidationReport _validationReport;
+        private readonly ValidationReport _validationReport;
 
-        private ICollectionView _managerView;
-        public ICollectionView Managers
+        public List<string> ExpandedManagerNames = new();
+        public ObservableCollection<ManagerValidationsWrapper> ManagerList { get; private set; } = new();
+        private CollectionView _managerView;
+        public CollectionView ManagerView
         {
             get => _managerView;
-            set
+            private set
             {
                 _managerView = value;
-                OnPropertyChanged(nameof(Managers));
+                OnPropertyChanged(nameof(ManagerView));
             }
         }
-        
         private DateTime _lastModified;
         public DateTime LastModified
         {
@@ -55,7 +59,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
-                Managers.Refresh();
+                ManagerView.Refresh();
             }
         }
         private int _totalCount;
@@ -98,7 +102,6 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(FailedCount));
             }
         }
-
         private bool _showOk;
         public bool ShowOk
         {
@@ -107,7 +110,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showOk = value;
                 OnPropertyChanged(nameof(ShowOk));
-                Filter();
+                RefreshViews();
             }
         }
         private bool _showDisabled = true;
@@ -118,7 +121,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showDisabled = value;
                 OnPropertyChanged(nameof(ShowDisabled));
-                Filter();
+                RefreshViews();
             }
         }
         private bool _showFailed = true;
@@ -129,18 +132,68 @@ namespace DashboardFrontend.ViewModels
             {
                 _showFailed = value;
                 OnPropertyChanged(nameof(ShowFailed));
-                Filter();
+                RefreshViews();
             }
         }
         #endregion
 
+        /// <summary>
+        /// Gets a list of raw validation tests from the Validation Report which is then used to generate a CollectionView with a set filter, and updates the validation test counters.
+        /// </summary>
         public void UpdateData()
         {
-            List<ManagerValidationsWrapper> list = new();
-            for (int i = 0; i < _validationReport.ValidationTests.Count; i++)
+            ManagerList = GetManagerList(_validationReport.ValidationTests);
+            ManagerView = GetManagerCollectionView(ManagerList);
+            ManagerView.Filter = OnManagersFilter;
+            UpdateCounters();
+        }
+
+        /// <summary>
+        /// Used as a filter for the ManagerView CollectionView.
+        /// </summary>
+        /// <param name="item">A ManagerValidationsWrapper object.</param>
+        /// <returns>True if the object should be shown in the CollectionView, and false otherwise.</returns>
+        private bool OnManagersFilter(object item)
+        {
+            ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
+            return wrapper.ManagerName.Contains(NameFilter) && !wrapper.ValidationView.IsEmpty;
+        }
+
+        /// <summary>
+        /// Refreshes all Validation CollectionViews in the ManagerValidationsWrappers, and then updates and filters the actual list of wrappers.
+        /// </summary>
+        private void RefreshViews()
+        {
+            foreach (object item in ManagerView)
             {
-                ValidationTest test = _validationReport.ValidationTests[i];
-                ManagerValidationsWrapper? dataEntry = list.FirstOrDefault(e => e.ManagerName == test.ManagerName);
+                ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
+                wrapper.ValidationView.Refresh();
+            }
+            UpdateData();
+        }
+
+        /// <summary>
+        /// Updates the number of validation tests with the different possible statuses.
+        /// </summary>
+        private void UpdateCounters()
+        {
+            OkCount = _validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Ok);
+            DisabledCount = _validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Disabled);
+            FailedCount = _validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
+            TotalCount = _validationReport.ValidationTests.Count;
+        }
+
+        /// <summary>
+        /// Goes through the specified list and groups Validations together by their associated Manager, which is represented by a list of ManagerValidationsWrappers.
+        /// </summary>
+        /// <param name="validations">List of validation test data.</param>
+        /// <returns>A collection of ManagerValidationsWrappers containing the given validation tests.</returns>
+        private ObservableCollection<ManagerValidationsWrapper> GetManagerList(IList<ValidationTest> validations)
+        {
+            ObservableCollection<ManagerValidationsWrapper> result = new();
+            foreach (ValidationTest test in validations)
+            {
+                ManagerValidationsWrapper? dataEntry = result.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
                 {
                     dataEntry.AddTest(test);
@@ -149,51 +202,24 @@ namespace DashboardFrontend.ViewModels
                 {
                     dataEntry = new(this, test.ManagerName);
                     dataEntry.AddTest(test);
-                    list.Add(dataEntry);
+                    if (ExpandedManagerNames.Contains(test.ManagerName))
+                    {
+                        dataEntry.IsExpanded = true;
+                    }
+                    result.Add(dataEntry);
                 }
             }
-            UpdateCounters();
-            LastModified = _validationReport.LastModified;
-            Managers = CollectionViewSource.GetDefaultView(list.OrderByDescending(x => x.FailedCount).ThenByDescending(x => x.DisabledCount));
-            Managers.Filter = ManagerFilter;
+            return result;
         }
 
-        private bool ManagerFilter(object item)
+        /// <summary>
+        /// Gets a CollectionView with a default view of the specified list of ManagerValidationsWrappers.
+        /// </summary>
+        /// <param name="wrappers">List of all wrappers.</param>
+        /// <returns>A CollectionView with the specified list of items.</returns>
+        private CollectionView GetManagerCollectionView(IList<ManagerValidationsWrapper> wrappers)
         {
-            if (item is ManagerValidationsWrapper wrapper)
-            {
-                return wrapper.ManagerName.Contains(NameFilter);
-            }
-            return false;
-        }
-
-        public bool ValidationsFilter(object item)
-        {
-            if (item is ValidationTest val)
-            {
-                return val.Status == ValidationStatus.Ok && ShowOk
-                    || val.Status == ValidationStatus.Failed && ShowFailed
-                    || val.Status == ValidationStatus.FailMismatch && ShowFailed
-                    || val.Status == ValidationStatus.Disabled && ShowDisabled;
-            }
-            return false;
-        }
-
-        private void Filter()
-        {
-            foreach (var item in Managers)
-            {
-                var wrapper = (ManagerValidationsWrapper)item;
-                wrapper.Validations.Refresh();
-            }
-        }
-
-        private void UpdateCounters()
-        {
-            OkCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Ok);
-            DisabledCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Disabled);
-            FailedCount = _validationReport.ValidationTests.Count(x => x.Status == ValidationStatus.Failed || x.Status == ValidationStatus.FailMismatch);
-            TotalCount = _validationReport.ValidationTests.Count;
+            return (CollectionView)CollectionViewSource.GetDefaultView(wrappers);
         }
     }
 }

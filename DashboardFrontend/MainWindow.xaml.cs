@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -204,6 +205,32 @@ namespace DashboardFrontend
         {
             _=int.TryParse(((FrameworkElement)comboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
             LiveChartViewModel.ChangeMaxView(comboBoxItemValue);
+        }
+
+        /// <summary>
+        /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
+        private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
+        {
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
+            if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+            {
+                ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+            }
+        }
+
+        /// <summary>
+        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerValidationsWrapper, and removes the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
+        {
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
+            ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
         }
     }
 }
