@@ -1,10 +1,17 @@
+using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
+using DashboardBackend;
+using DashboardBackend.Database;
 using Model;
+using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -12,11 +19,10 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
-            ViewModel = new(DataGridValidations);
-            DataContext = ViewModel;
             InitializeComponent();
+            ViewModel = new(DataGridValidations, ListViewLog);
+            DataContext = ViewModel;
         }
-
 
         public MainWindowViewModel ViewModel { get; }
 
@@ -42,7 +48,7 @@ namespace DashboardFrontend
             //buttonDetachManager.IsEnabled = false;
             //detachManager.Show();
         }
-         
+
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
@@ -180,9 +186,17 @@ namespace DashboardFrontend
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            if (ViewModel is not null)
+            {
+                _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+                ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+                ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            }
+        }
+
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
+        {
+            ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
         }
     }
 }

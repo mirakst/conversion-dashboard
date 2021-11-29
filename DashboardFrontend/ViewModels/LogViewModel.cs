@@ -1,10 +1,27 @@
 ﻿using Model;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
+        public LogViewModel()
+        {
+        }
+
+        public LogViewModel(ListView logListView)
+        {
+            LogListView = logListView;
+        }
+        
+        public bool DoAutoScroll { get; set; } = true;
+        public ListView LogListView { get; set; }
         private ObservableCollection<LogMessage> _messages = new();
         public ObservableCollection<LogMessage> Messages
         {
@@ -13,7 +30,11 @@ namespace DashboardFrontend.ViewModels
             {
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
-            }
+                if (DoAutoScroll && LogListView is not null && LogListView.Items.Count > 0)
+                {
+                    LogListView.ScrollIntoView(LogListView.Items[^1]);
+                }
+            } 
         }
 
         private int _infoCount;
@@ -118,16 +139,55 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed
+        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
         /// </summary>
         public void UpdateData(Log log)
         {
-            Messages = new(log.Messages);
-            InfoCount = log.InfoCount;
-            WarnCount = log.WarnCount;
-            ErrorCount = log.ErrorCount;
-            FatalCount = log.FatalCount;
-            ValidationCount = log.ValidationCount;
+            Messages = new(log.Messages.Where(x =>
+            {
+                return x.Type == LogMessageType.Info && ShowInfo
+                    || x.Type == LogMessageType.Warning && ShowWarn
+                    || x.Type == LogMessageType.Error && ShowError
+                    || x.Type == LogMessageType.Fatal && ShowFatal
+                    || x.Type == LogMessageType.Validation && ShowValidation;
+            }));
+            UpdateCounters(log);
+        }
+
+        /// <summary>
+        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage.
+        /// </summary>
+        /// <param name="msg">LogMessage whose type counter should be updated.</param>
+        private void UpdateCounters(Log log)
+        {
+            InfoCount = 0;
+            WarnCount = 0;
+            ErrorCount = 0;
+            FatalCount = 0;
+            ValidationCount = 0;
+            foreach(LogMessage msg in log.Messages)
+            {
+                switch (msg.Type)
+                {
+                    case LogMessageType.Info:
+                        InfoCount++;
+                        break;
+                    case LogMessageType.Warning:
+                        WarnCount++;
+                        break;
+                    case LogMessageType.Error:
+                        ErrorCount++;
+                        break;
+                    case LogMessageType.Fatal:
+                        FatalCount++;
+                        break;
+                    case LogMessageType.Validation:
+                        ValidationCount++;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

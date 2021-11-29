@@ -331,21 +331,16 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="29*"/>
-                            <ColumnDefinition Width="266*"/>
-                        </Grid.ColumnDefinitions>
-                        <ListView x:Name="ListViewLogEntry"
+                        <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding LogViewModel.Messages}"
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
-                                  MaxHeight="5000" Grid.ColumnSpan="2">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  MaxHeight="5000"
+                                  MouseEnter="ListViewLog_MouseOverChanged"
+                                  MouseLeave="ListViewLog_MouseOverChanged"
+                                  ScrollViewer.CanContentScroll="True">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
@@ -380,7 +375,6 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Style.Triggers>
