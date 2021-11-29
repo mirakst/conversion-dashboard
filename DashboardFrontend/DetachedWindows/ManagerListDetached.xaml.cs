@@ -16,20 +16,13 @@ namespace DashboardFrontend.DetachedWindows
     {
         public ManagerChartViewModel ManagerCharts { get; private set; }
 
-        public ManagerListDetached()
+        public ManagerListDetached() //Conversion parameter
         {
             ManagerCharts = new();
 
             InitializeComponent();
 
-            DataUtilities.DatabaseHandler = new SqlDatabase("Data Source=anderspc;Initial Catalog=ANS_CUSTOM;Integrated Security=True");                                                                          // Remove later once the Start monitoring functions has been made
-            Conversion conv = new();                                                                                                    
-            conv.Executions = DataUtilities.GetExecutions();                    
-            DataUtilities.AddManagers(conv.Executions);
-            conv.HealthReport = DataUtilities.BuildHealthReport();                                                                      
-            DataUtilities.AddHealthReportReadings(conv.HealthReport);                                                                   // To here
-
-            foreach (Manager manager in conv.ActiveExecution.Managers)
+            foreach (Manager manager in conv.ActiveExecution.Managers) // Change conv
             {
                 var wrapper = new ManagerWrapper(manager);
                 datagridManagers.Items.Add(wrapper);

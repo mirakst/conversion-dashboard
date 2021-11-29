@@ -21,20 +21,28 @@ namespace DashboardFrontend
         private readonly HealthReport _healthReport;
         private readonly List<Timer> _timers;
         private readonly SynchronizationContext? _uiContext;
+        public readonly Conversion _conversion;
         public readonly List<HealthReportViewModel> HealthReportViewModels = new();
         public readonly List<LogViewModel> LogViewModels = new();
         public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
+        public readonly List<ManagerViewModel> ManagerViewModels = new();
         public UserSettings UserSettings { get; set; } = new();
+        
 
         public Controller(MainWindowViewModel viewModel)
         {
             _uiContext = SynchronizationContext.Current;
             TryLoadUserSettings();
             _vm = viewModel;
+            _conversion = new();
+            _conversion.Executions = DU.GetExecutions();
+            DU.AddManagers(_conversion.Executions);
+            DU.AddManagerReadings(_conversion.ActiveExecution);
             _log = new Log();
             _validationReport = new ValidationReport();
             _healthReport = new HealthReport();
             _timers = new List<Timer>();
+
         }
 
         /// <summary>
@@ -50,6 +58,9 @@ namespace DashboardFrontend
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels.Add(_vm.HealthReportViewModel);
+
+            _vm.ManagerViewModel = new ManagerViewModel();
+            ManagerViewModels.Add(_vm.ManagerViewModel);
         }
 
         public LogViewModel CreateLogViewModel()
@@ -76,6 +87,14 @@ namespace DashboardFrontend
             result.NetworkDeltaChart.UpdateData(_healthReport.Network);
             result.NetworkSpeedChart.UpdateData(_healthReport.Network);
             HealthReportViewModels.Add(result);
+            return result;
+        }
+
+        public ManagerViewModel CreateManagerViewModel()
+        {
+            ManagerViewModel result = new();
+            result.UpdateData(_conversion.ActiveExecution.Managers);
+            ManagerViewModels.Add(result);
             return result;
         }
 
@@ -124,6 +143,15 @@ namespace DashboardFrontend
             else
             {
                 DU.BuildHealthReport(_healthReport);
+            }
+        }
+
+        public void UpdateManagerOverview()
+        {
+            DU.AddManagerReadings(_conversion.ActiveExecution);
+            foreach (var vm in ManagerViewModels)
+            {
+                _uiContext?.Send(x => vm.UpdateData(_conversion.ActiveExecution.Managers), null);
             }
         }
 
@@ -180,15 +208,15 @@ namespace DashboardFrontend
                     Task.Run(() => UpdateHealthReport(_healthReport.LastModified));
                     Task.Run(() => UpdateLog(_log.LastModified));
                     Task.Run(() => UpdateValidationReport(_validationReport.LastModified));
-                    //Task.Run(() => QueryManagers());
+                    Task.Run(() => UpdateManagerOverview());
                 }, null, 500, UserSettings.AllQueryInterval * 1000));
             }
             else
             {
                 _timers.Add(new Timer(x => UpdateHealthReport(_healthReport.LastModified), null, 500, UserSettings.HealthReportQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateLog(_log.LastModified), null, 500, UserSettings.LoggingQueryInterval * 1000));
-                //_timers.Add(new(x => QueryManagers(), null, 500, UserSettings.ManagerQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateValidationReport(_validationReport.LastModified), null, 500, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new Timer(x => UpdateManagerOverview(),null, 500, UserSettings.ManagerQueryInterval * 1000));
             }
             _vm.IsRunning = true;
         }

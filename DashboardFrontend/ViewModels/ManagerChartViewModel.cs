@@ -48,7 +48,6 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be added to the chart <param name="manager"></param>
         public void AddChartLinesHelper(ManagerWrapper manager)
         {
-            
             foreach (LiveChartViewModel chart in Charts)
             {
                 var managerValues = new ObservableCollection<ObservablePoint>(); // DELETE LATER: Exchange with the data stored in the manager.

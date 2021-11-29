@@ -24,5 +24,6 @@ namespace DashboardFrontend.ViewModels
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public HealthReportViewModel HealthReportViewModel { get; set; }
+        public ManagerViewModel ManagerViewModel {  get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Model;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -8,6 +10,11 @@ namespace DashboardFrontend.ViewModels
 {
     public class ManagerViewModel : BaseViewModel
     {
+        public ManagerViewModel()
+        {
+
+        }
+
         public ManagerViewModel(DataGrid dataGrid)
         {
             _datagrid = dataGrid;
@@ -53,12 +60,11 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-        public void UpdateData()
+        public void UpdateData(List<Manager> executionManagers)
         {
             Managers.Clear();
-            foreach (Manager manager in _managers)
+            foreach (Manager manager in executionManagers)
             {
-                Trace.WriteLine(nameof(manager.Name));
                 Managers.Add(manager);
             }
         }

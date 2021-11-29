@@ -37,8 +37,8 @@ namespace DashboardFrontend
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            ManagerListDetached expandmanager = new();
-            ButtonManagerDetach.IsEnabled = false;
+            ManagerListDetached expandmanager = new();
+            ButtonDetachManager.IsEnabled = false;
             expandmanager.Closing += OnManagerWindowClosing;
             expandmanager.Show();
         }
@@ -86,7 +86,7 @@ namespace DashboardFrontend
 
         private void OnManagerWindowClosing(object sender, CancelEventArgs e)
         {
-            ButtonManagerDetach.IsEnabled = true;
+            ButtonDetachManager.IsEnabled = true;
         }
 
         private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
