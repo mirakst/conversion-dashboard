@@ -25,17 +25,16 @@ namespace DashboardFrontend.ViewModels
 
         private Log _log;
         private ObservableCollection<LogMessage> _messages = new();
-        public ObservableCollection<LogMessage> Messages 
+        public ObservableCollection<LogMessage> Messages
         {
             get => _messages;
-            set 
-            { 
+            set
+            {
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
-
                 if (DoAutoScroll && LogListView.Items.Count > 0)
                 {
-                    LogListView.ScrollIntoView(LogListView.Items[LogListView.Items.Count - 1]);
+                    LogListView.ScrollIntoView(LogListView.Items[^1]);
                 }
             } 
         }
@@ -148,9 +147,8 @@ namespace DashboardFrontend.ViewModels
 
         public ListView LogListView { get; }
 
-
         /// <summary>
-        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed
+        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
         /// </summary>
         public void UpdateData()
         {
@@ -166,9 +164,9 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
+        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage.
         /// </summary>
-        /// <param name="msg">LogMessage whose type counter should be updated</param>
+        /// <param name="msg">LogMessage whose type counter should be updated.</param>
         private void UpdateCounters()
         {
             InfoCount = 0;
@@ -176,7 +174,7 @@ namespace DashboardFrontend.ViewModels
             ErrorCount = 0;
             FatalCount = 0;
             ValidationCount = 0;
-            foreach(var msg in _log.Messages)
+            foreach(LogMessage msg in _log.Messages)
             {
                 switch (msg.Type)
                 {

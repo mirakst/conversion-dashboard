@@ -337,11 +337,6 @@
                                   MouseEnter="listViewLogEntry_MouseOverChanged"
                                   MouseLeave="listViewLogEntry_MouseOverChanged"
                                   ScrollViewer.CanContentScroll="True">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
