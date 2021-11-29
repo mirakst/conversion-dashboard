@@ -117,8 +117,9 @@ namespace DashboardFrontend
                 foreach (var vm in HealthReportViewModels)
                 {
                     _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-
+                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Network), null);
+                    _uiContext?.Send(x => vm.NetworkDeltaChart.UpdateData(_healthReport.Network), null);
+                    _uiContext?.Send(x => vm.NetworkSpeedChart.UpdateData(_healthReport.Network), null);
                 }
             }
             else

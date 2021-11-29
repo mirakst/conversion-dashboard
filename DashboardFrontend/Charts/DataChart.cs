@@ -78,16 +78,12 @@ namespace DashboardFrontend.Charts
             {
                 ChartData.Values[1].Add(CreatePoint(item));
             }
-            try
+            if (cpu.Readings.Count > 0 && ram.Readings.Count > 0) 
             {
+
                 LastRamReading = ram.Readings.Last().Load * 100;
                 LastCpuReading = cpu.Readings.Last().Load * 100;
                 UpdatePlots(ram.Readings.Last().Date, cpu.Readings.Last().Date);
-            }
-            catch (InvalidOperationException ex)
-            {
-                LastRamReading = 0;
-                LastCpuReading = 0;
             }
         }
 
@@ -111,24 +107,34 @@ namespace DashboardFrontend.Charts
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            if (network.Readings.Count > 0)
+            {
+                LastNetPlot = network.Readings.Last().Date;
+            }
         }
 
         public void UpdateNetworkData(NetworkUsage reading)
         {
-            ChartData.Values[0].Add(CreatePoint(reading.BytesSend, reading.Date));
-            ChartData.Values[1].Add(CreatePoint(reading.BytesReceived, reading.Date));
+            double bytesSendFormatted = reading.BytesSend / Math.Pow(1024, 3);
+            double bytesReceivedFormatted = reading.BytesReceived / Math.Pow(1024, 3);
+            ChartData.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
 
         public void UpdateNetworkDeltaData(NetworkUsage reading)
         {
-            ChartData.Values[0].Add(CreatePoint(reading.BytesSendDelta, reading.Date));
-            ChartData.Values[1].Add(CreatePoint(reading.BytesReceivedDelta, reading.Date));
+            double bytesSendFormatted = reading.BytesSendDelta / Math.Pow(1024, 2);
+            double bytesReceivedFormatted = reading.BytesReceivedDelta / Math.Pow(1024, 2);
+            ChartData.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
 
         public void UpdateNetworkSpeedData(NetworkUsage reading)
         {
-            ChartData.Values[0].Add(CreatePoint(reading.BytesSendSpeed, reading.Date));
-            ChartData.Values[1].Add(CreatePoint(reading.BytesReceivedSpeed, reading.Date));
+            double bytesSendFormatted = reading.BytesSendSpeed / Math.Pow(1024, 2);
+            double bytesReceivedFormatted = reading.BytesReceivedSpeed / Math.Pow(1024, 2);
+            ChartData.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
+            ChartData.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
 
         private void UpdatePlots(DateTime ramDate, DateTime cpuDate)
@@ -151,9 +157,9 @@ namespace DashboardFrontend.Charts
         /// <param name="bytes"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        private ObservablePoint CreatePoint(long bytes, DateTime time)
+        private ObservablePoint CreatePoint(double readingSize, DateTime time)
         {
-            return new ObservablePoint(time.ToOADate(), Convert.ToDouble(bytes));
+            return new ObservablePoint(time.ToOADate(), readingSize);
         }
 
         #region AutoFocus Functions

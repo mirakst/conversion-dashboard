@@ -140,7 +140,10 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.MaximizeWindow(this);
+
+            WindowStyle = WindowStyle.SingleBorderWindow;
+            WindowState = WindowState.Maximized;
+            WindowStyle = WindowStyle.None;
             this.ButtonMaximize.Visibility = Visibility.Collapsed;
             this.ButtonRestore.Visibility = Visibility.Visible;
         }

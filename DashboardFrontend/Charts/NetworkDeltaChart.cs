@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing.Common;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -17,7 +18,7 @@ namespace DashboardFrontend.Charts
 
         public NetworkDeltaChart()
         {
-            Type = ChartType.Network;
+            Type = ChartType.NetworkDelta;
 
             Values = new()
             {
@@ -37,7 +38,7 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "MB",
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
                     Values=SendDeltaValues,
                 },
                 new LineSeries<ObservablePoint>
@@ -50,7 +51,7 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "MB",
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
                     Values=ReceiveDeltaValues,
                 }
             };
@@ -62,7 +63,7 @@ namespace DashboardFrontend.Charts
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
@@ -75,8 +76,12 @@ namespace DashboardFrontend.Charts
                 {
                     Name = "Delta",
                     Labeler = (value) => value.ToString("N0") + "MB",
+                    MinLimit = 0,
+                    MaxLimit = 100,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    Padding = new Padding(0),
+                    NamePadding = new Padding(0),
                 }
             };
         }

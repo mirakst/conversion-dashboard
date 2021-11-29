@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing.Common;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -83,6 +84,8 @@ namespace DashboardFrontend.Charts
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     MinStep = 0.25,
                     ForceStepToMin = true,
+                    Padding = new Padding(0),
+                    NamePadding = new Padding(0),
                 }
             };
         }

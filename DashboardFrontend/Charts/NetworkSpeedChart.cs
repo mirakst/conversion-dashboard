@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing.Common;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -15,7 +16,7 @@ namespace DashboardFrontend.Charts
 
         public NetworkSpeedChart()
         {
-            Type = ChartType.Network;
+            Type = ChartType.NetworkSpeed;
 
             Values = new()
             {
@@ -35,7 +36,7 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "KBps",
+                                                 Math.Round(e.PrimaryValue, 2) + "Mbps",
                     Values=SendSpeedValues,
                 },
                 new LineSeries<ObservablePoint>
@@ -48,7 +49,7 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "KBps",
+                                                 Math.Round(e.PrimaryValue, 2) + "Mbps",
                     Values = ReceiveSpeedValues,
                 }
             };
@@ -58,7 +59,7 @@ namespace DashboardFrontend.Charts
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
@@ -70,9 +71,13 @@ namespace DashboardFrontend.Charts
                 new Axis
                 {
                     Name = "Speed",
-                    Labeler = (value) => value.ToString("N2") + "KBps",
+                    Labeler = (value) => value.ToString("N0") + "Mbps",
+                    MinLimit = 0,
+                    MaxLimit = 10,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    Padding = new Padding(0),
+                    NamePadding = new Padding(0),
                 }
             };
         }
