@@ -1,42 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing.Common;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
-
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
-    /// <summary>
-    /// The ViewModel class for Performance monitoring.
-    /// </summary>
-    public class PerformanceViewModel
+    public class NetworkChart : BaseChart
     {
-        public List<ObservableCollection<ObservablePoint>> PerformanceData { get; set; }
-        public ObservableCollection<ObservablePoint> RAMValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> CPUValues { get; private set; } = new();
-        public List<ISeries> Series { get; private set; }
+        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceiveValues { get; private set; } = new();
 
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
-        
-        public PerformanceViewModel()
+        public NetworkChart()
         {
-            PerformanceData = new()
+            Type = ChartType.Network;
+
+            Values = new()
             {
-                RAMValues,
-                CPUValues,
+                SendValues,
+                ReceiveValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "RAM",
+                    Name = "Send",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
@@ -44,11 +36,12 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
+                                                 Math.Round(e.PrimaryValue, 2) + "GB",
+                    Values=SendValues,
                 },
-                new LineSeries<ObservablePoint> 
+                new LineSeries<ObservablePoint>
                 {
-                    Name = "CPU",
+                    Name = "Receive",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
@@ -56,7 +49,8 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString("P"),
+                                                 Math.Round(e.PrimaryValue, 2) + "GB",
+                    Values=ReceiveValues,
                 }
             };
 
@@ -65,7 +59,7 @@ namespace DashboardFrontend.ViewModels
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
@@ -76,14 +70,14 @@ namespace DashboardFrontend.ViewModels
             {
                 new Axis
                 {
-                    Name = "Load",
-                    Labeler  = (value) => value.ToString("P0"),
-                    MaxLimit = 1,
+                    Name = "SendReceived",
+                    Labeler = (value) => value.ToString("N0") + "GB",
                     MinLimit = 0,
+                    MaxLimit = 100,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    MinStep = 0.25,
-                    ForceStepToMin = true,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)), 
+                    Padding = new Padding(0),
+                    NamePadding = new Padding(0),
                 }
             };
         }

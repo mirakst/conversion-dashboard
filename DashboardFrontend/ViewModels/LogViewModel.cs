@@ -1,7 +1,4 @@
-﻿using DashboardBackend;
-using Model;
-using System;
-using System.Collections.Generic;
+﻿using Model;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -98,7 +95,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
-                UpdateData();
             }
         }
         private bool _showWarn = true;
@@ -109,7 +105,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
-                UpdateData();
             }
         }
         private bool _showError = true;
@@ -120,7 +115,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showError = value;
                 OnPropertyChanged(nameof(ShowError));
-                UpdateData();
             }
         }
         private bool _showFatal = true;
@@ -131,7 +125,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
-                UpdateData();
             }
         }
         private bool _showValidation = true;
@@ -142,7 +135,6 @@ namespace DashboardFrontend.ViewModels
             {
                 _showValidation = value;
                 OnPropertyChanged(nameof(ShowValidation));
-                UpdateData();
             }
         }
 

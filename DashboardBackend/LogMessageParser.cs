@@ -39,8 +39,8 @@ namespace DashboardBackend
             else if (Regex.IsMatch(message, @"^\[.+\] SQL statement has a cost of [\d+.]+, and a total of [\d+.]+ full table scans.$"))
             {
                 MatchCollection matches = Regex.Matches(message, @"(?<= )\d+\.?\d*");
-                // Since the statement cost is printed in en-US formatting, it must be parsed as such.
-                float statementCost = float.Parse(matches[0].Value, new CultureInfo("en-US"));
+                // Since the statement cost is printed in da-DK formatting, it must be parsed as such.
+                float statementCost = float.Parse(matches[0].Value, new CultureInfo("da-DK"));
                 int fullTableScans = int.Parse(matches[1].Value);
                 Console.WriteLine($"[INFO][COST: {statementCost}][SCANS: {fullTableScans}]");
             }

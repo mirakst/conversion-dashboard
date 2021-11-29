@@ -115,12 +115,12 @@
                                 </Style.Triggers>
                             </Style>
                         </GridView.ColumnHeaderContainerStyle>
-                        <GridViewColumn Header="Timestamp" 
-                                        DisplayMemberBinding="{Binding Date}"
+                        <GridViewColumn Header="Date"
+                                        DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
                                         Width="auto"/>
                         <GridViewColumn Header="Type" 
                                         DisplayMemberBinding="{Binding Type}"
-                                        Width="auto"/>
+                                        Width="70"/>
                         <GridViewColumn Header="Manager" 
                                         DisplayMemberBinding="{Binding ContextId}"
                                         Width="auto"/>

@@ -1,39 +1,36 @@
-﻿using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Painting;
-using SkiaSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing.Common;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
-namespace DashboardFrontend.ViewModels
+namespace DashboardFrontend.Charts
 {
-    public class NetworkViewModel
+    public class NetworkDeltaChart : BaseChart
     {
-        public List<ObservableCollection<ObservablePoint>> NetworkData { get; set; }
-        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> RecivedValues { get; private set; } = new();
-        public List<ISeries> Series { get; private set; }
+        public ObservableCollection<ObservablePoint> SendDeltaValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceiveDeltaValues { get; private set; } = new();
 
-        public List<Axis> XAxis { get; private set; }
-        public List<Axis> YAxis { get; private set; }
-
-        public NetworkViewModel()
+        public NetworkDeltaChart()
         {
+            Type = ChartType.NetworkDelta;
 
-            NetworkData = new()
+            Values = new()
             {
-                SendValues,
-                RecivedValues,
+                SendDeltaValues,
+                ReceiveDeltaValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Send",
+                    Name = "Send delta",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
@@ -41,11 +38,12 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 (e.PrimaryValue * 1000).ToString() + "MB",
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
+                    Values=SendDeltaValues,
                 },
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Recive",
+                    Name = "Receive delta",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
@@ -53,16 +51,19 @@ namespace DashboardFrontend.ViewModels
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 e.PrimaryValue.ToString() + "MB",
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
+                    Values=ReceiveDeltaValues,
                 }
             };
+
+            
 
             XAxis = new()
             {
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm"),
                     MinLimit = DateTime.Now.ToOADate(),
                     MaxLimit = DateTime.Now.ToOADate(),
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
@@ -73,10 +74,14 @@ namespace DashboardFrontend.ViewModels
             {
                 new Axis
                 {
-                    Name = "Mega Bytes",
-                    Labeler  = (value) => (value * 1000).ToString("N0") + "MB",
+                    Name = "Delta",
+                    Labeler = (value) => value.ToString("N0") + "MB",
+                    MinLimit = 0,
+                    MaxLimit = 100,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    Padding = new Padding(0),
+                    NamePadding = new Padding(0),
                 }
             };
         }

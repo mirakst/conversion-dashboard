@@ -1,7 +1,6 @@
 ﻿using DashboardFrontend.ViewModels;
 using DashboardFrontend.Settings;
 using System.Windows;
-using System.Diagnostics;
 using System;
 
 namespace DashboardFrontend.DetachedWindows

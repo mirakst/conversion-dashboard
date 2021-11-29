@@ -1,6 +1,7 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,11 +23,7 @@ namespace DashboardFrontend.ViewModels
         #endregion
 
         #region private
-        private PeriodicTimer? queryTimer;
-        private int queryTimerInterval = 2;
         private PeriodicTimer? autoFocusTimer;
-        private readonly Random random = new();
-        private bool isGraphRunning = false;
         private bool isAutoFocusTimer = false;
         private int maxView = 10;
         #endregion
@@ -42,7 +39,6 @@ namespace DashboardFrontend.ViewModels
         {
             AddLine(linesList, dataList, xAxisList, yAxisList);
             AutoFocusOn();
-            StartGraph();
         }
 
         /// <summary>
@@ -84,44 +80,53 @@ namespace DashboardFrontend.ViewModels
         }
 
         /// <summary>
-        /// Stops the <see cref="List{ISeries}"/> from updating, if it is running.
+        /// Asigns <see cref="NetworkUsage"/> data to the relative <see cref="ISeries"/>.
         /// </summary>
-        public void StopGraph()
+        /// <param name="network"></param>
+        public void UpdateNetworkData(Network network)
         {
-            if (isGraphRunning)
+            foreach (var reading in network.Readings)
             {
-                queryTimer.Dispose();
-                isGraphRunning = false;
+                Values[0].Add(CreateNetworkPoint(reading.BytesSend, reading.Date));
+                Values[1].Add(CreateNetworkPoint(reading.BytesSendSpeed, reading.Date));
             }
         }
 
         /// <summary>
-        /// Calls <see cref="QueryList"/> at a set interval.
+        /// Asigns <see cref="NetworkUsage"/> data to the relative <see cref="ISeries"/>.
         /// </summary>
-        /// <param name="querryTimer"></param>
-        public async void StartGraph()
+        /// <param name="network"></param>
+        public void UpdateNetworkDeltaData(Network network)
         {
-            if (!isGraphRunning) 
+            foreach (var reading in network.Readings)
             {
-                isGraphRunning = true;
-                queryTimer = new(TimeSpan.FromSeconds(queryTimerInterval));
-
-                while (await queryTimer.WaitForNextTickAsync())
-                {
-                    QueryList();
-                }
+                Values[0].Add(CreateNetworkPoint(reading.BytesSendDelta, reading.Date));
+                Values[1].Add(CreateNetworkPoint(reading.BytesReceived, reading.Date));
             }
         }
 
         /// <summary>
-        /// Function qurying data (generates data currently).
+        /// Asigns <see cref="NetworkUsage"/> data to the relative <see cref="ISeries"/>.
         /// </summary>
-        private void QueryList()
+        /// <param name="network"></param>
+        public void UpdateNetworkSpeedData(Network network)
         {
-            foreach (var item in Values)
+            foreach (var reading in network.Readings)
             {
-                item.Add(new ObservablePoint(DateTime.Now.ToOADate(), random.NextDouble()));
+                Values[0].Add(CreateNetworkPoint(reading.BytesReceivedSpeed, reading.Date));
+                Values[1].Add(CreateNetworkPoint(reading.BytesReceivedDelta, reading.Date));
             }
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ObservablePoint"/> from <see cref="NetworkUsage"/> data.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        private static ObservablePoint CreateNetworkPoint(long bytes, DateTime time)
+        {
+            return new ObservablePoint(time.ToOADate(), Convert.ToDouble(bytes));
         }
 
         #region AutoFocus Functions
@@ -196,16 +201,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-        /// <summary>
-        /// Change how often the query should run.
-        /// </summary>
-        /// <param name="input">The number of minutes between queryes.</param>
-        public void ChangeQueryTimer(int input)
-        {
-            queryTimerInterval = input;
-            StopGraph();
-            StartGraph();
-        }
+
         #endregion
     }
 }
