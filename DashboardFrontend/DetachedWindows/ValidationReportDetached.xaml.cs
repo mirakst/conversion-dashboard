@@ -21,48 +21,56 @@ namespace DashboardFrontend.DetachedWindows
 {
     public partial class ValidationReportDetached
     {
-        public ValidationReportDetached(ValidationReport validationReport)
+        public ValidationReportDetached(ValidationReportViewModel validationReportViewModel)
         {
             InitializeComponent();
-            ValidationReport = validationReport;
-            ViewModel = new(validationReport);
+            ViewModel = validationReportViewModel;
             DataContext = ViewModel;
         }
         
-        public ValidationReport ValidationReport { get; set; }
         public ValidationReportViewModel ViewModel { get; set; }
 
-        private void validationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        /// <summary>
+        /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
+        private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
         {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-            eventArgs.RoutedEvent = MouseWheelEvent;
-            eventArgs.Source = DataGridValidations;
-            DataGridValidations.RaiseEvent(eventArgs);
-        }
-
-        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-            eventArgs.RoutedEvent = MouseWheelEvent;
-            eventArgs.Source = DataGridValidations;
-            DataGridValidations.RaiseEvent(eventArgs);
-        }
-
-        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
+            if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
             {
-                Clipboard.SetText(test.SrcSql ?? "");
+                ViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
             }
         }
 
-        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerValidationsWrapper, and removes the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
         {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
+            ViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+        }
+
+        private void CopySrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
             {
-                Clipboard.SetText(test.DstSql ?? "");
+                Clipboard.SetText(test.SrcSql);
+            }
+        }
+
+        private void CopyDestSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql);
             }
         }
     }

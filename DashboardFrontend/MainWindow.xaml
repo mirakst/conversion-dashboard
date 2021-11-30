@@ -30,6 +30,7 @@
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
+        <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -410,7 +411,7 @@
                     <!-- Body -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="280"/>
+                            <ColumnDefinition Width="4.5*" MinWidth="280"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="2*" MinWidth="100"/>
                         </Grid.ColumnDefinitions>
@@ -421,7 +422,7 @@
 
                         <!-- Validations TreeView Header -->
                         <Grid>
-                            <TextBlock Text="Reconciliations"
+                            <TextBlock Text="Validations"
                                    Margin="5"
                                    Foreground="LightGray"
                                    FontWeight="Bold"/>
@@ -493,6 +494,7 @@
                                           ItemsSource="{Binding ManagerView}"
                                           VirtualizingPanel.IsVirtualizing="True"
                                           VirtualizingPanel.VirtualizationMode="Recycling"
+                                          VirtualizingPanel.ScrollUnit="Pixel"
                                           TreeViewItem.Expanded="TreeViewValidations_Expanded"
                                           TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
                                     <TreeView.ItemTemplate>
@@ -522,7 +524,12 @@
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="Foreground" Value="White"/>
                                             <Setter Property="MinHeight" Value="25"/>
-                                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                            <Setter Property="Focusable" Value="{Binding Converter={StaticResource IsValidationTestConverter}}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
+                                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
                                         </Style>
                                     </TreeView.Resources>
                                 </TreeView>
@@ -534,15 +541,91 @@
                                        Margin="0 5 5 5"
                                        Foreground="LightGray"
                                        FontWeight="Bold"/>
-                            <Button Name="buttonValidationReportDetach" 
+                            <Button Name="ButtonValidationReportDetach" 
+                                    Click="DetachValidationReportButtonClick"
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource DetachButton}">
                                 <Image Source="Icons/Detach.png"/>
                             </Button>
                         </Grid>
-                        <ListView Grid.Row="1" Grid.Column="2" Background="{DynamicResource CanvasColor}">
+                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                BorderThickness="1"
+                                Grid.Row="1"
+                                Grid.Column="2">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Orientation="Vertical" 
+                                        Background="{DynamicResource CanvasColor}"
+                                        DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                                    <TextBlock Text="Name" 
+                                           FontWeight="Bold" 
+                                           Margin="10 10 10 0"
+                                           Foreground="LightGray"/>
+                                    <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
+                                           Margin="10 0 10 0"/>
+                                    <TextBlock Text="Result" 
+                                           FontWeight="Bold" 
+                                           Foreground="LightGray"
+                                           Margin="10 20 10 0"/>
+                                    <StackPanel Orientation="Horizontal"
+                                            Margin="10 0 10 0">
+                                        <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" Width="15"/>
+                                        <TextBlock Text="{Binding Status}"
+                                               Margin="5 0 0 0"
+                                               VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Row count" 
+                                           FontWeight="Bold" 
+                                           Margin="10 20 10 0"
+                                           Foreground="LightGray"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Source "
+                                               Foreground="LightGray"
+                                               Margin="10 0 5 0"/>
+                                        <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
+                                               Margin="0 0 10 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Destination "
+                                               Foreground="LightGray"
+                                               Margin="10 0 5 0"/>
+                                        <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
+                                               Margin="0 0 10 0"/>
+                                    </StackPanel>
 
-                        </ListView>
+                                    <TextBlock Text="Copy SQL"
+                                           FontWeight="Bold"
+                                           Foreground="LightGray"
+                                           Margin="10 20 10 0"/>
+                                    <StackPanel Orientation="Horizontal"
+                                            Margin="10 5 10 0"
+                                            Height="30">
+                                        <Button Margin="0 0 5 0"
+                                            Click="CopySrcSql_Click"
+                                            IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                            Content="Source"/>
+                                        <Button Click="CopyDestSql_Click"
+                                            IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                            Content="Destination"/>
+                                    </StackPanel>
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                        </Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="FontFamily" Value="Segoe UI"/>
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Foreground" Value="Gray"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
                     </Grid>
                 </Grid>
 

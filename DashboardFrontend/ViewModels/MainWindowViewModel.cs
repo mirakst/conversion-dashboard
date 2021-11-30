@@ -26,7 +26,7 @@ namespace DashboardFrontend.ViewModels
             _log = log;
             _validationReport = validationReport;
             LogViewModel = new(log);
-            ValidationReportViewModel = new(validationReport);
+            ValidationReportViewModel = new();
             UserSettings = userSettings;
             LiveChartViewModel = liveChartViewModel;
         }
@@ -145,7 +145,7 @@ namespace DashboardFrontend.ViewModels
             if (result.Count > 0)
             {
                 _validationReport.ValidationTests = result;
-                _uiContext?.Send(x => ValidationReportViewModel.UpdateData(), null);
+                _uiContext?.Send(x => ValidationReportViewModel.UpdateData(_validationReport), null);
             }
             isQueryingValidations = false;
         }

@@ -95,9 +95,9 @@ namespace DashboardFrontend
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {            
-            ValidationReportDetached detachVR = new(ValidationReport);
+            ValidationReportDetached detachVR = new(new());
             detachVR.Closing += OnValidationWindowClosing;
-            buttonValidationReportDetach.IsEnabled = false;
+            ButtonValidationReportDetach.IsEnabled = false;
             detachVR.Show();
         }
 
@@ -130,30 +130,12 @@ namespace DashboardFrontend
 
         private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            buttonValidationReportDetach.IsEnabled = true;
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
         private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
             ButtonHealthReportDetach.IsEnabled = true;
-        }
-
-        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.SrcSql ?? "");
-            }
-        }
-
-        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.DstSql ?? "");
-            }
         }
 
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
@@ -231,6 +213,24 @@ namespace DashboardFrontend
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
             ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+        }
+
+        private void CopySrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.SrcSql);
+            }
+        }
+
+        private void CopyDestSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql);
+            }
         }
     }
 }
