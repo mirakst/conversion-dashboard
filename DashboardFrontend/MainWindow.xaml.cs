@@ -1,10 +1,17 @@
+using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
+using DashboardBackend;
+using DashboardBackend.Database;
 using Model;
+using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -13,10 +20,9 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new(DataGridValidations);
+            ViewModel = new(DataGridValidations, ListViewLog);
             DataContext = ViewModel;
         }
-
 
         public MainWindowViewModel ViewModel { get; }
 
@@ -45,7 +51,7 @@ namespace DashboardFrontend
                 ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
             };
         }
-         
+
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
@@ -138,7 +144,10 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.MaximizeWindow(this);
+
+            WindowStyle = WindowStyle.SingleBorderWindow;
+            WindowState = WindowState.Maximized;
+            WindowStyle = WindowStyle.None;
             this.ButtonMaximize.Visibility = Visibility.Collapsed;
             this.ButtonRestore.Visibility = Visibility.Visible;
         }
@@ -185,6 +194,11 @@ namespace DashboardFrontend
         private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
+        {
+            ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
         }
     }
 }

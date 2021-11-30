@@ -41,9 +41,9 @@ namespace DashboardFrontend
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
         /// </summary>
-        public void InitializeViewModels(DataGrid dataGridValidations)
+        public void InitializeViewModels(DataGrid dataGridValidations, ListView listViewLog)
         {
-            _vm.LogViewModel = new LogViewModel();
+            _vm.LogViewModel = new LogViewModel(listViewLog);
             LogViewModels.Add(_vm.LogViewModel);
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel(dataGridValidations);
@@ -97,10 +97,14 @@ namespace DashboardFrontend
         public void UpdateLog(DateTime timestamp)
         {
             _log.LastModified = DateTime.Now;
-            _log.Messages = DU.GetLogMessages(timestamp);
-            foreach (var vm in LogViewModels)
+            List<LogMessage> newData = DU.GetLogMessages(timestamp);
+            if (newData.Count > 0)
             {
-                _uiContext?.Send(x => vm.UpdateData(_log), null);
+                _log.Messages = newData;
+                foreach (var vm in LogViewModels)
+                {
+                    _uiContext?.Send(x => vm.UpdateData(_log), null);
+                }
             }
         }
 
@@ -110,10 +114,14 @@ namespace DashboardFrontend
         public void UpdateValidationReport(DateTime timestamp)
         {
             _validationReport.LastModified = DateTime.Now;
-            _validationReport.ValidationTests = DU.GetAfstemninger(timestamp);
-            foreach (var vm in ValidationReportViewModels)
+            List<ValidationTest> newData = DU.GetAfstemninger(timestamp);
+            if (newData.Count > 0)
             {
-                _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+                _validationReport.ValidationTests = newData;
+                foreach (var vm in ValidationReportViewModels)
+                {
+                    _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+                }
             }
         }
 
@@ -129,8 +137,9 @@ namespace DashboardFrontend
                 foreach (var vm in HealthReportViewModels)
                 {
                     _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-
+                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Network), null);
+                    _uiContext?.Send(x => vm.NetworkDeltaChart.UpdateData(_healthReport.Network), null);
+                    _uiContext?.Send(x => vm.NetworkSpeedChart.UpdateData(_healthReport.Network), null);
                 }
             }
             else

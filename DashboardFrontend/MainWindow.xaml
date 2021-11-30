@@ -44,7 +44,7 @@
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0"
                   Grid.ColumnSpan="2"
-                  MouseDown="DraggableGrid">
+                  MouseLeftButtonDown="DraggableGrid">
                 <TextBlock x:Name="TextBlockWindowTitle"
                            FontSize="14"
                            MinWidth="200"
@@ -329,21 +329,16 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="29*"/>
-                            <ColumnDefinition Width="266*"/>
-                        </Grid.ColumnDefinitions>
-                        <ListView x:Name="ListViewLogEntry"
-                                  ItemsSource="{Binding Messages}"
+                        <ListView x:Name="ListViewLog"
+                                  ItemsSource="{Binding LogViewModel.Messages}"
                                   Background="White"
                                   Foreground="Black"
                                   BorderBrush="{StaticResource BorderColor}"
-                                  MaxHeight="5000" Grid.ColumnSpan="2">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  MaxHeight="5000"
+                                  MouseEnter="ListViewLog_MouseOverChanged"
+                                  MouseLeave="ListViewLog_MouseOverChanged"
+                                  ScrollViewer.CanContentScroll="True">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
@@ -378,7 +373,6 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Style.Triggers>
@@ -762,7 +756,7 @@
                                                    Text="{Binding SystemLoadChart.LastCpuReading,
                                                           StringFormat='CPU Usage: {0:0}%'}"
                                                    Foreground="{DynamicResource ForegroundColor}"
-                                                   FontSize="20"
+                                                   FontSize="14"
                                                    VerticalAlignment="Center"
                                                    Grid.Column="0"
                                                    Grid.Row="0"
@@ -771,12 +765,13 @@
                                                    Text="{Binding SystemLoadChart.LastRamReading,
                                                           StringFormat='RAM Usage: {0:0}%'}"
                                                    Foreground="{DynamicResource ForegroundColor}"
-                                                   FontSize="20"
+                                                   FontSize="14"
                                                    VerticalAlignment="Center"
                                                    Grid.Column="1"
                                                    Grid.Row="0"
                                                    Margin="5,0,0,5"/>
                                         <lvc:CartesianChart
+                                                Margin="-7,0,0,-40"
                                                 Series="{Binding SystemLoadChart.ChartData.Series}"
                                                 XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
                                                 YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
@@ -785,14 +780,12 @@
                                                 MouseLeave="CartesianChart_MouseLeave"
                                                 MouseEnter="CartesianChart_MouseEnter"
                                                 Grid.Column="0"
-                                                Grid.ColumnSpan="4"
+                                                Grid.ColumnSpan="2"
                                                 Grid.Row="1">
                                         </lvc:CartesianChart>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="auto"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
                                         <Grid.RowDefinitions>
@@ -807,106 +800,46 @@
                          Name="TabItemNetwork"
                          Header="Network"
                          FontSize="16">
-                                <Border Margin="10">
-                                    <Grid>
-                                        <Border BorderBrush="{DynamicResource BorderColor}"
-                                    BorderThickness="1"
-                                    Margin="0,0,10,0"
-                                    Grid.Column="0"
-                                    Grid.Row="1">
-                                            <Grid Margin="5">
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Send:"
-                                                   FontSize="14"/>
-                                                    <TextBlock Text="Send delta:"
-                                                   FontSize="14"/>
-                                                    <TextBlock Text="Send speed:"
-                                                   FontSize="14"/>
-                                                    <TextBlock/>
-                                                    <TextBlock Text="Received"
-                                                   FontSize="14"/>
-                                                    <TextBlock Text="Received delta:"
-                                                   FontSize="14"/>
-                                                    <TextBlock Text="Received speed:"
-                                                   FontSize="14"/>
-                                                </StackPanel>
-                                                <StackPanel Grid.Column="1">
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="102 KB"
-                                                   FontSize="14"/>
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="932 KB"
-                                                   FontSize="14"/>
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="123 MB"
-                                                   FontSize="14"/>
-                                                    <TextBlock/>
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="43 KB"
-                                                   FontSize="14"/>
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="12 KB"
-                                                   FontSize="14"/>
-                                                    <TextBlock TextAlignment="Right"
-                                                   Text="13 MB"
-                                                   FontSize="14"/>
-                                                </StackPanel>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                            </Grid>
-                                        </Border>
-                                        <Border BorderBrush="{DynamicResource BorderColor}"
-                                    BorderThickness="1"
-                                    Grid.Column="1"
-                                    Grid.Row="1">
-                                            <Grid>
-                                                <lvc:CartesianChart Series="{Binding NetworkChart.ChartData.Series}"
-                                                                    XAxes="{Binding NetworkChart.ChartData.XAxis}"
-                                                                    YAxes="{Binding NetworkChart.ChartData.YAxis}"
-                                                                    ZoomMode="Both"
-                                                                    TooltipPosition="Top"
-                                                                    Grid.Row="0"
-                                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                                    MouseEnter="CartesianChart_MouseEnter">
-                                                </lvc:CartesianChart>
-                                                <lvc:CartesianChart Series="{Binding NetworkDeltaChart.ChartData.Series}"
-                                                        XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
-                                                        YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
-                                                        ZoomMode="Both"
-                                                        TooltipPosition="Top"
-                                                        Grid.Row="1"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                                </lvc:CartesianChart>
-                                                <lvc:CartesianChart  Series="{Binding NetworkSpeedChart.ChartData.Series}"
-                                                        XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
-                                                        YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
-                                                        ZoomMode="Both"
-                                                        TooltipPosition="Top"
-                                                        Grid.Row="2"
-                                                        MouseLeave="CartesianChart_MouseLeave"
-                                                        MouseEnter="CartesianChart_MouseEnter">
-                                                </lvc:CartesianChart>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                            </Grid>
-                                        </Border>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="3*"/>
-                                            <ColumnDefinition Width="7*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="40"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                    </Grid>
-                                </Border>
+                                <lvc:CartesianChart Margin="0,14,0,-30"
+                                                    Series="{Binding NetworkChart.ChartData.Series}"
+                                                    XAxes="{Binding NetworkChart.ChartData.XAxis}"
+                                                    YAxes="{Binding NetworkChart.ChartData.YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    Grid.Row="0"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </TabItem>
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemNetworkDelta"
+                                     Header="Network Delta"
+                                     FontSize="16">
+                                <lvc:CartesianChart Margin="0,14,0,-30"
+                                                    Series="{Binding NetworkDeltaChart.ChartData.Series}"
+                                                    XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
+                                                    YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    Grid.Row="1"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </TabItem>
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemNetworkSpeed"
+                                     Header="Network Speed"
+                                     FontSize="16">
+                                <lvc:CartesianChart  Margin="-6,14,0,-30"
+                                                     Series="{Binding NetworkSpeedChart.ChartData.Series}"
+                                                     XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
+                                                     YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
+                                                     ZoomMode="Both"
+                                                     TooltipPosition="Top"
+                                                     Grid.Row="2"
+                                                     MouseLeave="CartesianChart_MouseLeave"
+                                                     MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
                             </TabItem>
                         </TabControl>
                         <Grid

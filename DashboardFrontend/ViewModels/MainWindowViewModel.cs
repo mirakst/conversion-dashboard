@@ -4,10 +4,10 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(DataGrid dataGridValidations)
+        public MainWindowViewModel(DataGrid dataGridValidations, ListView listViewLog)
         {
             Controller = new(this);
-            Controller.InitializeViewModels(dataGridValidations);
+            Controller.InitializeViewModels(dataGridValidations, listViewLog);
         }
 
         public Controller Controller { get; set; }
