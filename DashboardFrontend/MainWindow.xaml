@@ -161,7 +161,7 @@
                             <Button Name="ButtonManagerSearch"
                                     Style="{DynamicResource SearchButton}"
                                     DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"
+                                <Image Source="/Icons/Magnifyingglass.png"
                                        Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
@@ -187,9 +187,9 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <Control Name="LoadingAnimManager"
+                        <Control Name="ControlLoadingAnimManager"
                                  Visibility="Hidden"
-                                 Style="{StaticResource LoadingAnimationStyle}"/>
+                                 Style="{StaticResource LoadingAnimation}"/>
                         <ListView x:Name="ListViewManagerList"
                                   Grid.Column="0"
                                   ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
@@ -335,9 +335,9 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <Control Name="LoadingAnimLog"
+                        <Control Name="ControlLoadingAnimLog"
                                  Visibility="Hidden"
-                                 Style="{StaticResource LoadingAnimationStyle}"/>
+                                 Style="{StaticResource LoadingAnimation}"/>
                         <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding LogViewModel.MessageView}"
                                   Background="{DynamicResource BackgroundColor}"
@@ -456,7 +456,7 @@
                                     Style="{DynamicResource SearchButton}"
                                     Grid.Row="0"
                                     DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"
+                                <Image Source="/Icons/magnifyingglass.png"
                                        Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
@@ -494,9 +494,9 @@
 
                     <Grid Grid.Row="1"
                           x:Name="ValidationReportComponent">
-                        <Control Name="LoadingAnimValidation"
+                        <Control Name="ControlLoadingAnimValidation"
                                  Visibility="Hidden"
-                                 Style="{StaticResource LoadingAnimationStyle}"/>
+                                 Style="{StaticResource LoadingAnimation}"/>
                         <ScrollViewer Grid.Row="1" 
                                       Grid.ColumnSpan="3"
                                       HorizontalScrollBarVisibility="Auto">
@@ -737,13 +737,13 @@
                                      Margin="-2,0,0,0">
                                 <Border Margin="10">
                                     <Grid>
-                                        <Control Name="LoadingAnimHealthReport"
+                                        <Control Name="ControlLoadingAnimHealthReport"
                                                  Visibility="Hidden"
                                                  Grid.Row="0"
                                                  Grid.Column="0"
                                                  Grid.RowSpan="2"
                                                  Grid.ColumnSpan="2"
-                                                 Style="{StaticResource LoadingAnimationStyle}"/>
+                                                 Style="{StaticResource LoadingAnimation}"/>
                                         <TextBlock Name="TextBlockCurrentCpuLoad"
                                                    Text="{Binding SystemLoadChart.LastCpuReading,
                                                           StringFormat='CPU Usage: {0:0}%'}"

@@ -1,7 +1,6 @@
 ﻿using DashboardFrontend.Settings;
 using Microsoft.Data.SqlClient;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 
 namespace DashboardFrontend.DetachedWindows
@@ -32,7 +31,7 @@ namespace DashboardFrontend.DetachedWindows
 
             UserSettings.ActiveProfile.BuildConnectionString(userId, password);
 
-            LoadingAnim.Visibility = Visibility.Visible;
+            ControlLoadingAnim.Visibility = Visibility.Visible;
             
             Worker.DoWork += Worker_DoWork;
             Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
@@ -62,7 +61,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LoadingAnim.Visibility = Visibility.Collapsed;
+            ControlLoadingAnim.Visibility = Visibility.Collapsed;
             Close();
         }
     }

@@ -40,7 +40,7 @@
                    Grid.Column="1"
                    Foreground="White"
                    Margin="0,6,0,0"/>
-            <Control Name="LoadingAnim"
+            <Control Name="ControlLoadingAnim"
                      Visibility="Hidden"
                      Grid.Column="0"
                      Grid.ColumnSpan="4"

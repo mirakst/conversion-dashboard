@@ -11,7 +11,6 @@ using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
 using System.Windows.Threading;
-using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -22,7 +21,6 @@ namespace DashboardFrontend
         private readonly ValidationReport _validationReport;
         private readonly HealthReport _healthReport;
         private readonly List<Timer> _timers;
-        private readonly SynchronizationContext? _uiContext;
         public readonly List<HealthReportViewModel> HealthReportViewModels = new();
         public readonly List<LogViewModel> LogViewModels = new();
         public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
@@ -30,7 +28,6 @@ namespace DashboardFrontend
 
         public Controller(MainWindowViewModel viewModel)
         {
-            _uiContext = SynchronizationContext.Current;
             TryLoadUserSettings();
             _vm = viewModel;
             _log = new Log();
@@ -113,7 +110,10 @@ namespace DashboardFrontend
                 _validationReport.ValidationTests = newData;
                 foreach (var vm in ValidationReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+                    Dispatcher.CurrentDispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_validationReport);
+                    });
                 }
             }
         }
@@ -129,10 +129,13 @@ namespace DashboardFrontend
                 DU.AddHealthReportReadings(_healthReport, timestamp);
                 foreach (var vm in HealthReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkDeltaChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkSpeedChart.UpdateData(_healthReport.Network), null);
+                    Dispatcher.CurrentDispatcher.Invoke(() =>
+                    {
+                        vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
+                        vm.NetworkChart.UpdateData(_healthReport.Network);
+                        vm.NetworkDeltaChart.UpdateData(_healthReport.Network);
+                        vm.NetworkSpeedChart.UpdateData(_healthReport.Network);
+                    });
                 }
             }
             else
