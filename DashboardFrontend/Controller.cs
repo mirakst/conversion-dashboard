@@ -10,7 +10,6 @@ using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
-using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -135,7 +134,6 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport(DateTime timestamp)
         {
-            Trace.WriteLine("hehe");
             if (_healthReport.IsInitialized)
             {
                 _healthReport.LastModified = DateTime.Now;
