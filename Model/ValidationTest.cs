@@ -20,7 +20,7 @@
         #region Enums
         public enum ValidationStatus
         {
-            Ok, Failed, FailMismatch, Disabled
+            Failed, FailMismatch, Disabled, Ok
         }
         #endregion Enums
 

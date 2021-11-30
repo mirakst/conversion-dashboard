@@ -4,25 +4,36 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Windows.Data;
 using static Model.ValidationTest;
+using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
+    /// <summary>
+    /// View model for the <see cref="ValidationReport"/> class. 
+    /// </summary>
     public class ValidationReportViewModel : BaseViewModel
     {
         public ValidationReportViewModel()
         {
-            
         }
 
-        public ValidationReportViewModel(DataGrid dataGridValidations)
-        {
-            DataGrid = dataGridValidations;
-        }
         #region Properties
-        public DataGrid DataGrid { get; set; }
-        public ObservableCollection<ValidationTestViewModel> Data { get; set; } = new();
-
+        private ValidationReport _validationReport;
+        public List<string> ExpandedManagerNames = new();
+        public ObservableCollection<ManagerValidationsWrapper> ManagerList { get; private set; } = new();
+        private CollectionView _managerView;
+        public CollectionView ManagerView
+        {
+            get => _managerView;
+            private set
+            {
+                _managerView = value;
+                OnPropertyChanged(nameof(ManagerView));
+            }
+        }
         private DateTime _lastModified;
         public DateTime LastModified
         {
@@ -41,7 +52,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
-                Filter();
+                ManagerView.Refresh();
             }
         }
         private int _totalCount;
@@ -84,81 +95,128 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(FailedCount));
             }
         }
-        private bool _showSuccessfulManagers = true;
-        public bool ShowSuccessfulManagers
+        private bool _showOk;
+        public bool ShowOk
         {
-            get => _showSuccessfulManagers;
+            get => _showOk;
             set
             {
-                _showSuccessfulManagers = value;
-                OnPropertyChanged(nameof(ShowSuccessfulManagers));
-                Filter();
+                _showOk = value;
+                OnPropertyChanged(nameof(ShowOk));
+                RefreshViews();
+            }
+        }
+        private bool _showDisabled = true;
+        public bool ShowDisabled
+        {
+            get => _showDisabled;
+            set
+            {
+                _showDisabled = value;
+                OnPropertyChanged(nameof(ShowDisabled));
+                RefreshViews();
+            }
+        }
+        private bool _showFailed = true;
+        public bool ShowFailed
+        {
+            get => _showFailed;
+            set
+            {
+                _showFailed = value;
+                OnPropertyChanged(nameof(ShowFailed));
+                RefreshViews();
             }
         }
         #endregion
 
+        /// <summary>
+        /// Gets a list of raw validation tests from the specified Validation Report which is then used to generate a CollectionView with a set filter, and updates the validation test counters.
+        /// </summary>
+        /// <param name="validationReport">The Validation Report to get data from.</param>
         public void UpdateData(ValidationReport validationReport)
         {
-            OkCount = 0;
-            DisabledCount = 0;
-            FailedCount = 0;
-            TotalCount = 0;
-            Data.Clear();
-            foreach(var test in validationReport.ValidationTests)
+            _validationReport = validationReport;
+            ManagerList = GetManagerList(validationReport.ValidationTests);
+            ManagerView = GetManagerCollectionView(ManagerList);
+            ManagerView.Filter = OnManagersFilter;
+            ManagerView.SortDescriptions.Add(new(nameof(FailedCount), ListSortDirection.Descending));
+            ManagerView.SortDescriptions.Add(new(nameof(DisabledCount), ListSortDirection.Descending));
+            UpdateCounters(validationReport);
+        }
+
+        /// <summary>
+        /// Used as a filter for the ManagerView CollectionView.
+        /// </summary>
+        /// <param name="item">A ManagerValidationsWrapper object.</param>
+        /// <returns>True if the object should be shown in the CollectionView, and false otherwise.</returns>
+        private bool OnManagersFilter(object item)
+        {
+            ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
+            return wrapper.ManagerName.Contains(NameFilter) && !wrapper.ValidationView.IsEmpty;
+        }
+
+        /// <summary>
+        /// Refreshes all Validation CollectionViews in the ManagerValidationsWrappers, and then updates and filters the actual list of wrappers.
+        /// </summary>
+        private void RefreshViews()
+        {
+            foreach (object item in ManagerView)
             {
-                ValidationTestViewModel? dataEntry = Data.FirstOrDefault(e => e.ManagerName == test.ManagerName);
+                ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
+                wrapper.ValidationView.Refresh();
+            }
+            UpdateData(_validationReport);
+        }
+
+        /// <summary>
+        /// Updates the number of validation tests with the different possible statuses.
+        /// </summary>
+        private void UpdateCounters(ValidationReport validationReport)
+        {
+            OkCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Ok);
+            DisabledCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Disabled);
+            FailedCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
+            TotalCount = validationReport.ValidationTests.Count;
+        }
+
+        /// <summary>
+        /// Goes through the specified list and groups Validations together by their associated Manager, which is represented by a list of ManagerValidationsWrappers.
+        /// </summary>
+        /// <param name="validations">List of validation test data.</param>
+        /// <returns>A collection of ManagerValidationsWrappers containing the given validation tests.</returns>
+        private ObservableCollection<ManagerValidationsWrapper> GetManagerList(IList<ValidationTest> validations)
+        {
+            ObservableCollection<ManagerValidationsWrapper> result = new();
+            foreach (ValidationTest test in validations)
+            {
+                ManagerValidationsWrapper? dataEntry = result.FirstOrDefault(e => e.ManagerName == test.ManagerName);
                 if (dataEntry != null)
                 {
                     dataEntry.AddTest(test);
                 }
                 else
                 {
-                    dataEntry = new(test.ManagerName);
+                    dataEntry = new(this, test.ManagerName);
                     dataEntry.AddTest(test);
-                    Data.Add(dataEntry);
+                    if (ExpandedManagerNames.Contains(test.ManagerName))
+                    {
+                        dataEntry.IsExpanded = true;
+                    }
+                    result.Add(dataEntry);
                 }
-                UpdateCounter(test);
             }
-            LastModified = validationReport.LastModified;
+            return result;
         }
 
         /// <summary>
-        /// Filters the Values collection by setting the visibility property of their associated DataGridRow control
+        /// Gets a CollectionView with a default view of the specified list of ManagerValidationsWrappers.
         /// </summary>
-        public void Filter()
+        /// <param name="wrappers">List of all wrappers.</param>
+        /// <returns>A CollectionView with the specified list of items.</returns>
+        private CollectionView GetManagerCollectionView(IList<ManagerValidationsWrapper> wrappers)
         {
-            foreach (ValidationTestViewModel item in Data)
-            {
-                DataGridRow row = (DataGridRow)DataGrid.ItemContainerGenerator.ContainerFromItem(item);
-                if (!item.ManagerName.Contains(NameFilter) || (item.OkCount == item.TotalCount && !ShowSuccessfulManagers))
-                {
-                    row.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    row.Visibility = Visibility.Visible;
-                }
-            }
-        }
-
-        private void UpdateCounter(ValidationTest test)
-        {
-            switch (test.Status)
-            {
-                case ValidationStatus.Ok:
-                    OkCount++;
-                    break;
-                case ValidationStatus.Disabled:
-                    DisabledCount++;
-                    break;
-                case ValidationStatus.Failed:
-                case ValidationStatus.FailMismatch:
-                    FailedCount++;
-                    break;
-                default: 
-                    break;
-            }
-            TotalCount++;
+            return (CollectionView)CollectionViewSource.GetDefaultView(wrappers);
         }
     }
 }

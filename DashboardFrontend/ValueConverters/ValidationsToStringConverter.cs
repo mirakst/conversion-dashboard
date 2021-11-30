@@ -9,7 +9,7 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var test = (ValidationTestViewModel)value;
+            var test = (ManagerValidationsWrapper)value;
             return $"{test.OkCount} of {test.TotalCount}";
         }
 

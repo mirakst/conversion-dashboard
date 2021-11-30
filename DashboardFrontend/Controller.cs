@@ -10,6 +10,7 @@ using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -26,7 +27,7 @@ namespace DashboardFrontend
         public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
         public readonly List<ManagerViewModel> ManagerViewModels = new();
         public UserSettings UserSettings { get; set; } = new();
-        
+
 
         public Controller(MainWindowViewModel viewModel)
         {
@@ -39,12 +40,12 @@ namespace DashboardFrontend
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
         /// </summary>
-        public void InitializeViewModels(DataGrid dataGridValidations, ListView listViewLog)
+        public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
             LogViewModels.Add(_vm.LogViewModel);
 
-            _vm.ValidationReportViewModel = new ValidationReportViewModel(dataGridValidations);
+            _vm.ValidationReportViewModel = new ValidationReportViewModel();
             ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
@@ -134,6 +135,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport(DateTime timestamp)
         {
+            Trace.WriteLine("hehe");
             if (_healthReport.IsInitialized)
             {
                 _healthReport.LastModified = DateTime.Now;
@@ -234,7 +236,7 @@ namespace DashboardFrontend
                 _timers.Add(new Timer(x => UpdateHealthReport(_healthReport.LastModified), null, 500, UserSettings.HealthReportQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateLog(_log.LastModified), null, 500, UserSettings.LoggingQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateValidationReport(_validationReport.LastModified), null, 500, UserSettings.ValidationQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateManagerOverview(),null, 500, UserSettings.ManagerQueryInterval * 1000));
+                _timers.Add(new Timer(x => UpdateManagerOverview(), null, 500, UserSettings.ManagerQueryInterval * 1000));
             }
             _vm.IsRunning = true;
         }

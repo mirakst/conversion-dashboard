@@ -1,7 +1,13 @@
+using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.Settings;
+using DashboardBackend;
+using DashboardBackend.Database;
 using Model;
+using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,7 +19,7 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new(DataGridValidations, ListViewLog);
+            ViewModel = new(ListViewLog);
             DataContext = ViewModel;
         }
 
@@ -28,9 +34,6 @@ namespace DashboardFrontend
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
-            //settingsWindow.Closing += OnSettingsWindowClosing;
-            //settingsWindow.IsEnabled = false;
-            //settingsWindow.Owner = Application.Current.MainWindow;
             settingsWindow.ShowDialog();
         }
 
@@ -61,7 +64,6 @@ namespace DashboardFrontend
             ValidationReportViewModel detachedValidationReportViewModel =
                 ViewModel.Controller.CreateValidationReportViewModel();
             ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
-            detachedValidationReportViewModel.DataGrid = detachVr.DataGridValidations;
             detachVr.Show();
             detachVr.Closed += delegate
             {
@@ -86,45 +88,26 @@ namespace DashboardFrontend
             ButtonSettings.IsEnabled = true;
         }
 
+        private void OnManagerWindowClosing(object sender, CancelEventArgs e)
+        {
+            ButtonDetachManager.IsEnabled = true;
+        }
+
         private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-            {
-                RoutedEvent = MouseWheelEvent,
-                Source = DataGridValidations
-            };
-            DataGridValidations.RaiseEvent(eventArgs);
+            ButtonLogDetach.IsEnabled = true;
         }
 
-        private void DetailsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
         {
-            var eventArgs = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-            {
-                RoutedEvent = MouseWheelEvent,
-                Source = DataGridValidations
-            };
-            DataGridValidations.RaiseEvent(eventArgs);
+            ButtonValidationReportDetach.IsEnabled = true;
         }
 
-        private void MenuItem_SrcSql_Click(object sender, RoutedEventArgs e)
+        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
         {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.SrcSql ?? "");
-            }
+            ButtonHealthReportDetach.IsEnabled = true;
         }
 
-        private void MenuItem_DstSql_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = (MenuItem)sender;
-            if (menuItem.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.DstSql ?? "");
-            }
-        }
-
-        //Window handlling events
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -184,14 +167,63 @@ namespace DashboardFrontend
             }
         }
 
-        private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
         {
             ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
+        }
+
+        /// <summary>
+        /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
+        private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
+        {
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
+            if (wrapper != null)
+            {
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerValidationsWrapper, and removes the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// </summary>
+        private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
+        {
+            TreeView tree = (TreeView)sender;
+            TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
+            if (wrapper != null)
+            {
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                }
+            }
+        }
+
+        private void CopySrcSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.SrcSql);
+            }
+        }
+
+        private void CopyDestSql_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.DataContext is ValidationTest test)
+            {
+                Clipboard.SetText(test.DstSql);
+            }
         }
     }
 }
