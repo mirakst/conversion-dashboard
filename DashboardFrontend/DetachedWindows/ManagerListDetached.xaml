@@ -6,11 +6,16 @@
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
         xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
+        xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         x:Class="DashboardFrontend.DetachedWindows.ManagerListDetached"
         mc:Ignorable="d"
         Title="Manager statistics" 
         Height="720" 
-        Width="1280">
+        Width="1280"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+    <converters:NotFoundToNaConverter x:Key="NotFoundToNaConverter"/>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -152,10 +157,10 @@
                                                         Binding="{Binding Manager.Runtime}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
-                                                        Binding="{Binding Manager.RowsRead}"
+                                                        Binding="{Binding Manager.RowsRead, Converter={StaticResource NotFoundToNaConverter}}"
                                                         Width="1.5*"/>
                                     <DataGridTextColumn Header="Rows written"
-                                                        Binding="{Binding Manager.RowsWritten}"
+                                                        Binding="{Binding Manager.RowsWritten, Converter={StaticResource NotFoundToNaConverter}}"
                                                         Width="1.5*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
