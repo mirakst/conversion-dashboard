@@ -91,7 +91,10 @@ namespace DashboardFrontend
                 _log.Messages = newData;
                 foreach (var vm in LogViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_log), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_log);
+                    });
                 }
             }
         }
@@ -108,7 +111,10 @@ namespace DashboardFrontend
                 _validationReport.ValidationTests = newData;
                 foreach (var vm in ValidationReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_validationReport);
+                    });
                 }
             }
         }
@@ -124,15 +130,30 @@ namespace DashboardFrontend
                 DU.AddHealthReportReadings(_healthReport, timestamp);
                 foreach (var vm in HealthReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkDeltaChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkSpeedChart.UpdateData(_healthReport.Network), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
+                        vm.NetworkChart.UpdateData(_healthReport.Network);
+                        vm.NetworkDeltaChart.UpdateData(_healthReport.Network);
+                        vm.NetworkSpeedChart.UpdateData(_healthReport.Network);
+                    });
                 }
             }
             else
             {
                 DU.BuildHealthReport(_healthReport);
+            }
+        }
+
+        public void UpdateManagerOverview()
+        {
+            DU.AddManagerReadings(_conversion.ActiveExecution);
+            foreach (var vm in ManagerViewModels)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    vm.UpdateData(_conversion.ActiveExecution.Managers);
+                });
             }
         }
 
@@ -155,9 +176,15 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    if (!_healthReport.IsInitialized)
+                    if (!_conversion.IsInitialized)
                     {
+                        _conversion.Executions = DU.GetExecutions();
+                        _log = _conversion.ActiveExecution.Log;
+                        _validationReport = _conversion.ActiveExecution.ValidationReport;
+                        _healthReport = _conversion.HealthReport;
+                        DU.AddManagers(_conversion.Executions);
                         DU.BuildHealthReport(_healthReport);
+                        _conversion.IsInitialized = true;
                     }
                     StartMonitoring();
                 }
@@ -189,15 +216,15 @@ namespace DashboardFrontend
                     Task.Run(() => UpdateHealthReport(_healthReport.LastModified));
                     Task.Run(() => UpdateLog(_log.LastModified));
                     Task.Run(() => UpdateValidationReport(_validationReport.LastModified));
-                    //Task.Run(() => QueryManagers());
+                    Task.Run(() => UpdateManagerOverview());
                 }, null, 500, UserSettings.AllQueryInterval * 1000));
             }
             else
             {
                 _timers.Add(new Timer(x => UpdateHealthReport(_healthReport.LastModified), null, 500, UserSettings.HealthReportQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateLog(_log.LastModified), null, 500, UserSettings.LoggingQueryInterval * 1000));
-                //_timers.Add(new(x => QueryManagers(), null, 500, UserSettings.ManagerQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateValidationReport(_validationReport.LastModified), null, 500, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new Timer(x => UpdateManagerOverview(),null, 500, UserSettings.ManagerQueryInterval * 1000));
             }
             _vm.IsRunning = true;
         }

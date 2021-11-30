@@ -29,7 +29,15 @@
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
-        <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <ContextMenu x:Key="ValidationTestContextMenu" 
+                     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
+            <MenuItem Header="Copy source SQL" 
+                      Click="MenuItem_SrcSql_Click" 
+                      IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
+            <MenuItem Header="Copy destination SQL" 
+                      Click="MenuItem_DstSql_Click" 
+                      IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
+        </ContextMenu>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -51,11 +59,11 @@
                       Margin="20,35,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
-                        Click="ButtonStartStopClick"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Style="{StaticResource DefaultButton}">
+                            Click="ButtonStartStopClick"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Style="{StaticResource DefaultButton}">
                         <Image>
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
@@ -136,97 +144,97 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="10" 
+            <Grid Margin="30,20,30,30" 
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-                
-                <Grid Name="GridManager"
-                      Margin="0,0,20,20"
+                  
+
+                <Grid x:Name="gridManagerList"
+                      Grid.Row="0"
                       Grid.Column="0"
-                      Grid.Row="0">
-                    <Grid Grid.Row="0">
-                        <TextBox Name="TextBoxManagerSearchBox"
-                                 Style="{DynamicResource SearchBox}"/>
-                        <DockPanel Name="DockPanelSearchButton"
-                                   Grid.Column="0" 
-                                   LastChildFill="False">
-                            <Button Name="ButtonManagerSearch"
-                                    Style="{DynamicResource SearchButton}"
-                                    DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"
-                                       Margin="0,5,0,5"/>
-                            </Button>
-                        </DockPanel>
-
-                        <Button Name="ButtonManagerFilter"
-                                Grid.Column="1"
-                                Style="{DynamicResource FilterButton}">
-                            <Image Source="Icons/Filter.png"/>
-                        </Button>
-
-                        <Button Name="ButtonDetachManager"
-                                Click="DetachManagerButtonClick"
-                                Grid.Column="2"
-                                Style="{StaticResource DetachButton}">
-                            <Image Source="Icons/Detach.png"/>
-                        </Button>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-
-                    <Grid Grid.Row="1">
-                        <ListView x:Name="ListViewManagerList"
-                                  Grid.Column="0"
-                                  ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
-                                  AlternationCount="2"
-                                  Background="{StaticResource CanvasColor}"
-                                  Foreground="{StaticResource ForegroundColor}"
-                                  BorderBrush="{StaticResource BorderColor}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Manager name"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerName}"/>
-                                    <GridViewColumn Header="Score"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerScore}"/>
-                                    <GridViewColumn Header="Status"
-                                                    Width="auto"
-                                                    DisplayMemberBinding="{Binding ManagerStatus}"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </Grid>
-
+                      Margin="0,0,20,20"
+                      DataContext="{Binding ManagerViewModel}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
+
+                    <TextBox Name="textboxManagerSearchbar"
+                             Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Search by manager Name or ID"
+                             Margin="0,0,5,0"
+                             Style="{DynamicResource SearchBox}"
+                             BorderBrush="{DynamicResource BorderColor}">
+                    </TextBox>
+
+                    <DockPanel LastChildFill="False">
+                        <Image Source="Icons/MagnifyingglassAlt.png"
+                               Margin="0,5,10,5"
+                               DockPanel.Dock="Right"/>
+                    </DockPanel>
+
+                    <Button Name="ButtonManagerFilter"
+                            Grid.Column="1"
+                            Margin="0"
+                            Style="{DynamicResource FilterButton}">
+                        <Image Source="Icons/Filter.png"/>
+                    </Button>
+
+                    <Button Name="ButtonDetachManager"
+                            Click="DetachManagerButtonClick"
+                            Grid.Column="2"
+                            Margin="0"
+                            Style="{StaticResource DetachButton}">
+                        <Image Source="Icons/Detach.png"/>
+                    </Button>
+
+                    <DataGrid x:Name="datagridManagers"
+                              ItemsSource="{Binding Managers}"
+                              Grid.Row="1"
+                              Grid.ColumnSpan="3"
+                              Style="{DynamicResource DefaultDatagrid}"
+                              BorderBrush="{DynamicResource BorderColor}" 
+                              SelectionChanged="datagridManagers_SelectionChanged">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" 
+                                                Binding="{Binding Manager.ContextId}"
+                                                Width="25pt"/>
+                            <DataGridTextColumn Header="Manager name" 
+                                                Binding="{Binding Manager.ShortName}"
+                                                Width="8*"/>
+                            <DataGridTextColumn Header="Score" 
+                                                Binding="{Binding Manager.Score}"
+                                                Width="*"/>
+                            <DataGridTextColumn Header="Status" 
+                                                Binding="{Binding Manager.Status}"
+                                                Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
 
                 <Grid Name="GridLog" 
                       Margin="20,0,0,20"
                       Grid.Column="1" 
-                      Grid.Row="0">
+                      Grid.Row="0"
+                      DataContext="{Binding LogViewModel}">
                     <Grid Grid.Row="0"
                           Margin="0">
                         <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
-                                      IsChecked="{Binding LogViewModel.ShowInfo}"
+                                      IsChecked="{Binding ShowInfo}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Info.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.InfoCount}"/>
+                                <TextBlock Text="{Binding InfoCount}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
@@ -237,13 +245,13 @@
                                    HorizontalAlignment="Center"/>
                         <ToggleButton Name="ToggleButtonLogWarning"
                                       Grid.Column="2"
-                                      IsChecked="{Binding LogViewModel.ShowWarn}"
+                                      IsChecked="{Binding ShowWarn}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Warning.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.WarnCount}"/>
+                                <TextBlock Text="{Binding WarnCount}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
@@ -253,13 +261,13 @@
                                    Grid.Column="3"/>
                         <ToggleButton Name="ToggleButtonLogError"
                                       Grid.Column="4"
-                                      IsChecked="{Binding LogViewModel.ShowError}"
+                                      IsChecked="{Binding ShowError}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.ErrorCount}"/>
+                                <TextBlock Text="{Binding ErrorCount}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
@@ -269,13 +277,13 @@
                                    Grid.Column="5"/>
                         <ToggleButton Name="ToggleButtonLogFatal"
                                       Grid.Column="6"
-                                      IsChecked="{Binding LogViewModel.ShowFatal}"
+                                      IsChecked="{Binding ShowFatal}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Fatal.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.FatalCount}"/>
+                                <TextBlock Text="{Binding FatalCount}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
@@ -285,13 +293,13 @@
                                    Grid.Column="7"/>
                         <ToggleButton Name="ToggleButtonLogValidation"
                                       Grid.Column="8"
-                                      IsChecked="{Binding LogViewModel.ShowValidation}"
+                                      IsChecked="{Binding ShowValidation}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Validation.png" 
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding LogViewModel.ValidationCount}"/>
+                                <TextBlock Text="{Binding ValidationCount}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
@@ -326,7 +334,7 @@
 
                     <Grid Grid.Row="1">
                         <ListView x:Name="ListViewLog"
-                                  ItemsSource="{Binding LogViewModel.MessageView}"
+                                  ItemsSource="{Binding MessageView}"
                                   Background="{DynamicResource BackgroundColor}"
                                   VirtualizingPanel.ScrollUnit="Pixel"
                                   VirtualizingPanel.IsVirtualizing="True"
@@ -501,13 +509,15 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
+                                </Grid.RowDefinitions>
+
                                 <TextBox x:Name="TextBoxValidationsSearchBar"
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
                                          Foreground="White"
-                                         CaretBrush="White"/>
+                                         CaretBrush="White"/>
+
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        HorizontalAlignment="Right"
                                        Margin="0 0 5 0"
@@ -665,8 +675,7 @@
                         </Border>
                     </Grid>
                 </Grid>
-
-                <Grid Name="GridHealthReportChartGrid"
+            <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
@@ -816,6 +825,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
+                
             <Grid Name="WindowControlGrid"
                   Grid.Column="5"
                   Grid.Row="0"
