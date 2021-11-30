@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("LOGGING")]
-    public partial class Logging
+    public partial class LoggingEntry
     {
         [Column("CREATED", TypeName = "datetime")]
         public DateTime? Created { get; set; }

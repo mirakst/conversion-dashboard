@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("EXECUTIONS")]
-    public partial class Execution : IDatabaseEntry
+    public partial class ExecutionEntry : IDatabaseEntry
     {
         [Column("EXECUTION_ID")]
         public long? ExecutionId { get; set; }

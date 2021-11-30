@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("ENGINE_PROPERTIES")]
-    public partial class EngineProperty
+    public partial class EnginePropertyEntry
     {
         [Column("MANAGER")]
         [StringLength(200)]

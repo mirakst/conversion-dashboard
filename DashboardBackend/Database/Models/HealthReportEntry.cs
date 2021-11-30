@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ namespace DashboardBackend.Database.Models
 {
     [Keyless]
     [Table("HEALTH_REPORT")]
-    public partial class HealthReport
+    public partial class HealthReportEntry
     {
         [Column("ROW_NO")]
         public int? RowNo { get; set; }

@@ -1,0 +1,91 @@
+﻿<Window x:Class="DashboardFrontend.DetachedWindows.ConnectDBDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ConnectDBDialog" 
+        Height="200" 
+        Width="350"
+        Background="{DynamicResource BackgroundColor}"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+    <Border Margin="10">
+        <Grid>
+            <TextBlock Name="TextBlockDialogHeader"
+                       Text="Connect to a database"
+                       TextAlignment="Center"
+                       Foreground="{DynamicResource ForegroundColor}"
+                       FontSize="30"
+                       Grid.Row="0"
+                       Grid.ColumnSpan="3"/>
+            <TextBox Name="TextBoxUserId"
+                     Margin="10"
+                     Grid.Row="1"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="3"/>
+            <Label Content="User ID"
+                   Grid.Row="1"
+                   Foreground="White"
+                   Grid.Column="1"
+                   Margin="0,6,0,0"/>
+            <PasswordBox Name="TextBoxPassword"
+                         Margin="10"
+                         Grid.Row="2"
+                         Grid.Column="2"
+                         Grid.ColumnSpan="3"/>
+            <Label Content="Password"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   Foreground="White"
+                   Margin="0,6,0,0"/>
+            <Control Name="ControlLoadingAnim"
+                     Visibility="Hidden"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="4"
+                     Grid.Row="0"
+                     Grid.RowSpan="4"
+                     Style="{StaticResource LoadingAnimation}"/>
+            <Grid MaxHeight="20"
+                  Grid.Row="3"
+                  Margin="0,10,0,0"
+                  Grid.ColumnSpan="3">
+                <Button Name="ButtonBack"
+                        Content="Back"
+                        Click="OnButtonBackClick"
+                        IsCancel="True"
+                        MinWidth="100"
+                        Margin="0,0,20,0"
+                        Grid.Column="0"
+                        HorizontalAlignment="Right"/>
+                <Button Name="ButtonConnectDb"
+                        Content="Connect"
+                        IsDefault="True"
+                        Click="OnButtonConnectDBClick"
+                        MinWidth="100"
+                        Margin="20,0,0,0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Left"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
+    </Border>
+</Window>
