@@ -10,30 +10,30 @@ using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
     public class Controller
     {
         private readonly MainWindowViewModel _vm;
-        private readonly Log _log;
-        private readonly ValidationReport _validationReport;
-        private readonly HealthReport _healthReport;
+        private Log _log;
+        private ValidationReport _validationReport;
+        private HealthReport _healthReport;
         private readonly List<Timer> _timers;
-        private readonly SynchronizationContext? _uiContext;
+        public readonly Conversion _conversion;
         public readonly List<HealthReportViewModel> HealthReportViewModels = new();
         public readonly List<LogViewModel> LogViewModels = new();
         public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
+        public readonly List<ManagerViewModel> ManagerViewModels = new();
         public UserSettings UserSettings { get; set; } = new();
+
 
         public Controller(MainWindowViewModel viewModel)
         {
-            _uiContext = SynchronizationContext.Current;
             TryLoadUserSettings();
             _vm = viewModel;
-            _log = new Log();
-            _validationReport = new ValidationReport();
-            _healthReport = new HealthReport();
+            _conversion = new();
             _timers = new List<Timer>();
         }
 
@@ -50,6 +50,9 @@ namespace DashboardFrontend
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels.Add(_vm.HealthReportViewModel);
+
+            _vm.ManagerViewModel = new ManagerViewModel(_healthReport);
+            ManagerViewModels.Add(_vm.ManagerViewModel);
         }
 
         public LogViewModel CreateLogViewModel()
@@ -76,6 +79,14 @@ namespace DashboardFrontend
             result.NetworkDeltaChart.UpdateData(_healthReport.Network);
             result.NetworkSpeedChart.UpdateData(_healthReport.Network);
             HealthReportViewModels.Add(result);
+            return result;
+        }
+
+        public ManagerViewModel CreateManagerViewModel()
+        {
+            ManagerViewModel result = new(_healthReport);
+            result.UpdateData(_conversion.ActiveExecution.Managers);
+            ManagerViewModels.Add(result);
             return result;
         }
 
@@ -124,6 +135,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport(DateTime timestamp)
         {
+            Trace.WriteLine("hehe");
             if (_healthReport.IsInitialized)
             {
                 _healthReport.LastModified = DateTime.Now;
@@ -224,7 +236,7 @@ namespace DashboardFrontend
                 _timers.Add(new Timer(x => UpdateHealthReport(_healthReport.LastModified), null, 500, UserSettings.HealthReportQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateLog(_log.LastModified), null, 500, UserSettings.LoggingQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateValidationReport(_validationReport.LastModified), null, 500, UserSettings.ValidationQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateManagerOverview(),null, 500, UserSettings.ManagerQueryInterval * 1000));
+                _timers.Add(new Timer(x => UpdateManagerOverview(), null, 500, UserSettings.ManagerQueryInterval * 1000));
             }
             _vm.IsRunning = true;
         }

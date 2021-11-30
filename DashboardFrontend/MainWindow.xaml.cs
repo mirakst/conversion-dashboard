@@ -34,18 +34,18 @@ namespace DashboardFrontend
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
-            //settingsWindow.Closing += OnSettingsWindowClosing;
-            //settingsWindow.IsEnabled = false;
-            //settingsWindow.Owner = Application.Current.MainWindow;
             settingsWindow.ShowDialog();
         }
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            //ManagerWindow detachManager = new();
-            //detachManager.Closing += OnManagerWindowClosing;
-            //buttonDetachManager.IsEnabled = false;
-            //detachManager.Show();
+            ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
+            ManagerListDetached detachManager = new(detachedManagerViewModel);
+            detachManager.Show();
+            detachManager.Closed += delegate
+            {
+                ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+            };
         }
 
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
@@ -150,7 +150,6 @@ namespace DashboardFrontend
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
             ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
-
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
@@ -227,3 +226,4 @@ namespace DashboardFrontend
             }
         }
     }
+}

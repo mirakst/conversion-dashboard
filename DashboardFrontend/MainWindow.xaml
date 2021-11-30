@@ -29,15 +29,7 @@
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
-        <ContextMenu x:Key="ValidationTestContextMenu" 
-                     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.DataContext}">
-            <MenuItem Header="Copy source SQL" 
-                      Click="MenuItem_SrcSql_Click" 
-                      IsEnabled="{Binding Path=SrcSql,Converter={StaticResource SqlToBoolConverter}}"/>
-            <MenuItem Header="Copy destination SQL" 
-                      Click="MenuItem_DstSql_Click" 
-                      IsEnabled="{Binding Path=DstSql,Converter={StaticResource SqlToBoolConverter}}"/>
-        </ContextMenu>
+        <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -199,9 +191,8 @@
                               Grid.Row="1"
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
-                              BorderBrush="{DynamicResource BorderColor}" 
-                              SelectionChanged="datagridManagers_SelectionChanged">
-
+                              BorderBrush="{DynamicResource BorderColor}">
+                        
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
