@@ -140,6 +140,7 @@
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
+                
                 <Grid Name="GridManager"
                       Margin="0,0,20,20"
                       Grid.Column="0"
@@ -504,8 +505,8 @@
                                 <TextBox x:Name="TextBoxValidationsSearchBar"
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
-                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
+                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                                         Foreground="White"
                                          CaretBrush="White"/>
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        HorizontalAlignment="Right"
@@ -549,9 +550,9 @@
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="Foreground" Value="White"/>
                                             <Setter Property="MinHeight" Value="25"/>
-                                            <Setter Property="Focusable" Value="{Binding Converter={StaticResource IsValidationTestConverter}}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
+                                                    <Setter Property="Focusable" Value="False"/>
                                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -569,8 +570,9 @@
                             <Button Name="ButtonValidationReportDetach" 
                                     Click="DetachValidationReportButtonClick"
                                     HorizontalAlignment="Right"
+                                    Margin="0"
                                     Style="{StaticResource DetachButton}">
-                                <Image Source="Icons/Detach.png"/>
+                                <Image Source="/Icons/Detach.png"/>
                             </Button>
                         </Grid>
                         <Border BorderBrush="{DynamicResource BorderColor}"
@@ -593,7 +595,17 @@
                                            Margin="10 20 10 0"/>
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 0 10 0">
-                                        <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" Width="15"/>
+                                        <Image Width="15">
+                                            <Image.Style>
+                                                <Style TargetType="{x:Type Image}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                            <Setter Property="Source" Value="{Binding Converter={StaticResource StatusToImageConverter}}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
                                         <TextBlock Text="{Binding Status}"
                                                Margin="5 0 0 0"
                                                VerticalAlignment="Center"/>
@@ -658,147 +670,140 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
-                    <Grid Grid.Row="1"
-                          Margin="0,-7,0,0">
-                        <TabControl Background="{DynamicResource BackgroundColor}"
-                        BorderBrush="{DynamicResource BorderColor}"
-                        DataContext="{Binding HealthReportViewModel}"
-                        Grid.ColumnSpan="2">
-                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                     Name="TabItemCpuRam"
-                                     Header="CPU &amp; RAM"
-                                     FontSize="16"
-                                     Margin="-2,0,0,0">
-                                <Border Margin="10">
-                                    <Grid>
-                                        <TextBlock Name="TextBlockCurrentCpuLoad"
-                                                   Text="{Binding SystemLoadChart.LastCpuReading,
-                                                          StringFormat='CPU Usage: {0:0}%'}"
-                                                   Foreground="{DynamicResource ForegroundColor}"
-                                                   FontSize="14"
-                                                   VerticalAlignment="Center"
-                                                   Grid.Column="0"
-                                                   Grid.Row="0"
-                                                   Margin="0,0,40,5"/>
-                                        <TextBlock Name="TextBlockCurrentRamUsage"
-                                                   Text="{Binding SystemLoadChart.LastRamReading,
-                                                          StringFormat='RAM Usage: {0:0}%'}"
-                                                   Foreground="{DynamicResource ForegroundColor}"
-                                                   FontSize="14"
-                                                   VerticalAlignment="Center"
-                                                   Grid.Column="1"
-                                                   Grid.Row="0"
-                                                   Margin="5,0,0,5"/>
-                                        <lvc:CartesianChart
-                                                Margin="-7,0,0,-40"
-                                                Series="{Binding SystemLoadChart.ChartData.Series}"
-                                                XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
-                                                YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="2"
-                                                Grid.Row="1">
-                                        </lvc:CartesianChart>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                    </Grid>
-                                </Border>
-                            </TabItem>
-
-                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                         Name="TabItemNetwork"
-                         Header="Network"
-                         FontSize="16">
-                                <lvc:CartesianChart Margin="0,14,0,-30"
-                                                    Series="{Binding NetworkChart.ChartData.Series}"
-                                                    XAxes="{Binding NetworkChart.ChartData.XAxis}"
-                                                    YAxes="{Binding NetworkChart.ChartData.YAxis}"
-                                                    ZoomMode="Both"
-                                                    TooltipPosition="Top"
-                                                    Grid.Row="0"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
-                            </TabItem>
-                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                     Name="TabItemNetworkDelta"
-                                     Header="Network Delta"
-                                     FontSize="16">
-                                <lvc:CartesianChart Margin="0,14,0,-30"
-                                                    Series="{Binding NetworkDeltaChart.ChartData.Series}"
-                                                    XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
-                                                    YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
-                                                    ZoomMode="Both"
-                                                    TooltipPosition="Top"
-                                                    Grid.Row="1"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
-                            </TabItem>
-                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                     Name="TabItemNetworkSpeed"
-                                     Header="Network Speed"
-                                     FontSize="16">
-                                <lvc:CartesianChart  Margin="-6,14,0,-30"
-                                                     Series="{Binding NetworkSpeedChart.ChartData.Series}"
-                                                     XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
-                                                     YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
-                                                     ZoomMode="Both"
-                                                     TooltipPosition="Top"
-                                                     Grid.Row="2"
-                                                     MouseLeave="CartesianChart_MouseLeave"
-                                                     MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
-                            </TabItem>
-                        </TabControl>
-                        <Grid
-                              VerticalAlignment="Top"
-                              Grid.Column="1"
-                              Margin="0,-5,0,0">
-                            <ComboBox Name="ComboBoxMaxView"
-                                      VerticalAlignment="Center"
-                                      Grid.Column="1"
-                                      SelectionChanged="ComboBox_SelectionChanged">
-                                <ComboBoxItem Content="30 Min" Tag="30"/>
-                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                                <ComboBoxItem Content="2 Hours" Tag="120"/>
-                                <ComboBoxItem Content="6 Hours" Tag="360"/>
-                                <ComboBoxItem Content="12 Hours" Tag="720"/>
-                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                            </ComboBox>
-                            <Button Name="ButtonHealthReportDetach"
-                                    Click="DetachHealthReportButtonClick"
-                                    Grid.Column="2"
-                                    Style="{StaticResource DetachButton}">
-                                <Image Source="Icons/Detach.png"/>
-                            </Button>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    <TabControl Background="{DynamicResource BackgroundColor}"
+                                BorderBrush="{DynamicResource BorderColor}"
+                                DataContext="{Binding HealthReportViewModel}"
+                                Grid.ColumnSpan="3"
+                                Margin="0,-2,0,0"
+                                Grid.RowSpan="2">
+                        <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                    Name="TabItemCpuRam"
+                                    Header="CPU &amp; RAM"
+                                    Height="30"
+                                    FontSize="16"
+                                    Margin="-2,0,0,0">
+                            <Border Margin="10">
+                                <Grid>
+                                    <TextBlock Name="TextBlockCurrentCpuLoad"
+                                                Text="{Binding SystemLoadChart.LastCpuReading,
+                                                        StringFormat='CPU Usage: {0:0}%'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="0"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+                                    <TextBlock Name="TextBlockCurrentRamUsage"
+                                                Text="{Binding SystemLoadChart.LastRamReading,
+                                                        StringFormat='RAM Usage: {0:0}%'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,0,-40"
+                                            Series="{Binding SystemLoadChart.ChartData.Series}"
+                                            XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
+                                            YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                </Grid>
+                            </Border>
+                        </TabItem>
+
+                        <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                    Name="TabItemNetwork"
+                                    Header="Network"
+                                    Height="30"
+                                    FontSize="16">
+                            <lvc:CartesianChart Margin="0,14,0,-30"
+                                                Series="{Binding NetworkChart.ChartData.Series}"
+                                                XAxes="{Binding NetworkChart.ChartData.XAxis}"
+                                                YAxes="{Binding NetworkChart.ChartData.YAxis}"
+                                                ZoomMode="Both"
+                                                TooltipPosition="Top"
+                                                Grid.Row="0"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter">
+                            </lvc:CartesianChart>
+                        </TabItem>
+                        <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                    Name="TabItemNetworkDelta"
+                                    Header="Network Delta"
+                                    Height="30"
+                                    FontSize="16">
+                            <lvc:CartesianChart Margin="0,14,0,-30"
+                                                Series="{Binding NetworkDeltaChart.ChartData.Series}"
+                                                XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
+                                                YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
+                                                ZoomMode="Both"
+                                                TooltipPosition="Top"
+                                                Grid.Row="1"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter">
+                            </lvc:CartesianChart>
+                        </TabItem>
+                        <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                    Name="TabItemNetworkSpeed"
+                                    Header="Network Speed"
+                                    Height="30"
+                                    FontSize="16">
+                            <lvc:CartesianChart  Margin="-6,14,0,-30"
+                                                    Series="{Binding NetworkSpeedChart.ChartData.Series}"
+                                                    XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
+                                                    YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    Grid.Row="2"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                            </lvc:CartesianChart>
+                        </TabItem>
+                    </TabControl>
+                    <ComboBox Name="ComboBoxMaxView"
+                              VerticalAlignment="Center"
+                              Grid.Column="1"
+                              SelectionChanged="ComboBox_SelectionChanged">
+                        <ComboBoxItem Content="30 Min" Tag="30"/>
+                        <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                        <ComboBoxItem Content="2 Hours" Tag="120"/>
+                        <ComboBoxItem Content="6 Hours" Tag="360"/>
+                        <ComboBoxItem Content="12 Hours" Tag="720"/>
+                        <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                    </ComboBox>
+                    <Button Name="ButtonHealthReportDetach"
+                            Click="DetachHealthReportButtonClick"
+                            Grid.Column="3"
+                            Style="{StaticResource DetachButton}"
+                            Margin="0">
+                        <Image Source="/Icons/Detach.png" VerticalAlignment="center"/>
+                    </Button>
                 </Grid>
 
                 <Grid.ColumnDefinitions>
@@ -847,7 +852,7 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
         </Grid>

@@ -40,12 +40,12 @@ namespace DashboardFrontend
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
         /// </summary>
-        public void InitializeViewModels(DataGrid dataGridValidations, ListView listViewLog)
+        public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
             LogViewModels.Add(_vm.LogViewModel);
 
-            _vm.ValidationReportViewModel = new ValidationReportViewModel(dataGridValidations);
+            _vm.ValidationReportViewModel = new ValidationReportViewModel();
             ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
 
             _vm.HealthReportViewModel = new HealthReportViewModel();

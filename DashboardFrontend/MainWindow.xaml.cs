@@ -20,7 +20,7 @@ namespace DashboardFrontend
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new(DataGridValidations, ListViewLog);
+            ViewModel = new(ListViewLog);
             DataContext = ViewModel;
         }
 
@@ -65,7 +65,6 @@ namespace DashboardFrontend
             ValidationReportViewModel detachedValidationReportViewModel =
                 ViewModel.Controller.CreateValidationReportViewModel();
             ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
-            detachedValidationReportViewModel.DataGrid = detachVr.DataGridValidations;
             detachVr.Show();
             detachVr.Closed += delegate
             {
@@ -183,11 +182,15 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
-            if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
+            if (wrapper != null)
             {
-                ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                }
             }
+
         }
 
         /// <summary>
@@ -197,8 +200,14 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
-            ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
+            if (wrapper != null)
+            {
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                }
+            }
         }
 
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)

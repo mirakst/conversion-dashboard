@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Generic;
 using System.Windows.Data;
 using static Model.ValidationTest;
+using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -18,11 +20,8 @@ namespace DashboardFrontend.ViewModels
         {
         }
 
-        public ValidationReportViewModel(DataGrid dataGridValidations)
-        {
-            DataGrid = dataGridValidations;
-        }
         #region Properties
+        private ValidationReport _validationReport;
         public List<string> ExpandedManagerNames = new();
         public ObservableCollection<ManagerValidationsWrapper> ManagerList { get; private set; } = new();
         private CollectionView _managerView;
@@ -137,6 +136,7 @@ namespace DashboardFrontend.ViewModels
         /// <param name="validationReport">The Validation Report to get data from.</param>
         public void UpdateData(ValidationReport validationReport)
         {
+            _validationReport = validationReport;
             ManagerList = GetManagerList(validationReport.ValidationTests);
             ManagerView = GetManagerCollectionView(ManagerList);
             ManagerView.Filter = OnManagersFilter;
@@ -166,8 +166,7 @@ namespace DashboardFrontend.ViewModels
                 ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
                 wrapper.ValidationView.Refresh();
             }
-            ManagerView = GetManagerCollectionView(ManagerList);
-            ManagerView.Filter = OnManagersFilter;
+            UpdateData(_validationReport);
         }
 
         /// <summary>
