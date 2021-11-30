@@ -161,7 +161,10 @@ namespace DashboardFrontend
             DU.AddManagerReadings(_conversion.ActiveExecution);
             foreach (var vm in ManagerViewModels)
             {
-                _uiContext?.Send(x => vm.UpdateData(_conversion.ActiveExecution.Managers), null);
+                Dispatcher.CurrentDispatcher?.Invoke(() =>
+                {
+                    vm.UpdateData(_conversion.ActiveExecution.Managers);
+                });
             }
         }
 
