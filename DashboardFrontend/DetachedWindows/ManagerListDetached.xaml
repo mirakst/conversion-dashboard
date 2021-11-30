@@ -1,0 +1,358 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
+        xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
+        xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
+        x:Class="DashboardFrontend.DetachedWindows.ManagerListDetached"
+        mc:Ignorable="d"
+        Title="Manager statistics" 
+        Height="720" 
+        Width="1280"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+    <converters:NotFoundToNaConverter x:Key="NotFoundToNaConverter"/>
+    </Window.Resources>
+    <Border Background="{DynamicResource BackgroundColor}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="15"/>
+            </Grid.RowDefinitions>
+
+            <GridSplitter Grid.Column="2" 
+                          Grid.Row="1"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Height="100"
+                          Width="5"
+                          Background="{DynamicResource CanvasColor}"/>
+            
+            <Grid x:Name="gridManagerList"
+                  Grid.Row="1"
+                  Grid.Column="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="35"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="22*"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Name="textboxSearchbar"
+                         TextChanged="TextboxSearchbar_TextChanged"
+                         Margin="0,0,0,5"
+                         ToolTip="Search by manager Name or ID"
+                         Style="{DynamicResource SearchBox}">
+                </TextBox>
+
+                <DockPanel LastChildFill="False">
+                    <Image Source="../Icons/MagnifyingglassAlt.png"
+                               Margin="0,2,2,7"
+                               DockPanel.Dock="Right"/>
+                </DockPanel>
+
+                <Button Name="buttonResetManagers"
+                        Click="ResetManagers_Click"
+                        ToolTip="Clear the chosen managers"
+                        Grid.Column="1"
+                        Margin="5,0,0,5"
+                        Content="Reset"
+                        Style="{DynamicResource DefaultButton}">
+                </Button>
+
+                <!-- The manager overview datagrid -->
+                <DataGrid x:Name="datagridManagers"
+                          Grid.Row="1"
+                          Grid.ColumnSpan="2"
+                          Style="{DynamicResource DefaultDatagrid}"
+                          BorderBrush="{DynamicResource BorderColor}"
+                          ItemsSource="{Binding Managers}" 
+                          SelectionChanged="datagridManagers_SelectionChanged">
+                    
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" 
+                                            Binding="{Binding Manager.ContextId}"
+                                            Width="25pt"/>
+                        <DataGridTextColumn Header="Manager name" 
+                                            Binding="{Binding Manager.ShortName}"
+                                            Width="9*"/>
+                        <DataGridTextColumn Header="Score" 
+                                            Binding="{Binding Manager.Score}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Status" 
+                                            Binding="{Binding Manager.Status}"
+                                            Width="*"/>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="buttonAddManager"
+                                            Click="AddManager_Click"
+                                            ToolTip="Add manager to detailed view"
+                                            FontFamily="wingdings 3"
+                                            Width="20pt"
+                                            Tag="{Binding}"
+                                            Style="{StaticResource DetachButton}"
+                                            Margin="0,0,4,0">
+                                        <Image Source="../Icons/Add.png"
+                                               Margin="8"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <Grid x:Name="tabcontrolGrid"
+                  Grid.Column="3"
+                  Grid.Row="1"
+                  Margin="0,-1,0,0">
+                
+                <!-- The details tab -->
+                <TabControl Name="tabcontrolStatistics"
+                            Background="{DynamicResource BackgroundColor}"
+                            BorderBrush="Transparent">
+                    
+                    <TabItem x:Name="TabInfo"
+                             Header="Info"
+                             Style="{DynamicResource TabItemStyleOverwrite}"
+                             Height="27">
+                        
+                        <Grid x:Name="GridInfoTab"
+                              Margin="-4,-6,-3,-3">
+                            
+                            <DataGrid x:Name="datagridManagerDetails"
+                                      Margin = "0, 3, 0, 0"
+                                      Style="{DynamicResource DefaultDatagrid}"
+                                      ItemsSource="{Binding WrappedManagers}">
+                                
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID"
+                                                        Binding="{Binding Manager.ContextId}"
+                                                        Width="25pt"/>
+                                    <DataGridTextColumn Header="Execution #"
+                                                        Binding="{Binding Manager.ExecutionId}"
+                                                        Width="60pt"/>
+                                    <DataGridTextColumn Header="Start time"
+                                                        Binding="{Binding Manager.StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Width="2*"/>
+                                    <DataGridTextColumn Header="End time"
+                                                        Binding="{Binding Manager.EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Width="2*"/>
+                                    <DataGridTextColumn Header="Est. runtime"
+                                                        Binding="{Binding Manager.Runtime}"
+                                                        Width="2*"/>
+                                    <DataGridTextColumn Header="Rows read"
+                                                        Binding="{Binding Manager.RowsRead, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Width="1.5*"/>
+                                    <DataGridTextColumn Header="Rows written"
+                                                        Binding="{Binding Manager.RowsWritten, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Width="1.5*"/>
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Name="buttonRemoveManager"
+                                                        Click="RemoveManager_Click"
+                                                        ToolTip="Remove manager from detailed view"
+                                                        FontFamily="wingdings 3"
+                                                        Width="20pt"
+                                                        Tag="{Binding}"
+                                                        Style="{StaticResource DetachButton}"
+                                                        Margin="0,0,4,0">
+                                                    <Image Source="../Icons/Remove.png"
+                                                           Margin="8"/>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    
+                    <!-- The charting tab -->
+                    <TabItem
+                        x:Name="TabPerformance"
+                        Header="Performance"
+                        Style="{DynamicResource TabItemStyleOverwrite}"
+                        Height="27">
+                        
+                        <Grid x:Name="GridPerformanceTab"
+                              Margin="-4,-6,-3,-3">
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Row="0"
+                                  Margin="0,5,0,5">
+                                
+                                <StackPanel>
+                                    <Label Content="CPU Usage"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+                                
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.CPUChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding ChartData.Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                            </Grid>
+
+                            <Grid Grid.Row="1"
+                                  Margin="0,5,0,5">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel>
+                                    <Label Content="RAM Usage"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.RAMChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding ChartData.Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </Grid>
+
+                            <Grid Grid.Row="2"
+                                  Margin="0,5,0,5">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <StackPanel >
+                                    <Label Content="Rows Read"
+                                        Style="{DynamicResource ChartLabels}"/>
+                                        
+                                </StackPanel>
+
+                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.ReadChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding ChartData.Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </Grid>
+
+                            <Grid Grid.Row="3"
+                                  Margin="0,5,0,5">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <StackPanel>
+                                    <Label Content="Rows Written"
+                                           Style="{DynamicResource ChartLabels}"/>
+                                </StackPanel>
+                                <lvc:CartesianChart Name="chartWritten"
+                                                    DataContext="{Binding ManagerChartViewModel.WrittenChart}"
+                                                    Grid.Row="1"
+                                                    Series="{Binding ChartData.Series}"
+                                                    ZoomMode="X"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    TooltipPosition="Top"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </Grid>
+
+                            <DataGrid Name="datagridManagerCharts"
+                                      ItemsSource="{Binding WrappedManagers}"
+                                      Grid.Row="0"
+                                      Grid.Column="1"
+                                      Grid.RowSpan="4"
+                                      Margin="15,5,0,10"
+                                      BorderBrush="Transparent"
+                                      Style="{DynamicResource DefaultDatagrid}"
+                                      Background="{DynamicResource BackgroundColor}" SelectionChanged="datagridManagerCharts_SelectionChanged">
+                                
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Rectangle Height="auto"
+                                                           Width="auto"
+                                                           Fill="{Binding LineColor}">
+                                                </Rectangle>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
+                                                        Header="ID"
+                                                        Width="30pt"/>
+                                    <DataGridTextColumn Binding="{Binding Manager.ExecutionId}"
+                                                        Header="Exec ID"
+                                                        Width="*"/>
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Name="buttonRemoveManager"
+                                                        Click="RemoveManager_Click"
+                                                        ToolTip="Remove manager from detailed view"
+                                                        Content='f'
+                                                        Width="20pt"
+                                                        FontFamily="wingdings 3"
+                                                        Tag="{Binding}"
+                                                        Style="{DynamicResource DefaultButton}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

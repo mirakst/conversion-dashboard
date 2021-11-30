@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\Add.png" />
     <None Remove="Icons\Cog.png" />
     <None Remove="Icons\Detach.png" />
     <None Remove="Icons\DetachWindow.png" />
@@ -21,6 +22,7 @@
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
     <None Remove="Icons\Refresh.png" />
+    <None Remove="Icons\Remove.png" />
     <None Remove="Icons\Settings.png" />
     <None Remove="Icons\Settings2.png" />
     <None Remove="Icons\Settings3.png" />
@@ -46,6 +48,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\Add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\Cog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -71,6 +81,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Refresh.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Remove.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Start.png">

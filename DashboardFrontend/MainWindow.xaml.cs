@@ -43,10 +43,13 @@ namespace DashboardFrontend
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            //ManagerWindow detachManager = new();
-            //detachManager.Closing += OnManagerWindowClosing;
-            //buttonDetachManager.IsEnabled = false;
-            //detachManager.Show();
+            ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
+            ManagerListDetached detachManager = new(detachedManagerViewModel);
+            detachManager.Show();
+            detachManager.Closed += delegate
+            {
+                ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+            };
         }
 
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
@@ -88,11 +91,6 @@ namespace DashboardFrontend
         private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
         {
             ButtonSettings.IsEnabled = true;
-        }
-
-        private void OnManagerWindowClosing(object sender, CancelEventArgs e)
-        {
-            ButtonDetachManager.IsEnabled = true;
         }
 
         private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -176,7 +174,6 @@ namespace DashboardFrontend
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
             ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
-
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
@@ -192,6 +189,11 @@ namespace DashboardFrontend
                 ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
                 ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
             }
+        }
+
+        private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
