@@ -342,7 +342,7 @@
                                   ItemsSource="{Binding LogViewModel.MessageView}"
                                   Background="{DynamicResource BackgroundColor}"
                                   VirtualizingPanel.ScrollUnit="Pixel"
-                                  VirtualizingPanel.IsVirtualizing="False"
+                                  VirtualizingPanel.IsVirtualizing="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   MouseEnter="ListViewLog_MouseOverChanged"
