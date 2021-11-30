@@ -4,6 +4,8 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{E824F912-3FFD-41D8-8924-23229B11C5A4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConversionEngineSimulator", "ConversionEngineSimulator\ConversionEngineSimulator.csproj", "{7050C82C-41D2-4D12-B4D3-23BA57436695}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{808A4020-110B-42BC-86DC-968645430538}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevConsoleApp", "DevConsoleApp\DevConsoleApp.csproj", "{15030058-50AB-4705-A813-C1181D6BE405}"
@@ -16,6 +18,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7050C82C-41D2-4D12-B4D3-23BA57436695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7050C82C-41D2-4D12-B4D3-23BA57436695}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7050C82C-41D2-4D12-B4D3-23BA57436695}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7050C82C-41D2-4D12-B4D3-23BA57436695}.Release|Any CPU.Build.0 = Release|Any CPU
 		{808A4020-110B-42BC-86DC-968645430538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{808A4020-110B-42BC-86DC-968645430538}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{808A4020-110B-42BC-86DC-968645430538}.Release|Any CPU.ActiveCfg = Release|Any CPU
