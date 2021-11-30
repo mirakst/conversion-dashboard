@@ -1,4 +1,4 @@
-﻿<Window x:Class="DashboardFrontend.MainWindow"
+<Window x:Class="DashboardFrontend.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,7 +14,6 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
-        MouseDown="DraggableGrid"
         ResizeMode="CanResizeWithGrip">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
@@ -36,16 +35,20 @@
         <Grid>
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0"
-                  Grid.ColumnSpan="2">
+                  Grid.ColumnSpan="2"
+                  MouseLeftButtonDown="DraggableGrid">
                 <TextBlock x:Name="TextBlockWindowTitle"
                            FontSize="14"
                            MinWidth="200"
                            TextAlignment="Center"
-                           Margin="0, 5, 0, 0"
-                           Foreground="{DynamicResource ForegroundColor}"
-                           Text="Conversion Dashboard"/>
+                           Margin="0, 8, 0, 0"
+                           Foreground="{DynamicResource ForegroundColor}">
+                    <TextBlock.Inlines>
+                        <Run FontWeight="Bold" FontSize="14" Text="Conversion Dashboard" />
+                    </TextBlock.Inlines>
+                </TextBlock>
                 <Grid Name="GridControlPanel"
-                      Margin="20,20,20,0"
+                      Margin="20,35,20,0"
                       Grid.Row="0">
                     <Button Name="ButtonStartStop"
                         Click="ButtonStartStopClick"
@@ -88,7 +91,7 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                Foreground="{DynamicResource ForegroundColor}"
-                               Text="{Binding UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
+                               Text="{Binding Controller.UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
                           Grid.Row="0">
                         <ProgressBar Name="ProgressBarManagerProgress" 
@@ -212,8 +215,9 @@
                       Margin="20,0,0,20"
                       Grid.Column="1" 
                       Grid.Row="0">
-                    <Grid Grid.Row="0">
-                        <ToggleButton Name="toggleButtonLogInfo"
+                    <Grid Grid.Row="0"
+                          Margin="0">
+                        <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
                                       IsChecked="{Binding LogViewModel.ShowInfo}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -228,7 +232,8 @@
 
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
-                                   Grid.Column="1"/>
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Center"/>
                         <ToggleButton Name="ToggleButtonLogWarning"
                                       Grid.Column="2"
                                       IsChecked="{Binding LogViewModel.ShowWarn}"
@@ -261,7 +266,7 @@
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="5"/>
-                        <ToggleButton Name="toggleButtonLogFatal"
+                        <ToggleButton Name="ToggleButtonLogFatal"
                                       Grid.Column="6"
                                       IsChecked="{Binding LogViewModel.ShowFatal}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -277,7 +282,7 @@
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="7"/>
-                        <ToggleButton Name="toggleButtonLogValidation"
+                        <ToggleButton Name="ToggleButtonLogValidation"
                                       Grid.Column="8"
                                       IsChecked="{Binding LogViewModel.ShowValidation}"
                                       Style="{DynamicResource DefaultToggleButton}">
@@ -290,7 +295,7 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Name="buttonLogFilter"
+                        <Button Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}">
                             <Image Source="Icons/Filter.png"/>
@@ -305,13 +310,13 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
-                            <ColumnDefinition Width="2"/>
+                            <ColumnDefinition Width="3"/>
                             <ColumnDefinition/>
-                            <ColumnDefinition Width="2"/>
+                            <ColumnDefinition Width="3"/>
                             <ColumnDefinition/>
-                            <ColumnDefinition Width="2"/>
+                            <ColumnDefinition Width="3"/>
                             <ColumnDefinition/>
-                            <ColumnDefinition Width="2"/>
+                            <ColumnDefinition Width="3"/>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
@@ -319,43 +324,55 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <ListView x:Name="listViewLogEntry"
-                                  ItemsSource="{Binding LogViewModel.Messages}"
-                                  Background="White"
-                                  Foreground="Black"
-                                  BorderBrush="{StaticResource BorderColor}"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  MaxHeight="5000">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
+                        <ListView x:Name="ListViewLog"
+                                  ItemsSource="{Binding LogViewModel.MessageView}"
+                                  Background="{DynamicResource BackgroundColor}"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  MouseEnter="ListViewLog_MouseOverChanged"
+                                  MouseLeave="ListViewLog_MouseOverChanged">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style TargetType="{x:Type GridViewColumnHeader}">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                            <Setter Property="Padding" Value="5,0,5,0"/>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsEnabled" Value="False">
-                                                    <Setter Property="TextElement.Foreground" Value="Black"/>
-                                                </Trigger>
-                                            </Style.Triggers>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+
+                                                        <StackPanel Orientation="Vertical">
+                                                            <TextBlock Text="{TemplateBinding Content}" 
+                                                                   Padding="4" 
+                                                                   Background="{DynamicResource BackgroundColor}" 
+                                                                   Width="{TemplateBinding Width}" 
+                                                                   TextAlignment="Left"
+                                                                   Foreground="White"/>
+                                                            <Separator/>
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
                                     <GridViewColumn Header="Date"
                                                     DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
-                                                    Width="auto"/>
-                                    <GridViewColumn Header="Type" 
-                                                    DisplayMemberBinding="{Binding Type}"
-                                                    Width="auto"/>
-                                    <GridViewColumn Header="Manager" 
+                                                    Width="120"/>
+                                    <GridViewColumn Header="ID" 
                                                     DisplayMemberBinding="{Binding ContextId}"
-                                                    Width="auto"/>
+                                                    Width="40"/>
+                                    <GridViewColumn Header="Type" 
+                                                    Width="90">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock TextWrapping="Wrap"
+                                                           Text="{Binding Type}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
                                     <GridViewColumn Header="Content" 
-                                                    Width="1000">
+                                                    Width="1100">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock TextWrapping="Wrap"
@@ -365,36 +382,44 @@
                                     </GridViewColumn>
                                 </GridView>
                             </ListView.View>
-
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="VerticalContentAlignment" Value="Top"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="Focusable" Value="False"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
-                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                            <Setter Property="Background" Value="#FCE283"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Error">
-                                            <Setter Property="Background" Value="#ED4F47"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageWarningColor}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                            <Setter Property="Background" Value="#CFCFCF"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageFatalForegroundColor}"/>
+                                            <Setter Property="Background" Value="{DynamicResource LogMessageFatalBackgroundColor}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                            <Setter Property="Background" Value="#FFFFFF"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageValidationColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error">
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
+                                            <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error, Validation">
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
+                                            <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
                                         </DataTrigger>
                                         <Trigger Property="Control.IsMouseOver" Value="True">
-                                            <Setter Property="Control.Background" Value="Transparent" />
-                                            <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Control.Background" Value="{DynamicResource LogBackgroundHighlightedBackgroundColor}"/>
+                                            <Setter Property="Control.Foreground" Value="{DynamicResource LogBackgroundHighlightedForegroundColor}"/>
+                                            <Setter Property="Control.BorderBrush" Value="Transparent"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
@@ -475,13 +500,13 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
+                                </Grid.RowDefinitions>
                                 <TextBox x:Name="TextBoxValidationsSearchBar"
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
-                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
-                                         CaretBrush="White"/>
+                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                                         Foreground="White"
+                                         CaretBrush="White"/>
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        HorizontalAlignment="Right"
                                        Margin="0 0 5 0"
@@ -633,47 +658,141 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
-                    <Grid Style="{DynamicResource ComponentControlBar}"
-                          Grid.Row="0">
-                        <ComboBox Name="comboBoxMaxView"
-                                  Margin="0,0,0,0"
-                                  VerticalAlignment="Center"
-                                  Grid.Column="1"
-                                  SelectionChanged="ComboBox_SelectionChanged">
-                            <ComboBoxItem Content="30 Min" Tag="30"/>
-                            <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
-                            <ComboBoxItem Content="2 Hours" Tag="120"/>
-                            <ComboBoxItem Content="6 Hours" Tag="360"/>
-                            <ComboBoxItem Content="12 Hours" Tag="720"/>
-                            <ComboBoxItem Content="24 Hours" Tag="1440"/>
-                        </ComboBox>
-                        <Button Name="ButtonHealthReportDetach"
-                                Click="DetachHealthReportButtonClick"
-                                Grid.Column="2"
-                                Style="{StaticResource DetachButton}">
-                            <Image Source="Icons/Detach.png"/>
-                        </Button>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-
-                    <Grid Grid.Row="1">
-                        <Border BorderBrush="{DynamicResource BorderColor}"
-                                BorderThickness="1">
-                            <lvc:CartesianChart DataContext="{Binding LiveChartViewModel}"
-                                                Series="{Binding Series}"
+                    <Grid Grid.Row="1"
+                          Margin="0,-7,0,0">
+                        <TabControl Background="{DynamicResource BackgroundColor}"
+                        BorderBrush="{DynamicResource BorderColor}"
+                        DataContext="{Binding HealthReportViewModel}"
+                        Grid.ColumnSpan="2">
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemCpuRam"
+                                     Header="CPU &amp; RAM"
+                                     FontSize="16"
+                                     Margin="-2,0,0,0">
+                                <Border Margin="10">
+                                    <Grid>
+                                        <TextBlock Name="TextBlockCurrentCpuLoad"
+                                                   Text="{Binding SystemLoadChart.LastCpuReading,
+                                                          StringFormat='CPU Usage: {0:0}%'}"
+                                                   Foreground="{DynamicResource ForegroundColor}"
+                                                   FontSize="14"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0"
+                                                   Grid.Row="0"
+                                                   Margin="0,0,40,5"/>
+                                        <TextBlock Name="TextBlockCurrentRamUsage"
+                                                   Text="{Binding SystemLoadChart.LastRamReading,
+                                                          StringFormat='RAM Usage: {0:0}%'}"
+                                                   Foreground="{DynamicResource ForegroundColor}"
+                                                   FontSize="14"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1"
+                                                   Grid.Row="0"
+                                                   Margin="5,0,0,5"/>
+                                        <lvc:CartesianChart
+                                                Margin="-7,0,0,-40"
+                                                Series="{Binding SystemLoadChart.ChartData.Series}"
+                                                XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
+                                                YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
                                                 ZoomMode="X"
-                                                XAxes="{Binding XAxis}"
-                                                YAxes="{Binding YAxis}"
                                                 TooltipPosition="Top"
                                                 MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
-                        </Border>
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="2"
+                                                Grid.Row="1">
+                                        </lvc:CartesianChart>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                </Border>
+                            </TabItem>
+
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                         Name="TabItemNetwork"
+                         Header="Network"
+                         FontSize="16">
+                                <lvc:CartesianChart Margin="0,14,0,-30"
+                                                    Series="{Binding NetworkChart.ChartData.Series}"
+                                                    XAxes="{Binding NetworkChart.ChartData.XAxis}"
+                                                    YAxes="{Binding NetworkChart.ChartData.YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    Grid.Row="0"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </TabItem>
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemNetworkDelta"
+                                     Header="Network Delta"
+                                     FontSize="16">
+                                <lvc:CartesianChart Margin="0,14,0,-30"
+                                                    Series="{Binding NetworkDeltaChart.ChartData.Series}"
+                                                    XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
+                                                    YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
+                                                    ZoomMode="Both"
+                                                    TooltipPosition="Top"
+                                                    Grid.Row="1"
+                                                    MouseLeave="CartesianChart_MouseLeave"
+                                                    MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </TabItem>
+                            <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
+                                     Name="TabItemNetworkSpeed"
+                                     Header="Network Speed"
+                                     FontSize="16">
+                                <lvc:CartesianChart  Margin="-6,14,0,-30"
+                                                     Series="{Binding NetworkSpeedChart.ChartData.Series}"
+                                                     XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
+                                                     YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
+                                                     ZoomMode="Both"
+                                                     TooltipPosition="Top"
+                                                     Grid.Row="2"
+                                                     MouseLeave="CartesianChart_MouseLeave"
+                                                     MouseEnter="CartesianChart_MouseEnter">
+                                </lvc:CartesianChart>
+                            </TabItem>
+                        </TabControl>
+                        <Grid
+                              VerticalAlignment="Top"
+                              Grid.Column="1"
+                              Margin="0,-5,0,0">
+                            <ComboBox Name="ComboBoxMaxView"
+                                      VerticalAlignment="Center"
+                                      Grid.Column="1"
+                                      SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="30 Min" Tag="30"/>
+                                <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
+                                <ComboBoxItem Content="2 Hours" Tag="120"/>
+                                <ComboBoxItem Content="6 Hours" Tag="360"/>
+                                <ComboBoxItem Content="12 Hours" Tag="720"/>
+                                <ComboBoxItem Content="24 Hours" Tag="1440"/>
+                            </ComboBox>
+                            <Button Name="ButtonHealthReportDetach"
+                                    Click="DetachHealthReportButtonClick"
+                                    Grid.Column="2"
+                                    Style="{StaticResource DetachButton}">
+                                <Image Source="Icons/Detach.png"/>
+                            </Button>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
                     </Grid>
 
                     <Grid.RowDefinitions>

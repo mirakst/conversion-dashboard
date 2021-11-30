@@ -7,17 +7,18 @@ namespace Model
         #region Constructors
         public LogMessage(string content, LogMessageType type, int contextId, DateTime date)
         {
-            Content = Regex.Replace(content, @"(\[\d+;\d+m)|(\[\d+m)", "");
+            Content = content;
             Type = type;
             Date = date;
-            ContextId = contextId;    
+            ContextId = contextId;
         }
         #endregion Constructors
 
         #region Enums
+        [Flags]
         public enum LogMessageType : byte
         {
-            Info, Warning, Error, Fatal, Validation
+            None = 0, Info = 1, Warning = 2, Error = 4, Fatal = 8, Validation = 16
         }
         #endregion Enums
 

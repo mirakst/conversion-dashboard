@@ -23,7 +23,6 @@
     <Border BorderThickness="10"
             Background="{DynamicResource BackgroundColor}">
         <Grid Name="GridValidationReport">
-            <!-- Body -->
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4.5*" MinWidth="280"/>
@@ -235,7 +234,6 @@
                         </StackPanel>
                     </ScrollViewer>
                 </Border>
-
             </Grid>
         </Grid>
     </Border>

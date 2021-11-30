@@ -1,5 +1,4 @@
 ﻿using DashboardBackend.Database.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace DashboardBackend.Database
 {   
@@ -86,6 +85,7 @@ namespace DashboardBackend.Database
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.HealthReports
+                                .Where(e => e.LogTime > minDate)
                                 .Where(e => e.ReportType == "CPU"
                                          || e.ReportType == "NETWORK"
                                          || e.ReportType == "MEMORY")

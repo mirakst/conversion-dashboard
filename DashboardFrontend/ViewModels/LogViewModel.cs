@@ -1,36 +1,37 @@
-﻿using DashboardBackend;
-using Model;
-using System;
-using System.Collections.Generic;
+﻿using Model;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Data;
 using static Model.LogMessage;
 
 namespace DashboardFrontend.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public LogViewModel(Log log)
+        public LogViewModel()
         {
-            _log = log;
-            UpdateData();
+
         }
 
-        private Log _log;
-        private ObservableCollection<LogMessage> _messages;
-        public ObservableCollection<LogMessage> Messages 
+        public LogViewModel(ListView logListView)
         {
-            get => _messages;
-            set 
-            { 
-                _messages = value;
-                OnPropertyChanged(nameof(Messages));
-            } 
+            LogListView = logListView;
         }
-
+        
+        public bool DoAutoScroll { get; set; } = true;
+        public ListView LogListView { get; set; }
+        public ObservableCollection<LogMessage> MessageList { get; private set; } = new();
+        private CollectionView _messageView;
+        public CollectionView MessageView
+        {
+            get => _messageView;
+            set
+            {
+                _messageView = value;
+                OnPropertyChanged(nameof(MessageView));
+            }
+        }
         private int _infoCount;
         public int InfoCount
         {
@@ -89,7 +90,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
-                UpdateData();
+                MessageView?.Refresh();
             }
         }
         private bool _showWarn = true;
@@ -100,7 +101,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
-                UpdateData();
+                MessageView?.Refresh();
             }
         }
         private bool _showError = true;
@@ -111,7 +112,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showError = value;
                 OnPropertyChanged(nameof(ShowError));
-                UpdateData();
+                MessageView?.Refresh();
             }
         }
         private bool _showFatal = true;
@@ -122,7 +123,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
-                UpdateData();
+                MessageView?.Refresh();
             }
         }
         private bool _showValidation = true;
@@ -133,60 +134,47 @@ namespace DashboardFrontend.ViewModels
             {
                 _showValidation = value;
                 OnPropertyChanged(nameof(ShowValidation));
-                UpdateData();
+                MessageView?.Refresh();
             }
         }
 
         /// <summary>
-        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed
+        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
         /// </summary>
-        public void UpdateData()
+        public void UpdateData(Log log)
         {
-            Messages = new(_log.Messages.Where(x =>
-            {
-                return x.Type == LogMessageType.Info && ShowInfo
-                    || x.Type == LogMessageType.Warning && ShowWarn
-                    || x.Type == LogMessageType.Error && ShowError
-                    || x.Type == LogMessageType.Fatal && ShowFatal
-                    || x.Type == LogMessageType.Validation && ShowValidation;
-            }));
-            UpdateCounters();
+            MessageList = new(log.Messages);
+            MessageView = (CollectionView)CollectionViewSource.GetDefaultView(MessageList);
+            MessageView.Filter = OnMessagesFilter;
+            UpdateCounters(log);
         }
 
         /// <summary>
-        /// Increments the counter property that corresponds to the LogMessageType of the given LogMessage
+        /// Used as a filter for the MessageView CollectionView.
         /// </summary>
-        /// <param name="msg">LogMessage whose type counter should be updated</param>
-        private void UpdateCounters()
+        /// <param name="item">A LogMessage object.</param>
+        /// <returns>True if the object should be shown in the CollectionView, and false otherwise.</returns>
+        private bool OnMessagesFilter(object item)
         {
-            InfoCount = 0;
-            WarnCount = 0;
-            ErrorCount = 0;
-            FatalCount = 0;
-            ValidationCount = 0;
-            foreach(var msg in _log.Messages)
-            {
-                switch (msg.Type)
-                {
-                    case LogMessageType.Info:
-                        InfoCount++;
-                        break;
-                    case LogMessageType.Warning:
-                        WarnCount++;
-                        break;
-                    case LogMessageType.Error:
-                        ErrorCount++;
-                        break;
-                    case LogMessageType.Fatal:
-                        FatalCount++;
-                        break;
-                    case LogMessageType.Validation:
-                        ValidationCount++;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            LogMessageType type = ((LogMessage)item).Type;
+            return (ShowInfo && type.HasFlag(LogMessageType.Info))
+                || (ShowWarn && type.HasFlag(LogMessageType.Warning))
+                || (ShowError && type.HasFlag(LogMessageType.Error))
+                || (ShowFatal && type.HasFlag(LogMessageType.Fatal))
+                || (ShowValidation && type.HasFlag(LogMessageType.Validation));
+        }
+
+        /// <summary>
+        /// Updates the number of log messages with the different possible types.
+        /// </summary>
+        /// <param name="log">The log to fetch updated counts from.</param>
+        private void UpdateCounters(Log log)
+        {
+            InfoCount = log.InfoCount;
+            WarnCount = log.WarnCount;
+            ErrorCount = log.ErrorCount;
+            FatalCount = log.FatalCount;
+            ValidationCount = log.ValidationCount;
         }
     }
 }

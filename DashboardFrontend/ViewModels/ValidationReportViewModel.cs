@@ -1,13 +1,7 @@
-﻿using DashboardBackend;
-using Model;
+﻿using Model;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -24,6 +18,10 @@ namespace DashboardFrontend.ViewModels
         {
         }
 
+        public ValidationReportViewModel(DataGrid dataGridValidations)
+        {
+            DataGrid = dataGridValidations;
+        }
         #region Properties
         public List<string> ExpandedManagerNames = new();
         public ObservableCollection<ManagerValidationsWrapper> ManagerList { get; private set; } = new();
