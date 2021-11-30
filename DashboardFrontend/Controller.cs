@@ -10,6 +10,8 @@ using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
+using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace DashboardFrontend
 {
@@ -91,7 +93,10 @@ namespace DashboardFrontend
                 _log.Messages = newData;
                 foreach (var vm in LogViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_log), null);
+                    Dispatcher.CurrentDispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_log);
+                    });
                 }
             }
         }

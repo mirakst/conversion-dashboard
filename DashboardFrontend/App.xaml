@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="StyleResources/DictionaryGeneral.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryListView.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryTab.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryAnimations.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

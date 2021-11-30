@@ -29,7 +29,6 @@
                    Grid.Row="1"
                    Foreground="White"
                    Grid.Column="1"
-                   Grid.ColumnSpan="3"
                    Margin="0,6,0,0"/>
             <PasswordBox Name="TextBoxPassword"
                          Margin="10"
@@ -39,9 +38,15 @@
             <Label Content="Password"
                    Grid.Row="2"
                    Grid.Column="1"
-                   Grid.ColumnSpan="3"
                    Foreground="White"
                    Margin="0,6,0,0"/>
+            <Control Name="LoadingAnim"
+                     Visibility="Hidden"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="4"
+                     Grid.Row="0"
+                     Grid.RowSpan="4"
+                     Style="{StaticResource LoadingAnimationStyle}"/>
             <Grid MaxHeight="20"
                   Grid.Row="3"
                   Margin="0,10,0,0"
@@ -62,7 +67,6 @@
                         Margin="20,0,0,0"
                         Grid.Column="1"
                         HorizontalAlignment="Left"/>
-                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

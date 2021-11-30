@@ -187,6 +187,9 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
+                        <Control Name="LoadingAnimManager"
+                                 Visibility="Hidden"
+                                 Style="{StaticResource LoadingAnimationStyle}"/>
                         <ListView x:Name="ListViewManagerList"
                                   Grid.Column="0"
                                   ItemContainerStyle="{StaticResource AlternatingListViewItemRowStyle}"
@@ -332,11 +335,14 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
+                        <Control Name="LoadingAnimLog"
+                                 Visibility="Hidden"
+                                 Style="{StaticResource LoadingAnimationStyle}"/>
                         <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding LogViewModel.MessageView}"
                                   Background="{DynamicResource BackgroundColor}"
                                   VirtualizingPanel.ScrollUnit="Pixel"
-                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.IsVirtualizing="False"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
                                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                   MouseEnter="ListViewLog_MouseOverChanged"
@@ -488,6 +494,9 @@
 
                     <Grid Grid.Row="1"
                           x:Name="ValidationReportComponent">
+                        <Control Name="LoadingAnimValidation"
+                                 Visibility="Hidden"
+                                 Style="{StaticResource LoadingAnimationStyle}"/>
                         <ScrollViewer Grid.Row="1" 
                                       Grid.ColumnSpan="3"
                                       HorizontalScrollBarVisibility="Auto">
@@ -718,9 +727,9 @@
                     <Grid Grid.Row="1"
                           Margin="0,-7,0,0">
                         <TabControl Background="{DynamicResource BackgroundColor}"
-                        BorderBrush="{DynamicResource BorderColor}"
-                        DataContext="{Binding HealthReportViewModel}"
-                        Grid.ColumnSpan="2">
+                                    BorderBrush="{DynamicResource BorderColor}"
+                                    DataContext="{Binding HealthReportViewModel}"
+                                    Grid.ColumnSpan="2">
                             <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                      Name="TabItemCpuRam"
                                      Header="CPU &amp; RAM"
@@ -728,6 +737,13 @@
                                      Margin="-2,0,0,0">
                                 <Border Margin="10">
                                     <Grid>
+                                        <Control Name="LoadingAnimHealthReport"
+                                                 Visibility="Hidden"
+                                                 Grid.Row="0"
+                                                 Grid.Column="0"
+                                                 Grid.RowSpan="2"
+                                                 Grid.ColumnSpan="2"
+                                                 Style="{StaticResource LoadingAnimationStyle}"/>
                                         <TextBlock Name="TextBlockCurrentCpuLoad"
                                                    Text="{Binding SystemLoadChart.LastCpuReading,
                                                           StringFormat='CPU Usage: {0:0}%'}"
@@ -747,17 +763,17 @@
                                                    Grid.Row="0"
                                                    Margin="5,0,0,5"/>
                                         <lvc:CartesianChart
-                                                Margin="-7,0,0,-40"
-                                                Series="{Binding SystemLoadChart.ChartData.Series}"
-                                                XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
-                                                YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="2"
-                                                Grid.Row="1">
+                                                             Margin="-7,0,0,-40"
+                                                             Series="{Binding SystemLoadChart.ChartData.Series}"
+                                                             XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
+                                                             YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
+                                                             ZoomMode="X"
+                                                             TooltipPosition="Top"
+                                                             MouseLeave="CartesianChart_MouseLeave"
+                                                             MouseEnter="CartesianChart_MouseEnter"
+                                                             Grid.Column="0"
+                                                             Grid.ColumnSpan="2"
+                                                             Grid.Row="1">
                                         </lvc:CartesianChart>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
