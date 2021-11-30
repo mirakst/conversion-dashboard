@@ -4,7 +4,7 @@
     <Color x:Key="FilledColor" A="255" B="155" R="155" G="155"/>
     <Color x:Key="UnfilledColor" A="0" B="155" R="155" G="155"/>
 
-    <Style x:Key="LoadingAnimationStyle" TargetType="Control">
+    <Style x:Key="LoadingAnimation" TargetType="Control">
         <Setter Property="Background" Value="#7F000000"/>
 
         <Setter Property="Template">

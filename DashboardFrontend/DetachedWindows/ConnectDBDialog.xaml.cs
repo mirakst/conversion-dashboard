@@ -15,7 +15,7 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         public UserSettings UserSettings { get; }
-        private readonly BackgroundWorker Worker = new BackgroundWorker()
+        private readonly BackgroundWorker Worker = new()
         {
             WorkerSupportsCancellation = true
         };
@@ -29,7 +29,7 @@ namespace DashboardFrontend.DetachedWindows
             {
                 return;
             }
-            
+
             UserSettings.ActiveProfile.BuildConnectionString(userId, password);
 
             LoadingAnim.Visibility = Visibility.Visible;
