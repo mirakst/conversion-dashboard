@@ -2,6 +2,7 @@
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
+using System.Text.RegularExpressions;
 using static Model.LogMessage;
 using static Model.ValidationTest;
 
@@ -91,7 +92,7 @@ namespace DashboardBackend
 
             return (from item in queryResult
                     let content = item.LogMessage
-                    let type = GetLogMessageType(item)
+                    let type = GetLogMessageType(item, content)
                     let contextId = (int)item.ContextId.Value
                     let created = item.Created.Value
                     select new LogMessage(content, type, contextId, created))
@@ -117,8 +118,8 @@ namespace DashboardBackend
             List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(minDate);
 
             return (from item in queryResult
-                    let content = item.LogMessage
-                    let type = GetLogMessageType(item)
+                    let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
+                    let type = GetLogMessageType(item, content)
                     let contextId = (int)item.ContextId.Value
                     let created = item.Created.Value
                     select new LogMessage(content, type, contextId, created))
@@ -275,19 +276,41 @@ namespace DashboardBackend
         /// <param name="entry">A single entry from the [LOGGING] table in the state database.</param>
         /// <returns>A log message type besed on the enum in the log message class.</returns>
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
-        public static LogMessageType GetLogMessageType(LoggingEntry entry)
+        public static LogMessageType GetLogMessageType(LoggingEntry entry, string content)
         {
-            if (entry.LogMessage.StartsWith("Afstemning") || entry.LogMessage.StartsWith("Check -"))
-                return LogMessageType.Validation;
-
-            return entry.LogLevel switch
+            LogMessageType type;
+            switch (entry.LogLevel)
             {
-                "INFO" => LogMessageType.Info,
-                "WARN" => LogMessageType.Warning,
-                "ERROR" => LogMessageType.Error,
-                "FATAL" => LogMessageType.Fatal,
-                _ => throw new ArgumentException(entry.LogLevel + " is not a known log message type.")
-            };
+                case "INFO":
+                    type = LogMessageType.Info;
+                    break;
+                case "WARN":
+                    type = LogMessageType.Warning;
+                    break;
+                case "ERROR":
+                    type = LogMessageType.Error;
+                    break;
+                case "FATAL":
+                    type = LogMessageType.Fatal;
+                    break;
+                default:
+                    type = LogMessageType.None;
+                    break;
+            }
+
+            if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
+            {
+                if (type.HasFlag(LogMessageType.Error))
+                {
+                    type |= LogMessageType.Validation;
+                }
+                else
+                {
+                    type = LogMessageType.Validation;
+                }
+            }
+
+            return type;
         }
 
         /// <summary>

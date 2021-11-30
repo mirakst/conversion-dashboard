@@ -9,17 +9,6 @@
         }
         #endregion Constructors
 
-        #region Enums
-        [Flags]
-        public enum LogFilters : byte
-        {
-            Info = 0,
-            Warning = 1,
-            Error = 2,
-            Validation = 4
-        }
-        #endregion Enums
-
         #region Properties
         private readonly List<LogMessage> _messages = new();
         public List<LogMessage> Messages
