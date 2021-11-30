@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="StyleResources/DictionaryTab.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryDatagrid.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryLabels.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryAnimations.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

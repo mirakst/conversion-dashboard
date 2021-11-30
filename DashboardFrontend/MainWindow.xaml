@@ -148,17 +148,17 @@
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
+                  
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
                       Grid.Column="0"
                       Margin="0,0,20,20"
                       DataContext="{Binding ManagerViewModel}">
-
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28"/>
@@ -168,6 +168,7 @@
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
+                             Margin="0,0,5,0"
                              Style="{DynamicResource SearchBox}"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
@@ -180,6 +181,7 @@
 
                     <Button Name="ButtonManagerFilter"
                             Grid.Column="1"
+                            Margin="0"
                             Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
                     </Button>
@@ -187,6 +189,7 @@
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
+                            Margin="0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
                     </Button>
@@ -448,7 +451,7 @@
                                     Style="{DynamicResource SearchButton}"
                                     Grid.Row="0"
                                     DockPanel.Dock="Right">
-                                <Image Source="../Icons/magnifyingglass.png"
+                                <Image Source="/Icons/magnifyingglass.png"
                                        Margin="0,5,0,5"/>
                             </Button>
                         </DockPanel>
@@ -716,9 +719,9 @@
                     <Grid Grid.Row="1"
                           Margin="0,-7,0,0">
                         <TabControl Background="{DynamicResource BackgroundColor}"
-                        BorderBrush="{DynamicResource BorderColor}"
-                        DataContext="{Binding HealthReportViewModel}"
-                        Grid.ColumnSpan="2">
+                                    BorderBrush="{DynamicResource BorderColor}"
+                                    DataContext="{Binding HealthReportViewModel}"
+                                    Grid.ColumnSpan="2">
                             <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                      Name="TabItemCpuRam"
                                      Header="CPU &amp; RAM"
@@ -745,17 +748,17 @@
                                                    Grid.Row="0"
                                                    Margin="5,0,0,5"/>
                                         <lvc:CartesianChart
-                                                Margin="-7,0,0,-40"
-                                                Series="{Binding SystemLoadChart.ChartData.Series}"
-                                                XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
-                                                YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="2"
-                                                Grid.Row="1">
+                                                             Margin="-7,0,0,-40"
+                                                             Series="{Binding SystemLoadChart.ChartData.Series}"
+                                                             XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
+                                                             YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
+                                                             ZoomMode="X"
+                                                             TooltipPosition="Top"
+                                                             MouseLeave="CartesianChart_MouseLeave"
+                                                             MouseEnter="CartesianChart_MouseEnter"
+                                                             Grid.Column="0"
+                                                             Grid.ColumnSpan="2"
+                                                             Grid.Row="1">
                                         </lvc:CartesianChart>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -771,9 +774,9 @@
                             </TabItem>
 
                             <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                         Name="TabItemNetwork"
-                         Header="Network"
-                         FontSize="16">
+                                     Name="TabItemNetwork"
+                                     Header="Network"
+                                     FontSize="16">
                                 <lvc:CartesianChart Margin="0,14,0,-25"
                                                     Series="{Binding NetworkChart.ChartData.Series}"
                                                     XAxes="{Binding NetworkChart.ChartData.XAxis}"

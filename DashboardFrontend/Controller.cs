@@ -20,7 +20,6 @@ namespace DashboardFrontend
         private ValidationReport _validationReport;
         private HealthReport _healthReport;
         private readonly List<Timer> _timers;
-        private readonly SynchronizationContext? _uiContext;
         public readonly Conversion _conversion;
         public readonly List<HealthReportViewModel> HealthReportViewModels = new();
         public readonly List<LogViewModel> LogViewModels = new();
@@ -31,7 +30,6 @@ namespace DashboardFrontend
 
         public Controller(MainWindowViewModel viewModel)
         {
-            _uiContext = SynchronizationContext.Current;
             TryLoadUserSettings();
             _vm = viewModel;
             _conversion = new();
@@ -103,7 +101,10 @@ namespace DashboardFrontend
                 _log.Messages = newData;
                 foreach (var vm in LogViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_log), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_log);
+                    });
                 }
             }
         }
@@ -120,7 +121,10 @@ namespace DashboardFrontend
                 _validationReport.ValidationTests = newData;
                 foreach (var vm in ValidationReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.UpdateData(_validationReport), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.UpdateData(_validationReport);
+                    });
                 }
             }
         }
@@ -136,10 +140,13 @@ namespace DashboardFrontend
                 DU.AddHealthReportReadings(_healthReport, timestamp);
                 foreach (var vm in HealthReportViewModels)
                 {
-                    _uiContext?.Send(x => vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu), null);
-                    _uiContext?.Send(x => vm.NetworkChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkDeltaChart.UpdateData(_healthReport.Network), null);
-                    _uiContext?.Send(x => vm.NetworkSpeedChart.UpdateData(_healthReport.Network), null);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        vm.SystemLoadChart.UpdateData(_healthReport.Ram, _healthReport.Cpu);
+                        vm.NetworkChart.UpdateData(_healthReport.Network);
+                        vm.NetworkDeltaChart.UpdateData(_healthReport.Network);
+                        vm.NetworkSpeedChart.UpdateData(_healthReport.Network);
+                    });
                 }
             }
             else
@@ -153,7 +160,10 @@ namespace DashboardFrontend
             DU.AddManagerReadings(_conversion.ActiveExecution);
             foreach (var vm in ManagerViewModels)
             {
-                _uiContext?.Send(x => vm.UpdateData(_conversion.ActiveExecution.Managers), null);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    vm.UpdateData(_conversion.ActiveExecution.Managers);
+                });
             }
         }
 
