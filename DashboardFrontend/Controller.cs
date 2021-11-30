@@ -10,7 +10,6 @@ using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using DU = DashboardBackend.DataUtilities;
 using Model;
-using System.Windows.Threading;
 
 namespace DashboardFrontend
 {
