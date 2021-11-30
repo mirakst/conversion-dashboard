@@ -157,8 +157,8 @@
                       DataContext="{Binding ManagerViewModel}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28"/>
@@ -168,6 +168,7 @@
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
+                             Margin="0,0,5,0"
                              Style="{DynamicResource SearchBox}"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
@@ -180,6 +181,7 @@
 
                     <Button Name="ButtonManagerFilter"
                             Grid.Column="1"
+                            Margin="0"
                             Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
                     </Button>
@@ -187,6 +189,7 @@
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
+                            Margin="0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
                     </Button>
