@@ -11,6 +11,5 @@ namespace DashboardFrontend.ViewModels
         public DataChart NetworkChart { get; set; } = new DataChart(new NetworkChart());
         public DataChart NetworkDeltaChart { get; set; } = new DataChart(new NetworkDeltaChart());
         public DataChart NetworkSpeedChart { get; set; } = new DataChart(new NetworkSpeedChart());
-        public DataChart ManagerChart { get; set; }
     }
 }
