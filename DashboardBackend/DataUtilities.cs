@@ -182,6 +182,7 @@ namespace DashboardBackend
                         if (manager.StartTime.HasValue)
                         {
                             manager.Runtime = endTime.Subtract(manager.StartTime.Value);
+                            manager.Status = ManagerStatus.Ok;
                         }
                     }
                     break;

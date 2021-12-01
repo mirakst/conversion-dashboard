@@ -29,9 +29,8 @@
         #endregion
 
         public Manager CurrentManager { get; set; }
-        public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
+        public Dictionary<int, Manager> ManagerDict { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
         public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-        public Dictionary<int, Manager> ContextIdManagerDict = new();
 
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
@@ -44,28 +43,11 @@
         public Log Log { get; set; } = new();
         #endregion
 
-        public void AddManager(Manager manager)
-        {
-            if (!ContextIdManagerDict.ContainsKey(manager.ContextId))
-            {
-                ContextIdManagerDict[manager.ContextId] = manager;
-                Managers.Add(manager);
-            }
-        }
-
-        public void SetUpDictionaries()
-        {
-            foreach (var manager in Managers)
-            {
-                ContextIdManagerDict.Add(manager.ContextId, manager);
-            }
-        }
-
         public override string ToString()
         {
             return $"ID: {Id}\nSTART TIME: {StartTime}\nEND TIME: {EndTime}\n" +
                    $"RUNTIME: {Runtime}\nROWS READ TOTAL: {RowsReadTotal}\n" +
-                   $"STATUS: {Status}\nMANAGERS: {Managers.Count}\n";
+                   $"STATUS: {Status}\nMANAGERS: {ManagerDict.Count}\n";
 
         }
     }

@@ -195,7 +195,7 @@
                         
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
-                                                Binding="{Binding Manager.ContextId}"
+                                                Binding="{Binding ContextId}"
                                                 Width="25pt"/>
                             <DataGridTextColumn Header="Manager name" 
                                                 Binding="{Binding Manager.ShortName}"

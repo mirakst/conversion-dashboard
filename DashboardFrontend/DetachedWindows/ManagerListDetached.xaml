@@ -81,7 +81,7 @@
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding Manager.ContextId}"
+                                            Binding="{Binding ContextId}"
                                             Width="25pt"/>
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Manager.ShortName}"
@@ -138,7 +138,7 @@
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding Manager.ContextId}"
+                                                        Binding="{Binding ContextId}"
                                                         Width="25pt"/>
                                     <DataGridTextColumn Header="Start time"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss}"
@@ -195,7 +195,7 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Row="0"
@@ -320,12 +320,9 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
+                                    <DataGridTextColumn Binding="{Binding ContextId, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
-                                    <DataGridTextColumn Binding="{Binding Manager.ExecutionId}"
-                                                        Header="Exec ID"
-                                                        Width="*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>

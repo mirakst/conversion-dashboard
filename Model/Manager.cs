@@ -9,28 +9,6 @@ namespace Model
         {
             Status = ManagerStatus.Ready;
         }
-
-        public Manager(int id, int execId, string name)
-        {
-            ContextId = id;
-            ExecutionId = execId;
-            Name = name;
-            Status = ManagerStatus.Ready;
-        }
-
-        public Manager(int id, int execId, string name, DateTime startTime)
-            : this(id, execId, name)
-        {
-            StartTime = startTime;
-            Status = ManagerStatus.Running;
-        }
-
-        public Manager(int id, int execId, string name, DateTime startTime, DateTime endTime)
-            : this(id, execId, name, startTime)
-        {
-            EndTime = endTime;
-            Status = ManagerStatus.Ok;
-        }
         #endregion
 
         #region Enums
@@ -41,8 +19,6 @@ namespace Model
         #endregion Enums
 
         #region Properties      
-        public int ContextId { get; set; } //[CONTEXT_ID] from [dbo].[LOGGING_CONTEXT], [ROW_ID] from [dbo].[MANAGERS]
-        public int ExecutionId { get; set; } //[EXECUTION_ID] from [dbo].[MANAGERS]
         public List<CpuLoad> CpuReadings { get; set; } = new();
         public List<RamLoad> RamReadings { get; set; } = new();
         private string _name;
@@ -77,19 +53,17 @@ namespace Model
 
         public override string ToString()
         {
-            return $"MANAGER ID: {ContextId}\nMANAGER EXECUTION ID: {ExecutionId}\nMANAGER NAME: {Name}\n" +
-                   $"START TIME: {StartTime}\nEND TIME: {EndTime}\nRUNTIME: {Runtime}\nROWS READ: {RowsRead}\n" +
-                   $"ROWS WRITTEN: {RowsWritten}\n";
+            return $"Manager [{Name}], status [{Status}]";
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Manager other && other.ContextId == ContextId && other.Name == Name;
+            return obj is Manager other && other.GetHashCode() == GetHashCode();
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ContextId, Name);
+            return Name.GetHashCode();
         }
     }
 }
