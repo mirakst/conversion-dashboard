@@ -130,9 +130,9 @@ namespace DashboardFrontend.ViewModels
         {
             if (item is ValidationTest val)
             {
-                return val.Status is ValidationStatus.Ok && _vm.ShowOk
-                    || val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch && _vm.ShowFailed
-                    || val.Status is ValidationStatus.Disabled && _vm.ShowDisabled;
+                return (val.Status is ValidationStatus.Ok && _vm.ShowOk)
+                    || (val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch && _vm.ShowFailed)
+                    || (val.Status is ValidationStatus.Disabled && _vm.ShowDisabled);
             }
             return false;
         }

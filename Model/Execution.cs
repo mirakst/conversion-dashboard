@@ -28,6 +28,10 @@
         }
         #endregion
 
+        public Manager CurrentManager { get; set; }
+        public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
+        public Dictionary<int, Manager> ContextIdManagerDict = new();
+
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
         public DateTime StartTime { get; } //From [CREATED] in [dbo].[EXECUTIONS].
@@ -35,17 +39,24 @@
         public TimeSpan Runtime => EndTime.Subtract(StartTime).Duration(); //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
         public ExecutionStatus Status { get; set; } //Status of the manager.
-        private readonly Dictionary<int, Manager> _contextIdDictionary = new();
-        public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
         public ValidationReport ValidationReport { get; set; } = new();
         public Log Log { get; set; } = new();
         #endregion
+
+        public void AddManager(Manager manager)
+        {
+            if (!ContextIdManagerDict.ContainsKey(manager.ContextId))
+            {
+                ContextIdManagerDict[manager.ContextId] = manager;
+                Managers.Add(manager);
+            }
+        }
 
         public void SetUpDictionaries()
         {
             foreach (var manager in Managers)
             {
-                _contextIdDictionary.Add(manager.ContextId, manager);
+                ContextIdManagerDict.Add(manager.ContextId, manager);
             }
         }
 

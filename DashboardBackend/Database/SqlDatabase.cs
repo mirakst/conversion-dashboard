@@ -1,4 +1,5 @@
 ﻿using DashboardBackend.Database.Models;
+using System.Diagnostics;
 
 namespace DashboardBackend.Database
 {   
@@ -64,8 +65,16 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.LoggingContexts
                                 .Where(e => e.ContextId > 0)
-                                .OrderBy(e => e.ContextId);
+                                .OrderBy(e => e.ExecutionId)
+                                .ThenBy(e => e.ContextId);
+            return queryResult.ToList();
+        }
 
+        /// <inheritdoc/>
+        public List<ManagerTracking> QueryManagerTracking()
+        {
+            using NetcompanyDbContext db = new(ConnectionString);
+            var queryResult = db.ManagerTrackings;
             return queryResult.ToList();
         }
 

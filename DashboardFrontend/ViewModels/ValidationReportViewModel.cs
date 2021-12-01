@@ -69,8 +69,8 @@ namespace DashboardFrontend.ViewModels
         public int OkCount
         {
             get => _okCount;
-            set 
-            { 
+            set
+            {
                 _okCount = value;
                 OnPropertyChanged(nameof(OkCount));
             }

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Model
 {
     public class Manager
@@ -34,8 +36,11 @@ namespace Model
         #endregion Enums
 
         #region Properties
+        // With the Conversion Engine simulation, we must rely on parsing log messages to identify start/end times, etc. instead of the various tables. Hence, this bool.
+        public bool HasReadAllDataFromLog { get; set; }
+        
         public int ContextId { get; } //[CONTEXT_ID] from [dbo].[LOGGING_CONTEXT], [ROW_ID] from [dbo].[MANAGERS]
-        public int ExecutionId { get; } //[EXECUTION_ID] from [dbo].[MANAGERS]
+        public int ExecutionId { get; set; } //[EXECUTION_ID] from [dbo].[MANAGERS]
         private string _name;
         public string Name
         {
@@ -57,33 +62,31 @@ namespace Model
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
 
         public string ShortName { get; set; }
-        public DateTime StartTime { get; private set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
-        public DateTime EndTime { get; private set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
-        public TimeSpan Runtime => EndTime.Subtract(StartTime).Duration(); //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
-        public ManagerStatus Status { get; private set; } //[STATUS] from [dbo].[MANAGER_TRACKING], where [MGR] = Name - until a manager start is logged, in which case it is RUNNING until a manager finishing is logged.
+        public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
+        public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
+        public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
+        public ManagerStatus? Status { get; set; } //[STATUS] from [dbo].[MANAGER_TRACKING], where [MGR] = Name - until a manager start is logged, in which case it is RUNNING until a manager finishing is logged.
         /*        public List<ManagerUsage> Readings { get; set; } = new(); //Readings from [dbo].[MANAGER_TRACKING], where [MGR] = Name.*/
-        public int RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
-        public int RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
+        public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
+        public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
         public double Score { get; set; }
-        #endregion Propertiesz
-
-        public void SetStartTime(string dateString)
-        {
-            if (dateString == null) return;
-            StartTime = DateTime.Parse(dateString);
-        }
-
-        public void SetEndTime(string dateString)
-        {
-            if (dateString == null) return;
-            EndTime = DateTime.Parse(dateString);
-        }
+        #endregion
 
         public override string ToString()
         {
             return $"MANAGER ID: {ContextId}\nMANAGER EXECUTION ID: {ExecutionId}\nMANAGER NAME: {Name}\n" +
                    $"START TIME: {StartTime}\nEND TIME: {EndTime}\nRUNTIME: {Runtime}\nROWS READ: {RowsRead}\n" +
                    $"ROWS WRITTEN: {RowsWritten}\n";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Manager other && other.ContextId == ContextId && other.Name == Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return (ContextId, Name).GetHashCode();
         }
     }
 }

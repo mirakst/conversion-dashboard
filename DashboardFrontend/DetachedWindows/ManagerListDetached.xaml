@@ -13,9 +13,6 @@
         Height="720" 
         Width="1280"
         WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-    <converters:NotFoundToNaConverter x:Key="NotFoundToNaConverter"/>
-    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -148,19 +145,19 @@
                                                         Binding="{Binding Manager.ExecutionId}"
                                                         Width="60pt"/>
                                     <DataGridTextColumn Header="Start time"
-                                                        Binding="{Binding Manager.StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="End time"
-                                                        Binding="{Binding Manager.EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.EndTime, StringFormat=dd/MM HH:mm:ss}"
                                                         Width="2*"/>
-                                    <DataGridTextColumn Header="Est. runtime"
-                                                        Binding="{Binding Manager.Runtime}"
+                                    <DataGridTextColumn Header="Runtime"
+                                                        Binding="{Binding Manager.Runtime, StringFormat=\{0:hh\\:mm\\:ss\\.f\}, TargetNullValue='N/A'}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
-                                                        Binding="{Binding Manager.RowsRead, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Binding="{Binding Manager.RowsRead, TargetNullValue='N/A'}"
                                                         Width="1.5*"/>
                                     <DataGridTextColumn Header="Rows written"
-                                                        Binding="{Binding Manager.RowsWritten, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Binding="{Binding Manager.RowsWritten, TargetNullValue='N/A'}"
                                                         Width="1.5*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>

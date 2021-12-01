@@ -14,7 +14,9 @@
         public bool IsInitialized { get; set; } //If the conversion has been built.
 
         public List<Execution> Executions { get; set; } = new(); //Created on new entry in [dbo].[EXECUTIONS]
-        public Execution ActiveExecution  => Executions.Last();
+        public Execution ActiveExecution  => Executions.LastOrDefault();
+        public DateTime LastExecutionUpdate { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+        public List<Manager> AllManagers { get; set; } = new();
         public HealthReport HealthReport { get; set; } = new();
 
         #endregion

@@ -43,6 +43,8 @@ namespace DashboardBackend.Database
         /// <returns>A list of Managers.</returns>
         List<LoggingContextEntry> QueryManagers();
 
+        List<ManagerTracking> QueryManagerTracking();
+
         /// <summary>
         /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
         /// </summary>
