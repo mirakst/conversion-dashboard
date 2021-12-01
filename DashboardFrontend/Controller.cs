@@ -27,11 +27,11 @@ namespace DashboardFrontend
             _timers = new List<Timer>();
         }
 
-        private bool _isUpdatingExecutions;
-        private bool _isUpdatingLog;
-        private bool _isUpdatingValidations;
-        private bool _isUpdatingManagers;
-        private bool _isUpdatingHealthReport;
+        public bool IsUpdatingExecutions { get; private set; }
+        public bool IsUpdatingLog { get; private set; }
+        public bool IsUpdatingValidations { get; private set; }
+        public bool IsUpdatingManagers { get; private set; }
+        public bool IsUpdatingHealthReport { get; private set; }
 
         private readonly MainWindowViewModel _vm;
         private readonly List<Timer> _timers;
@@ -100,28 +100,22 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog()
         {
-            if (_isUpdatingLog || Conversion.ActiveExecution?.Log is null)
+            if (IsUpdatingLog || Conversion.ActiveExecution?.Log is null)
             {
                 return;
             }
-            _isUpdatingLog = true;
-            List<LogMessage> newData = DU.GetLogMessages(Conversion.ActiveExecution.Log.LastModified);
-            Conversion.ActiveExecution.Log.LastModified = DateTime.Now;
+            IsUpdatingLog = true;
+            List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogUpdate);
+            Conversion.LastLogUpdate = DateTime.Now;
+
             if (newData.Count > 0)
             {
-                _ = Task.Run(() => ParseLogMessages(newData)).ContinueWith((e) =>
+                foreach (Execution execution in Conversion.Executions)
                 {
-                    foreach (var vm in ManagerViewModels)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            vm.UpdateData(Conversion.ActiveExecution.Managers);
-                        });
-                    }
-                });
+                    execution.Log.Messages = newData.Where(m => m.ExecutionId == execution.Id).ToList();
+                }
 
-                Conversion.ActiveExecution.Log.Messages = newData;
-                foreach (var vm in LogViewModels)
+                foreach (LogViewModel vm in LogViewModels)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -129,48 +123,7 @@ namespace DashboardFrontend
                     });
                 }
             }
-            _isUpdatingLog = false;
-        }
-
-        private void ParseLogMessages(List<LogMessage> messages)
-        {
-            foreach (LogMessage message in messages)
-            {
-                Execution? exec = Conversion.Executions.Find(e => e.Id == message.ExecutionId);
-
-                if (message.Content.StartsWith("Starting manager"))
-                {
-                    if (exec is not null)
-                    {
-                        Manager? manager = exec.Managers.Find(m => m.ContextId == message.ContextId);
-                        if (manager is not null)
-                        {
-                            manager.Status = Manager.ManagerStatus.Running;
-                            manager.StartTime = message.Date;
-                            exec.CurrentManager = manager;
-                            manager.HasReadAllDataFromLog = true;
-                        }
-                    }
-                }
-                if (message.Content == "Manager execution done.")
-                {
-                    if (exec is not null)
-                    {
-                        Manager? manager = exec.Managers.Find(m => m.ContextId == message.ContextId);
-                        if (manager is not null)
-                        {
-                            manager.Status = Manager.ManagerStatus.Ok;
-                            manager.EndTime = message.Date;
-                            if (manager.StartTime.HasValue)
-                            {
-                                manager.Runtime = manager.EndTime.Value.Subtract(manager.StartTime.Value);
-                            }
-                            exec.CurrentManager = null;
-                            manager.HasReadAllDataFromLog = true;
-                        }
-                    }
-                }
-            }
+            IsUpdatingLog = false;
         }
 
         /// <summary>
@@ -178,11 +131,11 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateValidationReport()
         {
-            if(_isUpdatingValidations || Conversion.ActiveExecution?.ValidationReport is null)
+            if(IsUpdatingValidations || Conversion.ActiveExecution?.ValidationReport is null)
             {
                 return;
             }
-            _isUpdatingValidations = true;
+            IsUpdatingValidations = true;
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.ActiveExecution.ValidationReport.LastModified);
             Conversion.ActiveExecution.ValidationReport.LastModified = DateTime.Now;
             if (newData.Count > 0)
@@ -196,7 +149,7 @@ namespace DashboardFrontend
                     });
                 }
             }
-            _isUpdatingValidations = false;
+            IsUpdatingValidations = false;
         }
 
         /// <summary>
@@ -204,11 +157,11 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport()
         {
-            if (_isUpdatingHealthReport || Conversion.HealthReport is null)
+            if (IsUpdatingHealthReport || Conversion.HealthReport is null)
             {
                 return;
             }
-            _isUpdatingHealthReport = true;
+            IsUpdatingHealthReport = true;
             if (Conversion.HealthReport.IsInitialized)
             {
                 DU.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
@@ -227,29 +180,40 @@ namespace DashboardFrontend
             {
                 DU.BuildHealthReport(Conversion.HealthReport);
             }
-            _isUpdatingHealthReport = false;
+            IsUpdatingHealthReport = false;
         }
 
         public void UpdateManagerOverview()
         {
-            if (_isUpdatingManagers || Conversion.ActiveExecution is null)
+            if (IsUpdatingManagers || Conversion.ActiveExecution is null)
             {
                 return;
             }
-            _isUpdatingManagers = true;
+            IsUpdatingManagers = true;
 
-            Dictionary<int, List<Manager>> executionIdManagerDict = DU.GetManagers(Conversion.AllManagers);
-            foreach(int id in executionIdManagerDict.Keys)
+            foreach (var execution in Conversion.Executions)
             {
-                Execution? exec = Conversion.Executions.Find(x => x.Id == id);
-                if (exec is null)
+                // Get all managers since the last update
+                List<Manager> managers = DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
+                Conversion.LastManagerUpdate = DateTime.Now;
+
+                foreach (Manager manager in managers)
                 {
-                    Trace.WriteLine($"Execution with ID {id} does not exist, skipping assignment of manager list to this execution");
-                }
-                if (exec is not null)
-                {
-                    List<Manager> uniques = exec.Managers.Union(executionIdManagerDict[id]).ToList();
-                    exec.Managers = uniques;
+                    // Check if we can assign context ID's to any of the managers
+                    LogMessage? managerStartedMessage = execution.Log.Messages.Find(m => m.Content.Split(',')[0] == $"Starting manager: {manager.Name}");
+                    if (managerStartedMessage != null)
+                    {
+                        manager.ContextId = managerStartedMessage.ContextId;
+                        Execution? exec = Conversion.Executions.Find(e => e.Id == managerStartedMessage.ExecutionId);
+                        if (exec != null && !exec.Managers.Contains(manager))
+                        {
+                            exec.Managers.Add(manager);
+                        }
+                    }
+
+                    // Check for health report data associated with the manager
+                    List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= manager.StartTime && r.Date <= manager.EndTime).ToList();
+                    List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= manager.StartTime && r.Date <= manager.EndTime).ToList();
                 }
             }
 
@@ -260,7 +224,7 @@ namespace DashboardFrontend
                     vm.UpdateData(Conversion.ActiveExecution.Managers);
                 });
             }
-            _isUpdatingManagers = false;
+            IsUpdatingManagers = false;
         }
 
         /// <summary>
@@ -302,18 +266,18 @@ namespace DashboardFrontend
 
         private void UpdateExecutions()
         {
-            if (_isUpdatingExecutions)
+            if (IsUpdatingExecutions)
             {
                 return;
             }
-            _isUpdatingExecutions = true;
+            IsUpdatingExecutions = true;
             List<Execution> result = DU.GetExecutions(Conversion.LastExecutionUpdate);
             Conversion.LastExecutionUpdate = DateTime.Now;
             if (result.Count > 0)
             {
                 Conversion.Executions.AddRange(result);
             }
-            _isUpdatingExecutions = false;
+            IsUpdatingExecutions = false;
         }
 
         /// <summary>

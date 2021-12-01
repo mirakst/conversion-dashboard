@@ -42,7 +42,6 @@ namespace DashboardBackend
         /// <returns>A list of all executions in the state database</returns>
         public static List<Execution> GetExecutions() => GetExecutions(SqlMinDateTime);
 
-
         /// <summary>
         /// Queries the state database for validation tests newer than minDate, 
         /// then creates a list of them for the system model, which is returned.
@@ -73,7 +72,6 @@ namespace DashboardBackend
         /// </summary>
         /// <returns>A list of all validation tests in the state database</returns>
         public static List<ValidationTest> GetAfstemninger() => GetAfstemninger(SqlMinDateTime);
-
 
         /// <summary>
         /// Queries the state database for log messages from a specific execution, newer than minDate,
@@ -129,7 +127,6 @@ namespace DashboardBackend
                     .ToList();
         }
 
-
         /// <summary>
         /// Queries the state database for all log messages, 
         /// then creates a list of them for the system model, which is returned.
@@ -138,90 +135,78 @@ namespace DashboardBackend
         public static List<LogMessage> GetLogMessages() => GetLogMessages(SqlMinDateTime);
 
         /// <summary>
-        /// 
+        /// Queries the state database for all managers added after the specified minimum date, and updates their values.
         /// </summary>
-        /// <param name="allManagers"></param>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <param name="allManagers">The list of all managers currently associated with the active Conversion.</param>
         /// <returns></returns>
-        public static Dictionary<int, List<Manager>> GetManagers(List<Manager> allManagers)
+        public static List<Manager> GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
         {
-            // return a dictionary where the keys are execution ID's and the values are lists of managers in each execution
-            Dictionary<int, List<Manager>> executionIdManagerDict = new();
-
-            // get list of all managers in all executions (may contain duplicates)
-            List<LoggingContextEntry> loggingContextEntries = DatabaseHandler.QueryManagers();
-            foreach(var entry in loggingContextEntries)
+            // Get all entries in the ENGINE_PROPERTIES table
+            // For each entry: Find the associated manager and add the value to it. 
+            // If the manager does not exist in allManagers, it is created.
+            List<EnginePropertyEntry> propertyEntries = DatabaseHandler.QueryEngineProperties(minDate);
+            foreach (var entry in propertyEntries)
             {
-                int contextId = (int)entry.ContextId;
-                int executionId = (int)entry.ExecutionId.Value;
-                string mgrName = entry.Context.Split(',')[0];
-
-                // ensure that managers are only created once (avoid duplicates for each execution), but they must be added to each execution
-                Manager manager = allManagers.Find(m => m.ContextId == contextId && m.Name == mgrName);
-                if (manager == null)
+                string name = entry.Manager.Split(',')[0];
+                Manager manager = allManagers.Find(m => m.Name == name);
+                if (manager is null)
                 {
-                    manager = new(contextId, executionId, mgrName);
+                    manager = new() { Name = name };
                     allManagers.Add(manager);
                 }
-                else
-                {
-                    manager.ExecutionId = executionId;
-                }
-
-                if (!executionIdManagerDict.ContainsKey(executionId))
-                {
-                    executionIdManagerDict.Add(executionId, new());
-                }
-                if (!executionIdManagerDict[executionId].Contains(manager))
-                {
-                    executionIdManagerDict[executionId].Add(manager);
-                }
+                AddEnginePropertiesToManager(manager, entry);
             }
-            // at this point we have a dictionary which maps lists of managers to execution ID's
-
-            // Get additional details (status, rows read/written, start/end time) from Manager_Tracking table and add them to the managers that have already been created
-            List<ManagerTracking> queryResult = DatabaseHandler.QueryManagerTracking();
-            foreach (int executionId in executionIdManagerDict.Keys)
-            {
-                AddTrackingDataToManagers(executionIdManagerDict[executionId], queryResult);
-            }
-
-            return executionIdManagerDict;
+            return allManagers;
         }
 
-        // If the manager does not have data in the Manager_Tracking database, nothing is added to it
-        public static void AddTrackingDataToManagers(List<Manager> managers, List<ManagerTracking> trackingInfo)
+        /// <summary>
+        /// Parses the value of the specified EnginePropertyEntry and adds it to the given manager.
+        /// </summary>
+        /// <param name="manager">The manager object associated with the entry.</param>
+        /// <param name="entry">The EnginePropertyEntry to get data from.</param>
+        private static void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
         {
-            foreach(var item in trackingInfo)
+            switch (entry.Key)
             {
-                string newManagerName = item.Mgr.Split(',')[0];
-                Manager manager = managers.Find(m => m.Name == newManagerName.ToUpper());
-                if (manager is not null && !manager.HasReadAllDataFromLog)
-                {
-                    manager.Name = newManagerName;
-                    manager.Status = GetManagerStatus(item);
-                    manager.RowsRead = item.Performancecountrowsread;
-                    manager.RowsWritten = item.Performancecountrowswritten;
-                    manager.StartTime = item.Starttime;
-                    manager.EndTime = item.Endtime;
-                    manager.Runtime = null;
-                    if (manager.StartTime.HasValue && manager.EndTime.HasValue)
+                case "START_TIME":
+                    if (DateTime.TryParse(entry.Value, out DateTime startTime))
                     {
-                        manager.Runtime = manager.EndTime.Value.Subtract(manager.StartTime.Value);
+                        manager.StartTime = startTime;
                     }
-                }
+                    break;
+                case "END_TIME":
+                    if (DateTime.TryParse(entry.Value, out DateTime endTime))
+                    {
+                        manager.EndTime = endTime;
+                        if (manager.StartTime.HasValue)
+                        {
+                            manager.Runtime = endTime.Subtract(manager.StartTime.Value);
+                        }
+                    }
+                    break;
+                case "Læste rækker":
+                    if (int.TryParse(entry.Value, out int rowsRead))
+                    {
+                        manager.RowsRead = rowsRead;
+                    }
+                    break;
+                case "Skrevne rækker":
+                    if (int.TryParse(entry.Value, out int rowsWritten))
+                    {
+                        manager.RowsWritten = rowsWritten;
+                    }
+                    break;
+                case "FinishedExecution":
+                    manager.Status = (entry.Value == "yes")
+                        ? ManagerStatus.Ok
+                        : ManagerStatus.Running;
+                    break;
+
+                default:
+                    break;
             }
         }
-
-        private static ManagerStatus GetManagerStatus(ManagerTracking manager)
-        {
-            return manager.Status switch
-            {
-                "OK" => ManagerStatus.Ok,
-                "READY" => ManagerStatus.Ready,
-                _ => ManagerStatus.Ready,
-            };
-        }
-
 
         /// <summary>
         /// Queries the state database for health report performance entries, 
@@ -310,25 +295,14 @@ namespace DashboardBackend
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
         public static LogMessageType GetLogMessageType(LoggingEntry entry, string content)
         {
-            LogMessageType type;
-            switch (entry.LogLevel)
+            var type = entry.LogLevel switch
             {
-                case "INFO":
-                    type = LogMessageType.Info;
-                    break;
-                case "WARN":
-                    type = LogMessageType.Warning;
-                    break;
-                case "ERROR":
-                    type = LogMessageType.Error;
-                    break;
-                case "FATAL":
-                    type = LogMessageType.Fatal;
-                    break;
-                default:
-                    type = LogMessageType.None;
-                    break;
-            }
+                "INFO" => LogMessageType.Info,
+                "WARN" => LogMessageType.Warning,
+                "ERROR" => LogMessageType.Error,
+                "FATAL" => LogMessageType.Fatal,
+                _ => LogMessageType.None,
+            };
 
             if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
             {

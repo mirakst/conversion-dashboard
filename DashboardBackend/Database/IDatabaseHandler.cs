@@ -41,7 +41,7 @@ namespace DashboardBackend.Database
         /// Retrieves all entries from the LOGGING_CONTEXT table of the state database .
         /// </summary>
         /// <returns>A list of Managers.</returns>
-        List<LoggingContextEntry> QueryManagers();
+        List<LoggingContextEntry> QueryLoggingContext();
 
         List<ManagerTracking> QueryManagerTracking();
 

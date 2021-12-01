@@ -23,6 +23,7 @@ namespace DashboardFrontend.DetachedWindows
             InitializeComponent();
 
             DataContext = Vm;
+
         }
 
         /// <summary>
@@ -141,16 +142,6 @@ namespace DashboardFrontend.DetachedWindows
             {
                 chart.AutoFocusOff();
             }
-        }
-
-        private void datagridManagers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void datagridManagerCharts_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

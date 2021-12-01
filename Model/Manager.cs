@@ -5,6 +5,11 @@ namespace Model
     public class Manager
     {
         #region Constructors
+        public Manager()
+        {
+            Status = ManagerStatus.Ready;
+        }
+
         public Manager(int id, int execId, string name)
         {
             ContextId = id;
@@ -35,12 +40,11 @@ namespace Model
         }
         #endregion Enums
 
-        #region Properties
-        // With the Conversion Engine simulation, we must rely on parsing log messages to identify start/end times, etc. instead of the various tables. Hence, this bool.
-        public bool HasReadAllDataFromLog { get; set; }
-        
-        public int ContextId { get; } //[CONTEXT_ID] from [dbo].[LOGGING_CONTEXT], [ROW_ID] from [dbo].[MANAGERS]
+        #region Properties      
+        public int ContextId { get; set; } //[CONTEXT_ID] from [dbo].[LOGGING_CONTEXT], [ROW_ID] from [dbo].[MANAGERS]
         public int ExecutionId { get; set; } //[EXECUTION_ID] from [dbo].[MANAGERS]
+        public List<CpuLoad> CpuReadings { get; set; } = new();
+        public List<RamLoad> RamReadings { get; set; } = new();
         private string _name;
         public string Name
         {
@@ -51,7 +55,6 @@ namespace Model
                 var splitName = value.Split('.');
                 if (splitName.Contains("managers"))
                 {
-                    var managersIndex = Array.IndexOf(splitName, "managers");
                     ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
                 }
                 else
@@ -86,7 +89,7 @@ namespace Model
 
         public override int GetHashCode()
         {
-            return (ContextId, Name).GetHashCode();
+            return HashCode.Combine(ContextId, Name);
         }
     }
 }

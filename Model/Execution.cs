@@ -30,6 +30,7 @@
 
         public Manager CurrentManager { get; set; }
         public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
+        public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
         public Dictionary<int, Manager> ContextIdManagerDict = new();
 
         #region Properties

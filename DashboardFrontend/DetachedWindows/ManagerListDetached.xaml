@@ -77,8 +77,7 @@
                           Grid.ColumnSpan="2"
                           Style="{DynamicResource DefaultDatagrid}"
                           BorderBrush="{DynamicResource BorderColor}"
-                          ItemsSource="{Binding Managers}" 
-                          SelectionChanged="datagridManagers_SelectionChanged">
+                          ItemsSource="{Binding Managers}">
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
@@ -141,9 +140,6 @@
                                     <DataGridTextColumn Header="ID"
                                                         Binding="{Binding Manager.ContextId}"
                                                         Width="25pt"/>
-                                    <DataGridTextColumn Header="Execution #"
-                                                        Binding="{Binding Manager.ExecutionId}"
-                                                        Width="60pt"/>
                                     <DataGridTextColumn Header="Start time"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss}"
                                                         Width="2*"/>
@@ -311,7 +307,7 @@
                                       Margin="15,5,0,10"
                                       BorderBrush="Transparent"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      Background="{DynamicResource BackgroundColor}" SelectionChanged="datagridManagerCharts_SelectionChanged">
+                                      Background="{DynamicResource BackgroundColor}">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn>

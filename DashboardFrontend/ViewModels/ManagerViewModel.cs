@@ -19,7 +19,7 @@ namespace DashboardFrontend.ViewModels
             _datagrid = dataGrid;
         }
 
-        private DataGrid _datagrid;
+        private readonly DataGrid _datagrid;
         private ObservableCollection<ManagerWrapper> _managers = new();
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public ObservableCollection<ManagerWrapper> Managers

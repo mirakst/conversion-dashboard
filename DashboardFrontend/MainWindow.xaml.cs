@@ -11,6 +11,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace DashboardFrontend
 {
@@ -44,7 +46,12 @@ namespace DashboardFrontend
             detachManager.Show();
             detachManager.Closed += delegate
             {
-                ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+                // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingManagers) { }
+                    ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+                });
             };
         }
 
@@ -55,7 +62,11 @@ namespace DashboardFrontend
             detachLog.Show();
             detachLog.Closed += delegate
             {
-                ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
+                });
             };
         }
 
@@ -67,7 +78,11 @@ namespace DashboardFrontend
             detachVr.Show();
             detachVr.Closed += delegate
             {
-                ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+                });
             };
         }
 
@@ -78,7 +93,11 @@ namespace DashboardFrontend
             detachHr.Show();
             detachHr.Closed += delegate
             {
-                ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
+                });
             };
         }
 

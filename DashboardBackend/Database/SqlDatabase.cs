@@ -24,7 +24,6 @@ namespace DashboardBackend.Database
             return queryResult.ToList();
         }
 
-
         /// <inheritdoc />
         public List<ExecutionEntry> QueryExecutions(DateTime minDate)
         {
@@ -60,7 +59,7 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<LoggingContextEntry> QueryManagers()
+        public List<LoggingContextEntry> QueryLoggingContext()
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.LoggingContexts
