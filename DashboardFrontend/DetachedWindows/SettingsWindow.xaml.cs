@@ -61,7 +61,7 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
-        private static bool Confirm(string message)
+        public static bool Confirm(string message)
         {
             MessageBoxResult result = MessageBox.Show(message, "Please confirm", MessageBoxButton.YesNo);
             return result == MessageBoxResult.Yes;

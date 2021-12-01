@@ -1,13 +1,7 @@
-using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.Settings;
-using DashboardBackend;
-using DashboardBackend.Database;
 using Model;
-using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

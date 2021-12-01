@@ -25,5 +25,13 @@ namespace DashboardFrontend.ViewModels
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public HealthReportViewModel HealthReportViewModel { get; set; }
         public ManagerViewModel ManagerViewModel {  get; set; }
+
+        public void UpdateView()
+        {
+            OnPropertyChanged(nameof(LogViewModel));
+            OnPropertyChanged(nameof(ValidationReportViewModel));
+            OnPropertyChanged(nameof(HealthReportViewModel));
+            OnPropertyChanged(nameof(ManagerViewModel));
+        }
     }
 }

@@ -39,7 +39,17 @@ namespace DashboardFrontend.Settings
         public string ConnectionString { get; private set; }
         [JsonIgnore]
         public bool HasReceivedCredentials { get; set; }
+        public bool HasStartedMonitoring { get; set; }
+        public event ProfileChanged ProfileChanged;
+        public void OnProfileChange()
+        {
+            ProfileChanged?.Invoke();
+        }
 
+        public bool HasEventListeners()
+        {
+            return ProfileChanged != null;
+        }
         public void BuildConnectionString(string userId, string password)
         {
             DbConnectionStringBuilder builder = new();
@@ -63,4 +73,5 @@ namespace DashboardFrontend.Settings
             return Id;
         }
     }
+    public delegate void ProfileChanged();
 }

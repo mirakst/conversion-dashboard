@@ -46,13 +46,24 @@ namespace DashboardFrontend.DetachedWindows
                 timeout.GetBindingExpression(TextBox.TextProperty)
             };
 
+            if ((dataSrc.Text != Profile.DataSource || database.Text != Profile.Database) && Profile.HasStartedMonitoring)
+            {
+                if (!SettingsWindow.Confirm("Editing the data source or database of the active profile will stop ongoing monitoring and clear all views. Continue?"))
+                {
+                    Close();
+                    return;
+                }
+                Profile.OnProfileChange();
+                Profile.HasStartedMonitoring = false;
+            }
+
             if (Profile.Equals(UserSettings.ActiveProfile))
             {
                 Profile.HasReceivedCredentials = false;
                 UserSettings.ActiveProfile = Profile;
             }
 
-            foreach(BindingExpression binding in bindings)
+            foreach (BindingExpression binding in bindings)
             {
                 binding.UpdateSource();
             }
