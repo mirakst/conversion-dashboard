@@ -72,10 +72,10 @@ namespace DashboardFrontend.Charts
                 {
                     Name = "Speed",
                     Labeler = (value) => value.ToString("N0") + "Mbps",
-                    MinLimit = 0,
-                    MaxLimit = 10,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    MinLimit = 0,
+                    MaxLimit = 30,
                     Padding = new Padding(0),
                     NamePadding = new Padding(0),
                 }
