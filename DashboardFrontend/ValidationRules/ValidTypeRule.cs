@@ -19,7 +19,7 @@ namespace DashboardFrontend.ValidationRules
             {
                 case "Int16":
                     bool result = int.TryParse(inputStr, out int intVal);
-                    return result ? new ValidationResult(true, null) : new ValidationResult(false, $"Input should be type of Int16");
+                    return result ? new ValidationResult(true, null) : new ValidationResult(false, $"Input must be of type: Int16");
             }
             throw new ArgumentException("The specified data type is either not implemented or it is spelt incorrectly in the assignment");
         }

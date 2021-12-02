@@ -5,7 +5,7 @@
     <ControlTemplate x:Key="ValidationTemplate">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="{Binding [0].ErrorContent}" 
-                           Foreground="Red"/>
+                           Foreground="#EA3E33"/>
             <AdornedElementPlaceholder/>
         </StackPanel>
     </ControlTemplate>

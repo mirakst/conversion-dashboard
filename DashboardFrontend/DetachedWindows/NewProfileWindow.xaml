@@ -72,6 +72,7 @@
                        Margin="0,-35,0,0"
                        Foreground="{DynamicResource ForegroundColor}"/>
             
+            <!-- Titles -->
             <StackPanel Grid.Row="1"
                         Grid.RowSpan="10"
                         Grid.Column="0"
@@ -102,6 +103,7 @@
                            Foreground="LightGray"/>
             </StackPanel>
 
+            <!-- User input -->
             <StackPanel Grid.Row="1"
                         Grid.Column="1"
                         Orientation="Vertical">
@@ -167,7 +169,7 @@
                 <TextBox x:Name="timeout" 
                          Height="22" 
                          VerticalAlignment="Center"
-                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}"> <!-- Text does not update when the window opens so textbox has to be interacted with to work-->
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
                         <Binding Path="Timeout" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>

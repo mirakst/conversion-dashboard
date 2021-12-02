@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
+        xmlns:ValidationRules="clr-namespace:DashboardFrontend.ValidationRules"
         mc:Ignorable="d"
         Title="Settings" 
         Height="500" 
@@ -23,11 +24,12 @@
     
     <Window.Resources>
         <valueConverters:ProfileConverter x:Key="ProfileConverter"/>
+        <ControlTemplate x:Key="ControlTemplate"/>
     </Window.Resources>
 
     <Border BorderBrush="{DynamicResource BorderColor}"
             BorderThickness="1">
-        <Grid Background="{DynamicResource BackgroundColor}">
+        <Grid Background="{DynamicResource CanvasColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*"/>
@@ -61,7 +63,7 @@
                     SelectedIndex="3" 
                     BorderThickness="0,1,0,0"
                     BorderBrush="Transparent"
-                    Background="{DynamicResource CanvasColor}">
+                    Background="{DynamicResource BackgroundColor}">
                 <TabItem Header="Profile" 
                      IsSelected="True" 
                      Margin="0,0,0,0"
@@ -114,7 +116,8 @@
                                    Text="Database connection" 
                                    FontWeight="Bold" 
                                    VerticalAlignment="Center"
-                                   Margin="0,-10,0,0"/>
+                                   Margin="0,-10,0,0"
+                                   Foreground="LightGray"/>
 
                         <!-- Values -->
                         <StackPanel Grid.Column="1">
@@ -177,6 +180,8 @@
                                  Grid.RowSpan="3" 
                                  Margin="0 5 0 5" 
                                  ItemsSource="{Binding Profiles}" 
+                                 Background="{DynamicResource CanvasColor}"
+                                 Foreground="{DynamicResource ForegroundColor}"
                                  DisplayMemberPath="Name" 
                                  SelectedItem="{Binding SelectedProfile,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}" 
                                  SelectedIndex="0"/>
@@ -241,26 +246,26 @@
                                     Orientation="Vertical"
                                     Margin="10,0,0,0">
                             <TextBlock
-                                Text="Logging"
-                                Margin="0,0,0,10"
+                                Text="Logging (sec)"
+                                Margin="0,0,0,15"
                                 Height="20"/>
                             
                             <TextBlock
-                                Text="Health report" 
-                                Margin="0,0,0,10"
+                                Text="Health report (sec)" 
+                                Margin="0,0,0,15"
                                 Height="20"/>
                             
                             <TextBlock
-                                Text="Validations" 
-                                Margin="0,0,0,10"
+                                Text="Validations (sec)" 
+                                Margin="0,0,0,15"
                                 Height="20"/>
                             
                             <TextBlock
-                                Text="Managers"
+                                Text="Managers (sec)"
                                 Margin="0,0,0,95"
                                 Height="20"/>
 
-                            <TextBlock Text="Query interval"
+                            <TextBlock Text="Query interval (sec)"
                                        Height="20"
                                        IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"
                                        Foreground="{DynamicResource ForegroundColor}"/>
@@ -270,41 +275,80 @@
                         <StackPanel Grid.Row="1"
                                     Grid.Column="2"
                                     Orientation="Vertical">
-                            <TextBox x:Name="LoggingTxt" 
-                                     Grid.Row="1" 
+                            <TextBox x:Name="TextBoxLoggingInterval" 
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
-                                     Margin="0,0,0,10"
-                                     Text="{Binding LoggingQueryInterval}"/>
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="LoggingQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
 
-                            <TextBox Grid.Row="2" 
+                            <TextBox x:Name="TextBoxHRInterval"
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
-                                     Margin="0,0,0,10"
-                                     Text="{Binding HealthReportQueryInterval}"/>
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="HealthReportQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
 
-                            <TextBox Grid.Row="3" 
+                            <TextBox x:Name="TextBoxValidationInterval"
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
-                                     Margin="0,0,0,10"
-                                     Text="{Binding ValidationQueryInterval}"/>
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="ValidationQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
 
-                            <TextBox Grid.Row="4" 
+                            <TextBox x:Name="TextBoxManagerInterval"
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
                                      Margin="0,0,0,95"
-                                     Text="{Binding ManagerQueryInterval}"/>
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="ManagerQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
 
-                            <TextBox Grid.Row="7" 
+                            <TextBox x:Name="TextBoxAllInterval"
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
-                                     Text="{Binding AllQueryInterval}" 
-                                     IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"/>
+                                     IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="AllQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
                         </StackPanel>
 
                         <CheckBox x:Name="synchronizeAllCheckbox" 
@@ -313,7 +357,7 @@
                                   Grid.ColumnSpan="2" 
                                   Content="Synchronize all queries" 
                                   VerticalAlignment="Bottom" 
-                                  Margin="5,0,0,100"
+                                  Margin="5,0,0,85"
                                   IsChecked="{Binding SynchronizeAllQueries,UpdateSourceTrigger=PropertyChanged}"
                                   Foreground="{DynamicResource ForegroundColor}"/>
                     </Grid>

@@ -3,6 +3,8 @@ using DashboardFrontend.Settings;
 using System.Windows;
 using System;
 using System.Windows.Input;
+using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -24,7 +26,16 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Button_SaveAndClose(object sender, RoutedEventArgs e)
         {
-            if (!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
+            List<bool> inputValidations = new()
+            {
+                Validation.GetHasError(TextBoxLoggingInterval),
+                Validation.GetHasError(TextBoxHRInterval),
+                Validation.GetHasError(TextBoxValidationInterval),
+                Validation.GetHasError(TextBoxManagerInterval),
+                Validation.GetHasError(TextBoxAllInterval)
+            };
+
+            if ((!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?")) && !inputValidations.Contains(true))
             {
                 try
                 {
