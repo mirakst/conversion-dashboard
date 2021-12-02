@@ -36,29 +36,29 @@
                 <RowDefinition Height="48"/>
             </Grid.RowDefinitions>
 
-            <Grid MouseLeftButtonDown="DraggableGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="35"/>
+            </Grid.ColumnDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="35"/>
-                </Grid.ColumnDefinitions>
+            <Button Name="ButtonCloseSettings" 
+                    Grid.Row="0" 
+                    Grid.Column="1"
+                    Content="r"
+                    Width="35"
+                    Height="35"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Style="{DynamicResource CloseWindowButton}"
+                    Command="{x:Static SystemCommands.CloseWindowCommand}"/>
 
-                <Button Name="ButtonCloseSettings" 
-                Grid.Row="0" 
-                Grid.Column="1"
-                Content="r"
-                Margin="0,5,5,15"
-                Style="{DynamicResource CloseWindowButton}"
-                Command="{x:Static SystemCommands.CloseWindowCommand}"/>
-
-                <TextBlock Text="Settings" 
+            <TextBlock Text="Settings" 
                    FontSize="32" 
                    Grid.ColumnSpan="2"
                    Margin="50,0,50,0"
                    TextAlignment="Center"
                    Foreground="{DynamicResource ForegroundColor}"/>
-            </Grid>
-            
+
             <TabControl Grid.Row="1" 
                     SelectedIndex="3" 
                     BorderThickness="0,1,0,0"
@@ -82,34 +82,32 @@
                         <StackPanel>
                             <!-- Block #1: General -->
                             <TextBlock Text="Active profile"
+                                       Height="22"
                                        FontSize="16"
-                                       VerticalAlignment="Center"
-                                       Foreground="LightGray"
                                        Margin="0,0,0,20"/>
 
                             <TextBlock Grid.Row="1" 
-                                       Text="Conversion name" 
-                                       VerticalAlignment="Center"
-                                       Foreground="LightGray"
+                                       Text="Conversion name"
                                        Margin="0,0,0,60"/>
 
                             <!-- Block #2: Database connection -->
                             <TextBlock Grid.Row="1" 
-                                       Text="Data Source" 
-                                       VerticalAlignment="Center"
-                                       Foreground="LightGray"
+                                       Text="Data Source"
                                        Margin="0,0,0,5"/>
 
                             <TextBlock Grid.Row="2" 
-                                       Text="Database" 
-                                       VerticalAlignment="Center"
-                                       Foreground="LightGray"
+                                       Text="Database"
                                        Margin="0,0,0,5"/>
                             
                             <TextBlock Grid.Row="3" 
-                                   Text="Connect Timeout (sec)" 
-                                   VerticalAlignment="Center"
-                                   Foreground="LightGray"/>
+                                   Text="Connect Timeout (sec)"/>
+
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Style>
+                            </StackPanel.Resources>
                         </StackPanel>
 
                         <TextBlock Grid.ColumnSpan="2" 
@@ -122,36 +120,27 @@
                         <!-- Values -->
                         <StackPanel Grid.Column="1">
                             <!-- Block #1: General -->
-                            <TextBlock Grid.Column="1" 
-                                       Text='{Binding ActiveProfile.Name,FallbackValue="-"}' 
-                                       FontSize="16" 
-                                       VerticalAlignment="Center"
+                            <TextBlock Text='{Binding ActiveProfile.Name,FallbackValue="-"}'
+                                       Height="22"
                                        Margin="0,0,0,20"/>
 
-                            <TextBlock Grid.Row="1" 
-                                       Grid.Column="1" 
-                                       Text='{Binding ActiveProfile.Conversion,FallbackValue="-"}' 
-                                       VerticalAlignment="Center"
+                            <TextBlock Text='{Binding ActiveProfile.Conversion,FallbackValue="-"}'
                                        Margin="0,0,0,60"/>
                             
                             <!-- Block #2: Database connection -->
-                            <TextBlock Grid.Row="1" 
-                                       Grid.Column="1" 
-                                       Text='{Binding ActiveProfile.DataSource,FallbackValue="-"}' 
-                                       VerticalAlignment="Center"
+                            <TextBlock Text='{Binding ActiveProfile.DataSource,FallbackValue="-"}'
                                        Margin="0,0,0,5"/>
 
-                            <TextBlock Grid.Row="2" 
-                                       Grid.Column="1" 
-                                       Text='{Binding ActiveProfile.Database,FallbackValue="-"}' 
-                                       VerticalAlignment="Center"
+                            <TextBlock Text='{Binding ActiveProfile.Database,FallbackValue="-"}'
                                        Margin="0,0,0,5"/>
 
-                            <TextBlock Grid.Row="3" 
-                                       Grid.Column="1" 
-                                       Text='{Binding ActiveProfile.Timeout,FallbackValue="-"}' 
-                                       VerticalAlignment="Center"/>
+                            <TextBlock Text='{Binding ActiveProfile.Timeout,FallbackValue="-"}'/>
 
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </StackPanel.Resources>
                         </StackPanel>
                         
                         <!-- Block #3: Profiles -->
@@ -357,7 +346,7 @@
                                   Grid.ColumnSpan="2" 
                                   Content="Synchronize all queries" 
                                   VerticalAlignment="Bottom" 
-                                  Margin="5,0,0,85"
+                                  Margin="5,0,0,90"
                                   IsChecked="{Binding SynchronizeAllQueries,UpdateSourceTrigger=PropertyChanged}"
                                   Foreground="{DynamicResource ForegroundColor}"/>
                     </Grid>

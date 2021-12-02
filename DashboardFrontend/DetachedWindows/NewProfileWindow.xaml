@@ -27,8 +27,7 @@
     <Border BorderBrush="{DynamicResource BorderColor}"
             BorderThickness="1">
         <Grid FocusManager.FocusedElement="{Binding ElementName=name}"
-              Background="{DynamicResource BackgroundColor}"
-              Margin="8,8,8,8">
+              Background="{DynamicResource BackgroundColor}">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -41,27 +40,23 @@
                 <RowDefinition Height="42"/>
             </Grid.RowDefinitions>
 
-            <Grid MouseLeftButtonDown="DraggableGrid"
-                  Grid.ColumnSpan="3">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="20"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Text="Profile editor"
+            <TextBlock Text="Profile editor"
                            FontSize="16"
                            Grid.ColumnSpan="5"
+                           Margin="0,5,0,0"
                            TextAlignment="Center"
                            Foreground="{DynamicResource ForegroundColor}"/>
 
                 <Button Name="ButtonCloseSettings" 
                         Content="r"
                         Grid.Column="1"
-                        Margin="-5,0,0,5"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Width="25"
+                        Height="25"
                         Style="{DynamicResource CloseWindowButton}"
                         Command="{x:Static SystemCommands.CloseWindowCommand}" Grid.ColumnSpan="2"/>
-            </Grid>
+            
 
             <TextBlock Grid.Row="1"
                        Grid.ColumnSpan="2" 
@@ -69,38 +64,36 @@
                        VerticalAlignment="Center" 
                        FontSize="14" 
                        FontWeight="Bold"
-                       Margin="0,-35,0,0"
+                       Margin="15,-55,0,0"
                        Foreground="{DynamicResource ForegroundColor}"/>
             
             <!-- Titles -->
             <StackPanel Grid.Row="1"
                         Grid.RowSpan="10"
                         Grid.Column="0"
+                        Margin="15,0,0,0"
                         Orientation="Vertical">
 
                 <TextBlock Text="Profile name" 
-                           Margin="0,10,0,20"
-                           VerticalAlignment="Center"
-                           Foreground="LightGray"/>
+                           Margin="0,5,0,15"/>
 
                 <TextBlock Text="Conversion" 
-                           Margin="0,0,0,61"
-                           VerticalAlignment="Center"
-                           Foreground="LightGray"/>
+                           Margin="0,0,0,55"/>
 
                 <TextBlock Text="Data source" 
-                           Margin="0,0,0,21"
-                           VerticalAlignment="Center"
-                           Foreground="LightGray"/>
+                           Margin="0,0,0,15"/>
 
                 <TextBlock Text="Database" 
-                           Margin="0,0,0,22"
-                           VerticalAlignment="Center"
-                           Foreground="LightGray"/>
+                           Margin="0,0,0,15"/>
 
-                <TextBlock Text="Timeout (sec)" 
-                           VerticalAlignment="Center"
-                           Foreground="LightGray"/>
+                <TextBlock Text="Timeout (sec)"/>
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Foreground" Value="LightGray"/>
+                        <Setter Property="Height" Value="22"/>
+                    </Style>
+                </StackPanel.Resources>
             </StackPanel>
 
             <!-- User input -->
@@ -197,6 +190,7 @@
                         IsDefault="True" 
                         Click="Button_Save"/>
             </StackPanel>
+            
         </Grid>
     </Border>
 </Window>

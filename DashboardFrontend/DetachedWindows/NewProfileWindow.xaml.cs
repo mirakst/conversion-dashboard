@@ -91,10 +91,5 @@ namespace DashboardFrontend.DetachedWindows
         {
             SystemCommands.CloseWindow(this);
         }
-
-        private void DraggableGrid(object sender, MouseButtonEventArgs e)
-        {
-            this.DragMove();
-        }
     }
 }
