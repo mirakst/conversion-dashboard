@@ -158,16 +158,32 @@ namespace DashboardBackend
             foreach (var entry in engineEntries)
             {
                 string name = entry.Manager.Split(',')[0];
-                Manager manager = allManagers.FindLast(m => m.Name == name);
-                if (manager is null || (manager.Status == ManagerStatus.Ok && manager.EndTime.HasValue && manager.StartTime.HasValue && manager.RowsRead.HasValue && manager.RowsWritten.HasValue))
+                // If manager was created by the log first (context id is set), find the first manager that is missing a property.
+                // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
+                Manager logManager = allManagers.Find(m => m.Name == name && m.ContextId != 0 && (!m.StartTime.HasValue || !m.EndTime.HasValue || !m.Runtime.HasValue || !m.RowsRead.HasValue || !m.RowsWritten.HasValue));
+                if (logManager != null)
                 {
-                    manager = new()
-                    {
-                        Name = name,
-                    };
-                    allManagers.Add(manager);
+                    AddEnginePropertiesToManager(logManager, entry);
                 }
-                AddEnginePropertiesToManager(manager, entry);
+                else
+                {
+                    // Find all managers created from ENGINE_PROPERTIES (context ID=0)
+                    Manager engManager = allManagers.Find(m => m.Name == name && m.ContextId == 0 && (!m.StartTime.HasValue || !m.EndTime.HasValue || !m.Runtime.HasValue || !m.RowsRead.HasValue || !m.RowsWritten.HasValue));
+                    if (engManager != null)
+                    {
+                        AddEnginePropertiesToManager(engManager, entry);
+                    }
+                    // If no manager was found at this point, it has neither been created from ENGINE_PROPERTIES or LOGGING - so we will create it!
+                    else
+                    {
+                        Manager manager = new()
+                        {
+                            Name = name,
+                        };
+                        AddEnginePropertiesToManager(manager, entry);
+                        allManagers.Add(manager);
+                    }
+                }
             }
         }
 
@@ -184,6 +200,12 @@ namespace DashboardBackend
                     if (DateTime.TryParse(entry.Value, out DateTime startTime))
                     {
                         manager.StartTime = startTime;
+                        manager.Status = ManagerStatus.Running;
+                        if (manager.EndTime.HasValue)
+                        {
+                            manager.Runtime = manager.EndTime.Value.Subtract(startTime);
+                            manager.Status = ManagerStatus.Ok;
+                        }
                     }
                     break;
                 case "END_TIME":
@@ -208,11 +230,6 @@ namespace DashboardBackend
                     {
                         manager.RowsWritten = rowsWritten;
                     }
-                    break;
-                case "FinishedExecution":
-                    manager.Status = (entry.Value == "yes")
-                        ? ManagerStatus.Ok
-                        : ManagerStatus.Running;
                     break;
 
                 default:

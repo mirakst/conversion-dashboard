@@ -113,7 +113,18 @@ namespace DashboardFrontend
 
             if (newData.Count > 0)
             {
-                newData.ForEach(m => ParseLogMessage(m));
+                newData.ForEach(m =>
+                {
+                    var exec = Conversion.Executions.Find(e => e.Id == m.ExecutionId);
+                    if (exec is null)
+                    {
+                        // The first log message of an execution was logged before the execution was created
+                        Trace.WriteLine("LOG - Created execution " + m.ExecutionId);
+                        exec = new Execution(m.ExecutionId, m.Date);
+                        Conversion.Executions.Add(exec);
+                    }
+                    exec.Log.Messages.Add(m);
+                });
 
                 foreach (LogViewModel vm in LogViewModels)
                 {
@@ -127,63 +138,59 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Gets (or creates, if it does not yet exist) the execution associated with the specified log message.
-        /// If the message contains "Starting manager: [NAME]" or "Manager execution done." the method will try to assign the context ID to the appropriate manager and set its status.
+        /// Attempts to find the manager associated with a "Starting manager: "-message, and assigns its context ID if it has not already been set.
+        /// The method also updates the status of managers when possible.
         /// </summary>
         /// <param name="message">The log message to parse.</param>
         private void ParseLogMessage(LogMessage message)
         {
-            Execution? exec = Conversion.Executions.Find(e => e.Id == message.ExecutionId);
-            if (exec is null)
+            if (Conversion.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
             {
-                // The first log message of an execution was logged before the execution was created
-                exec = new Execution(message.ExecutionId, message.Date);
-                Conversion.Executions.Add(exec);
-            }
-            exec.Log.Messages.Add(message);
-
-            if (message.Content.StartsWith("Starting manager:"))
-            {
-                Match match = Regex.Match(message.Content, @"^Starting manager: (?<Name>[\w.]*)");
-                if (match.Success)
+                if (message.Content.StartsWith("Starting manager:"))
                 {
-                    string name = match.Groups["Name"].Value;
-                    // If the manager has already been set up, simply change its status
-                    if (Conversion.AllManagers.Find(m => m.Name == name && m.ContextId == 0) is Manager mgr)
+                    Match match = Regex.Match(message.Content, @"^Starting manager: (?<Name>[\w.]*)");
+                    if (match.Success)
                     {
-                        if (mgr.Status != Manager.ManagerStatus.Ok)
+                        string name = match.Groups["Name"].Value;
+                        // Find all managers with the name parsed from the log message
+                        List<Manager> mgrs = Conversion.AllManagers.FindAll(m => m.Name == name);
+                        if (mgrs.Any())
                         {
-                            mgr.Status = Manager.ManagerStatus.Running;
+                            // Check if any of the managers are created from ENGINE_PROPERTIES (context ID=0)
+                            if (mgrs.Find(m => m.ContextId == 0) is Manager manager)
+                            {
+                                manager.ContextId = message.ContextId;
+                                if (!exec.Managers.Contains(manager))
+                                {
+                                    exec.Managers.Add(manager);
+                                }
+                            }
                         }
-                        mgr.ContextId = message.ContextId;
-                        if (!exec.Managers.Contains(mgr))
+                        // If a manager with the found name doesn't exist, create it
+                        else
                         {
-                            exec.Managers.Add(mgr);
+                            Trace.WriteLine($"LOG - Created manager [{name}]");
+                            Manager manager = new()
+                            {
+                                Name = name,
+                                ContextId = message.ContextId,
+                                Status = Manager.ManagerStatus.Running
+                            };
+                            exec.Managers.Add(manager);
+                            Conversion.AllManagers.Add(manager);
                         }
-                    }
-                    // Otherwise, create the manager and set its name, context ID and status
-                    else
-                    {
-                        Manager manager = new()
-                        {
-                            Name = name,
-                            ContextId = message.ContextId,
-                            Status = Manager.ManagerStatus.Running
-                        };
-                        exec.Managers.Add(manager);
-                        Conversion.AllManagers.Add(manager);
                     }
                 }
-            }
-            // Check if a manager has finished its execution
-            else if (message.Content == "Manager execution done.")
-            {
-                if (exec.Managers.Find(m => m.ContextId == message.ContextId) is Manager mgr)
+                // Check if a manager has finished its execution
+                else if (message.Content == "Manager execution done.")
                 {
-                    mgr.Status = Manager.ManagerStatus.Ok;
-                    if (!mgr.EndTime.HasValue)
+                    if (exec.Managers.Find(m => m.ContextId == message.ContextId) is Manager mgr)
                     {
-                        mgr.EndTime = message.Date;
+                        mgr.Status = Manager.ManagerStatus.Ok;
+                        if (!mgr.EndTime.HasValue)
+                        {
+                            mgr.EndTime = message.Date;
+                        }
                     }
                 }
             }
@@ -256,28 +263,31 @@ namespace DashboardFrontend
                 return;
             }
             IsUpdatingManagers = true;
-            
+
             DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
             Conversion.LastManagerUpdate = DateTime.Now;
 
-            // Check for any manager values that can be updated
-            if (!IsUpdatingLog)
+            // fetch log messages and parse the lot
+            Conversion.Executions.ForEach(e =>
             {
-                Conversion.AllManagers.ForEach(m =>
+                var messages = new List<LogMessage>(e.Log.Messages);
+                foreach (LogMessage message in messages)
                 {
-                    if (!m.Runtime.HasValue && m.StartTime.HasValue && m.EndTime.HasValue)
-                    {
-                        m.Runtime = m.EndTime.Value.Subtract(m.StartTime.Value);
-                    }
-                });
-            }
+                    ParseLogMessage(message);
+                }
+            });
 
-            // Check for CPU or RAM readings that can be associated with the manager
-            foreach (Manager manager in Conversion.AllManagers)
+            // Check for any manager values that can be updated
+            Conversion.AllManagers.ForEach(m =>
             {
-                List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= manager.StartTime && r.Date <= manager.EndTime).ToList();
-                List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= manager.StartTime && r.Date <= manager.EndTime).ToList();
-            }
+                if (!m.Runtime.HasValue && m.StartTime.HasValue && m.EndTime.HasValue)
+                {
+                    m.Runtime = m.EndTime.Value.Subtract(m.StartTime.Value);
+                }
+
+                List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+            });
 
             foreach (var vm in ManagerViewModels)
             {
@@ -343,10 +353,6 @@ namespace DashboardFrontend
                     {
                         Conversion.Executions.Add(exec);
                     }
-                    else
-                    {
-
-                    }
                 }
             }
             IsUpdatingExecutions = false;
@@ -374,8 +380,8 @@ namespace DashboardFrontend
             {
                 _timers.Add(new Timer(x => UpdateHealthReport(), null, 1000, UserSettings.HealthReportQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateValidationReport(), null, 1000, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new Timer(x => UpdateLog(), null, 1000, UserSettings.LoggingQueryInterval * 1000));
                 _timers.Add(new Timer(x => UpdateManagerOverview(), null, 1000, UserSettings.ManagerQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateLog(), null, 5000, UserSettings.LoggingQueryInterval * 1000));
             }
             _vm.IsRunning = true;
         }

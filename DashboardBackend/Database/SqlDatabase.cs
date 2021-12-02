@@ -99,11 +99,11 @@ namespace DashboardBackend.Database
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.EngineProperties
-                                .Where(e => e.Timestamp > minDate && (e.Key == "START_TIME"
-                                                                   || e.Key == "END_TIME"
-                                                                   || e.Key == "Læste rækker"
-                                                                   || e.Key == "Skrevne rækker"
-                                                                   || e.Key == "FinishedExecution"))
+                                .Where(e => e.Timestamp > minDate 
+                                        && (e.Key == "START_TIME"
+                                        ||  e.Key == "END_TIME"
+                                        ||  e.Key == "Læste rækker"
+                                        ||  e.Key == "Skrevne rækker"))
                                 .OrderBy(e => e.Timestamp);
 
             return queryResult.ToList();
