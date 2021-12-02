@@ -22,5 +22,19 @@
         public HealthReport HealthReport { get; set; } = new();
 
         #endregion
+
+        public void AddExecution(Execution execution)
+        {
+            if (ActiveExecution != null)
+            {
+                ActiveExecution.EndTime = DateTime.Now;
+                ActiveExecution.Status = Execution.ExecutionStatus.Finished;
+                if (ActiveExecution.StartTime.HasValue && ActiveExecution.EndTime.HasValue)
+                {
+                    ActiveExecution.Runtime = ActiveExecution.EndTime.Value.Subtract(ActiveExecution.StartTime.Value);
+                }
+            }
+            Executions.Add(execution);
+        }
     }
 }

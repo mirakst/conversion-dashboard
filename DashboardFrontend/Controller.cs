@@ -121,9 +121,10 @@ namespace DashboardFrontend
                         // The first log message of an execution was logged before the execution was created
                         Trace.WriteLine("LOG - Created execution " + m.ExecutionId);
                         exec = new Execution(m.ExecutionId, m.Date);
-                        Conversion.Executions.Add(exec);
+                        Conversion.AddExecution(exec);
                     }
                     exec.Log.Messages.Add(m);
+                    _logParseQuery.Push(m);
                 });
 
                 foreach (LogViewModel vm in LogViewModels)
@@ -193,6 +194,15 @@ namespace DashboardFrontend
                         }
                     }
                 }
+                // Check if an execution might have ended
+                else if (message.Content.StartsWith("Program closing due to thhe following error:")
+                    || message.Content == "Exiting from GuiManager..."
+                    || message.Content == "No managers left to start automatically for BATCH"
+                    || message.Content == "Deploy is finished!!")
+                {
+                    exec.Status = Execution.ExecutionStatus.Finished;
+                    exec.EndTime = message.Date;
+                }
             }
         }
 
@@ -253,6 +263,7 @@ namespace DashboardFrontend
             IsUpdatingHealthReport = false;
         }
 
+        private Stack<LogMessage> _logParseQuery = new();
         /// <summary>
         /// Updates the list of managers in the current Conversion and adds them to their associated executions.
         /// </summary>
@@ -267,15 +278,10 @@ namespace DashboardFrontend
             DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
             Conversion.LastManagerUpdate = DateTime.Now;
 
-            // fetch log messages and parse the lot
-            Conversion.Executions.ForEach(e =>
+            while (_logParseQuery.Count > 0)
             {
-                var messages = new List<LogMessage>(e.Log.Messages);
-                foreach (LogMessage message in messages)
-                {
-                    ParseLogMessage(message);
-                }
-            });
+                ParseLogMessage(_logParseQuery.Pop());
+            }
 
             // Check for any manager values that can be updated
             Conversion.AllManagers.ForEach(m =>
@@ -336,6 +342,9 @@ namespace DashboardFrontend
             dialogPopup.ShowDialog();
         }
 
+        /// <summary>
+        /// Updates the list of executions in the current conversion.
+        /// </summary>
         private void UpdateExecutions()
         {
             if (IsUpdatingExecutions)
@@ -347,11 +356,11 @@ namespace DashboardFrontend
             Conversion.LastExecutionUpdate = DateTime.Now;
             if (result.Count > 0)
             {
-                foreach(Execution exec in result)
+                foreach(Execution newExec in result)
                 {
-                    if (!Conversion.Executions.Any(e => e.Id == exec.Id))
+                    if (!Conversion.Executions.Any(e => e.Id == newExec.Id))
                     {
-                        Conversion.Executions.Add(exec);
+                        Conversion.AddExecution(newExec);
                     }
                 }
             }
