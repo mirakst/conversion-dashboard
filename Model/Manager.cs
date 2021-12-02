@@ -45,11 +45,37 @@ namespace Model
         public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
         public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
         public ManagerStatus Status { get; set; } //[STATUS] from [dbo].[MANAGER_TRACKING], where [MGR] = Name - until a manager start is logged, in which case it is RUNNING until a manager finishing is logged.
-        /*        public List<ManagerUsage> Readings { get; set; } = new(); //Readings from [dbo].[MANAGER_TRACKING], where [MGR] = Name.*/
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
         public double Score { get; set; }
         #endregion
+
+        /// <summary>
+        /// Adds performance readings to the manager, and ensures that entries are never added twice.
+        /// </summary>
+        /// <param name="cpuReadings">A list of CPU readings.</param>
+        /// <param name="ramReadings">A list of RAM readings.</param>
+        public void AddReadings(List<CpuLoad> cpuReadings, List<RamLoad> ramReadings)
+        {
+            if (CpuReadings.Any())
+            {
+                DateTime lastReading = CpuReadings.Last().Date;
+                CpuReadings.AddRange(cpuReadings.Where(r => r.Date > lastReading));
+            }
+            else
+            {
+                CpuReadings.AddRange(cpuReadings);
+            }
+            if (RamReadings.Any())
+            {
+                DateTime lastReading = RamReadings.Last().Date;
+                RamReadings.AddRange(ramReadings.Where(r => r.Date > lastReading));
+            }
+            else
+            {
+                RamReadings.AddRange(ramReadings);
+            }
+        }
 
         public override string ToString()
         {

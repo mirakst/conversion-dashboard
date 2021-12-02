@@ -23,7 +23,6 @@ namespace DashboardFrontend.DetachedWindows
             InitializeComponent();
 
             DataContext = Vm;
-
         }
 
         /// <summary>

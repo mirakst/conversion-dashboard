@@ -38,10 +38,7 @@ namespace DashboardFrontend.ViewModels
         public void AddChartLinesHelper(ManagerWrapper manager)
         {
             List<ObservableCollection<ObservablePoint>> managerValues = new(4);
-            managerValues.Add(new ObservableCollection<ObservablePoint>(_healthReport.Cpu.Readings
-                .Where(e => e.Date >= manager.Manager.StartTime)
-                .Where(e => e.Date < manager.Manager.EndTime)
-                .Select(CreatePoint)));
+            managerValues.Add(new ObservableCollection<ObservablePoint>(manager.Manager.CpuReadings.Select(CreatePoint)));
 
             int index = 0;
             foreach (DataChart chart in Charts)

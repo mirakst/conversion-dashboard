@@ -62,7 +62,10 @@ namespace DashboardFrontend
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
-            result.UpdateData(Conversion.ActiveExecution.Log);
+            if (Conversion.Executions.Any())
+            {
+                result.UpdateData(Conversion.ActiveExecution.Log);
+            }
             LogViewModels.Add(result);
             return result;
         }
@@ -70,7 +73,7 @@ namespace DashboardFrontend
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
-            if (Conversion.ActiveExecution != null)
+            if (Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.ValidationReport);
             }
@@ -81,10 +84,13 @@ namespace DashboardFrontend
         public HealthReportViewModel CreateHealthReportViewModel()
         {
             HealthReportViewModel result = new();
-            result.SystemLoadChart.UpdateData(Conversion.HealthReport.Ram, Conversion.HealthReport.Cpu);
-            result.NetworkChart.UpdateData(Conversion.HealthReport.Network);
-            result.NetworkDeltaChart.UpdateData(Conversion.HealthReport.Network);
-            result.NetworkSpeedChart.UpdateData(Conversion.HealthReport.Network);
+            if (Conversion.HealthReport != null)
+            {
+                result.SystemLoadChart.UpdateData(Conversion.HealthReport.Ram, Conversion.HealthReport.Cpu);
+                result.NetworkChart.UpdateData(Conversion.HealthReport.Network);
+                result.NetworkDeltaChart.UpdateData(Conversion.HealthReport.Network);
+                result.NetworkSpeedChart.UpdateData(Conversion.HealthReport.Network);
+            }
             HealthReportViewModels.Add(result);
             return result;
         }
@@ -92,7 +98,10 @@ namespace DashboardFrontend
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new(Conversion.HealthReport);
-            result.UpdateData(Conversion.ActiveExecution.Managers);
+            if (Conversion.Executions.Any())
+            {
+                result.UpdateData(Conversion.ActiveExecution.Managers);
+            }
             ManagerViewModels.Add(result);
             return result;
         }
@@ -124,7 +133,7 @@ namespace DashboardFrontend
                         Conversion.AddExecution(exec);
                     }
                     exec.Log.Messages.Add(m);
-                    _logParseQuery.Push(m);
+                    _logParseQueue.Enqueue(m);
                 });
 
                 foreach (LogViewModel vm in LogViewModels)
@@ -263,7 +272,7 @@ namespace DashboardFrontend
             IsUpdatingHealthReport = false;
         }
 
-        private Stack<LogMessage> _logParseQuery = new();
+        private readonly Queue<LogMessage> _logParseQueue = new();
         /// <summary>
         /// Updates the list of managers in the current Conversion and adds them to their associated executions.
         /// </summary>
@@ -278,9 +287,9 @@ namespace DashboardFrontend
             DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
             Conversion.LastManagerUpdate = DateTime.Now;
 
-            while (_logParseQuery.Count > 0)
+            while (_logParseQueue.Count > 0)
             {
-                ParseLogMessage(_logParseQuery.Pop());
+                ParseLogMessage(_logParseQueue.Dequeue());
             }
 
             // Check for any manager values that can be updated
@@ -293,6 +302,7 @@ namespace DashboardFrontend
 
                 List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
                 List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                m.AddReadings(cpuReadings, ramReadings);
             });
 
             foreach (var vm in ManagerViewModels)
