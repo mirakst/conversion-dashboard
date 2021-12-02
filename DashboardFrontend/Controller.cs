@@ -20,11 +20,11 @@ namespace DashboardFrontend
         private ValidationReport _validationReport;
         private HealthReport _healthReport;
         private readonly List<Timer> _timers;
-        public readonly Conversion _conversion;
-        public readonly List<HealthReportViewModel> HealthReportViewModels = new();
-        public readonly List<LogViewModel> LogViewModels = new();
-        public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
-        public readonly List<ManagerViewModel> ManagerViewModels = new();
+        private Conversion? Conversion { get; set; }
+        public List<HealthReportViewModel> HealthReportViewModels { get; private set; }
+        public List<LogViewModel> LogViewModels { get; private set; }
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
+        public List<ManagerViewModel> ManagerViewModels { get; private set; }
         public UserSettings UserSettings { get; set; } = new();
 
 
@@ -32,7 +32,6 @@ namespace DashboardFrontend
         {
             TryLoadUserSettings();
             _vm = viewModel;
-            _conversion = new();
             _timers = new List<Timer>();
         }
 
@@ -42,16 +41,26 @@ namespace DashboardFrontend
         public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
-            LogViewModels.Add(_vm.LogViewModel);
+            LogViewModels = new()
+            {
+                _vm.LogViewModel
+            };
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel();
-            ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
+            ValidationReportViewModels = new()
+            {
+                _vm.ValidationReportViewModel
+            };
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
-            HealthReportViewModels.Add(_vm.HealthReportViewModel);
+            HealthReportViewModels = new() {
+                _vm.HealthReportViewModel
+            };
 
             _vm.ManagerViewModel = new ManagerViewModel(_healthReport);
-            ManagerViewModels.Add(_vm.ManagerViewModel);
+            ManagerViewModels = new() {
+                _vm.ManagerViewModel
+            };
         }
 
         public LogViewModel CreateLogViewModel()
@@ -84,7 +93,7 @@ namespace DashboardFrontend
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new(_healthReport);
-            result.UpdateData(_conversion.ActiveExecution.Managers);
+            result.UpdateData(Conversion.ActiveExecution.Managers);
             ManagerViewModels.Add(result);
             return result;
         }
@@ -157,14 +166,27 @@ namespace DashboardFrontend
 
         public void UpdateManagerOverview()
         {
-            DU.AddManagerReadings(_conversion.ActiveExecution);
+            DU.AddManagerReadings(Conversion.ActiveExecution);
             foreach (var vm in ManagerViewModels)
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    vm.UpdateData(_conversion.ActiveExecution.Managers);
+                    vm.UpdateData(Conversion.ActiveExecution.Managers);
                 });
             }
+        }
+
+        private void InitializeConversion()
+        {
+            Conversion = new()
+            {
+                Executions = DU.GetExecutions()
+            };
+            _log = Conversion.ActiveExecution.Log;
+            _validationReport = Conversion.ActiveExecution.ValidationReport;
+            _healthReport = Conversion.HealthReport;
+            DU.AddManagers(Conversion.Executions);
+            DU.BuildHealthReport(_healthReport);
         }
 
         /// <summary>
@@ -186,17 +208,14 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
-                    if (!_conversion.IsInitialized)
+                    if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
-                        _conversion.Executions = DU.GetExecutions();
-                        _log = _conversion.ActiveExecution.Log;
-                        _validationReport = _conversion.ActiveExecution.ValidationReport;
-                        _healthReport = _conversion.HealthReport;
-                        DU.AddManagers(_conversion.Executions);
-                        DU.BuildHealthReport(_healthReport);
-                        _conversion.IsInitialized = true;
+                        UserSettings.ActiveProfile.ProfileChanged += Reset;
+                        UserSettings.ActiveProfile.ProfileChanged += StopMonitoring;
                     }
+                    InitializeConversion();
                     StartMonitoring();
+                    UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
             }
             else
@@ -277,6 +296,12 @@ namespace DashboardFrontend
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
+        }
+
+        internal void Reset()
+        {
+            InitializeViewModels(LogViewModels[0].LogListView);
+            _vm.UpdateView();
         }
     }
 }

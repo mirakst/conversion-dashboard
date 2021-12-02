@@ -1,6 +1,8 @@
 ﻿using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -38,6 +40,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Button_Save(object sender, RoutedEventArgs e)
         {
+            bool ProfileDataChanged = false;
             List<BindingExpression> bindings = new()
             {
                 TextBoxName.GetBindingExpression(TextBox.TextProperty),
@@ -47,6 +50,16 @@ namespace DashboardFrontend.DetachedWindows
                 TextBoxTimeout.GetBindingExpression(TextBox.TextProperty)
             };
 
+            if ((TextBoxDataSrc.Text != Profile.DataSource || TextBoxDatabase.Text != Profile.Database) && Profile.HasStartedMonitoring)
+            {
+                if (!SettingsWindow.Confirm("Editing the data source or database of the active profile will stop ongoing monitoring and clear all views. Continue?"))
+                {
+                    Close();
+                    return;
+                }
+                ProfileDataChanged = true;
+            }
+            
             foreach (BindingExpression binding in bindings)
             {
                 binding.UpdateSource();
@@ -61,7 +74,7 @@ namespace DashboardFrontend.DetachedWindows
                 Validation.GetHasError(TextBoxTimeout)
             };
 
-            if (!inputValidations.Contains(true))
+            if (inputValidations.Contains(true))
             {
                 if (Profile.Equals(UserSettings.ActiveProfile))
                 {
@@ -74,6 +87,11 @@ namespace DashboardFrontend.DetachedWindows
                     UserSettings.Profiles.Add(Profile);
                 }
 
+                if (ProfileDataChanged)
+                {
+                    Profile.OnProfileChange();
+                    Profile.HasStartedMonitoring = false;
+                }
                 Close();
             }
             else
@@ -90,6 +108,16 @@ namespace DashboardFrontend.DetachedWindows
         private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);
+        }
+
+        private void TextBoxName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBoxDataSrc_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

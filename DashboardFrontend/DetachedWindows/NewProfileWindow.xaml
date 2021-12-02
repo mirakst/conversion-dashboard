@@ -26,7 +26,7 @@
 
     <Border BorderBrush="{DynamicResource BorderColor}"
             BorderThickness="1">
-        <Grid FocusManager.FocusedElement="{Binding ElementName=name}"
+        <Grid FocusManager.FocusedElement="{Binding ElementName=TextBoxName}"
               Background="{DynamicResource BackgroundColor}">
 
             <Grid.ColumnDefinitions>
@@ -105,9 +105,9 @@
                          Height="22" 
                          Margin="0,5,0,15"
                          VerticalAlignment="Center" 
-                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxName_TextChanged">
                     <TextBox.Text>
-                        <Binding Path="Name" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                        <Binding Path="Name" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
                                 <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
                             </Binding.ValidationRules>
@@ -121,7 +121,7 @@
                          VerticalAlignment="Center" 
                          Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
-                        <Binding Path="Conversion" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                        <Binding Path="Conversion" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
                                 <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
                             </Binding.ValidationRules>
@@ -133,9 +133,9 @@
                          Height="22" 
                          Margin="0,0,0,15"
                          VerticalAlignment="Center"
-                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxDataSrc_TextChanged">
                     <TextBox.Text>
-                        <Binding Path="DataSource" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                        <Binding Path="DataSource" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
                                 <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
                                 <ValidationRules:InvalidCharactersRule InvalidCharacters=" "/>
@@ -150,7 +150,7 @@
                          VerticalAlignment="Center"
                          Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
-                        <Binding Path="Database" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                        <Binding Path="Database" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
                                 <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
                                 <ValidationRules:InvalidCharactersRule InvalidCharacters=" "/>
@@ -164,7 +164,7 @@
                          VerticalAlignment="Center"
                          Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
-                        <Binding Path="Timeout" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                        <Binding Path="Timeout" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
                                 <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
                             </Binding.ValidationRules>
@@ -185,7 +185,7 @@
                         Margin="0 0 10 0" 
                         IsCancel="True" 
                         Click="Button_Cancel"/>
-                <Button Content="OK" 
+                <Button Content="Save" 
                         Width="100" 
                         IsDefault="True" 
                         Click="Button_Save"/>

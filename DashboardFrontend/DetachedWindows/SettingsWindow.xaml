@@ -60,6 +60,7 @@
                    Foreground="{DynamicResource ForegroundColor}"/>
 
             <TabControl Grid.Row="1" 
+                    Grid.ColumnSpan="2"
                     SelectedIndex="3" 
                     BorderThickness="0,1,0,0"
                     BorderBrush="Transparent"
