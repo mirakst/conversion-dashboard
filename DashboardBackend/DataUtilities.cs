@@ -135,29 +135,40 @@ namespace DashboardBackend
         public static List<LogMessage> GetLogMessages() => GetLogMessages(SqlMinDateTime);
 
         /// <summary>
-        /// Queries the state database for all managers added after the specified minimum date, and updates their values.
+        /// Queries the state database for managers added since the specified minimum date.
+        /// 
         /// </summary>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <param name="allManagers">The list of all managers currently associated with the active Conversion.</param>
-        /// <returns></returns>
-        public static List<Manager> GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
+        /// <param name="minDate"></param>
+        /// <param name="allManagers"></param>
+        public static void GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
         {
-            // Get all entries in the ENGINE_PROPERTIES table
-            // For each entry: Find the associated manager and add the value to it. 
-            // If the manager does not exist in allManagers, it is created.
-            List<EnginePropertyEntry> propertyEntries = DatabaseHandler.QueryEngineProperties(minDate);
-            foreach (var entry in propertyEntries)
+            List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
+
+            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
+            foreach (var entry in engineEntries)
             {
                 string name = entry.Manager.Split(',')[0];
-                Manager manager = allManagers.Find(m => m.Name == name);
-                if (manager is null)
+                entry.Manager = name;
+            }
+
+            // For each entry: Find the associated manager and add the value to it. 
+            // If the manager exists but already has all values set, it must be the same manager in a new execution.
+            // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
+            foreach (var entry in engineEntries)
+            {
+                string name = entry.Manager.Split(',')[0];
+                Manager manager = allManagers.FindLast(m => m.Name == name);
+                if (manager is null || (manager.Status == ManagerStatus.Ok && manager.EndTime.HasValue && manager.StartTime.HasValue && manager.RowsRead.HasValue && manager.RowsWritten.HasValue))
                 {
-                    manager = new() { Name = name };
+                    manager = new()
+                    {
+                        Name = name,
+                    };
                     allManagers.Add(manager);
                 }
                 AddEnginePropertiesToManager(manager, entry);
             }
-            return allManagers;
         }
 
         /// <summary>

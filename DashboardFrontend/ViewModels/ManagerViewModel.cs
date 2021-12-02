@@ -70,13 +70,12 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
-        public void UpdateData(Dictionary<int, Manager> executionManagersDict)
+        public void UpdateData(List<Manager> executionManagers)
         {
             Managers.Clear();
-            foreach (int contextId in executionManagersDict.Keys)
+            foreach (var manager in executionManagers)
             {
-                Manager manager = executionManagersDict[contextId];
-                Managers.Add(new ManagerWrapper(manager, contextId));
+                Managers.Add(new ManagerWrapper(manager));
             }
         }
     }

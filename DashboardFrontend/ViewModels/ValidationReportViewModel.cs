@@ -52,7 +52,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
-                ManagerView.Refresh();
+                ManagerView?.Refresh();
             }
         }
         private int _totalCount;
@@ -161,12 +161,15 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         private void RefreshViews()
         {
-            foreach (object item in ManagerView)
+            if (ManagerView != null)
             {
-                ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
-                wrapper.ValidationView.Refresh();
+                foreach (object item in ManagerView)
+                {
+                    ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
+                    wrapper.ValidationView?.Refresh();
+                }
+                UpdateData(_validationReport);
             }
-            UpdateData(_validationReport);
         }
 
         /// <summary>

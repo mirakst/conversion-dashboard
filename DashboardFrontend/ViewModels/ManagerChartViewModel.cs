@@ -54,7 +54,7 @@ namespace DashboardFrontend.ViewModels
                     GeometryFill = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
                     GeometryStroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
                     GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => $"{manager.Manager.Name.Split(".").Last()}\nID [{manager.ContextId}]\n{DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}\n{e.PrimaryValue:P}"
+                    TooltipLabelFormatter = e => $"{manager.Manager.Name.Split(".").Last()}\nID [{manager.Manager.ContextId}]\n{DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}\n{e.PrimaryValue:P}"
                 }, managerValues[index++]);
             }
         }

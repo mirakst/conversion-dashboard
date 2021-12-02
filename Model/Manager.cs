@@ -39,7 +39,7 @@ namespace Model
                 }
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
-
+        public int ContextId { get; set; }
         public string ShortName { get; set; }
         public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
         public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.

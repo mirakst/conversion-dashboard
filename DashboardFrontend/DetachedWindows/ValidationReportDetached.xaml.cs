@@ -25,10 +25,12 @@ namespace DashboardFrontend.DetachedWindows
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
-            if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
             {
-                ViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                }
             }
         }
 
@@ -39,8 +41,14 @@ namespace DashboardFrontend.DetachedWindows
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = (ManagerValidationsWrapper)tree.ItemContainerGenerator.ItemFromContainer(item);
-            ViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+            item.IsSelected = false;
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            {
+                if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                {
+                    ViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                }
+            }
         }
 
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)

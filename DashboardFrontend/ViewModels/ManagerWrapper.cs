@@ -10,13 +10,11 @@ namespace DashboardFrontend
     public class ManagerWrapper
     {
         public Manager Manager {  get; set; }
-        public int ContextId { get; }
         public SolidColorBrush LineColor { get; private set; }
 
-        public ManagerWrapper(Manager manager, int contextId)
+        public ManagerWrapper(Manager manager)
         {
             Manager = manager;
-            ContextId = contextId;
             LineColor = new(RandomColor());
         }
 

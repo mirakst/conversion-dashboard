@@ -43,8 +43,6 @@ namespace DashboardBackend.Database
         /// <returns>A list of Managers.</returns>
         List<LoggingContextEntry> QueryLoggingContext();
 
-        List<ManagerTracking> QueryManagerTracking();
-
         /// <summary>
         /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
         /// </summary>
@@ -60,7 +58,7 @@ namespace DashboardBackend.Database
         List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database .
+        /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database.
         /// </summary>
         /// <returns>A list of manager data.</returns>
         List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate);

@@ -81,7 +81,7 @@
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
-                                            Binding="{Binding ContextId}"
+                                            Binding="{Binding Manager.ContextId}"
                                             Width="25pt"/>
                         <DataGridTextColumn Header="Manager name" 
                                             Binding="{Binding Manager.ShortName}"
@@ -138,7 +138,7 @@
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
-                                                        Binding="{Binding ContextId}"
+                                                        Binding="{Binding Manager.ContextId}"
                                                         Width="25pt"/>
                                     <DataGridTextColumn Header="Start time"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss}"
@@ -195,7 +195,7 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Row="0"
@@ -320,7 +320,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding ContextId, FallbackValue='N/A'}"
+                                    <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
                                     <DataGridTemplateColumn>

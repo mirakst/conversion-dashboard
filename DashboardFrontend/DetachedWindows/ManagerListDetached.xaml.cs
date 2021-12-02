@@ -35,7 +35,7 @@ namespace DashboardFrontend.DetachedWindows
         {
             foreach (ManagerWrapper manager in datagridManagers.SelectedItems)
             {
-                if (!Vm.WrappedManagers.Any(e => e.ContextId == manager.ContextId))
+                if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
                 {
                     DatagridManagerMover("Add", manager);
                 }
@@ -83,7 +83,7 @@ namespace DashboardFrontend.DetachedWindows
                 List<ManagerWrapper> foundManagers = new();
                 foreach (ManagerWrapper manager in datagridManagers.Items)
                 {
-                    if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.ContextId.ToString() == textboxSearchbar.Text)
+                    if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.Manager.ContextId.ToString() == textboxSearchbar.Text)
                     {
                         foundManagers.Add(manager);
                         datagridManagers.SelectedItems.Add(manager);
