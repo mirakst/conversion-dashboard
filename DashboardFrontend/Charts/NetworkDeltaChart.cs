@@ -76,10 +76,10 @@ namespace DashboardFrontend.Charts
                 {
                     Name = "Delta",
                     Labeler = (value) => value.ToString("N0") + "MB",
-                    MinLimit = 0,
-                    MaxLimit = 100,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    MinLimit = 0,
+                    MaxLimit = 1000,
                     Padding = new Padding(0),
                     NamePadding = new Padding(0),
                 }

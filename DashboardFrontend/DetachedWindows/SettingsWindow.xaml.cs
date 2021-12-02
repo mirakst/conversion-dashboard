@@ -2,6 +2,9 @@
 using DashboardFrontend.Settings;
 using System.Windows;
 using System;
+using System.Windows.Input;
+using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -23,7 +26,16 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Button_SaveAndClose(object sender, RoutedEventArgs e)
         {
-            if (!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
+            List<bool> inputValidations = new()
+            {
+                Validation.GetHasError(TextBoxLoggingInterval),
+                Validation.GetHasError(TextBoxHRInterval),
+                Validation.GetHasError(TextBoxValidationInterval),
+                Validation.GetHasError(TextBoxManagerInterval),
+                Validation.GetHasError(TextBoxAllInterval)
+            };
+
+            if ((!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?")) && !inputValidations.Contains(true))
             {
                 try
                 {
@@ -35,6 +47,10 @@ namespace DashboardFrontend.DetachedWindows
                     MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n"+ex.Message);
                 }
             }
+            else
+            {
+                _ = MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+            }
         }
 
         private void Button_Close(object sender, RoutedEventArgs e)
@@ -45,6 +61,7 @@ namespace DashboardFrontend.DetachedWindows
         private void Button_NewProfile(object sender, RoutedEventArgs e)
         {
             NewProfileWindow newProfileWindow = new(SettingsViewModel);
+            newProfileWindow.Owner = this;
             newProfileWindow.ShowDialog();
         }
 
@@ -83,6 +100,16 @@ namespace DashboardFrontend.DetachedWindows
                 SettingsViewModel.ActiveProfile = SettingsViewModel.SelectedProfile;
                 SettingsViewModel.HasChangedActiveProfile = !(SettingsViewModel.ActiveProfile.Equals(Settings.ActiveProfile));
             }
+        }
+
+        private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
         }
     }
 }
