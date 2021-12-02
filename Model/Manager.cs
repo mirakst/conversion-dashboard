@@ -86,6 +86,11 @@ namespace Model
                    $"ROWS WRITTEN: {RowsWritten}\n";
         }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExecutionId, Name, Score);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is not Manager other)
@@ -93,7 +98,7 @@ namespace Model
                 return false;
             }
 
-            return ExecutionId == other.ExecutionId && Name == other.Name;
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

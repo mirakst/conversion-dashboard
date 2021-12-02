@@ -1,4 +1,3 @@
-using DashboardBackend.Database.Models;
 using DashboardBackend.Tests.Database;
 using Model;
 using System;

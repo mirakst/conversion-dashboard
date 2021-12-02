@@ -5,13 +5,21 @@ namespace DashboardBackend
 {
     public class ManagerScore
     {
+        public ValidationReport ValidationReport { get; }
         public List<Manager> ManagerList { get; }
         public double AvrageRowsPerSecond { get; private set;  }
 
-        public ManagerScore(List<Manager> managerList)
+        public ManagerScore(ValidationReport validationReport, List<Manager> managerList)
         {
+            ValidationReport = validationReport;
             ManagerList = managerList;
+
             GetAvrageOfRowPerSecond(ManagerList);
+
+            foreach (var manager in ManagerList)
+            {
+                manager.Score = GetManagerScore(manager);
+            }
         }
 
         /// <summary>
@@ -20,15 +28,14 @@ namespace DashboardBackend
         /// <param name="validationReport"></param>
         /// <param name="manager"></param>
         /// <returns></returns>
-        public double GetManagerScore(ValidationReport validationReport, Manager manager)
+        public double GetManagerScore(Manager manager)
         {
             double score = GetRowPerSecond(manager) / AvrageRowsPerSecond;
-                   score += GetValidationsScore(validationReport, manager) * 2;
+                   score += GetValidationsScore(manager) * 2;
 
             return score;
         }
 
-        #region RowsPerSecond
         /// <summary>
         /// Calculates avrage rows per second for a <see cref="Manager"/>.
         /// </summary>
@@ -47,21 +54,20 @@ namespace DashboardBackend
         {
             AvrageRowsPerSecond = managerList.Select(m => GetRowPerSecond(m)).Sum() / managerList.Count;
         }
-        #endregion
-        #region ValidationsFailedPerOK
+
         /// <summary>
         /// Calculates a score for failed <see cref="ValidationReport.ValidationTests"/> out of total <see cref="ValidationReport.ValidationTests"/>.
         /// </summary>
         /// <param name="validationReport"></param>
         /// <param name="manager"></param>
         /// <returns></returns>
-        private static double GetValidationsScore(ValidationReport validationReport, Manager manager)
+        private double GetValidationsScore(Manager manager)
         {
-            int bad = validationReport.ValidationTests.Count(val => val.ManagerName == manager.Name
+            int bad = ValidationReport.ValidationTests.Count(val => val.ManagerName == manager.Name
                                                                      && (val.Status == ValidationStatus.Failed
                                                                      || val.Status == ValidationStatus.FailMismatch));
 
-            int total = validationReport.ValidationTests.Where(val => val.ManagerName == manager.Name)
+            int total = ValidationReport.ValidationTests.Where(val => val.ManagerName == manager.Name)
                                                         .Where(val => val.Status != ValidationStatus.Disabled)
                                                         .Count();
             if (bad > 0 && total > 0)
@@ -70,6 +76,5 @@ namespace DashboardBackend
             }
             return 0;
         }
-        #endregion
     }
 }
