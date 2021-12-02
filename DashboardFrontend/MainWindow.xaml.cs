@@ -156,14 +156,14 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            DataChart? ass = (DataChart)(sender as CartesianChart)?.DataContext!;
-            ass?.AutoFocusOn();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            DataChart? ass = (DataChart)(sender as CartesianChart)?.DataContext!;
-            ass?.AutoFocusOff();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOff();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
