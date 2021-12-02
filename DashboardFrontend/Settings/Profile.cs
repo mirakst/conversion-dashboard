@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace DashboardFrontend.Settings
 {
+    public delegate void ProfileChanged();
+
     public class Profile
     {
         public Profile(string name, string conversion, string dataSource, string database, int timeout)
@@ -39,6 +41,7 @@ namespace DashboardFrontend.Settings
         public string ConnectionString { get; private set; }
         [JsonIgnore]
         public bool HasReceivedCredentials { get; set; }
+        [JsonIgnore]
         public bool HasStartedMonitoring { get; set; }
         public event ProfileChanged ProfileChanged;
         public void OnProfileChange()
@@ -73,5 +76,4 @@ namespace DashboardFrontend.Settings
             return Id;
         }
     }
-    public delegate void ProfileChanged();
 }

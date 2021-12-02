@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Linq;
 
 namespace DashboardFrontend.Settings
 {
@@ -11,10 +13,23 @@ namespace DashboardFrontend.Settings
         {
         }
 
+        [JsonConstructor]
+        public UserSettings(IList<Profile> profiles, int loggingQueryInterval, int validationQueryInterval, int managerQueryInterval, int allQueryInterval, bool synchronizeAllQueries, int activeProfileId)
+        {
+            Profiles = profiles;
+            LoggingQueryInterval = loggingQueryInterval;
+            ValidationQueryInterval = validationQueryInterval;
+            ManagerQueryInterval = managerQueryInterval;
+            AllQueryInterval = allQueryInterval;
+            SynchronizeAllQueries = synchronizeAllQueries;
+            ActiveProfile = Profiles.FirstOrDefault(p => p.Id == activeProfileId);
+        }
+
         private readonly string _fileName = "UserSettings.json";
 
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
         private Profile? _activeProfile;
+        [JsonIgnore]
         public Profile? ActiveProfile
         {
             get => _activeProfile;
@@ -30,7 +45,10 @@ namespace DashboardFrontend.Settings
         public int ManagerQueryInterval { get; set; } = 60;
         public int AllQueryInterval { get; set; } = 30;
         public bool SynchronizeAllQueries { get; set; } = false;
+        [JsonIgnore]
         public bool HasActiveProfile => ActiveProfile is not null;
+        // For JSON serialization
+        public int ActiveProfileId => ActiveProfile?.Id ?? 0;
 
         private void OverwriteAll(IUserSettings settings)
         {
