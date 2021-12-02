@@ -108,7 +108,7 @@
                         Grid.Column="1"
                         Orientation="Vertical">
 
-                <TextBox x:Name="name"
+                <TextBox x:Name="TextBoxName"
                          Height="22" 
                          Margin="0,5,0,15"
                          VerticalAlignment="Center" 
@@ -122,7 +122,7 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <TextBox x:Name="conversion"
+                <TextBox x:Name="TextBoxConversion"
                          Height="22" 
                          Margin="0,0,0,55"
                          VerticalAlignment="Center" 
@@ -136,7 +136,7 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <TextBox x:Name="dataSrc" 
+                <TextBox x:Name="TextBoxDataSrc" 
                          Height="22" 
                          Margin="0,0,0,15"
                          VerticalAlignment="Center"
@@ -151,7 +151,7 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <TextBox x:Name="database" 
+                <TextBox x:Name="TextBoxDatabase" 
                          Height="22" 
                          Margin="0,0,0,15"
                          VerticalAlignment="Center"
@@ -166,7 +166,7 @@
                     </TextBox.Text>
                 </TextBox>
 
-                <TextBox x:Name="timeout" 
+                <TextBox x:Name="TextBoxTimeout" 
                          Height="22" 
                          VerticalAlignment="Center"
                          Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
@@ -180,6 +180,7 @@
                 </TextBox>
             </StackPanel>
 
+            <!-- Buttons -->
             <StackPanel Grid.Row="8" 
                         Grid.RowSpan="2"
                         Grid.ColumnSpan="3" 

@@ -47,6 +47,10 @@ namespace DashboardFrontend.DetachedWindows
                     MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n"+ex.Message);
                 }
             }
+            else
+            {
+                _ = MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+            }
         }
 
         private void Button_Close(object sender, RoutedEventArgs e)

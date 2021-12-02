@@ -40,11 +40,11 @@ namespace DashboardFrontend.DetachedWindows
         {
             List<BindingExpression> bindings = new()
             {
-                name.GetBindingExpression(TextBox.TextProperty),
-                conversion.GetBindingExpression(TextBox.TextProperty),
-                dataSrc.GetBindingExpression(TextBox.TextProperty),
-                database.GetBindingExpression(TextBox.TextProperty),
-                timeout.GetBindingExpression(TextBox.TextProperty)
+                TextBoxName.GetBindingExpression(TextBox.TextProperty),
+                TextBoxConversion.GetBindingExpression(TextBox.TextProperty),
+                TextBoxDataSrc.GetBindingExpression(TextBox.TextProperty),
+                TextBoxDatabase.GetBindingExpression(TextBox.TextProperty),
+                TextBoxTimeout.GetBindingExpression(TextBox.TextProperty)
             };
 
             foreach (BindingExpression binding in bindings)
@@ -54,11 +54,11 @@ namespace DashboardFrontend.DetachedWindows
 
             List<bool> inputValidations = new()
             {
-                Validation.GetHasError(name),
-                Validation.GetHasError(conversion),
-                Validation.GetHasError(dataSrc),
-                Validation.GetHasError(database),
-                Validation.GetHasError(timeout)
+                Validation.GetHasError(TextBoxName),
+                Validation.GetHasError(TextBoxConversion),
+                Validation.GetHasError(TextBoxDataSrc),
+                Validation.GetHasError(TextBoxDatabase),
+                Validation.GetHasError(TextBoxTimeout)
             };
 
             if (!inputValidations.Contains(true))
