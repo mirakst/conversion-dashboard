@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -46,23 +47,54 @@ namespace DashboardFrontend.DetachedWindows
                 timeout.GetBindingExpression(TextBox.TextProperty)
             };
 
-            if (Profile.Equals(UserSettings.ActiveProfile))
-            {
-                Profile.HasReceivedCredentials = false;
-                UserSettings.ActiveProfile = Profile;
-            }
-
-            foreach(BindingExpression binding in bindings)
+            foreach (BindingExpression binding in bindings)
             {
                 binding.UpdateSource();
             }
 
-            if (!UserSettings.Profiles.Contains(Profile))
+            List<bool> inputValidations = new()
             {
-                UserSettings.Profiles.Add(Profile);
-            }
+                Validation.GetHasError(name),
+                Validation.GetHasError(conversion),
+                Validation.GetHasError(dataSrc),
+                Validation.GetHasError(database),
+                Validation.GetHasError(timeout)
+            };
 
-            Close();
+            if (!inputValidations.Contains(true))
+            {
+                if (Profile.Equals(UserSettings.ActiveProfile))
+                {
+                    Profile.HasReceivedCredentials = false;
+                    UserSettings.ActiveProfile = Profile;
+                }
+
+                if (!UserSettings.Profiles.Contains(Profile))
+                {
+                    UserSettings.Profiles.Add(Profile);
+                }
+
+                Close();
+            }
+            else
+            {
+                _ = MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+            }
+        }
+
+        private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }

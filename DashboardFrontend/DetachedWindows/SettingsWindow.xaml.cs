@@ -2,6 +2,7 @@
 using DashboardFrontend.Settings;
 using System.Windows;
 using System;
+using System.Windows.Input;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -45,6 +46,7 @@ namespace DashboardFrontend.DetachedWindows
         private void Button_NewProfile(object sender, RoutedEventArgs e)
         {
             NewProfileWindow newProfileWindow = new(SettingsViewModel);
+            newProfileWindow.Owner = this;
             newProfileWindow.ShowDialog();
         }
 
@@ -83,6 +85,21 @@ namespace DashboardFrontend.DetachedWindows
                 SettingsViewModel.ActiveProfile = SettingsViewModel.SelectedProfile;
                 SettingsViewModel.HasChangedActiveProfile = !(SettingsViewModel.ActiveProfile.Equals(Settings.ActiveProfile));
             }
+        }
+
+        private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }

@@ -34,6 +34,7 @@ namespace DashboardFrontend
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
+            settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
 
