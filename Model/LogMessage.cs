@@ -34,5 +34,15 @@ namespace Model
         {
             return $"{Date} [{Type}]: {Content}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not LogMessage other)
+            {
+                return false;
+            }
+
+            return Date == other.Date && Content == other.Content;
+        }
     }
 }

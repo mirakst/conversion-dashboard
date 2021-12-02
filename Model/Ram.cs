@@ -25,5 +25,18 @@
         {
             return $"TOTAL MEMORY: {Total} bytes";
         }
+
+        public override int GetHashCode()
+        {
+            return (Total == null ? 0 : Total.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Ram other)
+                return false;
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }

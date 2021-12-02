@@ -40,5 +40,15 @@
         {
             return $"({Date}) {Name}: {Status}\n[src={SrcCount},dst={DstCount},toolkit={ToolkitId}]\nSrc sql: {SrcSql}\nDst sql: {DstSql}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ValidationTest other)
+            {
+                return false;
+            }
+
+            return Name == other.Name && ManagerName == other.ManagerName;
+        }
     }
 }

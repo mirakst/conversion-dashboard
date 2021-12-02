@@ -56,5 +56,19 @@
                    $"STATUS: {Status}\nMANAGERS: {Managers.Count}\n";
 
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, StartTime, EndTime, Status);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Execution other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode() && Managers.SequenceEqual(other.Managers);
+        }
     }
 }

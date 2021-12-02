@@ -85,5 +85,15 @@ namespace Model
                    $"START TIME: {StartTime}\nEND TIME: {EndTime}\nRUNTIME: {Runtime}\nROWS READ: {RowsRead}\n" +
                    $"ROWS WRITTEN: {RowsWritten}\n";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Manager other)
+            {
+                return false;
+            }
+
+            return ExecutionId == other.ExecutionId && Name == other.Name;
+        }
     }
 }

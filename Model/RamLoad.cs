@@ -20,5 +20,20 @@
         {
             return $"{Date.ToLongTimeString()}: {Load} bytes";
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExecutionId, Load, Date, Available);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not RamLoad other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }

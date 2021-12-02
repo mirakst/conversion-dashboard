@@ -33,5 +33,20 @@
             return $"BYTES SENT: {BytesSend} bytes\nBYTES SENT (DELTA): {BytesSendDelta} bytes\nBYTES SENT (SPEED): {BytesSendSpeed} bps\n" +
                    $"BYTES RECEIVED: {BytesReceived} bytes\nBYTES RECEIVED (DELTA): {BytesReceivedDelta} bytes\nBYTES RECEIVED (SPEED) {BytesReceivedSpeed} bps";
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExecutionId, Date, BytesSend, BytesReceived);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not NetworkUsage other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }
