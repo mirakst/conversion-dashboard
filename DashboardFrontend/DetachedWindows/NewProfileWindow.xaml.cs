@@ -74,7 +74,7 @@ namespace DashboardFrontend.DetachedWindows
                 Validation.GetHasError(TextBoxTimeout)
             };
 
-            if (inputValidations.Contains(true))
+            if (!inputValidations.Contains(true))
             {
                 if (Profile.Equals(UserSettings.ActiveProfile))
                 {

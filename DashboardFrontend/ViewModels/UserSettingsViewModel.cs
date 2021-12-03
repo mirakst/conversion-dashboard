@@ -16,6 +16,7 @@ namespace DashboardFrontend.ViewModels
             ManagerQueryInterval = userSettings.ManagerQueryInterval;
             AllQueryInterval = userSettings.AllQueryInterval;
             SynchronizeAllQueries = userSettings.SynchronizeAllQueries;
+            SelectedProfile = ActiveProfile;
         }
 
         public IList<Profile> Profiles { get; set; }
