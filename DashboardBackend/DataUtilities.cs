@@ -235,6 +235,11 @@ namespace DashboardBackend
             }
         }
 
+        public static int GetEstimatedManagerCount(int executionId)
+        {
+            return DatabaseHandler.QueryLoggingContext(executionId).Count;
+        }
+
         /// <summary>
         /// Queries the state database for health report performance entries, 
         /// and adds them to the health report.

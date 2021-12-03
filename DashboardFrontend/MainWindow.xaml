@@ -38,15 +38,25 @@
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0"
                   Grid.ColumnSpan="2"
                   MouseLeftButtonDown="DraggableGrid">
+                
                 <TextBlock x:Name="TextBlockWindowTitle"
                            FontSize="14"
                            MinWidth="200"
                            TextAlignment="Center"
-                           Margin="0, 8, 0, 0"
+                           Margin="0, 4, 0, 0"
                            Foreground="{DynamicResource ForegroundColor}">
                     <TextBlock.Inlines>
                         <Run FontWeight="Bold" FontSize="14" Text="Conversion Dashboard" />
@@ -55,6 +65,17 @@
                 <Grid Name="GridControlPanel"
                       Margin="20,35,20,0"
                       Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="8*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <Button Name="ButtonStartStop"
                             Click="ButtonStartStopClick"
                             Grid.Column="0"
@@ -98,46 +119,39 @@
                                Foreground="{DynamicResource ForegroundColor}"
                                Text="{Binding Controller.UserSettings.ActiveProfile.Conversion, FallbackValue='No profile set'}"/>
                     <Grid Grid.Column="3" 
-                          Grid.Row="0">
-                        <ProgressBar Name="ProgressBarManagerProgress" 
+                          Grid.RowSpan="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ProgressBar Name="ProgressBarExecutionProgress" 
                                      Margin="2"
-                                     Grid.Row="0"
                                      Minimum="0"
                                      Maximum="100"
-                                     Value="85"/>
-                        <TextBlock Text="{Binding ElementName=ProgressBarManagerProgress, Path=Value, StringFormat=Manager #: {0:0}%}" 
-                                   FontSize="15" 
-                                   HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center"/>
-                    </Grid>
+                                     Grid.ColumnSpan="3"
+                                     Value="{Binding CurrentProgress}"/>
+                        <TextBlock Text="{Binding ElementName=ProgressBarExecutionProgress, Path=Value, StringFormat=Execution: {0:0}%}" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
 
-                    <Grid Grid.Column="3" 
-                          Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="555*"/>
-                            <ColumnDefinition Width="346*"/>
-                        </Grid.ColumnDefinitions>
-                        <ProgressBar Name="ProgressBarConversionProgress" 
-                                     Margin="2,2,2,2" 
-                                     Minimum="0" 
-                                     Maximum="100" 
-                                     Value="15" Grid.ColumnSpan="2"/>
-                        <TextBlock Text="{Binding ElementName=ProgressBarConversionProgress, Path=Value, StringFormat=Conversion: {0:0}%}" 
-                                   FontSize="15" 
-                                   HorizontalAlignment="Left" 
-                                   VerticalAlignment="Center" Margin="395,0,0,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Margin="0 4 0 0"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Left">
+                            <TextBlock Grid.Row="1"
+                                   HorizontalAlignment="Right"
+                                   Text="Status: "
+                                   Foreground="LightGray"
+                                   FontWeight="Bold"/>
+                            <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding CurrentStatus}"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Left"
+                                   Foreground="LightGray"/>
+                        </StackPanel>
                     </Grid>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="8*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
                 </Grid>
             </Grid>
 
@@ -145,7 +159,7 @@
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-                  
+
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -199,7 +213,7 @@
                               BorderBrush="{DynamicResource BorderColor}"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
-                        
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
@@ -641,17 +655,17 @@
                                            FontWeight="Bold"
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
-                                    
+
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
-                                        
+
                                         <Button Margin="0 0 5 0"
                                             Click="CopySrcSql_Click"
                                             MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
                                             Content="Source"/>
-                                        
+
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
@@ -687,7 +701,7 @@
                         </Border>
                     </Grid>
                 </Grid>
-            <Grid Name="GridHealthReportChartGrid"
+                <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
@@ -849,7 +863,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-                
+            
             <Grid Name="WindowControlGrid"
                   Grid.Column="5"
                   Grid.Row="0"
@@ -881,14 +895,6 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
         </Grid>
     </Border>
 </Window>

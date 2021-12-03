@@ -58,13 +58,11 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<LoggingContextEntry> QueryLoggingContext()
+        public List<LoggingContextEntry> QueryLoggingContext(int executionId)
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.LoggingContexts
-                                .Where(e => e.ContextId > 0)
-                                .OrderBy(e => e.ExecutionId)
-                                .ThenBy(e => e.ContextId);
+                                .Where(e => e.ContextId > 0 && e.ExecutionId == executionId);
             return queryResult.ToList();
         }
 
