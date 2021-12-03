@@ -9,7 +9,7 @@ namespace DashboardBackend.Tests
     public class TestManagerScore
     {
         [Fact]
-        public void TestGetManagerScore_True()
+        public void GetManagerScore_GetsManagersScoreAndAssignsThemToEachManager_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             List<Manager> expected = new()

@@ -9,7 +9,7 @@ namespace DashboardBackend.Tests
     public class TestsDataUtilities
     {
         [Fact]
-        public void TestGetExecutions_True()
+        public void GetExecution_GetsExecutionsFromTestDatabase_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<Execution>()
@@ -24,7 +24,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestGetAfstemninger_True()
+        public void GetAfstemninger_GetsAfstemningerFromTestDatabase_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<ValidationTest>()
@@ -55,7 +55,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestGetLogMessages_True()
+        public void GetLogMessage_GetsLogMessagesFromTestDatabase_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<LogMessage>()
@@ -96,7 +96,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestGetLogMessagesWExecutionID_True()
+        public void GetLogMessage_GetsLogMessagesWithSpecificExecutionId_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<LogMessage>()
@@ -117,7 +117,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestGetLogMessagesWExecutionID_Throws()
+        public void GetLogMessage_GetsLogMessagesWithTooLowExecutionId_ThrowsArgumentOutOfRangeException()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
 
@@ -125,7 +125,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestGetManagers_True()
+        public void GetManager_GetsManagersFromTestDatabase_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<Manager>()
@@ -141,7 +141,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestAddManagers_True()
+        public void AddManager_AddsManagerFromExecutionToManagerList_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<Manager>()
@@ -151,8 +151,8 @@ namespace DashboardBackend.Tests
                 new Manager(3, 1, "ManagerThree"),
             };
 
-            var executinList = DataUtilities.GetExecutions();
-            DataUtilities.AddManagers(executinList);
+            var executionList = DataUtilities.GetExecutions();
+            DataUtilities.AddManagers(executionList);
 
             var actual = DataUtilities.GetManagers();
 
@@ -160,7 +160,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestAddHealthReport_True()
+        public void AddHealthReportReadings_GetsReadingsFromTheHealthReport_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             HealthReport expected = new(string.Empty,
@@ -200,7 +200,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestBuildHealthReport_True()
+        public void BuildHealthReport_BuildsAHealthReport_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             HealthReport expected = new(string.Empty,
@@ -218,7 +218,7 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void TestAddManagerReadings_True()
+        public void AddManagerReadings_GetReadingsForManagersAndAssignsThemToManager_ReturnTrue()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
