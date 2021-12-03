@@ -32,6 +32,32 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ManagerButton" TargetType="Button">
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        <Setter Property="Margin" Value="2,2,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ButtonOnHoverColor}" TargetName="Border" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background" Value="Transparent" TargetName="Border" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsDetailedInfoShown}" Value="true">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="DefaultWindowButton" TargetType="Button">
         <Setter Property="FontFamily" Value="Webdings"/>
         <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundColor}"/>

@@ -1,295 +1,372 @@
-﻿<Window x:Class="DashboardFrontend.DetachedWindows.SettingsWindow"
+<Window x:Class="DashboardFrontend.DetachedWindows.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
+        xmlns:ValidationRules="clr-namespace:DashboardFrontend.ValidationRules"
         mc:Ignorable="d"
         Title="Settings" 
         Height="500" 
         Width="420" 
+        WindowStyle="None"
         WindowStartupLocation="CenterOwner" 
         ShowInTaskbar="False" 
         ResizeMode="NoResize">
+    
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
+    </Window.CommandBindings>
+    
     <Window.Resources>
         <valueConverters:ProfileConverter x:Key="ProfileConverter"/>
+        <ControlTemplate x:Key="ControlTemplate"/>
     </Window.Resources>
-    <Grid Margin="0 0 0 10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="48"/>
-        </Grid.RowDefinitions>
 
-        <TextBlock Text="Settings" 
+    <Border BorderBrush="{DynamicResource BorderColor}"
+            BorderThickness="1">
+        <Grid Background="{DynamicResource CanvasColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="48"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="35"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Name="ButtonCloseSettings" 
+                    Grid.Row="0" 
+                    Grid.Column="1"
+                    Content="r"
+                    Width="35"
+                    Height="35"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Style="{DynamicResource CloseWindowButton}"
+                    Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+
+            <TextBlock Text="Settings" 
                    FontSize="32" 
-                   TextAlignment="Center"/>
-        
-        <TabControl Grid.Row="1" 
+                   Grid.ColumnSpan="2"
+                   Margin="50,0,50,0"
+                   TextAlignment="Center"
+                   Foreground="{DynamicResource ForegroundColor}"/>
+
+            <TabControl Grid.Row="1" 
+                    Grid.ColumnSpan="2"
                     SelectedIndex="3" 
-                    BorderThickness="0,1,0,0">
-            <TabItem Header="Profile" 
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="Transparent"
+                    Background="{DynamicResource BackgroundColor}">
+                <TabItem Header="Profile" 
                      IsSelected="True" 
-                     Margin="0,0,0,0">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="4*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Block #1: General -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="5*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="Active profile"
-                                   FontSize="16"
-                                   VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Row="1" 
-                                   Text="Conversion name" 
-                                   VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="1" 
-                                   Text='{Binding ActiveProfile.Name,FallbackValue="-"}' 
-                                   FontSize="16" 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="1" 
-                                   Grid.Column="1" 
-                                   Text='{Binding ActiveProfile.Conversion,FallbackValue="-"}' 
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-
-                    <!-- Block #2: Database connection -->
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="3*"/>
-                        </Grid.ColumnDefinitions>
+                     Margin="0,0,0,0"
+                     Style="{DynamicResource TabItemStyleOverwrite}">
+                    <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="150"/>
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Titles -->
+                        <StackPanel>
+                            <!-- Block #1: General -->
+                            <TextBlock Text="Active profile"
+                                       Height="22"
+                                       FontSize="16"
+                                       Margin="0,0,0,20"/>
+
+                            <TextBlock Grid.Row="1" 
+                                       Text="Conversion name"
+                                       Margin="0,0,0,60"/>
+
+                            <!-- Block #2: Database connection -->
+                            <TextBlock Grid.Row="1" 
+                                       Text="Data Source"
+                                       Margin="0,0,0,5"/>
+
+                            <TextBlock Grid.Row="2" 
+                                       Text="Database"
+                                       Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="3" 
+                                   Text="Connect Timeout (sec)"/>
+
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Style>
+                            </StackPanel.Resources>
+                        </StackPanel>
 
                         <TextBlock Grid.ColumnSpan="2" 
                                    Text="Database connection" 
                                    FontWeight="Bold" 
-                                   VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center"
+                                   Margin="0,-10,0,0"
+                                   Foreground="LightGray"/>
 
-                        <TextBlock Grid.Row="1" 
-                                   Text="Values Source" 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="1" 
-                                   Grid.Column="1" 
-                                   Text='{Binding ActiveProfile.DataSource,FallbackValue="-"}' 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="2" 
-                                   Text="Database" 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="2" 
-                                   Grid.Column="1" 
-                                   Text='{Binding ActiveProfile.Database,FallbackValue="-"}' 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="3" 
-                                   Text="Connect Timeout (sec)" 
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="3" 
-                                   Grid.Column="1" 
-                                   Text='{Binding ActiveProfile.Timeout,FallbackValue="-"}' 
-                                   VerticalAlignment="Center"/>
-                    </Grid>
+                        <!-- Values -->
+                        <StackPanel Grid.Column="1">
+                            <!-- Block #1: General -->
+                            <TextBlock Text='{Binding ActiveProfile.Name,FallbackValue="-"}'
+                                       Height="22"
+                                       Margin="0,0,0,20"/>
 
-                    <!-- Block #3: Profiles -->
-                    <Grid Grid.Row="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="2*"/>
-                            <RowDefinition Height="2*"/>
-                            <RowDefinition Height="2*"/>
-                        </Grid.RowDefinitions>
+                            <TextBlock Text='{Binding ActiveProfile.Conversion,FallbackValue="-"}'
+                                       Margin="0,0,0,60"/>
+                            
+                            <!-- Block #2: Database connection -->
+                            <TextBlock Text='{Binding ActiveProfile.DataSource,FallbackValue="-"}'
+                                       Margin="0,0,0,5"/>
 
-                        <TextBlock Grid.ColumnSpan="3" 
+                            <TextBlock Text='{Binding ActiveProfile.Database,FallbackValue="-"}'
+                                       Margin="0,0,0,5"/>
+
+                            <TextBlock Text='{Binding ActiveProfile.Timeout,FallbackValue="-"}'/>
+
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </StackPanel.Resources>
+                        </StackPanel>
+                        
+                        <!-- Block #3: Profiles -->
+                        <Grid Grid.Row="2"
+                              Grid.ColumnSpan="2"
+                              Margin="0,5,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="2*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.ColumnSpan="3" 
                                    Text="Profiles" 
                                    FontWeight="Bold" 
                                    VerticalAlignment="Center"/>
 
-                        <ListBox x:Name="profileListBox" 
+                            <ListBox x:Name="profileListBox" 
                                  Grid.Row="1" 
                                  Grid.RowSpan="3" 
                                  Margin="0 5 0 5" 
                                  ItemsSource="{Binding Profiles}" 
+                                 Background="{DynamicResource CanvasColor}"
+                                 Foreground="{DynamicResource ForegroundColor}"
                                  DisplayMemberPath="Name" 
-                                 SelectedItem="{Binding SelectedProfile,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}" 
-                                 SelectedIndex="0"/>
+                                 SelectedItem="{Binding SelectedProfile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Button Grid.Row="1" 
+                            <Button Grid.Row="1" 
                                 Grid.Column="1" 
                                 Grid.ColumnSpan="2" 
                                 Content="Set as active" 
                                 Margin="5" 
                                 Click="Button_SetActiveProfile" 
                                 IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
-                        
-                        <Button Grid.Row="2" 
+
+                            <Button Grid.Row="2" 
                                 Grid.Column="1" 
                                 Grid.ColumnSpan="2" 
                                 Content="New" 
                                 Margin="5" 
                                 Click="Button_NewProfile"/>
-                        
-                        <Button Grid.Row="3" 
+
+                            <Button Grid.Row="3" 
                                 Grid.Column="1" 
                                 Content="Edit" 
                                 Margin="5" 
                                 Click="Button_EditProfile" 
                                 IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
-                        
-                        <Button Grid.Row="3" 
+
+                            <Button Grid.Row="3" 
                                 Grid.Column="2" 
                                 Content="Delete" 
                                 Margin="5" 
                                 Click="Button_DeleteProfile" 
                                 IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </TabItem>
+                </TabItem>
 
-            <TabItem Header="Querying" 
-                     Margin="0,0,0,0">
-                <Grid Margin="10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <TabItem Header="Querying"
+                     Style="{DynamicResource TabItemStyleOverwrite}">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="75"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.ColumnSpan="4" 
-                               Text="Query intervals" 
-                               VerticalAlignment="Center" 
-                               FontSize="14" 
-                               FontWeight="Bold"/>
-                    <TextBlock Grid.Row="1" 
-                               Text="Logging" 
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="2" 
-                               Text="Health report" 
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="3" 
-                               Text="Validations" 
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="4" 
-                               Text="Managers" 
-                               VerticalAlignment="Center"/>
-                    <TextBox x:Name="LoggingTxt" 
-                             Grid.Row="1" 
-                             Grid.Column="1" 
-                             Height="22" 
-                             VerticalAlignment="Center" 
-                             Text="{Binding LoggingQueryInterval}"/>
+                        <TextBlock Grid.Column="1"
+                                   Grid.ColumnSpan="2" 
+                                   Text="Query intervals" 
+                                   VerticalAlignment="Center" 
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
 
-                    <TextBox Grid.Row="2" 
-                             Grid.Column="1" 
-                             Height="22" 
-                             VerticalAlignment="Center" 
-                             Text="{Binding HealthReportQueryInterval}"/>
-                    
-                    <TextBox Grid.Row="3" 
-                             Grid.Column="1" 
-                             Height="22" 
-                             VerticalAlignment="Center" 
-                             Text="{Binding ValidationQueryInterval}"/>
-                    
-                    <TextBox Grid.Row="4" 
-                             Grid.Column="1" 
-                             Height="22" 
-                             VerticalAlignment="Center" 
-                             Text="{Binding ManagerQueryInterval}"/>
-                    
-                    <ComboBox Grid.Row="1" 
-                              Grid.Column="3" 
-                              Height="22" 
-                              VerticalAlignment="Center"/>
-                    <ComboBox Grid.Row="2" 
-                              Grid.Column="3" 
-                              Height="22" 
-                              VerticalAlignment="Center"/>
-                    <ComboBox Grid.Row="3" 
-                              Grid.Column="3" 
-                              Height="22" 
-                              VerticalAlignment="Center"/>
-                    <ComboBox Grid.Row="4" 
-                              Grid.Column="3" 
-                              Height="22" 
-                              VerticalAlignment="Center"/>
+                        <!-- Titles -->
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="1"
+                                    Orientation="Vertical"
+                                    Margin="10,0,0,0">
+                            <TextBlock
+                                Text="Logging (sec)"
+                                Margin="0,0,0,15"
+                                Height="20"/>
+                            
+                            <TextBlock
+                                Text="Health report (sec)" 
+                                Margin="0,0,0,15"
+                                Height="20"/>
+                            
+                            <TextBlock
+                                Text="Validations (sec)" 
+                                Margin="0,0,0,15"
+                                Height="20"/>
+                            
+                            <TextBlock
+                                Text="Managers (sec)"
+                                Margin="0,0,0,95"
+                                Height="20"/>
 
-                    <CheckBox x:Name="synchronizeAllCheckbox" 
-                              Grid.Row="6" 
-                              Grid.ColumnSpan="2" 
-                              Content="Synchronize all queries" 
-                              VerticalAlignment="Bottom" 
-                              IsChecked="{Binding SynchronizeAllQueries,UpdateSourceTrigger=PropertyChanged}"/>
-                    <Label Grid.Row="7" 
-                           Content="Query interval" 
-                           VerticalAlignment="Center" 
-                           IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"/>
-                    <TextBox Grid.Row="7" 
-                             Grid.Column="1" 
-                             Height="22" 
-                             VerticalAlignment="Center" 
-                             Text="{Binding AllQueryInterval}" 
-                             IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"/>
-                    <ComboBox Grid.Row="7" 
-                              Grid.Column="3" 
-                              Height="22" 
-                              VerticalAlignment="Center" 
-                              IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"/>
-                </Grid>
-            </TabItem>
-        </TabControl>
-        
-        <StackPanel Grid.Row="2" 
+                            <TextBlock Text="Query interval (sec)"
+                                       Height="20"
+                                       IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"
+                                       Foreground="{DynamicResource ForegroundColor}"/>
+                        </StackPanel>
+
+                        <!-- Textboxes-->
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="2"
+                                    Orientation="Vertical">
+                            <TextBox x:Name="TextBoxLoggingInterval" 
+                                     Grid.Column="1" 
+                                     Height="20" 
+                                     Width="100"
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="LoggingQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBox x:Name="TextBoxHRInterval"
+                                     Grid.Column="1" 
+                                     Height="20" 
+                                     Width="100"
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="HealthReportQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBox x:Name="TextBoxValidationInterval"
+                                     Grid.Column="1" 
+                                     Height="20" 
+                                     Width="100"
+                                     Margin="0,0,0,15"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="ValidationQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBox x:Name="TextBoxManagerInterval"
+                                     Grid.Column="1" 
+                                     Height="20" 
+                                     Width="100"
+                                     Margin="0,0,0,95"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="ManagerQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBox x:Name="TextBoxAllInterval"
+                                     Grid.Column="1" 
+                                     Height="20" 
+                                     Width="100"
+                                     IsEnabled="{Binding ElementName=synchronizeAllCheckbox,Path=IsChecked,TargetNullValue=false}"
+                                     Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="AllQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+
+                        <CheckBox x:Name="synchronizeAllCheckbox" 
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  Grid.ColumnSpan="2" 
+                                  Content="Synchronize all queries" 
+                                  VerticalAlignment="Bottom" 
+                                  Margin="5,0,0,90"
+                                  IsChecked="{Binding SynchronizeAllQueries,UpdateSourceTrigger=PropertyChanged}"
+                                  Foreground="{DynamicResource ForegroundColor}"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <StackPanel Grid.Row="2" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Center">
-            <Button Content="Close" 
+                <Button Content="Close" 
                     IsCancel="True" 
-                    Margin="0 5 10 0" 
+                    Margin="0 5 10 5" 
                     Width="100" 
                     Click="Button_Close"/>
-            <Button Content="Save and close" 
+                <Button Content="Save and close" 
                     IsDefault="True" 
-                    Margin="0 5 0 0" 
+                    Margin="0 5 0 5" 
                     Width="100" 
                     Click="Button_SaveAndClose"/>
-        </StackPanel>
-    </Grid>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

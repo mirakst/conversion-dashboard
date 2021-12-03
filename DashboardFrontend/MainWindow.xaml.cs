@@ -1,18 +1,14 @@
-using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.Settings;
-using DashboardBackend;
-using DashboardBackend.Database;
 using Model;
-using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using DashboardFrontend.Charts;
+using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -36,6 +32,7 @@ namespace DashboardFrontend
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
+            settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
 
@@ -139,10 +136,11 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
         {
-
-            WindowStyle = WindowStyle.SingleBorderWindow;
+            System.Drawing.Rectangle rec = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle).WorkingArea;
+            MaxHeight = rec.Height;
+            MaxWidth = rec.Width;
+            ResizeMode = ResizeMode.NoResize;
             WindowState = WindowState.Maximized;
-            WindowStyle = WindowStyle.None;
             this.ButtonMaximize.Visibility = Visibility.Collapsed;
             this.ButtonRestore.Visibility = Visibility.Visible;
         }
@@ -154,6 +152,9 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs e)
         {
+            MaxHeight = double.PositiveInfinity;
+            MaxWidth = double.PositiveInfinity;
+            ResizeMode = ResizeMode.CanResize;
             SystemCommands.RestoreWindow(this);
             this.ButtonMaximize.Visibility = Visibility.Visible;
             this.ButtonRestore.Visibility = Visibility.Collapsed;
@@ -168,22 +169,24 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOff();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOff();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel is not null)
-            {
-                _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-                ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-                ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
-            }
+            if (ViewModel is null) return;
+            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkDeltaChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkSpeedChart.ChangeMaxView(comboBoxItemValue);
         }
 
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)

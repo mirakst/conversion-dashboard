@@ -21,7 +21,7 @@ namespace DashboardFrontend
         {
             TryLoadUserSettings();
             _vm = viewModel;
-            Conversion = new();
+            //Conversion = new();
             _timers = new List<Timer>();
         }
 
@@ -30,14 +30,14 @@ namespace DashboardFrontend
         public bool IsUpdatingValidations { get; private set; }
         public bool IsUpdatingManagers { get; private set; }
         public bool IsUpdatingHealthReport { get; private set; }
-
+        private readonly Queue<LogMessage> _logParseQueue = new();
         private readonly MainWindowViewModel _vm;
         private readonly List<Timer> _timers;
-        public Conversion Conversion { get; set; }
-        public readonly List<HealthReportViewModel> HealthReportViewModels = new();
-        public readonly List<LogViewModel> LogViewModels = new();
-        public readonly List<ValidationReportViewModel> ValidationReportViewModels = new();
-        public readonly List<ManagerViewModel> ManagerViewModels = new();
+        public Conversion? Conversion { get; set; }
+        public List<HealthReportViewModel> HealthReportViewModels { get; } = new();
+        public List<LogViewModel> LogViewModels { get; } = new();
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; } = new();
+        public List<ManagerViewModel> ManagerViewModels { get; } = new();
         public UserSettings UserSettings { get; set; } = new();
 
         /// <summary>
@@ -46,13 +46,21 @@ namespace DashboardFrontend
         public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
-            LogViewModels.Add(_vm.LogViewModel);
+            LogViewModels = new()
+            {
+                _vm.LogViewModel
+            };
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel();
-            ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
+            ValidationReportViewModels = new()
+            {
+                _vm.ValidationReportViewModel
+            };
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
-            HealthReportViewModels.Add(_vm.HealthReportViewModel);
+            HealthReportViewModels = new() {
+                _vm.HealthReportViewModel
+            };
 
             _vm.ManagerViewModel = new ManagerViewModel();
             ManagerViewModels.Add(_vm.ManagerViewModel);
@@ -61,7 +69,7 @@ namespace DashboardFrontend
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
-            if (Conversion.Executions.Any())
+            if (Conversion?.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.Log);
             }
@@ -72,7 +80,7 @@ namespace DashboardFrontend
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
-            if (Conversion.Executions.Any())
+            if (Conversion?.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.ValidationReport);
             }
@@ -83,7 +91,7 @@ namespace DashboardFrontend
         public HealthReportViewModel CreateHealthReportViewModel()
         {
             HealthReportViewModel result = new();
-            if (Conversion.HealthReport != null)
+            if (Conversion?.HealthReport != null)
             {
                 result.SystemLoadChart.UpdateData(Conversion.HealthReport.Ram, Conversion.HealthReport.Cpu);
                 result.NetworkChart.UpdateData(Conversion.HealthReport.Network);
@@ -97,7 +105,7 @@ namespace DashboardFrontend
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new();
-            if (Conversion.Executions.Any())
+            if (Conversion?.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.Managers);
             }
@@ -269,7 +277,6 @@ namespace DashboardFrontend
             IsUpdatingHealthReport = false;
         }
 
-        private readonly Queue<LogMessage> _logParseQueue = new();
         /// <summary>
         /// Updates the list of managers in the current Conversion and adds them to their associated executions.
         /// </summary>
@@ -331,7 +338,14 @@ namespace DashboardFrontend
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
+                    if (!UserSettings.ActiveProfile.HasEventListeners())
+                    {
+                        UserSettings.ActiveProfile.ProfileChanged += Reset;
+                        UserSettings.ActiveProfile.ProfileChanged += StopMonitoring;
+                    }
+                    Convsersion = new();
                     StartMonitoring();
+                    UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
             }
             else
@@ -440,6 +454,12 @@ namespace DashboardFrontend
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
+        }
+
+        internal void Reset()
+        {
+            InitializeViewModels(LogViewModels[0].LogListView);
+            _vm.UpdateView();
         }
     }
 }

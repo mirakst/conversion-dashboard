@@ -36,7 +36,7 @@
                           Width="5"
                           Background="{DynamicResource CanvasColor}"/>
             
-            <Grid x:Name="gridManagerList"
+            <Grid x:Name="GridManagerList"
                   Grid.Row="1"
                   Grid.Column="1">
 
@@ -49,7 +49,7 @@
                     <RowDefinition Height="22*"/>
                 </Grid.RowDefinitions>
 
-                <TextBox Name="textboxSearchbar"
+                <TextBox Name="TextboxSearchbar"
                          TextChanged="TextboxSearchbar_TextChanged"
                          Margin="0,0,0,5"
                          ToolTip="Search by manager Name or ID"
@@ -62,7 +62,7 @@
                                DockPanel.Dock="Right"/>
                 </DockPanel>
 
-                <Button Name="buttonResetManagers"
+                <Button Name="ButtonResetManagers"
                         Click="ResetManagers_Click"
                         ToolTip="Clear the chosen managers"
                         Grid.Column="1"
@@ -72,12 +72,15 @@
                 </Button>
 
                 <!-- The manager overview datagrid -->
-                <DataGrid x:Name="datagridManagers"
+                <DataGrid x:Name="DatagridManagers"
                           Grid.Row="1"
                           Grid.ColumnSpan="2"
                           Style="{DynamicResource DefaultDatagrid}"
                           BorderBrush="{DynamicResource BorderColor}"
-                          ItemsSource="{Binding Managers}">
+                          ItemsSource="{Binding Managers}" 
+                          SelectionChanged="datagridManagers_SelectionChanged"
+                          HorizontalScrollBarVisibility="Hidden"
+                          HorizontalAlignment="Left">
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
@@ -101,7 +104,7 @@
                                             FontFamily="wingdings 3"
                                             Width="20pt"
                                             Tag="{Binding}"
-                                            Style="{StaticResource DetachButton}"
+                                            Style="{StaticResource ManagerButton}"
                                             Margin="0,0,4,0">
                                         <Image Source="../Icons/Add.png"
                                                Margin="8"/>
@@ -113,13 +116,13 @@
                 </DataGrid>
             </Grid>
 
-            <Grid x:Name="tabcontrolGrid"
+            <Grid x:Name="TabcontrolGrid"
                   Grid.Column="3"
                   Grid.Row="1"
                   Margin="0,-1,0,0">
                 
                 <!-- The details tab -->
-                <TabControl Name="tabcontrolStatistics"
+                <TabControl Name="TabcontrolStatistics"
                             Background="{DynamicResource BackgroundColor}"
                             BorderBrush="Transparent">
                     
@@ -131,10 +134,12 @@
                         <Grid x:Name="GridInfoTab"
                               Margin="-4,-6,-3,-3">
                             
-                            <DataGrid x:Name="datagridManagerDetails"
+                            <DataGrid x:Name="DatagridManagerDetails"
                                       Margin = "0, 3, 0, 0"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      ItemsSource="{Binding WrappedManagers}">
+                                      ItemsSource="{Binding WrappedManagers}"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      HorizontalAlignment="Left">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
@@ -242,7 +247,7 @@
                                 </lvc:CartesianChart>
                             </Grid>
 
-                            <DataGrid Name="datagridManagerCharts"
+                            <DataGrid Name="DatagridManagerCharts"
                                       ItemsSource="{Binding WrappedManagers}"
                                       Grid.Row="0"
                                       Grid.Column="1"

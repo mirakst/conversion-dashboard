@@ -4,17 +4,28 @@ using System.Windows.Media;
 using System.Collections.ObjectModel;
 using LiveChartsCore.Defaults;
 using System.Collections.Generic;
+using DashboardFrontend.ViewModels;
 
 namespace DashboardFrontend
 {
     /// <summary>
     /// Wrapper class for manager to store a color associated with the manager
     /// </summary>
-    public class ManagerWrapper
+    public class ManagerWrapper : BaseViewModel
     {
         public Manager Manager {  get; set; }
         public SolidColorBrush LineColor { get; private set; }
         public List<ObservableCollection<ObservablePoint>> ManagerValues { get; set; } = new(4) { new(), new(), new(), new() };
+        private bool _isDetailedInfoShown;
+        public bool IsDetailedInfoShown
+        {
+            get => _isDetailedInfoShown;
+            set
+            {
+                _isDetailedInfoShown = value;
+                OnPropertyChanged(nameof(IsDetailedInfoShown));
+            }
+        }
 
         public ManagerWrapper(Manager manager)
         {

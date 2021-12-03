@@ -14,7 +14,8 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="CanResizeWithGrip"
+        AllowsTransparency="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
@@ -191,7 +192,9 @@
                               Grid.Row="1"
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
-                              BorderBrush="{DynamicResource BorderColor}">
+                              BorderBrush="{DynamicResource BorderColor}"
+                              HorizontalScrollBarVisibility="Hidden"
+                              HorizontalAlignment="Left">
                         
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
@@ -690,42 +693,51 @@
                                     Header="CPU &amp; RAM"
                                     Height="30"
                                     FontSize="16"
-                                    Margin="-2,0,0,0">
+                                    Margin="-2,0,0,0"
+                                    DataContext="{Binding SystemLoadChart}">
                             <Border Margin="10">
                                 <Grid>
                                     <TextBlock Name="TextBlockCurrentCpuLoad"
-                                                Text="{Binding SystemLoadChart.LastCpuReading,
+                                                Text="{Binding LastCpuReading,
                                                         StringFormat='CPU Usage: {0:0}%'}"
                                                 Foreground="{DynamicResource ForegroundColor}"
                                                 FontSize="14"
                                                 VerticalAlignment="Center"
-                                                Grid.Column="0"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
                                                 Grid.Row="0"
                                                 Margin="0,0,40,5"/>
                                     <TextBlock Name="TextBlockCurrentRamUsage"
-                                                Text="{Binding SystemLoadChart.LastRamReading,
+                                                Text="{Binding LastRamReading,
                                                         StringFormat='RAM Usage: {0:0}%'}"
                                                 Foreground="{DynamicResource ForegroundColor}"
                                                 FontSize="14"
                                                 VerticalAlignment="Center"
-                                                Grid.Column="1"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
                                                 Grid.Row="0"
                                                 Margin="5,0,0,5"/>
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
                                     <lvc:CartesianChart
                                             Margin="-7,0,0,-40"
-                                            Series="{Binding SystemLoadChart.ChartData.Series}"
-                                            XAxes="{Binding SystemLoadChart.ChartData.XAxis}"
-                                            YAxes="{Binding SystemLoadChart.ChartData.YAxis}"
+                                            Series="{Binding ChartData.Series}"
+                                            XAxes="{Binding ChartData.XAxis}"
+                                            YAxes="{Binding ChartData.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"
                                             MouseEnter="CartesianChart_MouseEnter"
                                             Grid.Column="0"
-                                            Grid.ColumnSpan="2"
+                                            Grid.ColumnSpan="4"
                                             Grid.Row="1">
                                     </lvc:CartesianChart>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
@@ -741,12 +753,13 @@
                                     Name="TabItemNetwork"
                                     Header="Network"
                                     Height="30"
-                                    FontSize="16">
+                                    FontSize="16"
+                                    DataContext="{Binding NetworkChart}">
                             <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding NetworkChart.ChartData.Series}"
-                                                XAxes="{Binding NetworkChart.ChartData.XAxis}"
-                                                YAxes="{Binding NetworkChart.ChartData.YAxis}"
-                                                ZoomMode="Both"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
                                                 TooltipPosition="Top"
                                                 Grid.Row="0"
                                                 MouseLeave="CartesianChart_MouseLeave"
@@ -757,12 +770,13 @@
                                     Name="TabItemNetworkDelta"
                                     Header="Network Delta"
                                     Height="30"
-                                    FontSize="16">
+                                    FontSize="16"
+                                    DataContext="{Binding NetworkDeltaChart}">
                             <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding NetworkDeltaChart.ChartData.Series}"
-                                                XAxes="{Binding NetworkDeltaChart.ChartData.XAxis}"
-                                                YAxes="{Binding NetworkDeltaChart.ChartData.YAxis}"
-                                                ZoomMode="Both"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
                                                 TooltipPosition="Top"
                                                 Grid.Row="1"
                                                 MouseLeave="CartesianChart_MouseLeave"
@@ -773,12 +787,13 @@
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
                                     Height="30"
-                                    FontSize="16">
+                                    FontSize="16"
+                                    DataContext="{Binding NetworkSpeedChart}">
                             <lvc:CartesianChart  Margin="-6,14,0,-30"
-                                                    Series="{Binding NetworkSpeedChart.ChartData.Series}"
-                                                    XAxes="{Binding NetworkSpeedChart.ChartData.XAxis}"
-                                                    YAxes="{Binding NetworkSpeedChart.ChartData.YAxis}"
-                                                    ZoomMode="Both"
+                                                    Series="{Binding ChartData.Series}"
+                                                    XAxes="{Binding ChartData.XAxis}"
+                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    ZoomMode="X"
                                                     TooltipPosition="Top"
                                                     Grid.Row="2"
                                                     MouseLeave="CartesianChart_MouseLeave"
@@ -820,7 +835,7 @@
             <Grid Name="WindowControlGrid"
                   Grid.Column="5"
                   Grid.Row="0"
-                  Margin="5,5,5,70">
+                  Margin="0,0,0,70">
                 <Button Name="ButtonMinimize" 
                         Grid.Column="0" 
                         Style="{DynamicResource DefaultWindowButton}"

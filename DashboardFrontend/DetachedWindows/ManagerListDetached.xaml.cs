@@ -14,8 +14,6 @@ namespace DashboardFrontend.DetachedWindows
     public partial class ManagerListDetached : Window
     {
         public ManagerViewModel Vm { get; set; }
-        public ObservableCollection<ManagerWrapper> Managers { get; set; } = new();
-
         public ManagerListDetached(ManagerViewModel managerViewModel) //Conversion parameter
         {
             Vm = managerViewModel;
@@ -32,11 +30,12 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ManagerWrapper manager in datagridManagers.SelectedItems)
+            foreach (ManagerWrapper manager in DatagridManagers.SelectedItems)
             {
                 if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
                 {
                     DatagridManagerMover("Add", manager);
+                    manager.IsDetailedInfoShown = true;
                 }
             }
         }
@@ -49,13 +48,14 @@ namespace DashboardFrontend.DetachedWindows
         private void RemoveManager_Click(object sender, RoutedEventArgs e)
         {
             List<ManagerWrapper> managers = new() { };
-            foreach (ManagerWrapper manager in TabInfo.IsSelected ? datagridManagerDetails.SelectedItems : datagridManagerCharts.SelectedItems)
+            foreach (ManagerWrapper manager in TabInfo.IsSelected ? DatagridManagerDetails.SelectedItems : DatagridManagerCharts.SelectedItems)
             {
                 managers.Add(manager);
             }
             foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
             {
                 DatagridManagerMover("Remove", manager);
+                manager.IsDetailedInfoShown = false;
             }
         }
 
@@ -76,16 +76,16 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void TextboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            datagridManagers.SelectedItems.Clear();
-            if (textboxSearchbar.Text != null)
+            DatagridManagers.SelectedItems.Clear();
+            if (TextboxSearchbar.Text != null)
             {
                 List<ManagerWrapper> foundManagers = new();
-                foreach (ManagerWrapper manager in datagridManagers.Items)
+                foreach (ManagerWrapper manager in DatagridManagers.Items)
                 {
-                    if (manager.Manager.Name.Contains(textboxSearchbar.Text) || manager.Manager.ContextId.ToString() == textboxSearchbar.Text)
+                    if (manager.Manager.Name.Contains(TextboxSearchbar.Text) || manager.Manager.ContextId.ToString() == TextboxSearchbar.Text)
                     {
                         foundManagers.Add(manager);
-                        datagridManagers.SelectedItems.Add(manager);
+                        DatagridManagers.SelectedItems.Add(manager);
                     }
                 }
             }

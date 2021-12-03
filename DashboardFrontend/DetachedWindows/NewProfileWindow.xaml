@@ -3,102 +3,194 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DashboardFrontend.DetachedWindows"
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
+        xmlns:ValidationRules="clr-namespace:DashboardFrontend.ValidationRules"
         mc:Ignorable="d"
         Title="Create new profile" 
-        Height="300" 
+        Height="320" 
         Width="340" 
+        WindowStyle="None"
         WindowStartupLocation="CenterOwner" 
         ShowInTaskbar="False" 
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{DynamicResource BackgroundColor}">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
+    </Window.CommandBindings>
+
     <Window.Resources>
         <valueConverters:StringToIntConverter x:Key="StringToIntConverter"/>
+        <ControlTemplate x:Key="ControlTemplate"/>
     </Window.Resources>
-    <Grid Margin="8" 
-          FocusManager.FocusedElement="{Binding ElementName=name}">
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="42"/>
-        </Grid.RowDefinitions>
 
-        <TextBlock Text="Profile name" 
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="1" 
-                   Text="Conversion" 
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="3" 
-                   Grid.ColumnSpan="2" 
-                   Text="Database connection"
-                   VerticalAlignment="Center" 
-                   FontSize="14" 
-                   FontWeight="Bold"/>
-        <TextBlock Grid.Row="4" 
-                   Text="Values source" 
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="5" 
-                   Text="Database" 
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="6" 
-                   Text="Timeout (sec)" 
-                   VerticalAlignment="Center"/>
-        
-        <!-- TODO: Add validation to all text fields -->
-        <TextBox x:Name="name" 
-                 Grid.Column="1" 
-                 Height="22" 
-                 VerticalAlignment="Center" 
-                 Text="{Binding Path=Name,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="conversion" 
-                 Grid.Row="1" 
-                 Grid.Column="1" 
-                 Height="22" 
-                 VerticalAlignment="Center" 
-                 Text="{Binding Path=Conversion,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="dataSrc" 
-                 Grid.Row="4" 
-                 Grid.Column="1" 
-                 Height="22" 
-                 VerticalAlignment="Center" 
-                 Text="{Binding Path=DataSource,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="database" 
-                 Grid.Row="5" 
-                 Grid.Column="1" 
-                 Height="22" 
-                 VerticalAlignment="Center" 
-                 Text="{Binding Path=Database,UpdateSourceTrigger=Explicit}"/>
-        <TextBox x:Name="timeout" 
-                 Grid.Row="6" 
-                 Grid.Column="1" 
-                 Height="22" 
-                 VerticalAlignment="Center" 
-                 Text="{Binding Path=Timeout,UpdateSourceTrigger=Explicit,Converter={StaticResource StringToIntConverter}}"/>
+    <Border BorderBrush="{DynamicResource BorderColor}"
+            BorderThickness="1">
+        <Grid FocusManager.FocusedElement="{Binding ElementName=TextBoxName}"
+              Background="{DynamicResource BackgroundColor}">
 
-        <StackPanel Grid.Row="8" 
-                    Grid.ColumnSpan="2" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center">
-            <Button Content="Cancel" 
-                    Width="100" 
-                    Margin="0 0 10 0" 
-                    IsCancel="True" 
-                    Click="Button_Cancel"/>
-            <Button Content="OK" 
-                    Width="100" 
-                    IsDefault="True" 
-                    Click="Button_Save"/>
-        </StackPanel>
-    </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="42"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Profile editor"
+                           FontSize="16"
+                           Grid.ColumnSpan="5"
+                           Margin="0,5,0,0"
+                           TextAlignment="Center"
+                           Foreground="{DynamicResource ForegroundColor}"/>
+
+                <Button Name="ButtonCloseSettings" 
+                        Content="r"
+                        Grid.Column="1"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Width="25"
+                        Height="25"
+                        Style="{DynamicResource CloseWindowButton}"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}" Grid.ColumnSpan="2"/>
+            
+
+            <TextBlock Grid.Row="1"
+                       Grid.ColumnSpan="2" 
+                       Text="Database connection"
+                       VerticalAlignment="Center" 
+                       FontSize="14" 
+                       FontWeight="Bold"
+                       Margin="15,-55,0,0"
+                       Foreground="{DynamicResource ForegroundColor}"/>
+            
+            <!-- Titles -->
+            <StackPanel Grid.Row="1"
+                        Grid.RowSpan="10"
+                        Grid.Column="0"
+                        Margin="15,0,0,0"
+                        Orientation="Vertical">
+
+                <TextBlock Text="Profile name" 
+                           Margin="0,5,0,15"/>
+
+                <TextBlock Text="Conversion" 
+                           Margin="0,0,0,55"/>
+
+                <TextBlock Text="Data source" 
+                           Margin="0,0,0,15"/>
+
+                <TextBlock Text="Database" 
+                           Margin="0,0,0,15"/>
+
+                <TextBlock Text="Timeout (sec)"/>
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Foreground" Value="LightGray"/>
+                        <Setter Property="Height" Value="22"/>
+                    </Style>
+                </StackPanel.Resources>
+            </StackPanel>
+
+            <!-- User input -->
+            <StackPanel Grid.Row="1"
+                        Grid.Column="1"
+                        Orientation="Vertical">
+
+                <TextBox x:Name="TextBoxName"
+                         Height="22" 
+                         Margin="0,5,0,15"
+                         VerticalAlignment="Center" 
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxName_TextChanged">
+                    <TextBox.Text>
+                        <Binding Path="Name" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBox x:Name="TextBoxConversion"
+                         Height="22" 
+                         Margin="0,0,0,55"
+                         VerticalAlignment="Center" 
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                    <TextBox.Text>
+                        <Binding Path="Conversion" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBox x:Name="TextBoxDataSrc" 
+                         Height="22" 
+                         Margin="0,0,0,15"
+                         VerticalAlignment="Center"
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxDataSrc_TextChanged">
+                    <TextBox.Text>
+                        <Binding Path="DataSource" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
+                                <ValidationRules:InvalidCharactersRule InvalidCharacters=" "/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBox x:Name="TextBoxDatabase" 
+                         Height="22" 
+                         Margin="0,0,0,15"
+                         VerticalAlignment="Center"
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                    <TextBox.Text>
+                        <Binding Path="Database" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <ValidationRules:MinimumCharactersRule MinimumCharacters="0"/>
+                                <ValidationRules:InvalidCharactersRule InvalidCharacters=" "/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBox x:Name="TextBoxTimeout" 
+                         Height="22" 
+                         VerticalAlignment="Center"
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
+                    <TextBox.Text>
+                        <Binding Path="Timeout" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="8" 
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="3" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        Margin="10,10,10,5">
+                <Button Content="Cancel" 
+                        Width="100" 
+                        Margin="0 0 10 0" 
+                        IsCancel="True" 
+                        Click="Button_Cancel"/>
+                <Button Content="Save" 
+                        Width="100" 
+                        IsDefault="True" 
+                        Click="Button_Save"/>
+            </StackPanel>
+            
+        </Grid>
+    </Border>
 </Window>
