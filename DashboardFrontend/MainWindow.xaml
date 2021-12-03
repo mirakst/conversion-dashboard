@@ -31,6 +31,10 @@
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        </Style>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -637,16 +641,30 @@
                                            FontWeight="Bold"
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
+                                    
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
+                                        
                                         <Button Margin="0 0 5 0"
                                             Click="CopySrcSql_Click"
+                                            MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
                                             Content="Source"/>
+                                        
                                         <Button Click="CopyDestSql_Click"
-                                            IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Destination"/>
+                                                MouseLeave="ButtonCopySql_MouseLeave"
+                                                IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                                Content="Destination"/>
+
+                                        <Popup x:Name="PopupCopySql"
+                                               Placement="Mouse">
+                                            <Border BorderBrush="{DynamicResource BorderColor}"
+                                                    BorderThickness="1">
+                                                <Label x:Name="TextBlockPopupSql"
+                                                       Style="{DynamicResource PopupLabel}"/>
+                                            </Border>
+                                        </Popup>
                                     </StackPanel>
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">

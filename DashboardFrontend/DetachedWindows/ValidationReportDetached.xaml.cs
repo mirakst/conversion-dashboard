@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Model;
 using DashboardFrontend.ViewModels;
+using System.Windows.Controls.Primitives;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -57,6 +58,8 @@ namespace DashboardFrontend.DetachedWindows
             if (button.DataContext is ValidationTest test)
             {
                 Clipboard.SetText(test.SrcSql);
+                TextBlockPopupSql.Content = "SQL source copied to clipboard";
+                PopupCopySql.IsOpen = true;
             }
         }
 
@@ -66,8 +69,16 @@ namespace DashboardFrontend.DetachedWindows
             if (button.DataContext is ValidationTest test)
             {
                 Clipboard.SetText(test.DstSql);
+                TextBlockPopupSql.Content = "SQL destination copied to clipboard";
+                PopupCopySql.IsOpen = true;
             }
         }
+
+        private void ButtonCopySql_MouseLeave(object sender, MouseEventArgs e)
+        {
+            PopupCopySql.IsOpen = false;
+        }
+
     }
 }
 

@@ -7,4 +7,12 @@
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
+
+    <Style x:Key="PopupLabel" TargetType="Label">
+        <Setter Property="Foreground" Value="LightGray"/>
+        <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
 </ResourceDictionary>
