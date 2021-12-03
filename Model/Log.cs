@@ -58,5 +58,26 @@
                 }
             }
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Messages.GetHashCode(),
+                                    InfoCount,
+                                    WarnCount,
+                                    ErrorCount,
+                                    FatalCount,
+                                    ValidationCount);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Log other)
+                return false;
+
+            if (Messages.Count == 0 && other.Messages.Count == 0)
+                return true;
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }

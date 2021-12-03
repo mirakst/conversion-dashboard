@@ -18,7 +18,7 @@
         #endregion Properties
         public override string ToString()
         {
-            return $"{Date.ToLongTimeString()}: {Load} bytes";
+            return $"{Date}: {Load:P} bytes";
         }
 
         public override int GetHashCode()

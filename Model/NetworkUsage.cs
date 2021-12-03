@@ -30,8 +30,12 @@
 
         public override string ToString()
         {
-            return $"BYTES SENT: {BytesSend} bytes\nBYTES SENT (DELTA): {BytesSendDelta} bytes\nBYTES SENT (SPEED): {BytesSendSpeed} bps\n" +
-                   $"BYTES RECEIVED: {BytesReceived} bytes\nBYTES RECEIVED (DELTA): {BytesReceivedDelta} bytes\nBYTES RECEIVED (SPEED) {BytesReceivedSpeed} bps";
+            return $"BYTES SENT: {BytesSend} bytes\n" +
+                   $"BYTES SENT (DELTA): {BytesSendDelta} bytes\n" +
+                   $"BYTES SENT (SPEED): {BytesSendSpeed} bps\n" +
+                   $"BYTES RECEIVED: {BytesReceived} bytes\n" +
+                   $"BYTES RECEIVED (DELTA): {BytesReceivedDelta} bytes\n" +
+                   $"BYTES RECEIVED (SPEED) {BytesReceivedSpeed} bps";
         }
 
         public override int GetHashCode()

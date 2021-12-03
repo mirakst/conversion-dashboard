@@ -56,9 +56,9 @@ namespace Model
         {
             return HashCode.Combine(HostName == null ? 0 : HostName.GetHashCode(),
                                     MonitorName == null ? 0 : MonitorName.GetHashCode(),
-                                    Cpu.GetHashCode(),
-                                    Network.GetHashCode(),
-                                    Ram.GetHashCode());
+                                    Cpu == null ? 0 : Cpu.GetHashCode(),
+                                    Network == null ? 0 : Network.GetHashCode(),
+                                    Ram == null ? 0 : Ram.GetHashCode());
         }
 
         public override bool Equals(object obj)
@@ -68,10 +68,14 @@ namespace Model
                 return false;
             }
 
+            bool tempCpu = Cpu.Readings == null && other.Cpu.Readings == null ? true : Cpu.Readings.SequenceEqual(other.Cpu.Readings);
+            bool tempRam = Ram.Readings == null && other.Ram.Readings == null ? true : Ram.Readings.SequenceEqual(other.Ram.Readings);
+            bool tempNetwork = Network.Readings == null || other.Network.Readings == null ? true : Network.Readings.SequenceEqual(other.Network.Readings);
+
             return GetHashCode() == other.GetHashCode()
-                   && Cpu.Readings.SequenceEqual(other.Cpu.Readings)
-                   && Network.Readings.SequenceEqual(other.Network.Readings)
-                   && Ram.Readings.SequenceEqual(other.Ram.Readings);
+                   && tempCpu
+                   && tempRam
+                   && tempNetwork;
         }
     }
 }

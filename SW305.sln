@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardFrontend", "Dashbo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend.Tests", "DashboardBackend.Tests\DashboardBackend.Tests.csproj", "{806FC4C9-9129-47D3-8ECD-E00649E98CAA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Tests", "Model.Tests\Model.Tests.csproj", "{93DCBCC7-9B4E-4103-B15A-05270496023E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{806FC4C9-9129-47D3-8ECD-E00649E98CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{806FC4C9-9129-47D3-8ECD-E00649E98CAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{806FC4C9-9129-47D3-8ECD-E00649E98CAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93DCBCC7-9B4E-4103-B15A-05270496023E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93DCBCC7-9B4E-4103-B15A-05270496023E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93DCBCC7-9B4E-4103-B15A-05270496023E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93DCBCC7-9B4E-4103-B15A-05270496023E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

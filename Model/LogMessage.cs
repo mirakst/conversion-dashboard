@@ -35,6 +35,11 @@ namespace Model
             return $"{Date} [{Type}]: {Content}";
         }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Date, Content.GetHashCode());
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is not LogMessage other)
@@ -42,7 +47,7 @@ namespace Model
                 return false;
             }
 
-            return Date == other.Date && Content == other.Content;
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

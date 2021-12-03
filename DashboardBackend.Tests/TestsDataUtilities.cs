@@ -14,8 +14,8 @@ namespace DashboardBackend.Tests
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<Execution>()
             {
-                new Execution(1, DateTime.Parse("01/01/2020 12:00:00")),
-                new Execution(2, DateTime.Parse("01/01/2020 13:00:00")),
+                new Execution(1, DateTime.Parse("01-01-2020 12:00:00")),
+                new Execution(2, DateTime.Parse("01-01-2020 13:00:00")),
             };
 
             var actual = DataUtilities.GetExecutions();
@@ -29,7 +29,7 @@ namespace DashboardBackend.Tests
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<ValidationTest>()
             {
-                new ValidationTest(DateTime.Parse("01/01/2020 12:00:00"),
+                new ValidationTest(DateTime.Parse("01-01-2020 12:00:00"),
                                    "validationOne",
                                    ValidationTest.ValidationStatus.Ok,
                                    "managerOne",
@@ -38,7 +38,7 @@ namespace DashboardBackend.Tests
                                    0,
                                    "srcSql",
                                    "dstSql"),
-                new ValidationTest(DateTime.Parse("01/01/2020 13:00:00"),
+                new ValidationTest(DateTime.Parse("01-01-2020 13:00:00"),
                                    "validationTwo",
                                    ValidationTest.ValidationStatus.Ok,
                                    "managerTwo",
@@ -63,31 +63,31 @@ namespace DashboardBackend.Tests
                 new LogMessage("Afstemning Error",
                                LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
                                0,
-                               DateTime.Parse("01/01/2020 17:00:00")),
+                               DateTime.Parse("01-01-2020 17:00:00")),
                 new LogMessage("Check - Error",
                                LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
                                0,
-                               DateTime.Parse("01/01/2020 18:00:00")),
+                               DateTime.Parse("01-01-2020 18:00:00")),
                 new LogMessage("Info",
                                LogMessage.LogMessageType.Info,
                                0,
-                               DateTime.Parse("01/01/2020 12:00:00")),
+                               DateTime.Parse("01-01-2020 12:00:00")),
                 new LogMessage("Warning",
                                LogMessage.LogMessageType.Warning,
                                0,
-                               DateTime.Parse("01/01/2020 13:00:00")),
+                               DateTime.Parse("01-01-2020 13:00:00")),
                 new LogMessage("Error",
                                LogMessage.LogMessageType.Error,
                                0,
-                               DateTime.Parse("01/01/2020 14:00:00")),
+                               DateTime.Parse("01-01-2020 14:00:00")),
                 new LogMessage("Fatal",
                                LogMessage.LogMessageType.Fatal,
                                0,
-                               DateTime.Parse("01/01/2020 15:00:00")),
+                               DateTime.Parse("01-01-2020 15:00:00")),
                 new LogMessage("None",
                                LogMessage.LogMessageType.None,
                                0,
-                               DateTime.Parse("01/01/2020 16:00:00")),
+                               DateTime.Parse("01-01-2020 16:00:00")),
             };
 
             var actual = DataUtilities.GetLogMessages();
@@ -104,11 +104,11 @@ namespace DashboardBackend.Tests
                 new LogMessage("Info",
                                LogMessage.LogMessageType.Info,
                                0,
-                               DateTime.Parse("01/01/2020 12:00:00")),
+                               DateTime.Parse("01-01-2020 12:00:00")),
                 new LogMessage("Warning",
                                LogMessage.LogMessageType.Warning,
                                1,
-                               DateTime.Parse("01/01/2020 13:00:00")),
+                               DateTime.Parse("01-01-2020 13:00:00")),
             };
 
             var actual = DataUtilities.GetLogMessages(0);
@@ -171,20 +171,20 @@ namespace DashboardBackend.Tests
 
             expected.Cpu.Readings = new List<CpuLoad>
             {
-                new(1, 0.1, DateTime.Parse("01/01/2020 12:00:00")),
-                new(1, 0.2, DateTime.Parse("01/01/2020 13:00:00"))
+                new(1, 0.1, DateTime.Parse("01-01-2020 12:00:00")),
+                new(1, 0.2, DateTime.Parse("01-01-2020 13:00:00"))
             };
 
             expected.Ram.Readings = new List<RamLoad>
             {
-                new(1, 0.9, 10, DateTime.Parse("01/01/2020 12:00:00")),
-                new(1, 0.8, 20, DateTime.Parse("01/01/2020 13:00:00"))
+                new(1, 0.9, 10, DateTime.Parse("01-01-2020 12:00:00")),
+                new(1, 0.8, 20, DateTime.Parse("01-01-2020 13:00:00"))
             };
 
             expected.Network.Readings = new List<NetworkUsage>
             {
-                new(1, 10, 10, 10, 10, 10, 10,DateTime.Parse("01/01/2020 12:00:00")),
-                new(1, 20, 20, 20, 20, 20, 20,DateTime.Parse("01/01/2020 13:00:00"))
+                new(1, 10, 10, 10, 10, 10, 10,DateTime.Parse("01-01-2020 12:00:00")),
+                new(1, 20, 20, 20, 20, 20, 20,DateTime.Parse("01-01-2020 13:00:00"))
             };
 
             HealthReport actual = new(string.Empty,
@@ -221,12 +221,12 @@ namespace DashboardBackend.Tests
         public void TestAddManagerReadings_True()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
-            var expected = new Execution(1, DateTime.Parse("01/01/2020 12:00:00"));
+            var expected = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
             expected.Managers.Add(new Manager(1, 1, "managerone"));
             expected.Managers.Add(new Manager(2, 1, "managertwo"));
             expected.Managers.Add(new Manager(3, 1, "managerthree"));
 
-            var actual = new Execution(1, DateTime.Parse("01/01/2020 12:00:00"));
+            var actual = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
 
             DataUtilities.AddManagers(new List<Execution>() { actual });
             DataUtilities.AddManagerReadings(actual);

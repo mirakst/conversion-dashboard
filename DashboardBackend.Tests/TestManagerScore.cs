@@ -19,24 +19,24 @@ namespace DashboardBackend.Tests
                     1,
                     1,
                     "ManagerOne",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
                 new Manager
                 (
                     2,
                     1,
                     "ManagerTwo",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
                 new Manager
                 (
                     3,
                     1,
                     "ManagerThree",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
             };
 
@@ -52,24 +52,24 @@ namespace DashboardBackend.Tests
                     1,
                     1,
                     "ManagerOne",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
                 new Manager
                 (
                     2,
                     1,
                     "ManagerTwo",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
                 new Manager
                 (
                     3,
                     1,
                     "ManagerThree",
-                    DateTime.Parse("01/01/2020 12:00:00"),
-                    DateTime.Parse("01/01/2020 12:01:00")
+                    DateTime.Parse("01-01-2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:01:00")
                 ),
             };
 
@@ -84,7 +84,7 @@ namespace DashboardBackend.Tests
             {
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:00:00"),
                     "validationTestOne",
                     ValidationTest.ValidationStatus.Ok,
                     "ManagerOne",
@@ -96,7 +96,7 @@ namespace DashboardBackend.Tests
                 ),
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:00:00"),
                     "validationTestTwo",
                     ValidationTest.ValidationStatus.Ok,
                     "ManagerTwo",
@@ -108,7 +108,7 @@ namespace DashboardBackend.Tests
                 ),
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:00"),
+                    DateTime.Parse("01-01-2020 12:00:00"),
                     "validationTestThree",
                     ValidationTest.ValidationStatus.Ok,
                     "ManagerThree",
@@ -120,7 +120,7 @@ namespace DashboardBackend.Tests
                 ),
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:30"),
+                    DateTime.Parse("01-01-2020 12:00:30"),
                     "validationTestOne",
                     ValidationTest.ValidationStatus.Failed,
                     "ManagerOne",
@@ -132,7 +132,7 @@ namespace DashboardBackend.Tests
                 ),
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:30"),
+                    DateTime.Parse("01-01-2020 12:00:30"),
                     "validationTestTwo",
                     ValidationTest.ValidationStatus.Failed,
                     "ManagerTwo",
@@ -144,7 +144,7 @@ namespace DashboardBackend.Tests
                 ),
                 new ValidationTest
                 (
-                    DateTime.Parse("01/01/2020 12:00:30"),
+                    DateTime.Parse("01-01-2020 12:00:30"),
                     "validationTestThree",
                     ValidationTest.ValidationStatus.Failed,
                     "ManagerThree",

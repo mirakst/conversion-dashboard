@@ -14,7 +14,7 @@ namespace DashboardBackend.Tests.Database
                 new AfstemningEntry()
                 {
                     Id = string.Empty,
-                    Afstemtdato = DateTime.Parse("01/01/2020 12:00:00"),
+                    Afstemtdato = DateTime.Parse("01-01-2020 12:00:00"),
                     Description = "validationOne",
                     Manager = "managerOne",
                     Context =  String.Empty,
@@ -40,7 +40,7 @@ namespace DashboardBackend.Tests.Database
                 new AfstemningEntry()
                 {
                     Id = string.Empty,
-                    Afstemtdato = DateTime.Parse("01/01/2020 13:00:00"),
+                    Afstemtdato = DateTime.Parse("01-01-2020 13:00:00"),
                     Description = "validationTwo",
                     Manager = "managerTwo",
                     Context =  String.Empty,
@@ -74,8 +74,8 @@ namespace DashboardBackend.Tests.Database
                 {
                     Manager = "ManagerOne",
                     Key = "START_TIME",
-                    Value = "01/01/2020 12:00:00",
-                    Timestamp = DateTime.Parse("01/01/2020 12:00:00"),
+                    Value = "01-01-2020 12:00:00",
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
@@ -83,7 +83,7 @@ namespace DashboardBackend.Tests.Database
                     Manager = "ManagerTwo",
                     Key = String.Empty,
                     Value = String.Empty,
-                    Timestamp = DateTime.Parse("01/01/2020 12:00:00"),
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
@@ -91,7 +91,7 @@ namespace DashboardBackend.Tests.Database
                     Manager = "ManagerThree,longassboithatisnotgoingtoshowitsfullname",
                     Key = String.Empty,
                     Value = String.Empty,
-                    Timestamp = DateTime.Parse("01/01/2020 12:00:00"),
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
@@ -99,15 +99,15 @@ namespace DashboardBackend.Tests.Database
                     Manager = "ManagerOne",
                     Key = "Læste rækker",
                     Value = "69420",
-                    Timestamp = DateTime.Parse("01/01/2020 12:00:00"),
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
                 {
                     Manager = "ManagerOne",
                     Key = "END_TIME",
-                    Value = "01/01/2020 13:00:00",
-                    Timestamp = DateTime.Parse("01/01/2020 13:00:00"),
+                    Value = "01-01-2020 13:00:00",
+                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
@@ -115,7 +115,7 @@ namespace DashboardBackend.Tests.Database
                     Manager = "ManagerOne",
                     Key = "Skrevne rækker",
                     Value = "69420",
-                    Timestamp = DateTime.Parse("01/01/2020 13:00:00"),
+                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
                     RunNo = null,
                 }
             };
@@ -129,13 +129,13 @@ namespace DashboardBackend.Tests.Database
                 {
                     ExecutionId =  1,
                     ExecutionUuid = "conversion1",
-                    Created = DateTime.Parse("01/01/2020 12:00:00"),
+                    Created = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new ExecutionEntry()
                 {
                     ExecutionId =  2,
                     ExecutionUuid = "conversion2",
-                    Created = DateTime.Parse("01/01/2020 13:00:00"),
+                    Created = DateTime.Parse("01-01-2020 13:00:00"),
                 }
             };
         }
@@ -155,7 +155,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = null,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -168,7 +168,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = null,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -181,7 +181,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = null,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -194,7 +194,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 100,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -207,7 +207,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 100,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -220,7 +220,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 100,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -233,7 +233,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = null,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -246,7 +246,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = null,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -259,7 +259,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 100,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
             };
         }
@@ -270,7 +270,7 @@ namespace DashboardBackend.Tests.Database
             {
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 12:00:00"),
+                    Created = DateTime.Parse("01-01-2020 12:00:00"),
                     LogMessage = "Info",
                     LogLevel = "Info",
                     ExecutionId = 0,
@@ -278,7 +278,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 13:00:00"),
+                    Created = DateTime.Parse("01-01-2020 13:00:00"),
                     LogMessage = "Warning",
                     LogLevel = "Warning",
                     ExecutionId = 0,
@@ -293,7 +293,7 @@ namespace DashboardBackend.Tests.Database
             {
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 17:00:00"),
+                    Created = DateTime.Parse("01-01-2020 17:00:00"),
                     LogMessage = "Afstemning Error",
                     LogLevel = "ERROR",
                     ExecutionId = null,
@@ -301,7 +301,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 18:00:00"),
+                    Created = DateTime.Parse("01-01-2020 18:00:00"),
                     LogMessage = "Check - Error",
                     LogLevel = "INFO",
                     ExecutionId = null,
@@ -309,7 +309,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 12:00:00"),
+                    Created = DateTime.Parse("01-01-2020 12:00:00"),
                     LogMessage = "Info",
                     LogLevel = "INFO",
                     ExecutionId = null,
@@ -317,7 +317,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 13:00:00"),
+                    Created = DateTime.Parse("01-01-2020 13:00:00"),
                     LogMessage = "Warning",
                     LogLevel = "WARN",
                     ExecutionId = null,
@@ -325,7 +325,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 14:00:00"),
+                    Created = DateTime.Parse("01-01-2020 14:00:00"),
                     LogMessage = "Error",
                     LogLevel = "ERROR",
                     ExecutionId = null,
@@ -333,7 +333,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 15:00:00"),
+                    Created = DateTime.Parse("01-01-2020 15:00:00"),
                     LogMessage = "Fatal",
                     LogLevel = "FATAL",
                     ExecutionId = null,
@@ -341,7 +341,7 @@ namespace DashboardBackend.Tests.Database
                 },
                 new LoggingEntry()
                 {
-                    Created = DateTime.Parse("01/01/2020 16:00:00"),
+                    Created = DateTime.Parse("01-01-2020 16:00:00"),
                     LogMessage = "None",
                     LogLevel = string.Empty,
                     ExecutionId = null,
@@ -390,7 +390,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -403,7 +403,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -416,7 +416,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -429,7 +429,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -442,7 +442,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -455,7 +455,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -468,7 +468,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -481,7 +481,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -494,7 +494,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -507,7 +507,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 10,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 12:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -520,7 +520,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -533,7 +533,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -546,7 +546,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -559,7 +559,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -572,7 +572,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 },
                 new HealthReportEntry()
                 {
@@ -585,7 +585,7 @@ namespace DashboardBackend.Tests.Database
                     ReportNumericValue = 20,
                     ReportValueType = String.Empty,
                     ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01/01/2020 13:00:00"),
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 }
             };
         }
