@@ -1,5 +1,4 @@
 ﻿using Model;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -9,9 +8,9 @@ namespace DashboardFrontend.ViewModels
 {
     public class ManagerViewModel : BaseViewModel
     {
-        public ManagerViewModel(HealthReport healthReport)
+        public ManagerViewModel()
         {
-            ManagerChartViewModel = new(healthReport);
+            ManagerChartViewModel = new();
         }
 
         public ManagerViewModel(DataGrid dataGrid)

@@ -89,7 +89,7 @@ namespace Model
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return HashCode.Combine(Name, ContextId);
         }
     }
 }

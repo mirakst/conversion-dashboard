@@ -1,6 +1,9 @@
 using System;
 using Model;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
+using LiveChartsCore.Defaults;
+using System.Collections.Generic;
 
 namespace DashboardFrontend
 {
@@ -11,6 +14,7 @@ namespace DashboardFrontend
     {
         public Manager Manager {  get; set; }
         public SolidColorBrush LineColor { get; private set; }
+        public List<ObservableCollection<ObservablePoint>> ManagerValues { get; set; } = new(4) { new(), new(), new(), new() };
 
         public ManagerWrapper(Manager manager)
         {

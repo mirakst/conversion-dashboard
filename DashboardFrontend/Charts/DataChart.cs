@@ -24,7 +24,12 @@ namespace DashboardFrontend.Charts
         public DataChart(BaseChart chart) : this()
         {
             ChartData = chart;
-            
+        }
+
+        public DataChart(BaseChart chart, bool shouldAutoFocus)
+        {
+            ChartData = chart;
+            AutoFocusOff();
         }
 
         #region public
@@ -79,11 +84,11 @@ namespace DashboardFrontend.Charts
         /// </summary>
         /// The line to be removed <param name="dataName"></param>
         /// The data associated with the line <param name="data"></param>
-        public void RemoveData(String dataName, ObservableCollection<ObservablePoint> data)
+        public void RemoveData(string dataName, ObservableCollection<ObservablePoint> data)
         {
             ChartData.Values.Remove(data);
-
-            int managerIndex = ChartData.Series.FindIndex(e => e.Name == dataName) + 1;
+            string shortName = dataName.Split('.').Last();
+            int managerIndex = ChartData.Series.FindIndex(e => e.Name == shortName);
             ChartData.Series.RemoveAt(managerIndex);
         }
 
@@ -92,8 +97,6 @@ namespace DashboardFrontend.Charts
         /// </summary>
         public void UpdateData(Ram? ram, Cpu? cpu)
         {
-            
-            
             if (ram is null || cpu is null) return;
             foreach (var item in ram.Readings.Where(e => e.Date > LastRamPlot))
             {
@@ -106,7 +109,6 @@ namespace DashboardFrontend.Charts
             }
             if (cpu.Readings.Count > 0 && ram.Readings.Count > 0) 
             {
-
                 LastRamReading = ram.Readings.Last().Load * 100;
                 LastCpuReading = cpu.Readings.Last().Load * 100;
                 UpdatePlots(ram.Readings.Last().Date, cpu.Readings.Last().Date);
@@ -212,8 +214,9 @@ namespace DashboardFrontend.Charts
                 {
                     if (ChartData.Values.Count > 0 && ChartData.Values.First()?.Count > 0)
                     {
-                        ChartData.XAxis[0].MinLimit = ChartData.Values.First().Count >= _maxView ? ChartData.Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() :
-                            ChartData.Values.First().First().X.Value;
+                        ChartData.XAxis[0].MinLimit = ChartData.Values.First().Count >= _maxView
+                            ? ChartData.Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() 
+                            : ChartData.Values.First().First().X.Value;
                         ChartData.XAxis[0].MaxLimit = ChartData.Values.First().Last().X.Value;
                     }
                 }

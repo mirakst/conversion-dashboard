@@ -5,7 +5,6 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Model;
 
@@ -16,49 +15,52 @@ namespace DashboardFrontend.ViewModels
 
         #region Chart objects
 
-        public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"));
-        public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"));
-        public DataChart ReadChart { get; private set; } = new(new ManagerChart("Rows"));
-        public DataChart WrittenChart { get; private set; } = new(new ManagerChart("Rows"));
+        public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"), false);
+        public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"), false);
         public List<DataChart> Charts { get; private set; } = new();
         #endregion
 
-        private HealthReport _healthReport { get; set; }
-
-        public ManagerChartViewModel(HealthReport healthReport)
+        public ManagerChartViewModel()
         {
-            _healthReport = healthReport;
             Charts.Add(CPUChart);
+            Charts.Add(RAMChart);
         }
 
         /// <summary>
         /// Adds a line to all manager charts based on the data stored in the manager.
         /// </summary>
-        /// The manager to be added to the chart <param name="manager"></param>
-        public void AddChartLinesHelper(ManagerWrapper manager)
+        /// The manager to be added to the chart <param name="wrapper"></param>
+        public void AddChartLinesHelper(ManagerWrapper wrapper)
         {
-            List<ObservableCollection<ObservablePoint>> managerValues = new(4);
-            managerValues.Add(new ObservableCollection<ObservablePoint>(manager.Manager.CpuReadings.Select(CreatePoint)));
+            if (wrapper.Manager.CpuReadings.FirstOrDefault()?.Date is DateTime firstCpu)
+            {
+                wrapper.ManagerValues[0] = new(wrapper.Manager.CpuReadings.Select(p => CreatePoint(p, firstCpu)));
+            }
+            if (wrapper.Manager.RamReadings.FirstOrDefault()?.Date is DateTime firstRam)
+            {
+                wrapper.ManagerValues[1] = new(wrapper.Manager.RamReadings.Select(p => CreatePoint(p, firstRam)));
+            }
 
             int index = 0;
             foreach (DataChart chart in Charts)
             {
                 chart.AddLine(new LineSeries<ObservablePoint>
                 {
-                    Name = $"{manager.Manager.Name.Split(".").Last()}",
+                    Name = $"{wrapper.Manager.Name.Split(".").Last()}",
                     Fill = null,
-                    Stroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString()), 3),
-                    GeometryFill = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
-                    GeometryStroke = new SolidColorPaint(SKColor.Parse(manager.LineColor.Color.ToString())),
+                    Stroke = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString()), 3),
+                    GeometryFill = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
+                    GeometryStroke = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
                     GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => $"{manager.Manager.Name.Split(".").Last()}\nID [{manager.Manager.ContextId}]\n{DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}\n{e.PrimaryValue:P}"
-                }, managerValues[index++]);
+                    TooltipLabelFormatter = e => $"{wrapper.Manager.Name.Split(".").Last()}\nID {wrapper.Manager.ContextId}\n{DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}\n{e.PrimaryValue:P}"
+                }, wrapper.ManagerValues[index++]);
             }
         }
 
-        private ObservablePoint CreatePoint(PerformanceMetric pointData)
+        private ObservablePoint CreatePoint(PerformanceMetric pointData, DateTime first)
         {
-            return new ObservablePoint(pointData.Date.ToOADate(), pointData.Load);
+            double offsetDate = pointData.Date.ToOADate() - first.ToOADate();
+            return new ObservablePoint(offsetDate, pointData.Load);
         }
 
         /// <summary>
@@ -67,10 +69,9 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be removed <param name="manager"></param>
         public void RemoveChartLinesHelper(ManagerWrapper manager)
         {
-            foreach (DataChart chart in Charts)
+            for (int i = 0; i < Charts.Count; i++)
             {
-                var managerValues = new ObservableCollection<ObservablePoint>();
-                chart.RemoveData(manager.Manager.Name, managerValues);
+                Charts[i].RemoveData(manager.Manager.Name, manager.ManagerValues[i]);
             }
         }
 

@@ -116,31 +116,5 @@ namespace DashboardFrontend.DetachedWindows
                     break;
             }
         }
-
-        /// <summary>
-        /// Event freezing the charts if the mouse is hovering over them.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            foreach (DataChart chart in Vm.ManagerChartViewModel.Charts)
-            {
-                chart.AutoFocusOn();
-            }
-        }
-
-        /// <summary>
-        /// Event for unfreezing the charts when the mouse leaves.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            foreach (DataChart chart in Vm.ManagerChartViewModel.Charts)
-            {
-                chart.AutoFocusOff();
-            }
-        }
     }
 }

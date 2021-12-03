@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Windows.Markup;
-using DashboardFrontend.Charts;
-using LiveChartsCore.Defaults;
-using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -26,8 +20,7 @@ namespace DashboardFrontend.Charts
                 {
                     Name = "Time",
                     Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
-                    MinLimit = DateTime.Now.ToOADate(),
-                    MaxLimit = DateTime.Now.ToOADate(),
+                    MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(new SKColor(255,255,255)),
                 }
             };

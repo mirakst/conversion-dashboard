@@ -5,7 +5,6 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -55,7 +54,7 @@ namespace DashboardFrontend
             _vm.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels.Add(_vm.HealthReportViewModel);
 
-            _vm.ManagerViewModel = new ManagerViewModel(Conversion.HealthReport);
+            _vm.ManagerViewModel = new ManagerViewModel();
             ManagerViewModels.Add(_vm.ManagerViewModel);
         }
 
@@ -97,7 +96,7 @@ namespace DashboardFrontend
 
         public ManagerViewModel CreateManagerViewModel()
         {
-            ManagerViewModel result = new(Conversion.HealthReport);
+            ManagerViewModel result = new();
             if (Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.Managers);
@@ -124,11 +123,10 @@ namespace DashboardFrontend
             {
                 newData.ForEach(m =>
                 {
-                    var exec = Conversion.Executions.Find(e => e.Id == m.ExecutionId);
+                    Execution? exec = Conversion.Executions.Find(e => e.Id == m.ExecutionId);
                     if (exec is null)
                     {
                         // The first log message of an execution was logged before the execution was created
-                        Trace.WriteLine("LOG - Created execution " + m.ExecutionId);
                         exec = new Execution(m.ExecutionId, m.Date);
                         Conversion.AddExecution(exec);
                     }
@@ -179,7 +177,6 @@ namespace DashboardFrontend
                         // If a manager with the found name doesn't exist, create it
                         else
                         {
-                            Trace.WriteLine($"LOG - Created manager [{name}]");
                             Manager manager = new()
                             {
                                 Name = name,
