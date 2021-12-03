@@ -63,7 +63,7 @@ namespace DashboardBackend.Tests.Database
                     EndTime = null,
                     Afstemningsdata = Array.Empty<byte>(),
                 }
-            };
+            }.FindAll(e => e.Afstemtdato >= minDate);
         }
 
         public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
@@ -118,7 +118,7 @@ namespace DashboardBackend.Tests.Database
                     Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
                     RunNo = null,
                 }
-            };
+            }.FindAll(e => e.Timestamp >= minDate);
         }
 
         public List<ExecutionEntry> QueryExecutions(DateTime minDate)
@@ -137,7 +137,7 @@ namespace DashboardBackend.Tests.Database
                     ExecutionUuid = "conversion2",
                     Created = DateTime.Parse("01-01-2020 13:00:00"),
                 }
-            };
+            }.FindAll(e => e.Date >= minDate);
         }
 
         public List<HealthReportEntry> QueryHealthReport()
@@ -284,7 +284,7 @@ namespace DashboardBackend.Tests.Database
                     ExecutionId = 0,
                     ContextId = 1,
                 }
-            };
+            }.FindAll(e => e.Created >= minDate);
         }
 
         public List<LoggingEntry> QueryLogMessages(DateTime minDate)
@@ -347,7 +347,7 @@ namespace DashboardBackend.Tests.Database
                     ExecutionId = null,
                     ContextId = 0,
                 },
-            };
+            }.FindAll(e => e.Created >= minDate);
         }
 
         public List<LoggingContextEntry> QueryManagers()
@@ -587,7 +587,7 @@ namespace DashboardBackend.Tests.Database
                     ReportValueHuman = String.Empty,
                     LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 }
-            };
+            }.FindAll(e => e.LogTime >= minDate);
         }
     }
 }
