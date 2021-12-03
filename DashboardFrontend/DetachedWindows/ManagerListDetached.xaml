@@ -132,6 +132,7 @@
                     <TabItem x:Name="TabInfo"
                              Header="Info"
                              Style="{DynamicResource TabItemStyleOverwrite}"
+                             Margin="-2,0,0,0"
                              Height="27">
                         
                         <Grid x:Name="GridInfoTab"
