@@ -14,7 +14,6 @@ namespace DashboardFrontend.ViewModels
     {
 
         #region Chart objects
-
         public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"), false);
         public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"), false);
         public List<DataChart> Charts { get; private set; } = new();
@@ -52,7 +51,9 @@ namespace DashboardFrontend.ViewModels
                     GeometryFill = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
                     GeometryStroke = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
                     GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => $"{wrapper.Manager.Name.Split(".").Last()}\nID {wrapper.Manager.ContextId}\n{DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}\n{e.PrimaryValue:P}"
+                    TooltipLabelFormatter = e => $"({DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}) {wrapper.Manager.Name.Split(".").Last()} [{wrapper.Manager.ContextId}]: {e.PrimaryValue:P}",
+                    LineSmoothness = 0.5,
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(200),
                 }, wrapper.ManagerValues[index++]);
             }
         }

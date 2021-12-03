@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using static Model.LogMessage;
 using static Model.ValidationTest;
 using static Model.Manager;
-using System.Diagnostics;
 
 namespace DashboardBackend
 {
@@ -157,10 +156,9 @@ namespace DashboardBackend
             // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
             foreach (var entry in engineEntries)
             {
-                string name = entry.Manager.Split(',')[0];
                 // If manager was created by the log first (context id is set), find the first manager that is missing a property.
                 // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
-                Manager logManager = allManagers.Find(m => m.Name == name && m.ContextId != 0 && m.IsMissingValues);
+                Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
                 if (logManager != null)
                 {
                     AddEnginePropertiesToManager(logManager, entry);
@@ -168,7 +166,7 @@ namespace DashboardBackend
                 else
                 {
                     // Find all managers created from ENGINE_PROPERTIES (context ID=0)
-                    Manager engManager = allManagers.Find(m => m.Name == name && m.ContextId == 0 && m.IsMissingValues);
+                    Manager engManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId == 0 && m.IsMissingValues);
                     if (engManager != null)
                     {
                         AddEnginePropertiesToManager(engManager, entry);
@@ -178,7 +176,7 @@ namespace DashboardBackend
                     {
                         Manager manager = new()
                         {
-                            Name = name,
+                            Name = entry.Manager,
                         };
                         AddEnginePropertiesToManager(manager, entry);
                         allManagers.Add(manager);

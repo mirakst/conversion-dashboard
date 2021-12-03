@@ -7,9 +7,9 @@ namespace DashboardFrontend.ViewModels
         public HealthReportViewModel()
         {
         }
-        public DataChart SystemLoadChart { get; set; } = new DataChart(new PerformanceChart());
-        public DataChart NetworkChart { get; set; } = new DataChart(new NetworkChart());
-        public DataChart NetworkDeltaChart { get; set; } = new DataChart(new NetworkDeltaChart());
-        public DataChart NetworkSpeedChart { get; set; } = new DataChart(new NetworkSpeedChart());
+        public DataChart SystemLoadChart { get; set; } = new DataChart(new PerformanceChart(), true);
+        public DataChart NetworkChart { get; set; } = new DataChart(new NetworkChart(), true);
+        public DataChart NetworkDeltaChart { get; set; } = new DataChart(new NetworkDeltaChart(), true);
+        public DataChart NetworkSpeedChart { get; set; } = new DataChart(new NetworkSpeedChart(), true);
     }
 }

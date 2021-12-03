@@ -13,12 +13,15 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow(UserSettings userSettings)
+        private readonly Controller controller;
+
+        public SettingsWindow(Controller controller)
         {
             InitializeComponent();
-            Settings = userSettings;
-            SettingsViewModel = new(userSettings);
+            Settings = controller.UserSettings;
+            SettingsViewModel = new(controller.UserSettings);
             DataContext = SettingsViewModel;
+            this.controller = controller;
         }
 
         private UserSettingsViewModel SettingsViewModel { get; }
@@ -35,21 +38,31 @@ namespace DashboardFrontend.DetachedWindows
                 Validation.GetHasError(TextBoxAllInterval)
             };
 
-            if ((!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?")) && !inputValidations.Contains(true))
+            if (inputValidations.Contains(true))
             {
-                try
+                MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+                return;
+            }
+            else if (SettingsViewModel.HasChangedActiveProfile && Settings.ActiveProfile?.HasStartedMonitoring is true)
+            {
+                if (Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
                 {
-                    Settings.OverwriteAllAndSave(SettingsViewModel);
-                    Close();
+                    Settings.ActiveProfile.HasStartedMonitoring = false;
+                    controller.Reset();
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n"+ex.Message);
+                    return;
                 }
             }
-            else
+            try
             {
-                _ = MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+                Settings.OverwriteAllAndSave(SettingsViewModel);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n" + ex.Message);
             }
         }
 

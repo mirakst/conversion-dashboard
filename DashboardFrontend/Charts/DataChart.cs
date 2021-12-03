@@ -15,21 +15,13 @@ namespace DashboardFrontend.Charts
     /// </summary>
     public class DataChart : BaseViewModel
     {
-
-        public DataChart()
-        {
-            AutoFocusOn();
-        }
-
-        public DataChart(BaseChart chart) : this()
-        {
-            ChartData = chart;
-        }
-
         public DataChart(BaseChart chart, bool shouldAutoFocus)
         {
             ChartData = chart;
-            AutoFocusOff();
+            if (shouldAutoFocus)
+            {
+                AutoFocusOn();
+            }
         }
 
         #region public

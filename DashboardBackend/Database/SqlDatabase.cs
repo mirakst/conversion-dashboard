@@ -1,5 +1,4 @@
 ﻿using DashboardBackend.Database.Models;
-using System.Diagnostics;
 
 namespace DashboardBackend.Database
 {   

@@ -36,7 +36,7 @@ namespace DashboardBackend
         /// <returns></returns>
         private static double GetRowPerSecond(Manager manager)
         {
-            if (manager.RowsRead.HasValue && manager.RowsWritten.HasValue && manager.Runtime.HasValue)
+            if ((manager.RowsRead.HasValue || manager.RowsWritten.HasValue) && manager.Runtime.HasValue)
             {
                 return (manager.RowsRead.Value + manager.RowsWritten.Value) / manager.Runtime.Value.TotalSeconds;
             }

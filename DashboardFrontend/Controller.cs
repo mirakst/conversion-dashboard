@@ -21,7 +21,7 @@ namespace DashboardFrontend
         {
             TryLoadUserSettings();
             _vm = viewModel;
-            //Conversion = new();
+            Conversion = new();
             _timers = new List<Timer>();
         }
 
@@ -34,10 +34,10 @@ namespace DashboardFrontend
         private readonly MainWindowViewModel _vm;
         private readonly List<Timer> _timers;
         public Conversion? Conversion { get; set; }
-        public List<HealthReportViewModel> HealthReportViewModels { get; } = new();
-        public List<LogViewModel> LogViewModels { get; } = new();
-        public List<ValidationReportViewModel> ValidationReportViewModels { get; } = new();
-        public List<ManagerViewModel> ManagerViewModels { get; } = new();
+        public List<HealthReportViewModel> HealthReportViewModels { get; private set; } = new();
+        public List<LogViewModel> LogViewModels { get; private set; } = new();
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; } = new();
+        public List<ManagerViewModel> ManagerViewModels { get; private set; } = new();
         public UserSettings UserSettings { get; set; } = new();
 
         /// <summary>
@@ -46,16 +46,16 @@ namespace DashboardFrontend
         public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
-            LogViewModels.Add(_vm.LogViewModel);
+            LogViewModels = new() { _vm.LogViewModel };
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel();
-            ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
+            ValidationReportViewModels = new() { _vm.ValidationReportViewModel };
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
-            HealthReportViewModels.Add(_vm.HealthReportViewModel);
+            HealthReportViewModels = new() { _vm.HealthReportViewModel };
 
             _vm.ManagerViewModel = new ManagerViewModel();
-            ManagerViewModels.Add(_vm.ManagerViewModel);
+            ManagerViewModels = new() { _vm.ManagerViewModel };
         }
 
         public LogViewModel CreateLogViewModel()
@@ -201,7 +201,7 @@ namespace DashboardFrontend
                     }
                 }
                 // Check if an execution might have ended
-                else if (message.Content.StartsWith("Program closing due to thhe following error:")
+                else if (message.Content.StartsWith("Program closing due to the following error:")
                     || message.Content == "Exiting from GuiManager..."
                     || message.Content == "No managers left to start automatically for BATCH"
                     || message.Content == "Deploy is finished!!")
@@ -333,9 +333,7 @@ namespace DashboardFrontend
                     if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
-                        UserSettings.ActiveProfile.ProfileChanged += StopMonitoring;
                     }
-                    Conversion = new();
                     StartMonitoring();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
@@ -450,6 +448,8 @@ namespace DashboardFrontend
 
         internal void Reset()
         {
+            StopMonitoring();
+            Conversion = new();
             InitializeViewModels(LogViewModels[0].LogListView);
             _vm.UpdateView();
         }

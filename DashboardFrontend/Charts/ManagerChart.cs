@@ -21,7 +21,8 @@ namespace DashboardFrontend.Charts
                     Name = "Time",
                     Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
                     MinLimit = 0,
-                    LabelsPaint = new SolidColorPaint(new SKColor(255,255,255)),
+                    LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(500),
                 }
             };
 
@@ -37,6 +38,7 @@ namespace DashboardFrontend.Charts
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     MinStep = 0.25,
                     ForceStepToMin = true,
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(500),
                 }
             };
         }

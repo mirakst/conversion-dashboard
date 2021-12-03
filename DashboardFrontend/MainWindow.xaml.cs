@@ -31,7 +31,7 @@ namespace DashboardFrontend
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
+            SettingsWindow settingsWindow = new(ViewModel.Controller);
             settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }

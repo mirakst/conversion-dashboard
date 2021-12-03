@@ -147,7 +147,7 @@ namespace DashboardFrontend.ViewModels
             MessageView = (CollectionView)CollectionViewSource.GetDefaultView(MessageList);
             MessageView.Filter = OnMessagesFilter;
             UpdateCounters(log);
-            if (DoAutoScroll && LogListView is not null && LogListView.Items.Count > 0)
+            if (DoAutoScroll && LogListView is not null && !LogListView.Items.IsEmpty)
             {
                 LogListView.ScrollIntoView(LogListView.Items[^1]);
             }
