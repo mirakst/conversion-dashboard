@@ -21,6 +21,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void OnButtonConnectDBClick(object sender, RoutedEventArgs e)
         {
+            ButtonConnectDb.IsEnabled = false;
             string userId = TextBoxUserId.Text;
             string password = TextBoxPassword.Password;
 
@@ -33,8 +34,8 @@ namespace DashboardFrontend.DetachedWindows
 
             ControlLoadingAnim.Visibility = Visibility.Visible;
             
-            Worker.DoWork += Worker_DoWork;
-            Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            Worker.DoWork += Worker_DoWork!;
+            Worker.RunWorkerCompleted += Worker_RunWorkerCompleted!;
             Worker.RunWorkerAsync();
         }
 
@@ -46,7 +47,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            using SqlConnection conn = new(UserSettings.ActiveProfile.ConnectionString);
+            using SqlConnection conn = new(UserSettings.ActiveProfile!.ConnectionString);
             try
             {
                 conn.Open();

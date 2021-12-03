@@ -13,9 +13,6 @@
         Height="720" 
         Width="1280"
         WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-    <converters:NotFoundToNaConverter x:Key="NotFoundToNaConverter"/>
-    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -81,7 +78,6 @@
                           Style="{DynamicResource DefaultDatagrid}"
                           BorderBrush="{DynamicResource BorderColor}"
                           ItemsSource="{Binding Managers}" 
-                          SelectionChanged="datagridManagers_SelectionChanged"
                           HorizontalScrollBarVisibility="Hidden"
                           HorizontalAlignment="Left">
                     
@@ -148,23 +144,20 @@
                                     <DataGridTextColumn Header="ID"
                                                         Binding="{Binding Manager.ContextId}"
                                                         Width="25pt"/>
-                                    <DataGridTextColumn Header="Execution #"
-                                                        Binding="{Binding Manager.ExecutionId}"
-                                                        Width="60pt"/>
                                     <DataGridTextColumn Header="Start time"
-                                                        Binding="{Binding Manager.StartTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="End time"
-                                                        Binding="{Binding Manager.EndTime, StringFormat=\{0:dd/MM HH.mm.ss\}}"
+                                                        Binding="{Binding Manager.EndTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"
                                                         Width="2*"/>
-                                    <DataGridTextColumn Header="Est. runtime"
-                                                        Binding="{Binding Manager.Runtime}"
+                                    <DataGridTextColumn Header="Runtime"
+                                                        Binding="{Binding Manager.Runtime, StringFormat=\{0:hh\\:mm\\:ss\}, TargetNullValue='N/A'}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
-                                                        Binding="{Binding Manager.RowsRead, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Binding="{Binding Manager.RowsRead, TargetNullValue='N/A'}"
                                                         Width="1.5*"/>
                                     <DataGridTextColumn Header="Rows written"
-                                                        Binding="{Binding Manager.RowsWritten, Converter={StaticResource NotFoundToNaConverter}}"
+                                                        Binding="{Binding Manager.RowsWritten, TargetNullValue='N/A'}"
                                                         Width="1.5*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
@@ -201,12 +194,10 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Row="0"
@@ -223,9 +214,7 @@
                                                     ZoomMode="X"
                                                     XAxes="{Binding ChartData.XAxis}"
                                                     YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Top"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
+                                                    TooltipPosition="Center">
                                 </lvc:CartesianChart>
 
                                 <Grid.RowDefinitions>
@@ -253,60 +242,7 @@
                                                     ZoomMode="X"
                                                     XAxes="{Binding ChartData.XAxis}"
                                                     YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Top"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
-                            </Grid>
-
-                            <Grid Grid.Row="2"
-                                  Margin="0,5,0,5">
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                
-                                <StackPanel >
-                                    <Label Content="Rows Read"
-                                        Style="{DynamicResource ChartLabels}"/>
-                                        
-                                </StackPanel>
-
-                                <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.ReadChart}"
-                                                    Grid.Row="1"
-                                                    Series="{Binding ChartData.Series}"
-                                                    ZoomMode="X"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Top"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                                </lvc:CartesianChart>
-                            </Grid>
-
-                            <Grid Grid.Row="3"
-                                  Margin="0,5,0,5">
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                
-                                <StackPanel>
-                                    <Label Content="Rows Written"
-                                           Style="{DynamicResource ChartLabels}"/>
-                                </StackPanel>
-                                <lvc:CartesianChart Name="ChartWritten"
-                                                    DataContext="{Binding ManagerChartViewModel.WrittenChart}"
-                                                    Grid.Row="1"
-                                                    Series="{Binding ChartData.Series}"
-                                                    ZoomMode="X"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Top"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
+                                                    TooltipPosition="Top">
                                 </lvc:CartesianChart>
                             </Grid>
 
@@ -318,7 +254,7 @@
                                       Margin="15,5,0,10"
                                       BorderBrush="Transparent"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      Background="{DynamicResource BackgroundColor}" SelectionChanged="datagridManagerCharts_SelectionChanged">
+                                      Background="{DynamicResource BackgroundColor}">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn>
@@ -334,9 +270,6 @@
                                     <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="30pt"/>
-                                    <DataGridTextColumn Binding="{Binding Manager.ExecutionId}"
-                                                        Header="Exec ID"
-                                                        Width="*"/>
                                     <DataGridTemplateColumn>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
