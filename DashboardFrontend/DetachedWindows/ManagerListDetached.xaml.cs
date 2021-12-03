@@ -35,6 +35,7 @@ namespace DashboardFrontend.DetachedWindows
                 if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
                 {
                     DatagridManagerMover("Add", manager);
+                    manager.IsDetailedInfoShown = true;
                 }
             }
         }
@@ -54,6 +55,7 @@ namespace DashboardFrontend.DetachedWindows
             foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
             {
                 DatagridManagerMover("Remove", manager);
+                manager.IsDetailedInfoShown = false;
             }
         }
 

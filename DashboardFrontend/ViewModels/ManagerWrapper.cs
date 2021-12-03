@@ -1,16 +1,26 @@
 using System;
 using Model;
 using System.Windows.Media;
+using DashboardFrontend.ViewModels;
 
 namespace DashboardFrontend
 {
     /// <summary>
     /// Wrapper class for manager to store a color associated with the manager
     /// </summary>
-    public class ManagerWrapper
+    public class ManagerWrapper : BaseViewModel
     {
         public Manager Manager {  get; set; }
         public SolidColorBrush LineColor { get; private set; }
+        private bool _isDetailedInfoShown;
+        public bool IsDetailedInfoShown
+        {
+            get => _isDetailedInfoShown;
+            set
+            {
+                _isDetailedInfoShown = value;
+                OnPropertyChanged(nameof(IsDetailedInfoShown));
+            }}
 
         public ManagerWrapper(Manager manager)
         {

@@ -107,7 +107,7 @@
                                             FontFamily="wingdings 3"
                                             Width="20pt"
                                             Tag="{Binding}"
-                                            Style="{StaticResource DetachButton}"
+                                            Style="{StaticResource ManagerButton}"
                                             Margin="0,0,4,0">
                                         <Image Source="../Icons/Add.png"
                                                Margin="8"/>
