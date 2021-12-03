@@ -46,21 +46,13 @@ namespace DashboardFrontend
         public void InitializeViewModels(ListView listViewLog)
         {
             _vm.LogViewModel = new LogViewModel(listViewLog);
-            LogViewModels = new()
-            {
-                _vm.LogViewModel
-            };
+            LogViewModels.Add(_vm.LogViewModel);
 
             _vm.ValidationReportViewModel = new ValidationReportViewModel();
-            ValidationReportViewModels = new()
-            {
-                _vm.ValidationReportViewModel
-            };
+            ValidationReportViewModels.Add(_vm.ValidationReportViewModel);
 
             _vm.HealthReportViewModel = new HealthReportViewModel();
-            HealthReportViewModels = new() {
-                _vm.HealthReportViewModel
-            };
+            HealthReportViewModels.Add(_vm.HealthReportViewModel);
 
             _vm.ManagerViewModel = new ManagerViewModel();
             ManagerViewModels.Add(_vm.ManagerViewModel);
@@ -69,7 +61,7 @@ namespace DashboardFrontend
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
-            if (Conversion?.Executions.Any())
+            if (Conversion != null && Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.Log);
             }
@@ -80,7 +72,7 @@ namespace DashboardFrontend
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
-            if (Conversion?.Executions.Any())
+            if (Conversion != null && Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.ValidationReport);
             }
@@ -105,7 +97,7 @@ namespace DashboardFrontend
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new();
-            if (Conversion?.Executions.Any())
+            if (Conversion != null && Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.ActiveExecution.Managers);
             }
@@ -118,7 +110,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog()
         {
-            if (IsUpdatingLog || Conversion.ActiveExecution?.Log is null)
+            if (IsUpdatingLog || Conversion?.ActiveExecution?.Log is null)
             {
                 return;
             }
@@ -160,7 +152,7 @@ namespace DashboardFrontend
         /// <param name="message">The log message to parse.</param>
         private void ParseLogMessage(LogMessage message)
         {
-            if (Conversion.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
+            if (Conversion?.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
             {
                 if (message.Content.StartsWith("Starting manager:"))
                 {
@@ -225,7 +217,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateValidationReport()
         {
-            if(IsUpdatingValidations || Conversion.ActiveExecution?.ValidationReport is null)
+            if(IsUpdatingValidations || Conversion?.ActiveExecution?.ValidationReport is null)
             {
                 return;
             }
@@ -251,7 +243,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport()
         {
-            if (IsUpdatingHealthReport || Conversion.HealthReport is null)
+            if (IsUpdatingHealthReport || Conversion?.HealthReport is null)
             {
                 return;
             }
@@ -282,7 +274,7 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateManagerOverview()
         {
-            if (IsUpdatingManagers || Conversion.ActiveExecution is null)
+            if (IsUpdatingManagers || Conversion?.ActiveExecution is null)
             {
                 return;
             }
@@ -343,7 +335,7 @@ namespace DashboardFrontend
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
                         UserSettings.ActiveProfile.ProfileChanged += StopMonitoring;
                     }
-                    Convsersion = new();
+                    Conversion = new();
                     StartMonitoring();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
@@ -368,7 +360,7 @@ namespace DashboardFrontend
         /// </summary>
         private void UpdateExecutions()
         {
-            if (IsUpdatingExecutions)
+            if (IsUpdatingExecutions || Conversion is null)
             {
                 return;
             }

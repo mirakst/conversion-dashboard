@@ -160,7 +160,7 @@ namespace DashboardBackend
                 string name = entry.Manager.Split(',')[0];
                 // If manager was created by the log first (context id is set), find the first manager that is missing a property.
                 // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
-                Manager logManager = allManagers.Find(m => m.Name == name && m.ContextId != 0 && (!m.StartTime.HasValue || !m.EndTime.HasValue || !m.Runtime.HasValue || !m.RowsRead.HasValue || !m.RowsWritten.HasValue));
+                Manager logManager = allManagers.Find(m => m.Name == name && m.ContextId != 0 && m.IsMissingValues);
                 if (logManager != null)
                 {
                     AddEnginePropertiesToManager(logManager, entry);
@@ -168,7 +168,7 @@ namespace DashboardBackend
                 else
                 {
                     // Find all managers created from ENGINE_PROPERTIES (context ID=0)
-                    Manager engManager = allManagers.Find(m => m.Name == name && m.ContextId == 0 && (!m.StartTime.HasValue || !m.EndTime.HasValue || !m.Runtime.HasValue || !m.RowsRead.HasValue || !m.RowsWritten.HasValue));
+                    Manager engManager = allManagers.Find(m => m.Name == name && m.ContextId == 0 && m.IsMissingValues);
                     if (engManager != null)
                     {
                         AddEnginePropertiesToManager(engManager, entry);

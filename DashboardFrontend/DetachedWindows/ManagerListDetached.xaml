@@ -78,7 +78,6 @@
                           Style="{DynamicResource DefaultDatagrid}"
                           BorderBrush="{DynamicResource BorderColor}"
                           ItemsSource="{Binding Managers}" 
-                          SelectionChanged="datagridManagers_SelectionChanged"
                           HorizontalScrollBarVisibility="Hidden"
                           HorizontalAlignment="Left">
                     
