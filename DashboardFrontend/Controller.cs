@@ -5,6 +5,7 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -243,11 +244,10 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport()
         {
-            if (IsUpdatingHealthReport || Conversion?.HealthReport is null)
+            if (Conversion?.HealthReport is null)
             {
                 return;
             }
-            IsUpdatingHealthReport = true;
             if (Conversion.HealthReport.IsInitialized)
             {
                 DU.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
@@ -266,7 +266,6 @@ namespace DashboardFrontend
             {
                 DU.BuildHealthReport(Conversion.HealthReport);
             }
-            IsUpdatingHealthReport = false;
         }
 
         /// <summary>
@@ -274,16 +273,15 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateManagerOverview()
         {
-            if (IsUpdatingManagers || Conversion?.ActiveExecution is null)
+            if (Conversion?.ActiveExecution is null)
             {
                 return;
             }
-            IsUpdatingManagers = true;
 
             DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
             Conversion.LastManagerUpdate = DateTime.Now;
 
-            while (_logParseQueue.Count > 0)
+            while (_logParseQueue.Any())
             {
                 ParseLogMessage(_logParseQueue.Dequeue());
             }
@@ -291,14 +289,9 @@ namespace DashboardFrontend
             // Check for any manager values that can be updated
             Conversion.AllManagers.ForEach(m =>
             {
-                if (!m.Runtime.HasValue && m.StartTime.HasValue && m.EndTime.HasValue)
-                {
-                    m.Runtime = m.EndTime.Value.Subtract(m.StartTime.Value);
-                }
-
-                List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                m.AddReadings(cpuReadings, ramReadings);
+                //List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                //List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                //m.AddReadings(cpuReadings, ramReadings);
             });
 
             foreach (var vm in ManagerViewModels)
@@ -308,7 +301,6 @@ namespace DashboardFrontend
                     vm.UpdateData(Conversion.ActiveExecution.Managers);
                 });
             }
-            IsUpdatingManagers = false;
         }
 
         /// <summary>
@@ -334,7 +326,8 @@ namespace DashboardFrontend
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
                     }
-                    StartMonitoring();
+                    Task task = new(StartMonitoring);
+                    task.Start();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
             }
@@ -383,27 +376,77 @@ namespace DashboardFrontend
         /// </summary>
         private void StartMonitoring()
         {
-            _timers.Add(new Timer(x => { UpdateExecutions(); }, null, 0, 5000));
-            _timers.Add(new Timer(x => { UpdateHealthReport(); }, null, 500, 5000));
-
-            if (UserSettings.SynchronizeAllQueries)
-            {
-                _timers.Add(new Timer(x =>
-                {
-                    Task.Run(() => UpdateHealthReport());
-                    Task.Run(() => UpdateLog());
-                    Task.Run(() => UpdateValidationReport());
-                    Task.Run(() => UpdateManagerOverview());
-                }, null, 1000, UserSettings.AllQueryInterval * 1000));
-            }
-            else
-            {
-                _timers.Add(new Timer(x => UpdateHealthReport(), null, 1000, UserSettings.HealthReportQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateValidationReport(), null, 1000, UserSettings.ValidationQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateLog(), null, 1000, UserSettings.LoggingQueryInterval * 1000));
-                _timers.Add(new Timer(x => UpdateManagerOverview(), null, 1000, UserSettings.ManagerQueryInterval * 1000));
-            }
             _vm.IsRunning = true;
+            bool shouldUpdateLog = false;
+            bool shouldUpdateExecutions = false;
+            bool shouldUpdateHealthReport = false;
+            bool shouldUpdateValidations = false;
+            bool shouldUpdateManagers = false;
+
+            Timer logTimer = new(x => shouldUpdateLog = true, null, 0, UserSettings.LoggingQueryInterval * 1000);
+            Timer execTimer = new(x => shouldUpdateExecutions = true, null, 0, 10000);
+            Timer healthReportTimer = new(x => shouldUpdateHealthReport = true, null, 0, UserSettings.HealthReportQueryInterval * 1000);
+            Timer validationsTimer = new(x => shouldUpdateValidations = true, null, 0, UserSettings.ValidationQueryInterval * 1000);
+            Timer managerTimer = new(x => shouldUpdateManagers = true, null, 0, UserSettings.ManagerQueryInterval * 1000);
+
+            UpdateExecutions();
+            DU.BuildHealthReport(Conversion?.HealthReport);
+
+            // mål performance for hver blok
+            while (_vm.IsRunning)
+            {
+                if (shouldUpdateLog)
+                {
+                    Trace.WriteLine("Updating log");
+                    UpdateLog();
+                    shouldUpdateLog = false;
+                }
+                if (shouldUpdateManagers)
+                {
+                    Trace.WriteLine("Updating managers");
+                    UpdateManagerOverview();
+                    shouldUpdateManagers = false;
+                }
+                if (shouldUpdateValidations)
+                {
+                    Trace.WriteLine("Updating validations");
+                    UpdateValidationReport();
+                    shouldUpdateValidations = false;
+                }
+                if (shouldUpdateHealthReport)
+                {
+                    Trace.WriteLine("Updating health report");
+                    UpdateHealthReport();
+                    shouldUpdateHealthReport = false;
+                }
+                if (shouldUpdateExecutions)
+                {
+                    Trace.WriteLine("Updating executions yo");
+                    UpdateExecutions();
+                    shouldUpdateExecutions = false;
+                }
+            }
+
+            //_timers.Add(new Timer(x => { UpdateExecutions(); }, null, 0, 10000));
+
+            //if (UserSettings.SynchronizeAllQueries)
+            //{
+            //    _timers.Add(new Timer(x =>
+            //    {
+            //        Task.Run(() => UpdateHealthReport());
+            //        Task.Run(() => UpdateLog());
+            //        Task.Run(() => UpdateValidationReport());
+            //        Task.Run(() => UpdateManagerOverview());
+            //    }, null, 1000, UserSettings.AllQueryInterval * 1000));
+            //}
+            //else
+            //{
+            //    _timers.Add(new Timer(x => UpdateHealthReport(), null, 1000, UserSettings.HealthReportQueryInterval * 1000));
+            //    _timers.Add(new Timer(x => UpdateValidationReport(), null, 1000, UserSettings.ValidationQueryInterval * 1000));
+            //    _timers.Add(new Timer(x => UpdateLog(), null, 1000, UserSettings.LoggingQueryInterval * 1000));
+            //    _timers.Add(new Timer(x => UpdateManagerOverview(), null, 1000, UserSettings.ManagerQueryInterval * 1000));
+            //}
+            //_vm.IsRunning = true;
         }
 
         /// <summary>
@@ -441,6 +484,7 @@ namespace DashboardFrontend
                 DisplayGeneralError("An unexpected problem occurred while loading user settings", ex);
             }
         }
+
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
