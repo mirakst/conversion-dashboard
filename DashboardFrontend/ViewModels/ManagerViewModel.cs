@@ -1,4 +1,5 @@
 ﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace DashboardFrontend.ViewModels
             _datagrid = dataGrid;
         }
 
+        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
         private readonly DataGrid _datagrid;
         private ObservableCollection<ManagerWrapper> _managers = new();
         public ManagerChartViewModel ManagerChartViewModel { get; set; }

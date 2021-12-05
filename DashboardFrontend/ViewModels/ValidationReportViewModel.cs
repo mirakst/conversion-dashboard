@@ -20,6 +20,8 @@ namespace DashboardFrontend.ViewModels
         {
         }
 
+
+
         #region Properties
         private ValidationReport _validationReport;
         public List<string> ExpandedManagerNames = new();
@@ -34,14 +36,14 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(ManagerView));
             }
         }
-        private DateTime _lastModified;
-        public DateTime LastModified
+        private DateTime _lastUpdated;
+        public DateTime LastUpdated
         {
-            get => _lastModified;
+            get => _lastUpdated;
             set
             {
-                _lastModified = value;
-                OnPropertyChanged(nameof(LastModified));
+                _lastUpdated = value;
+                OnPropertyChanged(nameof(LastUpdated));
             }
         }
         private string _nameFilter = string.Empty;

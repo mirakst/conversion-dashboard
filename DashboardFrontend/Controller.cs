@@ -26,11 +26,11 @@ namespace DashboardFrontend
             _timers = new List<Timer>();
         }
 
-        public bool IsUpdatingExecutions { get; private set; }
-        public bool IsUpdatingLog { get; private set; }
-        public bool IsUpdatingValidations { get; private set; }
-        public bool IsUpdatingManagers { get; private set; }
-        public bool IsUpdatingHealthReport { get; private set; }
+        public bool ShouldUpdateExecutions { get; private set; }
+        public bool ShouldUpdateLog { get; private set; }
+        public bool ShouldUpdateValidations { get; private set; }
+        public bool ShouldUpdateManagers { get; private set; }
+        public bool ShouldUpdateHealthReport { get; private set; }
         private readonly Queue<LogMessage> _logParseQueue = new();
         private readonly MainWindowViewModel _vm;
         private readonly List<Timer> _timers;
@@ -111,14 +111,13 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog()
         {
-            if (IsUpdatingLog || Conversion?.ActiveExecution?.Log is null)
+            if (Conversion?.ActiveExecution?.Log is null)
             {
                 return;
             }
-            IsUpdatingLog = true;
 
-            List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogUpdate);
-            Conversion.LastLogUpdate = DateTime.Now;
+            List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
+            Conversion.LastLogQuery = DateTime.Now;
 
             if (newData.Count > 0)
             {
@@ -134,16 +133,8 @@ namespace DashboardFrontend
                     exec.Log.Messages.Add(m);
                     _logParseQueue.Enqueue(m);
                 });
-
-                foreach (LogViewModel vm in LogViewModels)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        vm.UpdateData(Conversion.ActiveExecution.Log);
-                    });
-                }
+                Conversion.LastLogUpdated = DateTime.Now;
             }
-            IsUpdatingLog = false;
         }
 
         /// <summary>
@@ -218,25 +209,17 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateValidationReport()
         {
-            if(IsUpdatingValidations || Conversion?.ActiveExecution?.ValidationReport is null)
+            if(Conversion?.ActiveExecution?.ValidationReport is null)
             {
                 return;
             }
-            IsUpdatingValidations = true;
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.ActiveExecution.ValidationReport.LastModified);
             Conversion.ActiveExecution.ValidationReport.LastModified = DateTime.Now;
             if (newData.Count > 0)
             {
                 Conversion.ActiveExecution.ValidationReport.ValidationTests = newData;
-                foreach (var vm in ValidationReportViewModels)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        vm.UpdateData(Conversion.ActiveExecution.ValidationReport);
-                    });
-                }
+                Conversion.LastValidationsUpdated = DateTime.Now;
             }
-            IsUpdatingValidations = false;
         }
 
         /// <summary>
@@ -250,16 +233,10 @@ namespace DashboardFrontend
             }
             if (Conversion.HealthReport.IsInitialized)
             {
-                DU.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
-                foreach (var vm in HealthReportViewModels)
+                int dataCount = DU.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
+                if (dataCount > 0)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        vm.SystemLoadChart.UpdateData(Conversion.HealthReport.Ram, Conversion.HealthReport.Cpu);
-                        vm.NetworkChart.UpdateData(Conversion.HealthReport.Network);
-                        vm.NetworkDeltaChart.UpdateData(Conversion.HealthReport.Network);
-                        vm.NetworkSpeedChart.UpdateData(Conversion.HealthReport.Network);
-                    });
+                    Conversion.LastHealthReportUpdated = DateTime.Now;
                 }
             }
             else
@@ -278,28 +255,52 @@ namespace DashboardFrontend
                 return;
             }
 
-            DU.GetAndUpdateManagers(Conversion.LastManagerUpdate, Conversion.AllManagers);
-            Conversion.LastManagerUpdate = DateTime.Now;
+            int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
+            Conversion.LastManagerQuery = DateTime.Now;
 
             while (_logParseQueue.Any())
             {
                 ParseLogMessage(_logParseQueue.Dequeue());
+                managerCount = 1;
             }
 
-            // Check for any manager values that can be updated
-            Conversion.AllManagers.ForEach(m =>
+            // Check for any health report readings
+            if (Conversion.HealthReport?.Cpu is not null && Conversion.HealthReport?.Ram is not null)
             {
-                //List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                //List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                //m.AddReadings(cpuReadings, ramReadings);
-            });
-
-            foreach (var vm in ManagerViewModels)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
+                Conversion.AllManagers.ForEach(m =>
                 {
-                    vm.UpdateData(Conversion.ActiveExecution.Managers);
+                    List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                    List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                    m.AddReadings(cpuReadings, ramReadings);
                 });
+            }
+
+            if (managerCount > 0)
+            {
+                Conversion.LastManagerUpdated = DateTime.Now;
+            }
+        }
+
+        /// <summary>
+        /// Updates the list of executions in the current conversion.
+        /// </summary>
+        private void UpdateExecutions()
+        {
+            if (Conversion is null)
+            {
+                return;
+            }
+            List<Execution> result = DU.GetExecutions(Conversion.LastExecutionQuery);
+            Conversion.LastExecutionQuery = DateTime.Now;
+            if (result.Count > 0)
+            {
+                foreach(Execution newExec in result)
+                {
+                    if (!Conversion.Executions.Any(e => e.Id == newExec.Id))
+                    {
+                        Conversion.AddExecution(newExec);
+                    }
+                }
             }
         }
 
@@ -326,8 +327,10 @@ namespace DashboardFrontend
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
                     }
-                    Task task = new(StartMonitoring);
-                    task.Start();
+                    Task monitoring = new(StartMonitoring);
+                    Task updateViews = new(UpdateViews);
+                    monitoring.Start();
+                    updateViews.Start();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
                 }
             }
@@ -347,106 +350,141 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Updates the list of executions in the current conversion.
+        /// Gathers initial information (Executions, health report info) and then starts the query timers that determine when to fetch data for the individual parts of the Conversion.
+        /// The main loop ensures that data is processed when appropriate, as determined by the timers.
         /// </summary>
-        private void UpdateExecutions()
-        {
-            if (IsUpdatingExecutions || Conversion is null)
-            {
-                return;
-            }
-            IsUpdatingExecutions = true;
-            List<Execution> result = DU.GetExecutions(Conversion.LastExecutionUpdate);
-            Conversion.LastExecutionUpdate = DateTime.Now;
-            if (result.Count > 0)
-            {
-                foreach(Execution newExec in result)
-                {
-                    if (!Conversion.Executions.Any(e => e.Id == newExec.Id))
-                    {
-                        Conversion.AddExecution(newExec);
-                    }
-                }
-            }
-            IsUpdatingExecutions = false;
-        }
-
-        /// <summary>
-        /// Sets up the necessary query timers that gather and update information in the system.
-        /// </summary>
+        /// <remarks><see cref="Thread.Sleep(int)"/> is used to drastically reduce the number of times the loop is executed, lowering the overall CPU load.</remarks>
         private void StartMonitoring()
         {
             _vm.IsRunning = true;
-            bool shouldUpdateLog = false;
-            bool shouldUpdateExecutions = false;
-            bool shouldUpdateHealthReport = false;
-            bool shouldUpdateValidations = false;
-            bool shouldUpdateManagers = false;
-
-            Timer logTimer = new(x => shouldUpdateLog = true, null, 0, UserSettings.LoggingQueryInterval * 1000);
-            Timer execTimer = new(x => shouldUpdateExecutions = true, null, 0, 10000);
-            Timer healthReportTimer = new(x => shouldUpdateHealthReport = true, null, 0, UserSettings.HealthReportQueryInterval * 1000);
-            Timer validationsTimer = new(x => shouldUpdateValidations = true, null, 0, UserSettings.ValidationQueryInterval * 1000);
-            Timer managerTimer = new(x => shouldUpdateManagers = true, null, 0, UserSettings.ManagerQueryInterval * 1000);
-
             UpdateExecutions();
             DU.BuildHealthReport(Conversion?.HealthReport);
+            SetupTimers();
 
-            // mål performance for hver blok
             while (_vm.IsRunning)
             {
-                if (shouldUpdateLog)
+                if (ShouldUpdateLog)
                 {
-                    Trace.WriteLine("Updating log");
+                    Trace.WriteLine("log");
                     UpdateLog();
-                    shouldUpdateLog = false;
+                    ShouldUpdateLog = false;
                 }
-                if (shouldUpdateManagers)
+                if (ShouldUpdateManagers)
                 {
-                    Trace.WriteLine("Updating managers");
+                    Trace.WriteLine("mgr");
                     UpdateManagerOverview();
-                    shouldUpdateManagers = false;
+                    ShouldUpdateManagers = false;
                 }
-                if (shouldUpdateValidations)
+                if (ShouldUpdateValidations)
                 {
-                    Trace.WriteLine("Updating validations");
+                    Trace.WriteLine("vr");
                     UpdateValidationReport();
-                    shouldUpdateValidations = false;
+                    ShouldUpdateValidations = false;
                 }
-                if (shouldUpdateHealthReport)
+                if (ShouldUpdateHealthReport)
                 {
-                    Trace.WriteLine("Updating health report");
+                    Trace.WriteLine("hr");
                     UpdateHealthReport();
-                    shouldUpdateHealthReport = false;
+                    ShouldUpdateHealthReport = false;
                 }
-                if (shouldUpdateExecutions)
+                if (ShouldUpdateExecutions)
                 {
-                    Trace.WriteLine("Updating executions yo");
+                    Trace.WriteLine("e");
                     UpdateExecutions();
-                    shouldUpdateExecutions = false;
+                    ShouldUpdateExecutions = false;
                 }
+                Thread.Sleep(10);
             }
+        }
 
-            //_timers.Add(new Timer(x => { UpdateExecutions(); }, null, 0, 10000));
+        /// <summary>
+        /// Runs continuously while monitoring, and ensures that the appropriate viewmodels are updated when new data is added to the Conversion. 
+        /// </summary>
+        /// <remarks><see cref="Thread.Sleep(int)"/> is used to drastically reduce the number of times the loop is executed, lowering the overall CPU load.</remarks>
+        private void UpdateViews()
+        {
+            while (_vm.IsRunning)
+            {
+                if (Conversion?.ActiveExecution is null)
+                {
+                    continue;
+                }
+                foreach (ValidationReportViewModel vm in ValidationReportViewModels)
+                {
+                    if (vm.LastUpdated < Conversion.LastValidationsUpdated)
+                    {
+                        vm.LastUpdated = DateTime.Now;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            vm.UpdateData(Conversion.ActiveExecution.ValidationReport);
+                        });
+                    }
+                }
+                foreach (LogViewModel vm in LogViewModels)
+                {
+                    if (vm.LastUpdated < Conversion.LastLogUpdated)
+                    {
+                        vm.LastUpdated = DateTime.Now;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            vm.UpdateData(Conversion.ActiveExecution.Log);
+                        });
+                    }
+                }
+                foreach (ManagerViewModel vm in ManagerViewModels)
+                {
+                    if (Conversion?.ActiveExecution is not null && vm.LastUpdated < Conversion?.LastManagerUpdated)
+                    {
+                        vm.LastUpdated = DateTime.Now;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            vm.UpdateData(Conversion.ActiveExecution.Managers);
+                        });
+                    }
+                }
+                foreach (HealthReportViewModel vm in HealthReportViewModels)
+                {
+                    if (vm.LastUpdated < Conversion.LastHealthReportUpdated)
+                    {
+                        vm.LastUpdated = DateTime.Now;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            vm.SystemLoadChart.UpdateData(Conversion.HealthReport.Ram, Conversion.HealthReport.Cpu);
+                            vm.NetworkChart.UpdateData(Conversion.HealthReport.Network);
+                            vm.NetworkDeltaChart.UpdateData(Conversion.HealthReport.Network);
+                            vm.NetworkSpeedChart.UpdateData(Conversion.HealthReport.Network);
+                        });
+                    }
+                }
+                Thread.Sleep(10);
+            }
+        }
 
-            //if (UserSettings.SynchronizeAllQueries)
-            //{
-            //    _timers.Add(new Timer(x =>
-            //    {
-            //        Task.Run(() => UpdateHealthReport());
-            //        Task.Run(() => UpdateLog());
-            //        Task.Run(() => UpdateValidationReport());
-            //        Task.Run(() => UpdateManagerOverview());
-            //    }, null, 1000, UserSettings.AllQueryInterval * 1000));
-            //}
-            //else
-            //{
-            //    _timers.Add(new Timer(x => UpdateHealthReport(), null, 1000, UserSettings.HealthReportQueryInterval * 1000));
-            //    _timers.Add(new Timer(x => UpdateValidationReport(), null, 1000, UserSettings.ValidationQueryInterval * 1000));
-            //    _timers.Add(new Timer(x => UpdateLog(), null, 1000, UserSettings.LoggingQueryInterval * 1000));
-            //    _timers.Add(new Timer(x => UpdateManagerOverview(), null, 1000, UserSettings.ManagerQueryInterval * 1000));
-            //}
-            //_vm.IsRunning = true;
+        /// <summary>
+        /// Creates and adds query timers which start immediately to the <see cref="_timers"/> list.
+        /// </summary>
+        private void SetupTimers()
+        {
+            if (UserSettings.SynchronizeAllQueries)
+            {
+                _timers.Add(new Timer(x =>
+                {
+                    ShouldUpdateLog = true;
+                    ShouldUpdateExecutions = true;
+                    ShouldUpdateHealthReport = true;
+                    ShouldUpdateValidations = true;
+                    ShouldUpdateManagers = true;
+
+                }, null, 0, UserSettings.AllQueryInterval * 1000));
+            }
+            else
+            {
+                _timers.Add(new Timer(x => ShouldUpdateLog = true, null, 0, UserSettings.LoggingQueryInterval * 1000));
+                _timers.Add(new Timer(x => ShouldUpdateExecutions = true, null, 0, 10000));
+                _timers.Add(new Timer(x => ShouldUpdateHealthReport = true, null, 0, UserSettings.HealthReportQueryInterval * 1000));
+                _timers.Add(new Timer(x => ShouldUpdateValidations = true, null, 0, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new Timer(x => ShouldUpdateManagers = true, null, 0, UserSettings.ManagerQueryInterval * 1000));
+            }
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using Model;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static Model.LogMessage;
@@ -18,7 +17,8 @@ namespace DashboardFrontend.ViewModels
         {
             LogListView = logListView;
         }
-        
+
+        public System.DateTime LastUpdated { get; set; }
         public bool DoAutoScroll { get; set; } = true;
         public ListView LogListView { get; set; }
         public ObservableCollection<LogMessage> MessageList { get; private set; } = new();
