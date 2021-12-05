@@ -220,6 +220,7 @@ namespace DashboardFrontend.ViewModels
             public ExecutionObservable(Execution e, ValidationReportViewModel vm)
             {
                 Id = e.Id;
+                StartTime = e.StartTime;
                 Managers = new(e.Managers.Select(m => new ManagerObservable(m)));
                 foreach (ManagerObservable m in Managers)
                 {
@@ -234,6 +235,7 @@ namespace DashboardFrontend.ViewModels
                 }
             }
 
+            public DateTime? StartTime { get; set; }
             public int FailedTotalCount
             {
                 get => _failedTotalCount; set
@@ -283,7 +285,6 @@ namespace DashboardFrontend.ViewModels
                     OnPropertyChanged(nameof(Managers));
                 }
             }
-
         }
 
         public class ManagerObservable : BaseViewModel
@@ -291,20 +292,12 @@ namespace DashboardFrontend.ViewModels
             public ManagerObservable(Manager mgr)
             {
                 Name = mgr.Name;
-                Validations = new(mgr.Validations);
+                ContextId = mgr.ContextId;
+                Validations = mgr.Validations;
                 ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
             }
             
-            private ObservableCollection<ValidationTest> _validations = new();
-            public ObservableCollection<ValidationTest> Validations
-            {
-                get => _validations;
-                set
-                {
-                    _validations = value;
-                    OnPropertyChanged(nameof(Validations));
-                }
-            }
+            public List<ValidationTest> Validations = new();
             private CollectionView _validationView;
             public CollectionView ValidationView
             {
@@ -317,6 +310,7 @@ namespace DashboardFrontend.ViewModels
             }
             
             public string Name { get; private set; }
+            public int ContextId { get; private set; }
             public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
             public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);
             public int OkCount => Validations.Count(v => v.Status is ValidationStatus.Ok);

@@ -13,15 +13,15 @@ namespace DashboardFrontend.ValueConverters
             {
                 if (entry.FailedCount == 0 && entry.DisabledCount > 0)
                 {
-                    return "/Icons/Warning.png";
+                    return "/Icons/ValidationDisabled.png";
                 }
                 else if (entry.FailedCount > 0)
                 {
-                    return "/Icons/Fatal.png";
+                    return "/Icons/ValidationFailed.png";
                 }
                 else
                 {
-                    return "/Icons/Validation.png";
+                    return "/Icons/ValidationOk.png";
                 }
             }
             return "";

@@ -36,6 +36,8 @@
     <None Remove="Icons\ValidationDisabled.png" />
     <None Remove="Icons\Validation.png" />
     <None Remove="Icons\ValidationAlt.png" />
+    <None Remove="Icons\ValidationFailed.png" />
+    <None Remove="Icons\ValidationOk.png" />
     <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
@@ -112,6 +114,12 @@
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Resource>
     <Resource Include="Icons\ValidationAlt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\ValidationFailed.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\ValidationOk.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Warning.png">

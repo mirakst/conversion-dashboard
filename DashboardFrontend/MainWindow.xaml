@@ -520,8 +520,12 @@
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" Foreground="White"/>
-                                                <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm:ss})'}" Foreground="LightGray"/>-->
+                                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White"/>
+                                                <TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
+                                                           VerticalAlignment="Center"
+                                                           Foreground="LightGray"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
@@ -560,6 +564,9 @@
                                                        Margin="0 0 4 0"/>
                                                 <TextBlock Text="{Binding Name}" 
                                                            VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="LightGray"/>
                                             </StackPanel>
                                             <HierarchicalDataTemplate.ItemTemplate>
                                                 <DataTemplate>
@@ -612,19 +619,27 @@
                                 <StackPanel Orientation="Vertical" 
                                         Background="{DynamicResource CanvasColor}"
                                         DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
-                                    <TextBlock Text="Name" 
+                                    <TextBlock Text="Description" 
                                            FontWeight="Bold" 
                                            Margin="10 10 10 0"
                                            Foreground="LightGray"/>
                                     <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
                                            Margin="10 0 10 0"/>
+                                    
+                                    <TextBlock Text="Toolkit ID"
+                                               FontWeight="Bold"
+                                               Margin="10 20 10 0"
+                                               Foreground="LightGray"/>
+                                    <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
+                                               Margin="10 0 10 0"/>
+
                                     <TextBlock Text="Result" 
                                            FontWeight="Bold" 
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 0 10 0">
-                                        <Image Width="15">
+                                        <Image Width="20">
                                             <Image.Style>
                                                 <Style TargetType="{x:Type Image}">
                                                     <Style.Triggers>
@@ -639,6 +654,7 @@
                                                Margin="5 0 0 0"
                                                VerticalAlignment="Center"/>
                                     </StackPanel>
+                                        
                                     <TextBlock Text="Row count" 
                                            FontWeight="Bold" 
                                            Margin="10 20 10 0"
@@ -662,17 +678,14 @@
                                            FontWeight="Bold"
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
-                                    
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
-                                        
                                         <Button Margin="0 0 5 0"
                                             Click="CopySrcSql_Click"
                                             MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
                                             Content="Source"/>
-                                        
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
