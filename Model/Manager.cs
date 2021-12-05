@@ -18,7 +18,8 @@ namespace Model
         }
         #endregion Enums
 
-        #region Properties      
+        #region Properties     
+        public List<ValidationTest> Validations { get; set; } = new();
         public List<CpuLoad> CpuReadings { get; set; } = new();
         public List<RamLoad> RamReadings { get; set; } = new();
         private string _name;

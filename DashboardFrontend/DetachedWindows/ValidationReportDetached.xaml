@@ -127,7 +127,7 @@
                                   Name="TreeViewValidations"
                                   Background="Transparent"
                                   BorderBrush="Transparent"
-                                  ItemsSource="{Binding ManagerView}"
+                                  ItemsSource="{Binding ExecutionView}"
                                   VirtualizingPanel.IsVirtualizing="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
                                   VirtualizingPanel.ScrollUnit="Pixel"

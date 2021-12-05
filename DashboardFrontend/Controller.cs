@@ -75,7 +75,7 @@ namespace DashboardFrontend
             ValidationReportViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.ValidationReport);
+                result.UpdateData(Conversion.Executions);
             }
             ValidationReportViewModels.Add(result);
             return result;
@@ -204,19 +204,49 @@ namespace DashboardFrontend
             }
         }
 
+        private Queue<ValidationTest> _validationsQueue = new();
+
         /// <summary>
         /// Updates the validation tests in the validation report.
         /// </summary>
         public void UpdateValidationReport()
         {
-            if(Conversion?.ActiveExecution?.ValidationReport is null)
+            if(Conversion is null)
             {
                 return;
             }
-            List<ValidationTest> newData = DU.GetAfstemninger(Conversion.ActiveExecution.ValidationReport.LastModified);
-            Conversion.ActiveExecution.ValidationReport.LastModified = DateTime.Now;
-            if (newData.Count > 0)
+
+            List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
+            Conversion.LastValidationsQuery = DateTime.Now;
+
+            // This will block the program if it never finds a suitable manager for the validation test ...
+            while (_validationsQueue.Any())
             {
+                ValidationTest v = _validationsQueue.Peek();
+                if (Conversion.AllManagers.Find(m => m.Name == v.ManagerName && v.Date < m.EndTime) is Manager mgr)
+                {
+                    mgr.Validations.Add(_validationsQueue.Dequeue());
+                    Conversion.LastValidationsUpdated = DateTime.Now;
+                }
+                else
+                {
+                    Trace.WriteLine("this bitch aint got no manager: " + v.ManagerName);
+                }
+            }
+
+            if (newData.Any())
+            {
+                newData.ForEach(v => 
+                {
+                    if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
+                    {
+                        mgr.Validations.Add(v);
+                    }
+                    else
+                    {
+                        _validationsQueue.Enqueue(v);
+                    }
+                });
                 Conversion.ActiveExecution.ValidationReport.ValidationTests = newData;
                 Conversion.LastValidationsUpdated = DateTime.Now;
             }
@@ -365,35 +395,30 @@ namespace DashboardFrontend
             {
                 if (ShouldUpdateLog)
                 {
-                    Trace.WriteLine("log");
                     UpdateLog();
                     ShouldUpdateLog = false;
                 }
                 if (ShouldUpdateManagers)
                 {
-                    Trace.WriteLine("mgr");
                     UpdateManagerOverview();
                     ShouldUpdateManagers = false;
                 }
                 if (ShouldUpdateValidations)
                 {
-                    Trace.WriteLine("vr");
                     UpdateValidationReport();
                     ShouldUpdateValidations = false;
                 }
                 if (ShouldUpdateHealthReport)
                 {
-                    Trace.WriteLine("hr");
                     UpdateHealthReport();
                     ShouldUpdateHealthReport = false;
                 }
                 if (ShouldUpdateExecutions)
                 {
-                    Trace.WriteLine("e");
                     UpdateExecutions();
                     ShouldUpdateExecutions = false;
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -411,18 +436,18 @@ namespace DashboardFrontend
                 }
                 foreach (ValidationReportViewModel vm in ValidationReportViewModels)
                 {
-                    if (vm.LastUpdated < Conversion.LastValidationsUpdated)
+                    if (vm.LastUpdated <= Conversion.LastValidationsUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.ValidationReport);
+                            vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
                 foreach (LogViewModel vm in LogViewModels)
                 {
-                    if (vm.LastUpdated < Conversion.LastLogUpdated)
+                    if (vm.LastUpdated <= Conversion.LastLogUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
@@ -433,7 +458,7 @@ namespace DashboardFrontend
                 }
                 foreach (ManagerViewModel vm in ManagerViewModels)
                 {
-                    if (Conversion?.ActiveExecution is not null && vm.LastUpdated < Conversion?.LastManagerUpdated)
+                    if (vm.LastUpdated <= Conversion?.LastManagerUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
@@ -444,7 +469,7 @@ namespace DashboardFrontend
                 }
                 foreach (HealthReportViewModel vm in HealthReportViewModels)
                 {
-                    if (vm.LastUpdated < Conversion.LastHealthReportUpdated)
+                    if (vm.LastUpdated <= Conversion.LastHealthReportUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
@@ -456,7 +481,7 @@ namespace DashboardFrontend
                         });
                     }
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 

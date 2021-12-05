@@ -20,7 +20,6 @@
     </Window.CommandBindings>
 
     <Window.Resources>
-        <valueConverters:StringToIntConverter x:Key="StringToIntConverter"/>
         <ControlTemplate x:Key="ControlTemplate"/>
     </Window.Resources>
 
