@@ -147,11 +147,9 @@ namespace DashboardFrontend.ViewModels
 
         public bool OnValidationsFilter(object item)
         {
-            return item is ValidationTest val
-                ? (ShowOk && val.Status is ValidationStatus.Ok)
-                    || (ShowFailed && val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch)
-                    || (ShowDisabled && val.Status is ValidationStatus.Disabled)
-                : false;
+            return item is ValidationTest val && ((ShowOk && val.Status is ValidationStatus.Ok)
+                                              ||  (ShowFailed && val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch)
+                                              ||  (ShowDisabled && val.Status is ValidationStatus.Disabled));
         }
 
         /// <summary>

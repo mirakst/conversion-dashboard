@@ -31,6 +31,7 @@
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <converters:BoolToInvertedBoolConverter x:Key="BoolToInvertedBoolConverter"/>
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
@@ -190,12 +191,12 @@
                                DockPanel.Dock="Right"/>
                     </DockPanel>
 
-                    <Button Name="ButtonManagerFilter"
+                    <ToggleButton Name="ButtonManagerFilter"
                             Grid.Column="1"
                             Margin="0, 0, 0, 1"
                             Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
-                    </Button>
+                    </ToggleButton>
 
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
@@ -316,12 +317,76 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Name="ButtonLogFilter"
+                        <ToggleButton Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}"
-                                Margin="0, 0, 0, -1">
+                                Margin="0, 0, 0, -1"
+                                IsEnabled="{Binding ElementName=PopupLogFilter, Path=IsOpen, Converter={StaticResource BoolToInvertedBoolConverter}}">
                             <Image Source="Icons/Filter.png"/>
-                        </Button>
+                        </ToggleButton>
+                        <Popup x:Name="PopupLogFilter" 
+                               Grid.Column="9"
+                               StaysOpen="False" 
+                               IsOpen="{Binding IsChecked, ElementName=ButtonLogFilter, Mode=TwoWay}"
+                               PlacementTarget="{Binding ElementName=ListViewLog}"
+                               Placement="Left"
+                               HorizontalOffset="{Binding ActualWidth, ElementName=ListViewLog}">
+                            <Border Width="Auto" 
+                                    Height="Auto" 
+                                    Background="{DynamicResource CanvasColor}" 
+                                    BorderThickness="1" 
+                                    BorderBrush="{DynamicResource BorderColor}">
+                                <StackPanel HorizontalAlignment="Center" Margin="10,5">
+                                    <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
+                                    <ComboBox Width="100"
+                                              Height="26"
+                                              Margin="0,0,18,0"
+                                              VerticalAlignment="Top"
+                                              Style="{DynamicResource ComboBoxExecutions}" 
+                                              ItemsSource="{Binding Executions}" 
+                                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="White"/>
+                                                    <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="LightGray"/>-->
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
+                                    <ItemsControl Height="200" 
+                                                  Background="{DynamicResource BackgroundColor}"
+                                                  Foreground="{DynamicResource ForegroundColor}"
+                                                  ItemsSource="{Binding SelectedExecution.Managers}"
+                                                  Margin="0,5">
+                                        <ItemsControl.Template>
+                                            <ControlTemplate>
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{DynamicResource BackgroundColor}">
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                        <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Click="ContextIdCheckbox_OnToggle" 
+                                                              IsChecked="{Binding IsChecked}" 
+                                                              Content="{Binding ContextId}" 
+                                                              Foreground="{DynamicResource ForegroundColor}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Disable all" Margin="0,0,5,0" Click="ContextIdFilter_OnClick" Tag="false"/>
+                                        <Button Content="Enable all" Click="ContextIdFilter_OnClick" Tag="true"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
 
                         <Button Name="ButtonLogDetach" 
                                 Click="DetachLogButtonClick" 
@@ -359,9 +424,10 @@
                                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   MouseEnter="ListViewLog_MouseOverChanged"
                                   MouseLeave="ListViewLog_MouseOverChanged"
+                                  
                                   Margin="0,-2,0,0">
                             <ListView.View>
-                                <GridView>
+                                <GridView AllowsColumnReorder="False">
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style TargetType="{x:Type GridViewColumnHeader}">
                                             <Setter Property="OverridesDefaultStyle" Value="True"/>

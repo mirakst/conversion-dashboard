@@ -78,7 +78,7 @@ namespace DashboardFrontend
             LogViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.Log);
+                result.UpdateData(Conversion.Executions);
             }
             LogViewModels.Add(result);
             return result;
@@ -329,6 +329,7 @@ namespace DashboardFrontend
             if (managerCount > 0)
             {
                 Conversion.LastManagerUpdated = DateTime.Now;
+                Conversion.LastLogUpdated = DateTime.Now;
             }
         }
 
@@ -471,7 +472,7 @@ namespace DashboardFrontend
                 }
                 foreach (ValidationReportViewModel vm in ValidationReportViewModels)
                 {
-                    if (vm.LastUpdated <= Conversion.LastValidationsUpdated)
+                    if (vm.LastUpdated < Conversion.LastValidationsUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
@@ -487,7 +488,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.Log);
+                            vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }

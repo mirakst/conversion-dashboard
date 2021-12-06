@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using DashboardFrontend.Charts;
 using LiveChartsCore.SkiaSharpView.WPF;
 
@@ -269,6 +268,24 @@ namespace DashboardFrontend
         private void ButtonCopySql_MouseLeave(object sender, MouseEventArgs e)
         {
             PopupCopySql.IsOpen = false;
+        }
+
+        private void ContextIdCheckbox_OnToggle(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LogViewModel.MessageView.Refresh();
+            ViewModel.LogViewModel.ScrollToLast();
+        }
+
+        private void ContextIdFilter_OnClick(object sender, RoutedEventArgs e)
+        {
+            bool buttonVal = bool.Parse((string) ((FrameworkElement) sender).Tag);
+            if (ViewModel.LogViewModel.SelectedExecution is null) return;
+            foreach (var manager in ViewModel.LogViewModel.SelectedExecution.Managers)
+            {
+                manager.IsChecked = buttonVal;
+            }
+            ViewModel.LogViewModel.MessageView.Refresh();
+            ViewModel.LogViewModel.ScrollToLast();
         }
     }
 }

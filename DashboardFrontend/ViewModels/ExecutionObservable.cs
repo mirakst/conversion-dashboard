@@ -9,11 +9,15 @@ namespace DashboardFrontend.ViewModels
 {
     public class ExecutionObservable : BaseViewModel
     {
-        public ExecutionObservable(Execution exec, ValidationReportViewModel vm)
+        public ExecutionObservable(Execution exec)
         {
             Id = exec.Id;
             StartTime = exec.StartTime;
             Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+            LogMessages = new(exec.Log.Messages);
+        }
+        public ExecutionObservable(Execution exec, ValidationReportViewModel vm) : this(exec)
+        {
             foreach (ManagerObservable manager in Managers)
             {
                 manager.IsExpanded = vm.ExpandedManagerNames.Contains(manager.Name);
@@ -64,6 +68,11 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(TotalCount));
             }
         }
+        public int InfoCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Info));
+        public int WarnCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Warning));
+        public int ErrorCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Error));
+        public int FatalCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Fatal));
+        public int ValidationCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Validation));
         public int Id { get; set; }
         private ObservableCollection<ManagerObservable> _managers = new();
         public ObservableCollection<ManagerObservable> Managers
@@ -73,6 +82,16 @@ namespace DashboardFrontend.ViewModels
             {
                 _managers = value;
                 OnPropertyChanged(nameof(Managers));
+            }
+        }
+        private ObservableCollection<LogMessage> _logMessages = new();
+        public ObservableCollection<LogMessage> LogMessages
+        {
+            get => _logMessages;
+            set
+            {
+                _logMessages = value;
+                OnPropertyChanged(nameof(LogMessages));
             }
         }
     }
