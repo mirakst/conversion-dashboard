@@ -1,4 +1,4 @@
-﻿using DashboardBackend.Database;
+using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
@@ -138,22 +138,23 @@ namespace DashboardBackend
         /// </summary>
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="allManagers"></param>
-        public static void GetAndUpdateManagers(List<Manager> allManagers) => GetAndUpdateManagers(SqlMinDateTime, allManagers);
-        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
-        {
-            List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
-            int addedManagers = 0;
-
-            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-            foreach (var entry in engineEntries)
-            {
-                string name = entry.Manager.Split(',')[0];
-                entry.Manager = name;
-            }
-            // For each entry: Find the associated manager and add the value to it. 
+        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        {
+            List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
+            int addedManagers = 0;
+
+            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
+            foreach (var entry in engineEntries)
+            {
+                string name = entry.Manager.Split(',')[0];
+                entry.Manager = name;
+            }
+
+            // For each entry: Find the associated manager and add the value to it.
             // If the manager exists but already has all values set, it must be the same manager in a new execution.
             // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
-            foreach (var entry in engineEntries)            {
+            foreach (var entry in engineEntries)
+            {
                 // If manager was created by the log first (context id is set), find the first manager that is missing a property.
                 // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
                 Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
@@ -175,14 +176,14 @@ namespace DashboardBackend
                         Manager manager = new()
                         {
                             Name = entry.Manager,
-                        };
-                        AddEnginePropertiesToManager(manager, entry);
-                        allManagers.Add(manager);
-                        addedManagers++;
-                    }
-                }
-            }
-            return addedManagers;
+                        };
+                        AddEnginePropertiesToManager(manager, entry);
+                        allManagers.Add(manager);
+                        addedManagers++;
+                    }
+                }
+            }
+            return addedManagers;
         }
 
         /// <summary>
@@ -190,54 +191,57 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="manager">The manager object associated with the entry.</param>
         /// <param name="entry">The EnginePropertyEntry to get data from.</param>
-        private static void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
-        {
-            switch (entry.Key)
-            {
-                case "START_TIME":
-                    if (DateTime.TryParse(entry.Value, out DateTime startTime))
-                    {
-                        manager.StartTime = startTime;
-                        manager.Status = ManagerStatus.Running;
-                        if (manager.EndTime.HasValue)
-                        {
-                            manager.Runtime = manager.EndTime.Value.Subtract(startTime);
-                            manager.Status = ManagerStatus.Ok;
-                        }
-                    }
-                    break;
-                case "END_TIME":
-                    if (DateTime.TryParse(entry.Value, out DateTime endTime))
-                    {
-                        manager.EndTime = endTime;
-                        if (manager.StartTime.HasValue)
-                        {
-                            manager.Runtime = endTime.Subtract(manager.StartTime.Value);
-                            manager.Status = ManagerStatus.Ok;
-                        }
-                    }
-                    break;
-                case "Læste rækker":
-                    if (int.TryParse(entry.Value, out int rowsRead))
-                    {
-                        manager.RowsRead = rowsRead;
-                    }
-                    break;
-                case "Skrevne rækker":
-                    if (int.TryParse(entry.Value, out int rowsWritten))
-                    {
-                        manager.RowsWritten = rowsWritten;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
+        private static void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
+        {
+            switch (entry.Key)
+            {
+                case "START_TIME":
+                    if (DateTime.TryParse(entry.Value, out DateTime startTime))
+                    {
+                        manager.StartTime = startTime;
+                        manager.Status = ManagerStatus.Running;
+                        if (manager.EndTime.HasValue)
+                        {
+                            manager.Runtime = manager.EndTime.Value.Subtract(startTime);
+                            manager.Status = ManagerStatus.Ok;
+                        }
+                    }
+                    break;
+
+                case "END_TIME":
+                    if (DateTime.TryParse(entry.Value, out DateTime endTime))
+                    {
+                        manager.EndTime = endTime;
+                        if (manager.StartTime.HasValue)
+                        {
+                            manager.Runtime = endTime.Subtract(manager.StartTime.Value);
+                            manager.Status = ManagerStatus.Ok;
+                        }
+                    }
+                    break;
+
+                case "Læste rækker":
+                    if (int.TryParse(entry.Value, out int rowsRead))
+                    {
+                        manager.RowsRead = rowsRead;
+                    }
+                    break;
+
+                case "Skrevne rækker":
+                    if (int.TryParse(entry.Value, out int rowsWritten))
+                    {
+                        manager.RowsWritten = rowsWritten;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
 
-        public static int GetEstimatedManagerCount(int executionId)
-        {
-            return DatabaseHandler.QueryLoggingContext(executionId).Count;
+        public static int GetEstimatedManagerCount(int executionId)
+        {
+            return DatabaseHandler.QueryLoggingContext(executionId).Count;
         }
 
         /// <summary>
@@ -327,16 +331,15 @@ namespace DashboardBackend
         /// <returns>A log message type besed on the enum in the log message class.</returns>
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
         public static LogMessageType GetLogMessageType(LoggingEntry entry, string content)
-        {
-            var type = entry.LogLevel switch
-            {
-                "INFO" => LogMessageType.Info,
-                "WARN" => LogMessageType.Warning,
-                "ERROR" => LogMessageType.Error,
-                "FATAL" => LogMessageType.Fatal,
-                _ => LogMessageType.None,
+        {
+            var type = entry.LogLevel switch
+            {
+                "INFO" => LogMessageType.Info,
+                "WARN" => LogMessageType.Warning,
+                "ERROR" => LogMessageType.Error,
+                "FATAL" => LogMessageType.Fatal,
+                _ => LogMessageType.None,
             };
-
             if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
             {
                 if (type.HasFlag(LogMessageType.Error))
@@ -348,7 +351,6 @@ namespace DashboardBackend
                     type = LogMessageType.Validation;
                 }
             }
-
             return type;
         }
 
