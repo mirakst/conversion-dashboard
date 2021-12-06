@@ -76,9 +76,17 @@ namespace DashboardBackend.Tests
                                    "dstSql")
             };
 
-            var actual = DataUtilities.GetAfstemninger();
+            var actual = DataUtilities.GetAfstemninger(DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GetAfstemninger_GetsAfstemningerFromTestDatabase_ThrowsArgumentException()
+        {
+            DataUtilities.DatabaseHandler = new TestDatabase();
+
+            Assert.Throws<ArgumentException>(() =>DataUtilities.GetAfstemninger(DateTime.Parse("01-01-2020 10:00:00")));
         }
 
         [Fact]
@@ -181,6 +189,17 @@ namespace DashboardBackend.Tests
             Assert.Throws<ArgumentOutOfRangeException>(() => DataUtilities.GetLogMessages(-1, DateTime.Parse("02-01-2020 12:00:00")));
         }
         #endregion
+        #region GetEstimatedManagerCount
+        [Fact]
+        public void GetEstimatedManagerCount_ReturnTrue()
+        {
+            DataUtilities.DatabaseHandler = new TestDatabase();
+            var expected = 2;
+            var actual = DataUtilities.GetEstimatedManagerCount(0);
+
+            Assert.Equal(expected, actual);
+        }
+        #endregion
         #region GetManager
         [Fact]
         public void GetManager_GetsManagersFromTestDatabase_ReturnTrue()
@@ -203,7 +222,7 @@ namespace DashboardBackend.Tests
             };
 
             var actual = new List<Manager>();
-            DataUtilities.GetAndUpdateManagers(actual);
+            DataUtilities.GetAndUpdateManagers(DateTime.Parse("01-01-2020 12:00:00"), actual);
 
             Assert.Equal(expected, actual);
         }
