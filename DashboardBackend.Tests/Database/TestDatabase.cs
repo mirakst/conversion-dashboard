@@ -171,7 +171,7 @@ namespace DashboardBackend.Tests.Database
             }.FindAll(e => e.Created >= minDate);
         }
 
-        public List<LoggingContextEntry> QueryLoggingContext()
+        public List<LoggingContextEntry> QueryLoggingContext(int executionId)
         {
             return new List<LoggingContextEntry>()
             {
@@ -187,7 +187,7 @@ namespace DashboardBackend.Tests.Database
                     ContextId = 1,
                     ExecutionId= 0
                 }
-            };
+            }.FindAll(e => e.ExecutionId == executionId);
         }
 
         public List<HealthReportEntry> QueryHealthReport()

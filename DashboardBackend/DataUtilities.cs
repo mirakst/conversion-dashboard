@@ -139,7 +139,7 @@ namespace DashboardBackend
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="allManagers"></param>
         public static void GetAndUpdateManagers(List<Manager> allManagers) => GetAndUpdateManagers(SqlMinDateTime, allManagers);
-        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+                public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
         {
             List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
             int addedManagers = 0;
