@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -57,7 +56,6 @@ namespace DashboardFrontend.ViewModels
 
         public void UpdateExecutionProgress(int currentProgress)
         {
-            Trace.WriteLine("Progress = " + currentProgress + "%");
             CurrentProgress = currentProgress;
         }
     }
