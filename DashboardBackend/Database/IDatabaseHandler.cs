@@ -41,7 +41,7 @@ namespace DashboardBackend.Database
         /// Retrieves all entries from the LOGGING_CONTEXT table of the state database .
         /// </summary>
         /// <returns>A list of Managers.</returns>
-        List<LoggingContextEntry> QueryLoggingContext();
+        List<LoggingContextEntry> QueryLoggingContext(int executionId);
 
         /// <summary>
         /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
