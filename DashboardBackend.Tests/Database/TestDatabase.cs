@@ -41,6 +41,32 @@ namespace DashboardBackend.Tests.Database
                 {
                     Id = string.Empty,
                     Afstemtdato = DateTime.Parse("01-01-2020 10:00:00"),
+                    Description = "validationOne",
+                    Manager = "managerOne",
+                    Context =  String.Empty,
+                    Srcantal = 0,
+                    Dstantal = 0,
+                    Customantal = null,
+                    Afstemresultat = "OK",
+                    RunJob = String.Empty,
+                    ToolkitId = 0,
+                    SrcSqlCost = null,
+                    DstSqlCost = null,
+                    CustomSqlCost = null,
+                    SrcSql = "srcSql",
+                    DstSql = "dstSql",
+                    CustomSql = String.Empty,
+                    SrcSqlTime = null,
+                    DstSqlTime = null,
+                    CustomSqlTime = null,
+                    StartTime = null,
+                    EndTime = null,
+                    Afstemningsdata = Array.Empty<byte>(),
+                },
+                new AfstemningEntry()
+                {
+                    Id = string.Empty,
+                    Afstemtdato = DateTime.Parse("01-01-2020 08:00:00"),
                     Description = "validationThrowTest",
                     Manager = "managerOne",
                     Context =  String.Empty,
@@ -99,13 +125,19 @@ namespace DashboardBackend.Tests.Database
                 new ExecutionEntry()
                 {
                     ExecutionId =  1,
-                    ExecutionUuid = "conversion1",
+                    ExecutionUuid = "conversionOneCopy",
+                    Created = DateTime.Parse("01-01-2020 10:00:00"),
+                },
+                new ExecutionEntry()
+                {
+                    ExecutionId =  1,
+                    ExecutionUuid = "conversionOne",
                     Created = DateTime.Parse("01-01-2020 12:00:00"),
                 },
                 new ExecutionEntry()
                 {
                     ExecutionId =  2,
-                    ExecutionUuid = "conversion2",
+                    ExecutionUuid = "conversionTwo",
                     Created = DateTime.Parse("01-01-2020 13:00:00"),
                 }
             }.FindAll(e => e.Date >= minDate);
