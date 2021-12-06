@@ -1,4 +1,5 @@
-﻿using DashboardFrontend.ViewModels;
+﻿using System.Windows;
+using DashboardFrontend.ViewModels;
 using System.Windows.Input;
 
 namespace DashboardFrontend.DetachedWindows
@@ -10,6 +11,7 @@ namespace DashboardFrontend.DetachedWindows
             InitializeComponent();
             logViewModel.LogListView = ListViewLog;
             DataContext = logViewModel;
+            ListViewLog.Loaded += logViewModel.ScrollToLast;
         }
 
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)

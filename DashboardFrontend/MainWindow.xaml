@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
-        Height="720"
-        Width="1280"
+        Height="900"
+        Width="1600"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
@@ -145,7 +145,7 @@
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-                  
+
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -165,8 +165,9 @@
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
-                             Margin="0,0,5,0"
+                             Height="26"
                              Style="{DynamicResource SearchBox}"
+                             Margin="0,0,0,1"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
 
@@ -178,7 +179,7 @@
 
                     <Button Name="ButtonManagerFilter"
                             Grid.Column="1"
-                            Margin="0"
+                            Margin="0, 0, 0, 1"
                             Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
                     </Button>
@@ -186,7 +187,7 @@
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
                             Grid.Column="2"
-                            Margin="0"
+                            Margin="0, -2, -2, 0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
                     </Button>
@@ -199,7 +200,7 @@
                               BorderBrush="{DynamicResource BorderColor}"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
-                        
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
@@ -223,7 +224,7 @@
                       Grid.Row="0"
                       DataContext="{Binding LogViewModel}">
                     <Grid Grid.Row="0"
-                          Margin="0">
+                          Margin="-4, 0, 0, 4">
                         <ToggleButton Name="ToggleButtonLogInfo"
                                       Grid.Column="0"
                                       IsChecked="{Binding ShowInfo}"
@@ -304,14 +305,16 @@
 
                         <Button Name="ButtonLogFilter"
                                 Grid.Column="9"
-                                Style="{DynamicResource FilterButton}">
+                                Style="{DynamicResource FilterButton}"
+                                Margin="0, 0, 0, -1">
                             <Image Source="Icons/Filter.png"/>
                         </Button>
 
                         <Button Name="ButtonLogDetach" 
                                 Click="DetachLogButtonClick" 
                                 Grid.Column="10"
-                                Style="{DynamicResource DetachButton}">
+                                Style="{DynamicResource DetachButton}"
+                                Margin="0, -2, -2, -2">
                             <Image Source="Icons/Detach.png"/>
                         </Button>
 
@@ -331,15 +334,19 @@
                     </Grid>
 
                     <Grid Grid.Row="1">
+                        <Grid.Resources>
+                            <converters:WidthCalculationMultiConverter x:Key="lastColumnResizeConverter"/>
+                        </Grid.Resources>
                         <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding MessageView}"
                                   Background="{DynamicResource BackgroundColor}"
                                   VirtualizingPanel.ScrollUnit="Pixel"
                                   VirtualizingPanel.IsVirtualizing="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   MouseEnter="ListViewLog_MouseOverChanged"
-                                  MouseLeave="ListViewLog_MouseOverChanged">
+                                  MouseLeave="ListViewLog_MouseOverChanged"
+                                  Margin="0,-2,0,0">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
@@ -355,7 +362,9 @@
                                                                    Background="{DynamicResource BackgroundColor}" 
                                                                    Width="{TemplateBinding Width}" 
                                                                    TextAlignment="Left"
-                                                                   Foreground="White"/>
+                                                                   Foreground="{DynamicResource ForegroundColor}"
+
+                                                                   TextWrapping="Wrap"/>
                                                             <Separator/>
                                                         </StackPanel>
                                                     </ControlTemplate>
@@ -378,8 +387,15 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="Content" 
-                                                    Width="1100">
+                                    <GridViewColumn Header="Content">
+                                        <GridViewColumn.Width>
+                                            <MultiBinding Converter="{StaticResource lastColumnResizeConverter}">
+                                                <Binding Path="ActualWidth" 
+                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                                <Binding Path="View.Columns" 
+                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                            </MultiBinding>
+                                        </GridViewColumn.Width>
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock TextWrapping="Wrap"
@@ -463,7 +479,7 @@
                                     HorizontalAlignment="Right">
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
                                           IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
+                                          Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Validation.png"
                                            Margin="0 0 2 0"
@@ -474,7 +490,7 @@
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
                                           IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
+                                          Margin="0, 2, 0, 2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Warning.png"
                                            Margin="0 0 2 0"
@@ -485,7 +501,7 @@
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
                                           IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
+                                          Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Fatal.png"
                                            Margin="0 0 2 0"
@@ -606,7 +622,7 @@
                             <Button Name="ButtonValidationReportDetach" 
                                     Click="DetachValidationReportButtonClick"
                                     HorizontalAlignment="Right"
-                                    Margin="0"
+                                    Margin="0, 0, -2, 0"
                                     Style="{StaticResource DetachButton}">
                                 <Image Source="/Icons/Detach.png"/>
                             </Button>
@@ -721,7 +737,7 @@
                         </Border>
                     </Grid>
                 </Grid>
-            <Grid Name="GridHealthReportChartGrid"
+                <Grid Name="GridHealthReportChartGrid"
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
@@ -738,12 +754,12 @@
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
-                                Margin="0,-2,0,0"
-                                Grid.RowSpan="2">
+                                Grid.RowSpan="2"
+                                Margin="0,0,0,0">
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemCpuRam"
                                     Header="CPU &amp; RAM"
-                                    Height="30"
+                                    Height="28"
                                     FontSize="16"
                                     Margin="-2,0,0,0"
                                     DataContext="{Binding SystemLoadChart}">
@@ -774,7 +790,7 @@
                                     Grid.Column="1"
                                     Margin="-50,0"/>
                                     <lvc:CartesianChart
-                                            Margin="-7,0,0,-40"
+                                            Margin="-7,0,5,-40"
                                             Series="{Binding ChartData.Series}"
                                             XAxes="{Binding ChartData.XAxis}"
                                             YAxes="{Binding ChartData.YAxis}"
@@ -804,7 +820,7 @@
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetwork"
                                     Header="Network"
-                                    Height="30"
+                                    Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
                             <lvc:CartesianChart Margin="0,14,0,-30"
@@ -821,7 +837,7 @@
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkDelta"
                                     Header="Network Delta"
-                                    Height="30"
+                                    Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
                             <lvc:CartesianChart Margin="0,14,0,-30"
@@ -838,7 +854,7 @@
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
-                                    Height="30"
+                                    Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
                             <lvc:CartesianChart  Margin="-6,14,0,-30"
@@ -856,7 +872,8 @@
                     <ComboBox Name="ComboBoxMaxView"
                               VerticalAlignment="Center"
                               Grid.Column="1"
-                              SelectionChanged="ComboBox_SelectionChanged">
+                              SelectionChanged="ComboBox_SelectionChanged"
+                              Height="26">
                         <ComboBoxItem Content="30 Min" Tag="30"/>
                         <ComboBoxItem Content="1 Hour" Tag="60" IsSelected="True"/>
                         <ComboBoxItem Content="2 Hours" Tag="120"/>
@@ -868,7 +885,7 @@
                             Click="DetachHealthReportButtonClick"
                             Grid.Column="3"
                             Style="{StaticResource DetachButton}"
-                            Margin="0">
+                            Margin="0, 0, -2, 0">
                         <Image Source="/Icons/Detach.png" VerticalAlignment="center"/>
                     </Button>
                 </Grid>
@@ -883,7 +900,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
-                
+
             <Grid Name="WindowControlGrid"
                   Grid.Column="5"
                   Grid.Row="0"

@@ -20,7 +20,8 @@
                          Name="TabItemCpuRam"
                          Header="CPU &amp; RAM"
                          FontSize="16"
-                         DataContext="{Binding SystemLoadChart}">
+                         DataContext="{Binding SystemLoadChart}"
+                         Margin="-2,0,0,0">
                     <Border Margin="10">
                         <Grid>
                             <TextBlock Name="TextBlockCurrentCpuLoad"
