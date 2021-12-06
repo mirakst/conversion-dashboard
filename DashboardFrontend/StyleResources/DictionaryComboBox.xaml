@@ -15,16 +15,16 @@
                                             <ColumnDefinition Width="*" MaxWidth="20"/>
                                         </Grid.ColumnDefinitions>
                                         <Border x:Name="Border"  Grid.ColumnSpan="2" CornerRadius="5" Background="{DynamicResource BackgroundColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" />
-                                        <Path x:Name="Arrow" Grid.Column="1"  Fill="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                        <Path x:Name="Arrow" Grid.Column="1"  Fill="{DynamicResource HeaderForegroundColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
                                     </Grid>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                                            <Setter TargetName="Border" Property="BorderBrush" Value="white" />
-                                            <Setter TargetName="Arrow" Property="Fill" Value="White"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource BorderOnHoverColor}" />
+                                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource BorderOnHoverColor}"/>
                                         </Trigger>
                                         <Trigger Property="ToggleButton.IsChecked" Value="true">
-                                            <Setter TargetName="Border" Property="BorderBrush" Value="white" />
-                                            <Setter TargetName="Arrow" Property="Fill" Value="White"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource BorderOnHoverColor}" />
+                                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource BorderOnHoverColor}"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

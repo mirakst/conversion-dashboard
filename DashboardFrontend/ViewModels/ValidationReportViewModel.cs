@@ -20,6 +20,7 @@ namespace DashboardFrontend.ViewModels
         {
         }
 
+        #region Properties
         private ObservableCollection<ExecutionObservable> _executions = new();
         public ObservableCollection<ExecutionObservable> Executions
         {
@@ -30,7 +31,6 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(Executions));
             }
         }
-
         private ExecutionObservable? _selectedExecution;
         public ExecutionObservable? SelectedExecution
         {
@@ -42,8 +42,6 @@ namespace DashboardFrontend.ViewModels
                 SetExecution(value);
             }
         }
-
-        #region Properties
         public List<string> ExpandedManagerNames = new();
         public ObservableCollection<Manager> ManagerList { get; private set; } = new();
         private CollectionView _managerView;
@@ -75,46 +73,6 @@ namespace DashboardFrontend.ViewModels
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
                 ManagerView?.Refresh();
-            }
-        }
-        private int _totalCount;
-        public int TotalCount
-        {
-            get => _totalCount;
-            set
-            {
-                _totalCount = value;
-                OnPropertyChanged(nameof(TotalCount));
-            }
-        }
-        private int _okCount;
-        public int OkCount
-        {
-            get => _okCount;
-            set
-            {
-                _okCount = value;
-                OnPropertyChanged(nameof(OkCount));
-            }
-        }
-        private int _disabledCount;
-        public int DisabledCount
-        {
-            get => _disabledCount;
-            set
-            {
-                _disabledCount = value;
-                OnPropertyChanged(nameof(DisabledCount));
-            }
-        }
-        private int _failedCount;
-        public int FailedCount
-        {
-            get => _failedCount;
-            set
-            {
-                _failedCount = value;
-                OnPropertyChanged(nameof(FailedCount));
             }
         }
         private bool _showOk;
@@ -150,7 +108,6 @@ namespace DashboardFrontend.ViewModels
                 RefreshViews();
             }
         }
-
         #endregion
 
         /// <summary>
@@ -188,7 +145,7 @@ namespace DashboardFrontend.ViewModels
             return mgr.Name.Contains(NameFilter);
         }
 
-        private bool OnValidationsFilter(object item)
+        public bool OnValidationsFilter(object item)
         {
             return item is ValidationTest val
                 ? (ShowOk && val.Status is ValidationStatus.Ok)
@@ -212,117 +169,6 @@ namespace DashboardFrontend.ViewModels
                     
                 }
                 ManagerView.Refresh();
-            }
-        }
-
-        public class ExecutionObservable : BaseViewModel
-        {
-            public ExecutionObservable(Execution e, ValidationReportViewModel vm)
-            {
-                Id = e.Id;
-                StartTime = e.StartTime;
-                Managers = new(e.Managers.Select(m => new ManagerObservable(m)));
-                foreach (ManagerObservable m in Managers)
-                {
-                    m.IsExpanded = vm.ExpandedManagerNames.Contains(m.Name);
-                    m.ValidationView.Filter = vm.OnValidationsFilter;
-                    m.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Status), ListSortDirection.Ascending));
-                    m.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Date), ListSortDirection.Descending));
-                    FailedTotalCount += m.Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-                    DisabledTotalCount += m.Validations.Count(v => v.Status is ValidationStatus.Disabled);
-                    OkTotalCount += m.Validations.Count(v => v.Status is ValidationStatus.Ok);
-                    TotalCount += m.Validations.Count;
-                }
-            }
-
-            public DateTime? StartTime { get; set; }
-            public int FailedTotalCount
-            {
-                get => _failedTotalCount; set
-                {
-                    _failedTotalCount = value;
-                    OnPropertyChanged(nameof(FailedTotalCount));
-                }
-            }
-            public int DisabledTotalCount
-            {
-                get => _disabledTotalCount; set
-                {
-                    _disabledTotalCount = value;
-                    OnPropertyChanged(nameof(DisabledTotalCount));
-                }
-            }
-            public int OkTotalCount
-            {
-                get => _okTotalCount; set
-                {
-                    _okTotalCount = value;
-                    OnPropertyChanged(nameof(OkTotalCount));
-                }
-            }
-            public int TotalCount
-            {
-                get => _totalCount; set
-                {
-                    _totalCount = value;
-                    OnPropertyChanged(nameof(TotalCount));
-                }
-            }
-
-            public int Id { get; set; }
-            private ObservableCollection<ManagerObservable> _managers = new();
-            private int _failedTotalCount;
-            private int _disabledTotalCount;
-            private int _okTotalCount;
-            private int _totalCount;
-
-            public ObservableCollection<ManagerObservable> Managers
-            {
-                get => _managers;
-                set
-                {
-                    _managers = value;
-                    OnPropertyChanged(nameof(Managers));
-                }
-            }
-        }
-
-        public class ManagerObservable : BaseViewModel
-        {
-            public ManagerObservable(Manager mgr)
-            {
-                Name = mgr.Name;
-                ContextId = mgr.ContextId;
-                Validations = mgr.Validations;
-                ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
-            }
-            
-            public List<ValidationTest> Validations = new();
-            private CollectionView _validationView;
-            public CollectionView ValidationView
-            {
-                get => _validationView; 
-                set
-                {
-                    _validationView = value;
-                    OnPropertyChanged(nameof(ValidationView));
-                }
-            }
-            
-            public string Name { get; private set; }
-            public int ContextId { get; private set; }
-            public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-            public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);
-            public int OkCount => Validations.Count(v => v.Status is ValidationStatus.Ok);
-            private bool _isExpanded;
-            public bool IsExpanded
-            {
-                get => _isExpanded;
-                set
-                {
-                    _isExpanded = value;
-                    OnPropertyChanged(nameof(IsExpanded));
-                }
             }
         }
     }

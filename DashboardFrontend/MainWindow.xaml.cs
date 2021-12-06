@@ -202,7 +202,7 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ValidationReportViewModel.ManagerObservable manager)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
                 if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
@@ -219,7 +219,7 @@ namespace DashboardFrontend
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             item.IsSelected = false;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ValidationReportViewModel.ManagerObservable manager)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
                 if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {

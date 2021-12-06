@@ -9,7 +9,7 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ValidationReportViewModel.ManagerObservable entry)
+            if (value is ManagerObservable entry)
             {
                 if (entry.FailedCount == 0 && entry.DisabledCount > 0)
                 {
