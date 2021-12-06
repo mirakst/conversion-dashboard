@@ -26,285 +26,287 @@
 
     <Border BorderThickness="10"
             Background="{DynamicResource BackgroundColor}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4.5*" MinWidth="280"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="2*" MinWidth="100"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid Name="gridValidationReport"
-                      Margin="0,0,20,0"
-                      Grid.Column="0"
-                      Grid.Row="1">
-
-            <!-- Body -->
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4.5*" MinWidth="280"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="2*" MinWidth="100"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Validations TreeView Header -->
-                <Grid>
-                    <TextBlock Text="Validations"
-                                   Margin="5"
-                                   Foreground="LightGray"
-                                   FontWeight="Bold"/>
-                    <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Right">
-                        <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                <Image Source="/Icons/Validation.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
-                                <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0, 2, 0, 2">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                <Image Source="/Icons/Warning.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
-                                <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                <Image Source="/Icons/Fatal.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
-                                <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </ToggleButton>
+            <!-- Validations TreeView Header -->
+            <Grid>
+                <TextBlock Text="Validations"
+                           Margin="5"
+                           Foreground="{DynamicResource HeaderForegroundColor}"
+                           FontWeight="Bold"/>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right">
+                    <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                  IsChecked="{Binding ShowEmpty,UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="0,2,0,2">
                         <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                            <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
-                                           VerticalAlignment="Center"
-                                           Foreground="Gray"/>
+                            <TextBlock Text="Show empty"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                  IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="0,2,0,2">
+                        <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                            <Image Source="/Icons/Validation.png"
+                                   Margin="0 0 2 0"
+                                   MaxHeight="20"/>
+                            <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                  IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="0, 2, 0, 2">
+                        <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                            <Image Source="/Icons/Warning.png"
+                                   Margin="0 0 2 0"
+                                   MaxHeight="20"/>
+                            <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                  IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="0,2,0,2">
+                        <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                            <Image Source="/Icons/Fatal.png"
+                                   Margin="0 0 2 0"
+                                   MaxHeight="20"/>
+                            <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                        <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                                   VerticalAlignment="Center"
+                                   Foreground="Gray"/>
                     </StackPanel>
-                </Grid>
-                <!-- Validations TreeView -->
-                <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
-                    <Grid Background="{DynamicResource CanvasColor}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="3*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <ComboBox Margin="2" 
-                                          Style="{DynamicResource ComboBoxExecutions}" 
-                                          ItemsSource="{Binding Executions}" 
-                                          SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="White"/>
-                                        <TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-
-                        <TextBox x:Name="TextBoxValidationsSearchBar"
-                                         Grid.Column="1"
-                                         Margin="2"
-                                         Style="{DynamicResource ValidationsSearchBox}"
-                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
-                                         CaretBrush="White"/>
-
-                        <Image Source="/Icons/Magnifyingglass.png"
-                                       Grid.Column="1"
-                                       HorizontalAlignment="Right"
-                                       Margin="0 0 5 0"
-                                       Width="20"/>
-
-                        <TreeView Grid.Row="1"
-                                          Grid.ColumnSpan="2"
-                                          Name="TreeViewValidations"
-                                          Background="Transparent"
-                                          BorderBrush="Transparent"
-                                          ItemsSource="{Binding ManagerView}"
-                                          VirtualizingPanel.IsVirtualizing="True"
-                                          VirtualizingPanel.VirtualizationMode="Recycling"
-                                          VirtualizingPanel.ScrollUnit="Pixel"
-                                          TreeViewItem.Expanded="TreeViewValidations_Expanded"
-                                          TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
-                                    <StackPanel Orientation="Horizontal" 
-                                                        Height="20">
-                                        <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
-                                                       Margin="0 0 4 0"/>
-                                        <TextBlock Text="{Binding Name}" 
-                                                           VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
-                                    </StackPanel>
-                                    <HierarchicalDataTemplate.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" 
-                                                                Height="20" 
-                                                                Margin="0 5 0 0">
-                                                <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}"
-                                                               Margin="10 0 5 0"/>
-                                                <TextBlock Text="{Binding Name}" 
-                                                                   VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </HierarchicalDataTemplate.ItemTemplate>
-                                </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
-                            <TreeView.Resources>
-                                <Style TargetType="TreeViewItem">
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="MinHeight" Value="25"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
-                                            <Setter Property="Focusable" Value="False"/>
-                                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TreeView.Resources>
-                        </TreeView>
-                    </Grid>
-                </Border>
-
-                <Grid Grid.Column="2">
-                    <TextBlock Text="Summary"
-                                       Margin="0 5 5 5"
-                                       Foreground="LightGray"
-                                       FontWeight="Bold"/>
-                </Grid>
-                <Border BorderBrush="{DynamicResource BorderColor}"
-                                BorderThickness="1"
-                                Grid.Row="1"
-                                Grid.Column="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical" 
-                                        Background="{DynamicResource CanvasColor}"
-                                        DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
-                            <TextBlock Text="Description" 
-                                           FontWeight="Bold" 
-                                           Margin="10 10 10 0"
-                                           Foreground="LightGray"/>
-                            <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
-                                           Margin="10 0 10 0"/>
-
-                            <TextBlock Text="Toolkit ID"
-                                               FontWeight="Bold"
-                                               Margin="10 20 10 0"
-                                               Foreground="LightGray"/>
-                            <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
-                                               Margin="10 0 10 0"/>
-
-                            <TextBlock Text="Result" 
-                                           FontWeight="Bold" 
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
-                            <StackPanel Orientation="Horizontal"
-                                            Margin="10 0 10 0">
-                                <Image Width="20">
-                                    <Image.Style>
-                                        <Style TargetType="{x:Type Image}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
-                                                    <Setter Property="Source" Value="{Binding Converter={StaticResource StatusToImageConverter}}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Image.Style>
-                                </Image>
-                                <TextBlock Text="{Binding Status}"
-                                               Margin="5 0 0 0"
-                                               VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <TextBlock Text="Row count" 
-                                           FontWeight="Bold" 
-                                           Margin="10 20 10 0"
-                                           Foreground="LightGray"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Source "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
-                                <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Destination "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
-                                <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
-                            </StackPanel>
-
-                            <TextBlock Text="Copy SQL"
-                                           FontWeight="Bold"
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
-                            <StackPanel Orientation="Horizontal"
-                                            Margin="10 5 10 0"
-                                            Height="30">
-                                <Button Margin="0 0 5 0"
-                                            Click="CopySrcSql_Click"
-                                            MouseLeave="ButtonCopySql_MouseLeave"
-                                            IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Source"/>
-                                <Button Click="CopyDestSql_Click"
-                                                MouseLeave="ButtonCopySql_MouseLeave"
-                                                IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                                Content="Destination"/>
-
-                                <Popup x:Name="PopupCopySql"
-                                               Placement="Mouse">
-                                    <Border BorderBrush="{DynamicResource BorderColor}"
-                                                    BorderThickness="1">
-                                        <Label x:Name="TextBlockPopupSql"
-                                                       Style="{DynamicResource PopupLabel}"/>
-                                    </Border>
-                                </Popup>
-                            </StackPanel>
-                            <StackPanel.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="FontSize" Value="14"/>
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                </Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="FontFamily" Value="Segoe UI"/>
-                                    <Setter Property="FontSize" Value="14"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter Property="Foreground" Value="Gray"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Resources>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Border>
+                </StackPanel>
             </Grid>
+            <!-- Validations TreeView -->
+            <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                <Grid Background="{DynamicResource CanvasColor}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ComboBox Margin="2" 
+                              ToolTip="Choose which execution to view data from"
+                              Style="{DynamicResource ComboBoxExecutions}" 
+                              ItemsSource="{Binding Executions}" 
+                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBox x:Name="TextBoxValidationsSearchBar"
+                             Grid.Column="1"
+                             Margin="2"
+                             Style="{DynamicResource ValidationsSearchBox}"
+                             Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Search for managers by their name or context ID"
+                             Foreground="{DynamicResource ForegroundColor}"
+                             CaretBrush="{DynamicResource ForegroundColor}"/>
+
+                    <Image Source="/Icons/Magnifyingglass.png"
+                           Grid.Column="1"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 5 0"
+                           Width="20"/>
+
+                    <TreeView Grid.Row="1"
+                              Grid.ColumnSpan="2"
+                              Name="TreeViewValidations"
+                              Background="Transparent"
+                              BorderBrush="Transparent"
+                              ItemsSource="{Binding ManagerView}"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              TreeViewItem.Expanded="TreeViewValidations_Expanded"
+                              TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
+                                <StackPanel Orientation="Horizontal" 
+                                            Height="20">
+                                    <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
+                                           Margin="0 0 4 0"/>
+                                    <TextBlock Text="{Binding Name}" 
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
+                                </StackPanel>
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" 
+                                                    Height="20" 
+                                                    Margin="0 5 0 0">
+                                            <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}"
+                                                   Margin="10 0 5 0"/>
+                                            <TextBlock Text="{Binding Name}" 
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.Resources>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+                                <Setter Property="MinHeight" Value="25"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
+                                        <Setter Property="Focusable" Value="False"/>
+                                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TreeView.Resources>
+                    </TreeView>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="2">
+                <TextBlock Text="Details"
+                           Margin="0 5 5 5"
+                           Foreground="{DynamicResource HeaderForegroundColor}"
+                           FontWeight="Bold"/>
+            </Grid>
+            <Border BorderBrush="{DynamicResource BorderColor}"
+                    BorderThickness="1"
+                    Grid.Row="1"
+                    Grid.Column="2">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical" 
+                                Background="{DynamicResource CanvasColor}"
+                                DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                        <TextBlock Text="Description" 
+                                   FontWeight="Bold" 
+                                   Margin="10 10 10 0"
+                                   Foreground="{DynamicResource HeaderForegroundColor}"/>
+                        <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
+                                   Margin="10 0 10 0"/>
+
+                        <TextBlock Text="Toolkit ID"
+                                   FontWeight="Bold"
+                                   Margin="10 20 10 0"
+                                   Foreground="{DynamicResource HeaderForegroundColor}"/>
+                        <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
+                                   Margin="10 0 10 0"/>
+
+                        <TextBlock Text="Result" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                   Margin="10 20 10 0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10 0 10 0">
+                            <Image Width="20">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                <Setter Property="Source" Value="{Binding Converter={StaticResource StatusToImageConverter}}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <TextBlock Text="{Binding Status}"
+                                       Margin="5 0 0 0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Row count" 
+                                   FontWeight="Bold" 
+                                   Margin="10 20 10 0"
+                                   Foreground="{DynamicResource HeaderForegroundColor}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Source "
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
+                                       Margin="10 0 5 0"/>
+                            <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
+                                       Margin="0 0 10 0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Destination "
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
+                                       Margin="10 0 5 0"/>
+                            <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
+                                       Margin="0 0 10 0"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Copy SQL"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                   Margin="10 20 10 10"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10 5 10 10"
+                                    Height="30">
+                            <Button Margin="0 0 20 0"
+                                    Click="CopySrcSql_Click"
+                                    MouseLeave="ButtonCopySql_MouseLeave"
+                                    IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                    Template="{DynamicResource CopySqlButton}"
+                                    Content="Source"/>
+                            <Button Click="CopyDestSql_Click"
+                                    MouseLeave="ButtonCopySql_MouseLeave"
+                                    IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                    Template="{DynamicResource CopySqlButton}"
+                                    Content="Destination"/>
+
+                            <Popup x:Name="PopupCopySql"
+                                   Placement="Mouse">
+                                <Border BorderBrush="{DynamicResource BorderColor}"
+                                        BorderThickness="1">
+                                    <Label x:Name="TextBlockPopupSql"
+                                           Style="{DynamicResource PopupLabel}"/>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="TextWrapping" Value="Wrap"/>
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="FontFamily" Value="Segoe UI"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="Width" Value="80"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
         </Grid>
     </Border>
 </Window>
