@@ -159,10 +159,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            if (_vm is not null)
-            {
-                _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
-            }
+            SetStatusMessage(DashboardStatus.UpdatingLog]);
 
             List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
             Conversion.LastLogQuery = DateTime.Now;
@@ -263,7 +260,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingValidations];
+            SetStatusMessage(DashboardStatus.UpdatingValidations);
           
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
@@ -291,7 +288,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingHealthReport];
+            SetStatusMessage(DashboardStatus.UpdatingHealthReport);
 
             if (Conversion.HealthReport.IsInitialized)
             {
@@ -317,7 +314,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingManagers];
+            SetStatusMessage(DashboardStatus.UpdatingManagers);
 
             int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
@@ -354,7 +351,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingExecutions];
+            SetStatusMessage(DashboardStatus.UpdatingExecutions);
           
             List<Execution> result = DU.GetExecutions(Conversion.LastExecutionQuery);
             Conversion.LastExecutionQuery = DateTime.Now;
@@ -379,6 +376,14 @@ namespace DashboardFrontend
             if (_vm.CurrentStatus == _statusMessages[status])
             {
                 _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
+            }
+        }
+
+        private void SetStatusMessage(DashboardStatus status)
+        {
+            if (_vm is not null)
+            {
+                _vm.CurrentStatus = _statusMessages[status];
             }
         }
 
