@@ -8,8 +8,8 @@ namespace Model.Tests
         [Fact]
         public void Equals_DiffrentLogMessageWithSameParameters_ReturnsTrue()
         {
-            var expected = new LogMessage("content", LogMessage.LogMessageType.Info, 1, DateTime.Parse("01-01-2020 12:00:00"));
-            var actual = new LogMessage("content", LogMessage.LogMessageType.Info, 1, DateTime.Parse("01-01-2020 12:00:00"));
+            var expected = new LogMessage("content", LogMessage.LogMessageType.Info, 1, 0, DateTime.Parse("01-01-2020 12:00:00"));
+            var actual = new LogMessage("content", LogMessage.LogMessageType.Info, 1, 0, DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
         }
@@ -17,7 +17,7 @@ namespace Model.Tests
         [Fact]
         public void ToString_SameLogmessage_ReturnsTrue()
         {
-            var logMessage = new LogMessage("content", LogMessage.LogMessageType.Info, 1, DateTime.Parse("01-01-2020 12:00:00"));
+            var logMessage = new LogMessage("content", LogMessage.LogMessageType.Info, 1, 0, DateTime.Parse("01-01-2020 12:00:00"));
             var expected = "01-01-2020 12:00:00 [Info]: content";
 
             var actual = logMessage.ToString();

@@ -101,29 +101,36 @@ namespace DashboardBackend.Tests
                 new LogMessage("Afstemning Error",
                                LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
                                0,
+                               0,
                                DateTime.Parse("01-01-2020 17:00:00")),
                 new LogMessage("Check - Error",
                                LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
+                               0,
                                0,
                                DateTime.Parse("01-01-2020 18:00:00")),
                 new LogMessage("Info",
                                LogMessage.LogMessageType.Info,
                                0,
+                               0,
                                DateTime.Parse("01-01-2020 12:00:00")),
                 new LogMessage("Warning",
                                LogMessage.LogMessageType.Warning,
+                               0,
                                0,
                                DateTime.Parse("01-01-2020 13:00:00")),
                 new LogMessage("Error",
                                LogMessage.LogMessageType.Error,
                                0,
+                               0,
                                DateTime.Parse("01-01-2020 14:00:00")),
                 new LogMessage("Fatal",
                                LogMessage.LogMessageType.Fatal,
                                0,
+                               0,
                                DateTime.Parse("01-01-2020 15:00:00")),
                 new LogMessage("None",
                                LogMessage.LogMessageType.None,
+                               0,
                                0,
                                DateTime.Parse("01-01-2020 16:00:00")),
             };
@@ -152,10 +159,12 @@ namespace DashboardBackend.Tests
                 new LogMessage("Info",
                                LogMessage.LogMessageType.Info,
                                0,
+                               0,
                                DateTime.Parse("01-01-2020 12:00:00")),
                 new LogMessage("Warning",
                                LogMessage.LogMessageType.Warning,
                                1,
+                               0,
                                DateTime.Parse("01-01-2020 13:00:00")),
             };
 
@@ -179,45 +188,56 @@ namespace DashboardBackend.Tests
             DataUtilities.DatabaseHandler = new TestDatabase();
             var expected = new List<Manager>()
             {
-                new Manager(1, 1, "ManagerOne"),
-                new Manager(2, 1, "ManagerTwo"),
-                new Manager(3, 1, "ManagerThree"),
+                new Manager()
+                {
+                    Name = "ManagerOne",
+                },
+                new Manager()
+                {
+                    Name = "ManagerTwo",
+                },
+                new Manager()
+                {
+                    Name = "ManagerThree",
+                }
             };
 
-            var actual = DataUtilities.GetManagers();
+            var actual = new List<Manager>();
+            DataUtilities.GetAndUpdateManagers(actual);
 
             Assert.Equal(expected, actual);
         }
 
-        [Fact] /* This test should be chacked later dosen't care about minDate*/
-        public void TODO_DoesFail_GetManager_GetsManagersFromTestDatabaseWhereMinDateIsGreaterThanNewestManager_ReturnEmpty()
+        [Fact]
+        public void GetManager_GetsManagersFromTestDatabaseWhereMinDateIsGreaterThanNewestManager_ReturnEmpty()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
 
-            var actual = DataUtilities.GetManagers(DateTime.Parse("02-01-2020 12:00:00"));
+            var actual = new List<Manager>();
+            DataUtilities.GetAndUpdateManagers(DateTime.Parse("02-01-2020 12:00:00"), actual);
 
-            Assert.NotEmpty(actual);
+            Assert.Empty(actual);
         }
         #endregion
         #region AddManager
-        [Fact]
-        public void AddManager_AddsManagerFromExecutionToManagerList_ReturnTrue()
-        {
-            DataUtilities.DatabaseHandler = new TestDatabase();
-            var expected = new List<Manager>()
-            {
-                new Manager(1, 1, "ManagerOne"),
-                new Manager(2, 1, "ManagerTwo"),
-                new Manager(3, 1, "ManagerThree"),
-            };
+        //[Fact]
+        //public void AddManager_AddsManagerFromExecutionToManagerList_ReturnTrue()
+        //{
+        //    DataUtilities.DatabaseHandler = new TestDatabase();
+        //    var expected = new List<Manager>()
+        //    {
+        //        new Manager(1, 1, "ManagerOne"),
+        //        new Manager(2, 1, "ManagerTwo"),
+        //        new Manager(3, 1, "ManagerThree"),
+        //    };
 
-            var executionList = DataUtilities.GetExecutions();
-            DataUtilities.AddManagers(executionList);
+        //    var executionList = DataUtilities.GetExecutions();
+        //    DataUtilities.AddManagers(executionList);
 
-            var actual = DataUtilities.GetManagers();
+        //    var actual = DataUtilities.GetManagers();
 
-            Assert.Equal(expected, actual);
-        }
+        //    Assert.Equal(expected, actual);
+        //}
         #endregion
         #region AddHealthReport
         [Fact]
@@ -259,44 +279,6 @@ namespace DashboardBackend.Tests
 
             Assert.Equal(expected, actual);
         }
-        #endregion
-        #region AddManagerReadings
-        [Fact]
-        public void AddManagerReadings_GetReadingsForManagersAndAssignsThemToManager_ReturnTrue()
-        {
-            DataUtilities.DatabaseHandler = new TestDatabase();
-
-            var expected = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-            expected.Managers.Add(new Manager(1, 1, "managerone"));
-            expected.Managers.Add(new Manager(2, 1, "managertwo"));
-            expected.Managers.Add(new Manager(3, 1, "managerthree"));
-
-            var actual = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-
-            DataUtilities.AddManagers(new List<Execution>() { actual });
-            DataUtilities.AddManagerReadings(actual);
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void AddManagerReadings_GetReadingsForManagersWhereReadingsAreNotAssignedToManagersSinceMinDateIsNewerThanNewestManagerReading_DoesNotAddAnyReadings()
-        {
-            DataUtilities.DatabaseHandler = new TestDatabase();
-
-            var expected = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-            expected.Managers.Add(new Manager(1, 1, "managerone"));
-            expected.Managers.Add(new Manager(2, 1, "managertwo"));
-            expected.Managers.Add(new Manager(3, 1, "managerthree"));
-
-            var actual = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-
-            DataUtilities.AddManagers(new List<Execution>() { actual });
-            DataUtilities.AddManagerReadings(actual, DateTime.Parse("02-01-2020 12:00:00"));
-
-            Assert.Equal(expected, actual);
-        }
-
         #endregion
         #region BuildHealthReport
         [Fact]

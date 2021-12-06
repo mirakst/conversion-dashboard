@@ -22,11 +22,11 @@ namespace Model.Tests
 
             log.Messages = new List<LogMessage>()
             {
-                new LogMessage("info", LogMessage.LogMessageType.Info, 1, DateTime.Parse("01-01-2020 12:00:00")),
-                new LogMessage("warning", LogMessage.LogMessageType.Warning, 1, DateTime.Parse("01-01-2020 12:00:00")),
-                new LogMessage("error", LogMessage.LogMessageType.Error, 1, DateTime.Parse("01-01-2020 12:00:00")),
-                new LogMessage("fatal", LogMessage.LogMessageType.Fatal, 1, DateTime.Parse("01-01-2020 12:00:00")),
-                new LogMessage("validation", LogMessage.LogMessageType.Validation, 1, DateTime.Parse("01-01-2020 12:00:00"))
+                new LogMessage("info", LogMessage.LogMessageType.Info, 1, 0, DateTime.Parse("01-01-2020 12:00:00")),
+                new LogMessage("warning", LogMessage.LogMessageType.Warning, 1, 0, DateTime.Parse("01-01-2020 12:00:00")),
+                new LogMessage("error", LogMessage.LogMessageType.Error, 1, 0, DateTime.Parse("01-01-2020 12:00:00")),
+                new LogMessage("fatal", LogMessage.LogMessageType.Fatal, 1, 0, DateTime.Parse("01-01-2020 12:00:00")),
+                new LogMessage("validation", LogMessage.LogMessageType.Validation, 1, 0, DateTime.Parse("01-01-2020 12:00:00"))
             };
 
             var expected = new[] { 1, 1, 1, 1, 1 };

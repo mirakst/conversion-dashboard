@@ -18,9 +18,7 @@ namespace Model.Tests
         public void ToString_SameExecution_ReturnsTrue()
         {
             var execution = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-            var expected = $"ID: 1\nSTART TIME: 01-01-2020 12:00:00\nEND TIME: 01-01-0001 00:00:00\n" +
-                           $"RUNTIME: 737424.12:00:00\nROWS READ TOTAL: 0\n" +
-                           $"STATUS: Finished\nMANAGERS: 0\n";
+            var expected = "Execution 1: Status=Started Start=01-01-2020 12:00:00 End=";
 
             var actual = execution.ToString();
 

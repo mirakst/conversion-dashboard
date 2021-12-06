@@ -66,61 +66,6 @@ namespace DashboardBackend.Tests.Database
             }.FindAll(e => e.Afstemtdato >= minDate);
         }
 
-        public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
-        {
-            return new List<EnginePropertyEntry>()
-            {
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerOne",
-                    Key = "START_TIME",
-                    Value = "01-01-2020 12:00:00",
-                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
-                    RunNo = null,
-                },
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerTwo",
-                    Key = String.Empty,
-                    Value = String.Empty,
-                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
-                    RunNo = null,
-                },
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerThree,longassboithatisnotgoingtoshowitsfullname",
-                    Key = String.Empty,
-                    Value = String.Empty,
-                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
-                    RunNo = null,
-                },
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerOne",
-                    Key = "Læste rækker",
-                    Value = "69420",
-                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
-                    RunNo = null,
-                },
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerOne",
-                    Key = "END_TIME",
-                    Value = "01-01-2020 13:00:00",
-                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
-                    RunNo = null,
-                },
-                new EnginePropertyEntry()
-                {
-                    Manager = "ManagerOne",
-                    Key = "Skrevne rækker",
-                    Value = "69420",
-                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
-                    RunNo = null,
-                }
-            }.FindAll(e => e.Timestamp >= minDate);
-        }
-
         public List<ExecutionEntry> QueryExecutions(DateTime minDate)
         {
             return new List<ExecutionEntry>()
@@ -138,6 +83,111 @@ namespace DashboardBackend.Tests.Database
                     Created = DateTime.Parse("01-01-2020 13:00:00"),
                 }
             }.FindAll(e => e.Date >= minDate);
+        }
+
+        public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
+        {
+            return new List<LoggingEntry>()
+            {
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 12:00:00"),
+                    LogMessage = "Info",
+                    LogLevel = "Info",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 13:00:00"),
+                    LogMessage = "Warning",
+                    LogLevel = "Warning",
+                    ExecutionId = 0,
+                    ContextId = 1,
+                }
+            }.FindAll(e => e.Created >= minDate);
+        }
+
+        public List<LoggingEntry> QueryLogMessages(DateTime minDate)
+        {
+            return new List<LoggingEntry>()
+            {
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 17:00:00"),
+                    LogMessage = "Afstemning Error",
+                    LogLevel = "ERROR",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 18:00:00"),
+                    LogMessage = "Check - Error",
+                    LogLevel = "INFO",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 12:00:00"),
+                    LogMessage = "Info",
+                    LogLevel = "INFO",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 13:00:00"),
+                    LogMessage = "Warning",
+                    LogLevel = "WARN",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 14:00:00"),
+                    LogMessage = "Error",
+                    LogLevel = "ERROR",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 15:00:00"),
+                    LogMessage = "Fatal",
+                    LogLevel = "FATAL",
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+                new LoggingEntry()
+                {
+                    Created = DateTime.Parse("01-01-2020 16:00:00"),
+                    LogMessage = "None",
+                    LogLevel = string.Empty,
+                    ExecutionId = 0,
+                    ContextId = 0,
+                },
+            }.FindAll(e => e.Created >= minDate);
+        }
+
+        public List<LoggingContextEntry> QueryLoggingContext()
+        {
+            return new List<LoggingContextEntry>()
+            {
+                new LoggingContextEntry()
+                {
+                    Context = string.Empty,
+                    ContextId = 0,
+                    ExecutionId= 0
+                },
+                new LoggingContextEntry()
+                {
+                    Context = string.Empty,
+                    ContextId = 1,
+                    ExecutionId= 0
+                }
+            };
         }
 
         public List<HealthReportEntry> QueryHealthReport()
@@ -264,115 +314,59 @@ namespace DashboardBackend.Tests.Database
             };
         }
 
-        public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
+        public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
         {
-            return new List<LoggingEntry>()
+            return new List<EnginePropertyEntry>()
             {
-                new LoggingEntry()
+                new EnginePropertyEntry()
                 {
-                    Created = DateTime.Parse("01-01-2020 12:00:00"),
-                    LogMessage = "Info",
-                    LogLevel = "Info",
-                    ExecutionId = 0,
-                    ContextId = 0,
+                    Manager = "ManagerOne",
+                    Key = "START_TIME",
+                    Value = "01-01-2020 12:00:00",
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
+                    RunNo = null,
                 },
-                new LoggingEntry()
+                new EnginePropertyEntry()
                 {
-                    Created = DateTime.Parse("01-01-2020 13:00:00"),
-                    LogMessage = "Warning",
-                    LogLevel = "Warning",
-                    ExecutionId = 0,
-                    ContextId = 1,
+                    Manager = "ManagerTwo",
+                    Key = String.Empty,
+                    Value = String.Empty,
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
+                    RunNo = null,
+                },
+                new EnginePropertyEntry()
+                {
+                    Manager = "ManagerThree,longassboithatisnotgoingtoshowitsfullname",
+                    Key = String.Empty,
+                    Value = String.Empty,
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
+                    RunNo = null,
+                },
+                new EnginePropertyEntry()
+                {
+                    Manager = "ManagerOne",
+                    Key = "Læste rækker",
+                    Value = "69420",
+                    Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
+                    RunNo = null,
+                },
+                new EnginePropertyEntry()
+                {
+                    Manager = "ManagerOne",
+                    Key = "END_TIME",
+                    Value = "01-01-2020 13:00:00",
+                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
+                    RunNo = null,
+                },
+                new EnginePropertyEntry()
+                {
+                    Manager = "ManagerOne",
+                    Key = "Skrevne rækker",
+                    Value = "69420",
+                    Timestamp = DateTime.Parse("01-01-2020 13:00:00"),
+                    RunNo = null,
                 }
-            }.FindAll(e => e.Created >= minDate);
-        }
-
-        public List<LoggingEntry> QueryLogMessages(DateTime minDate)
-        {
-            return new List<LoggingEntry>()
-            {
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 17:00:00"),
-                    LogMessage = "Afstemning Error",
-                    LogLevel = "ERROR",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 18:00:00"),
-                    LogMessage = "Check - Error",
-                    LogLevel = "INFO",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 12:00:00"),
-                    LogMessage = "Info",
-                    LogLevel = "INFO",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 13:00:00"),
-                    LogMessage = "Warning",
-                    LogLevel = "WARN",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 14:00:00"),
-                    LogMessage = "Error",
-                    LogLevel = "ERROR",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 15:00:00"),
-                    LogMessage = "Fatal",
-                    LogLevel = "FATAL",
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-                new LoggingEntry()
-                {
-                    Created = DateTime.Parse("01-01-2020 16:00:00"),
-                    LogMessage = "None",
-                    LogLevel = string.Empty,
-                    ExecutionId = null,
-                    ContextId = 0,
-                },
-            }.FindAll(e => e.Created >= minDate);
-        }
-
-        public List<LoggingContextEntry> QueryManagers()
-        {
-            return new List<LoggingContextEntry>()
-            {
-                new LoggingContextEntry()
-                {
-                    ContextId = 1,
-                    ExecutionId = 1,
-                    Context = "ManagerOne",
-                },
-                new LoggingContextEntry()
-                {
-                    ContextId = 2,
-                    ExecutionId = 1,
-                    Context = "ManagerTwo",
-                },
-                new LoggingContextEntry()
-                {
-                    ContextId = 3,
-                    ExecutionId = 1,
-                    Context = "ManagerThree,longassnamethatisnotshown",
-                }
-            };
+            }.FindAll(e => e.Timestamp >= minDate);
         }
 
         public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
@@ -588,6 +582,31 @@ namespace DashboardBackend.Tests.Database
                     LogTime = DateTime.Parse("01-01-2020 13:00:00"),
                 }
             }.FindAll(e => e.LogTime >= minDate);
+        }
+
+        public List<LoggingContextEntry> QueryManagers()
+        {
+            return new List<LoggingContextEntry>()
+            {
+                new LoggingContextEntry()
+                {
+                    ContextId = 1,
+                    ExecutionId = 1,
+                    Context = "ManagerOne",
+                },
+                new LoggingContextEntry()
+                {
+                    ContextId = 2,
+                    ExecutionId = 1,
+                    Context = "ManagerTwo",
+                },
+                new LoggingContextEntry()
+                {
+                    ContextId = 3,
+                    ExecutionId = 1,
+                    Context = "ManagerThree,longassnamethatisnotshown",
+                }
+            };
         }
     }
 }

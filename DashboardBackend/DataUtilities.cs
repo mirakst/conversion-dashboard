@@ -133,62 +133,66 @@ namespace DashboardBackend
         /// <returns>A list of all log messages from the state database</returns>
         public static List<LogMessage> GetLogMessages() => GetLogMessages(SqlMinDateTime);
 
-        /// <summary>
-        /// Queries the state database for managers added since the specified minimum date.
-        /// 
-        /// </summary>
-        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
-        /// <param name="minDate"></param>
+        /// <summary>
+        /// Queries the state database for managers.
+        /// </summary>
+        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="allManagers"></param>
-        public static void GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
-        {
+        public static void GetAndUpdateManagers(List<Manager> allManagers) => GetAndUpdateManagers(SqlMinDateTime, allManagers);
+
+        /// <summary>
+        /// Queries the state database for managers added since the specified minimum date.
+        /// 
+        /// </summary>
+        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
+        /// <param name="minDate"></param>
+        /// <param name="allManagers"></param>
+        public static void GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        {
             List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
-
-            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-            foreach (var entry in engineEntries)
-            {
-                string name = entry.Manager.Split(',')[0];
-                entry.Manager = name;
+            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
+            foreach (var entry in engineEntries)
+            {
+                string name = entry.Manager.Split(',')[0];
+                entry.Manager = name;
             }
-
-            // For each entry: Find the associated manager and add the value to it. 
-            // If the manager exists but already has all values set, it must be the same manager in a new execution.
-            // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
-            foreach (var entry in engineEntries)
-            {
-                // If manager was created by the log first (context id is set), find the first manager that is missing a property.
-                // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
-                Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
-                if (logManager != null)
-                {
-                    AddEnginePropertiesToManager(logManager, entry);
-                }
-                else
-                {
-                    // Find all managers created from ENGINE_PROPERTIES (context ID=0)
-                    Manager engManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId == 0 && m.IsMissingValues);
-                    if (engManager != null)
-                    {
-                        AddEnginePropertiesToManager(engManager, entry);
-                    }
-                    // If no manager was found at this point, it has neither been created from ENGINE_PROPERTIES or LOGGING - so we will create it!
-                    else
-                    {
-                        Manager manager = new()
-                        {
-                            Name = entry.Manager,
+            // For each entry: Find the associated manager and add the value to it. 
+            // If the manager exists but already has all values set, it must be the same manager in a new execution.
+            // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
+            foreach (var entry in engineEntries)            {
+                // If manager was created by the log first (context id is set), find the first manager that is missing a property.
+                // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
+                Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
+                if (logManager != null)
+                {
+                    AddEnginePropertiesToManager(logManager, entry);
+                }
+                else
+                {
+                    // Find all managers created from ENGINE_PROPERTIES (context ID=0)
+                    Manager engManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId == 0 && m.IsMissingValues);
+                    if (engManager != null)
+                    {
+                        AddEnginePropertiesToManager(engManager, entry);
+                    }
+                    // If no manager was found at this point, it has neither been created from ENGINE_PROPERTIES or LOGGING - so we will create it!
+                    else
+                    {
+                        Manager manager = new()
+                        {
+                            Name = entry.Manager,
                         };
-                        AddEnginePropertiesToManager(manager, entry);
-                        allManagers.Add(manager);
-                    }
-                }
-            }
+                        AddEnginePropertiesToManager(manager, entry);
+                        allManagers.Add(manager);
+                    }
+                }
+            }
         }
 
-        /// <summary>
-        /// Parses the value of the specified EnginePropertyEntry and adds it to the given manager.
-        /// </summary>
-        /// <param name="manager">The manager object associated with the entry.</param>
+        /// <summary>
+        /// Parses the value of the specified EnginePropertyEntry and adds it to the given manager.
+        /// </summary>
+        /// <param name="manager">The manager object associated with the entry.</param>
         /// <param name="entry">The EnginePropertyEntry to get data from.</param>
         private static void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
         {

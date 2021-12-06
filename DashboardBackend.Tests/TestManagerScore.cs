@@ -14,30 +14,27 @@ namespace DashboardBackend.Tests
             DataUtilities.DatabaseHandler = new TestDatabase();
             List<Manager> expected = new()
             {
-                new Manager
-                (
-                    1,
-                    1,
-                    "ManagerOne",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
-                new Manager
-                (
-                    2,
-                    1,
-                    "ManagerTwo",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
-                new Manager
-                (
-                    3,
-                    1,
-                    "ManagerThree",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
+                new Manager()
+                {
+                    Name = "ManagerOne",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                },
+                new Manager()
+                {
+                    Name = "ManagerTwo",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                },
+                new Manager()
+                {
+                    Name = "ManagerThree",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                },
             };
 
             foreach (Manager manager in expected)
@@ -47,30 +44,27 @@ namespace DashboardBackend.Tests
 
             List<Manager> actual = new()
             {
-                new Manager
-                (
-                    1,
-                    1,
-                    "ManagerOne",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
-                new Manager
-                (
-                    2,
-                    1,
-                    "ManagerTwo",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
-                new Manager
-                (
-                    3,
-                    1,
-                    "ManagerThree",
-                    DateTime.Parse("01-01-2020 12:00:00"),
-                    DateTime.Parse("01-01-2020 12:01:00")
-                ),
+                new Manager()
+                {
+                    Name = "ManagerOne",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                },
+                new Manager()
+                {
+                    Name = "ManagerTwo",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                },
+                new Manager()
+                {
+                    Name = "ManagerThree",
+                    ContextId = 1,
+                    StartTime = DateTime.Parse("01-01-2020 12:00:00"),
+                    EndTime = DateTime.Parse("01-01-2020 12:01:00")
+                }
             };
 
             foreach (Manager manager in actual)
