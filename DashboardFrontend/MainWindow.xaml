@@ -484,7 +484,7 @@
                                         <Image Source="/Icons/Validation.png"
                                            Margin="0 0 2 0"
                                            MaxHeight="20"/>
-                                        <TextBlock Text="{Binding OkCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
                                                VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
@@ -495,7 +495,7 @@
                                         <Image Source="/Icons/Warning.png"
                                            Margin="0 0 2 0"
                                            MaxHeight="20"/>
-                                        <TextBlock Text="{Binding DisabledCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
                                                VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
@@ -506,12 +506,12 @@
                                         <Image Source="/Icons/Fatal.png"
                                            Margin="0 0 2 0"
                                            MaxHeight="20"/>
-                                        <TextBlock Text="{Binding FailedCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
                                                VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
                                 <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                    <TextBlock Text="{Binding TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                                    <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
                                            VerticalAlignment="Center"
                                            Foreground="Gray"/>
                                 </StackPanel>
@@ -520,12 +520,35 @@
                         <!-- Validations TreeView -->
                         <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
                             <Grid Background="{DynamicResource CanvasColor}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
+                                <ComboBox Margin="2" 
+                                          Style="{DynamicResource ComboBoxExecutions}" 
+                                          ItemsSource="{Binding Executions}" 
+                                          SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White"/>
+                                                <TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
+                                                           VerticalAlignment="Center"
+                                                           Foreground="LightGray"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
                                 <TextBox x:Name="TextBoxValidationsSearchBar"
+                                         Grid.Column="1"
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
@@ -533,11 +556,13 @@
                                          CaretBrush="White"/>
 
                                 <Image Source="/Icons/Magnifyingglass.png"
+                                       Grid.Column="1"
                                        HorizontalAlignment="Right"
                                        Margin="0 0 5 0"
                                        Width="20"/>
 
                                 <TreeView Grid.Row="1"
+                                          Grid.ColumnSpan="2"
                                           Name="TreeViewValidations"
                                           Background="Transparent"
                                           BorderBrush="Transparent"
@@ -553,8 +578,11 @@
                                                         Height="20">
                                                 <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
                                                        Margin="0 0 4 0"/>
-                                                <TextBlock Text="{Binding ManagerName}" 
+                                                <TextBlock Text="{Binding Name}" 
                                                            VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="LightGray"/>
                                             </StackPanel>
                                             <HierarchicalDataTemplate.ItemTemplate>
                                                 <DataTemplate>
@@ -607,19 +635,27 @@
                                 <StackPanel Orientation="Vertical" 
                                         Background="{DynamicResource CanvasColor}"
                                         DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
-                                    <TextBlock Text="Name" 
+                                    <TextBlock Text="Description" 
                                            FontWeight="Bold" 
                                            Margin="10 10 10 0"
                                            Foreground="LightGray"/>
                                     <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
                                            Margin="10 0 10 0"/>
+                                    
+                                    <TextBlock Text="Toolkit ID"
+                                               FontWeight="Bold"
+                                               Margin="10 20 10 0"
+                                               Foreground="LightGray"/>
+                                    <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
+                                               Margin="10 0 10 0"/>
+
                                     <TextBlock Text="Result" 
                                            FontWeight="Bold" 
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 0 10 0">
-                                        <Image Width="15">
+                                        <Image Width="20">
                                             <Image.Style>
                                                 <Style TargetType="{x:Type Image}">
                                                     <Style.Triggers>
@@ -634,6 +670,7 @@
                                                Margin="5 0 0 0"
                                                VerticalAlignment="Center"/>
                                     </StackPanel>
+                                        
                                     <TextBlock Text="Row count" 
                                            FontWeight="Bold" 
                                            Margin="10 20 10 0"
@@ -657,17 +694,14 @@
                                            FontWeight="Bold"
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
-                                    
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
-                                        
                                         <Button Margin="0 0 5 0"
                                             Click="CopySrcSql_Click"
                                             MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
                                             Content="Source"/>
-                                        
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"

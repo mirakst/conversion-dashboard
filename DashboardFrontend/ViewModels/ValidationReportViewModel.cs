@@ -20,12 +20,30 @@ namespace DashboardFrontend.ViewModels
         {
         }
 
-
-
         #region Properties
-        private ValidationReport _validationReport;
+        private ObservableCollection<ExecutionObservable> _executions = new();
+        public ObservableCollection<ExecutionObservable> Executions
+        {
+            get => _executions;
+            set
+            {
+                _executions = value;
+                OnPropertyChanged(nameof(Executions));
+            }
+        }
+        private ExecutionObservable? _selectedExecution;
+        public ExecutionObservable? SelectedExecution
+        {
+            get => _selectedExecution;
+            set
+            {
+                _selectedExecution = value;
+                OnPropertyChanged(nameof(SelectedExecution));
+                SetExecution(value);
+            }
+        }
         public List<string> ExpandedManagerNames = new();
-        public ObservableCollection<ManagerValidationsWrapper> ManagerList { get; private set; } = new();
+        public ObservableCollection<Manager> ManagerList { get; private set; } = new();
         private CollectionView _managerView;
         public CollectionView ManagerView
         {
@@ -55,46 +73,6 @@ namespace DashboardFrontend.ViewModels
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
                 ManagerView?.Refresh();
-            }
-        }
-        private int _totalCount;
-        public int TotalCount
-        {
-            get => _totalCount;
-            set
-            {
-                _totalCount = value;
-                OnPropertyChanged(nameof(TotalCount));
-            }
-        }
-        private int _okCount;
-        public int OkCount
-        {
-            get => _okCount;
-            set
-            {
-                _okCount = value;
-                OnPropertyChanged(nameof(OkCount));
-            }
-        }
-        private int _disabledCount;
-        public int DisabledCount
-        {
-            get => _disabledCount;
-            set
-            {
-                _disabledCount = value;
-                OnPropertyChanged(nameof(DisabledCount));
-            }
-        }
-        private int _failedCount;
-        public int FailedCount
-        {
-            get => _failedCount;
-            set
-            {
-                _failedCount = value;
-                OnPropertyChanged(nameof(FailedCount));
             }
         }
         private bool _showOk;
@@ -136,15 +114,24 @@ namespace DashboardFrontend.ViewModels
         /// Gets a list of raw validation tests from the specified Validation Report which is then used to generate a CollectionView with a set filter, and updates the validation test counters.
         /// </summary>
         /// <param name="validationReport">The Validation Report to get data from.</param>
-        public void UpdateData(ValidationReport validationReport)
+        public void UpdateData(List<Execution> executions)
         {
-            _validationReport = validationReport;
-            ManagerList = GetManagerList(validationReport.ValidationTests);
-            ManagerView = GetManagerCollectionView(ManagerList);
-            ManagerView.Filter = OnManagersFilter;
-            ManagerView.SortDescriptions.Add(new(nameof(FailedCount), ListSortDirection.Descending));
-            ManagerView.SortDescriptions.Add(new(nameof(DisabledCount), ListSortDirection.Descending));
-            UpdateCounters(validationReport);
+            Executions = new(executions.Select(e => new ExecutionObservable(e, this)));
+            if (SelectedExecution is null)
+            {
+                SelectedExecution = Executions.Last();
+            }
+        }
+
+        private void SetExecution(ExecutionObservable exec)
+        {
+            if (exec is not null)
+            {
+                ManagerView = (CollectionView)CollectionViewSource.GetDefaultView(exec.Managers);
+                ManagerView.Filter = OnManagersFilter;
+                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.FailedCount), ListSortDirection.Descending));
+                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.DisabledCount), ListSortDirection.Descending));
+            }
         }
 
         /// <summary>
@@ -154,8 +141,17 @@ namespace DashboardFrontend.ViewModels
         /// <returns>True if the object should be shown in the CollectionView, and false otherwise.</returns>
         private bool OnManagersFilter(object item)
         {
-            ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
-            return wrapper.ManagerName.Contains(NameFilter) && !wrapper.ValidationView.IsEmpty;
+            ManagerObservable mgr = (ManagerObservable)item;
+            return mgr.Name.Contains(NameFilter);
+        }
+
+        public bool OnValidationsFilter(object item)
+        {
+            return item is ValidationTest val
+                ? (ShowOk && val.Status is ValidationStatus.Ok)
+                    || (ShowFailed && val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch)
+                    || (ShowDisabled && val.Status is ValidationStatus.Disabled)
+                : false;
         }
 
         /// <summary>
@@ -163,65 +159,17 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         private void RefreshViews()
         {
-            if (ManagerView != null)
+            if (SelectedExecution != null && ManagerView != null)
             {
                 foreach (object item in ManagerView)
                 {
-                    ManagerValidationsWrapper wrapper = (ManagerValidationsWrapper)item;
-                    wrapper.ValidationView?.Refresh();
+                    ManagerObservable mgr = (ManagerObservable)item;
+                    mgr.ValidationView?.Refresh();
+                    mgr.IsExpanded = ExpandedManagerNames.Contains(mgr.Name);
+                    
                 }
-                UpdateData(_validationReport);
+                ManagerView.Refresh();
             }
-        }
-
-        /// <summary>
-        /// Updates the number of validation tests with the different possible statuses.
-        /// </summary>
-        private void UpdateCounters(ValidationReport validationReport)
-        {
-            OkCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Ok);
-            DisabledCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Disabled);
-            FailedCount = validationReport.ValidationTests.Count(x => x.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-            TotalCount = validationReport.ValidationTests.Count;
-        }
-
-        /// <summary>
-        /// Goes through the specified list and groups Validations together by their associated Manager, which is represented by a list of ManagerValidationsWrappers.
-        /// </summary>
-        /// <param name="validations">List of validation test data.</param>
-        /// <returns>A collection of ManagerValidationsWrappers containing the given validation tests.</returns>
-        private ObservableCollection<ManagerValidationsWrapper> GetManagerList(IList<ValidationTest> validations)
-        {
-            ObservableCollection<ManagerValidationsWrapper> result = new();
-            foreach (ValidationTest test in validations)
-            {
-                ManagerValidationsWrapper? dataEntry = result.FirstOrDefault(e => e.ManagerName == test.ManagerName);
-                if (dataEntry != null)
-                {
-                    dataEntry.AddTest(test);
-                }
-                else
-                {
-                    dataEntry = new(this, test.ManagerName);
-                    dataEntry.AddTest(test);
-                    if (ExpandedManagerNames.Contains(test.ManagerName))
-                    {
-                        dataEntry.IsExpanded = true;
-                    }
-                    result.Add(dataEntry);
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a CollectionView with a default view of the specified list of ManagerValidationsWrappers.
-        /// </summary>
-        /// <param name="wrappers">List of all wrappers.</param>
-        /// <returns>A CollectionView with the specified list of items.</returns>
-        private CollectionView GetManagerCollectionView(IList<ManagerValidationsWrapper> wrappers)
-        {
-            return (CollectionView)CollectionViewSource.GetDefaultView(wrappers);
         }
     }
 }

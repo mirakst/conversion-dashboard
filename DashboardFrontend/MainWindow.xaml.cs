@@ -218,11 +218,11 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(manager.Name);
                 }
             }
         }
@@ -235,11 +235,11 @@ namespace DashboardFrontend
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             item.IsSelected = false;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }
             }
         }
