@@ -434,7 +434,6 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
-
                                                         <StackPanel Orientation="Vertical">
                                                             <TextBlock Text="{TemplateBinding Content}" 
                                                                    Padding="4" 
@@ -490,6 +489,7 @@
                                     <Setter Property="FontFamily" Value="Consolas"/>
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>

@@ -156,18 +156,18 @@ namespace DashboardFrontend
 
             if (newData.Count > 0)
             {
-                newData.ForEach(m =>
+                newData.ForEach(logMessage =>
                 {
-                    Execution? exec = Conversion.Executions.Find(e => e.Id == m.ExecutionId);
+                    Execution? exec = Conversion.Executions.Find(e => e.Id == logMessage.ExecutionId);
                     if (exec is null)
                     {
                         // The first log message of an execution was logged before the execution was created
-                        exec = new Execution(m.ExecutionId, m.Date);
+                        exec = new Execution(logMessage.ExecutionId, logMessage.Date);
                         exec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
                         Conversion.AddExecution(exec);
                     }
-                    exec.Log.Messages.Add(m);
-                    _logParseQueue.Enqueue(m);
+                    exec.Log.Messages.Add(logMessage);
+                    _logParseQueue.Enqueue(logMessage);
                 });
                 Conversion.LastLogUpdated = DateTime.Now;
             }
@@ -183,9 +183,9 @@ namespace DashboardFrontend
         {
             if (Conversion?.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
             {
-                if (message.Content.StartsWith("Starting manager:"))
+                if (message.Content.StartsWith("Automatic manager execution: Starting manager"))
                 {
-                    Match match = Regex.Match(message.Content, @"^Starting manager: (?<Name>[\w.]*)");
+                    Match match = Regex.Match(message.Content, @"^Automatic manager execution: Starting manager (?<Name>[\w.]*)");
                     if (match.Success)
                     {
                         string name = match.Groups["Name"].Value;
@@ -196,7 +196,7 @@ namespace DashboardFrontend
                             // Check if any of the managers are created from ENGINE_PROPERTIES (context ID=0)
                             if (mgrs.Find(m => m.ContextId == 0) is Manager manager)
                             {
-                                manager.ContextId = message.ContextId;
+                                manager.ContextId = message.ContextId + 1;
                                 if (!exec.Managers.Contains(manager))
                                 {
                                     exec.AddManager(manager);
@@ -209,7 +209,7 @@ namespace DashboardFrontend
                             Manager manager = new()
                             {
                                 Name = name,
-                                ContextId = message.ContextId,
+                                ContextId = message.ContextId + 1,
                                 Status = Manager.ManagerStatus.Running
                             };
                             exec.AddManager(manager);
@@ -238,6 +238,8 @@ namespace DashboardFrontend
                     exec.Status = Execution.ExecutionStatus.Finished;
                     exec.EndTime = message.Date;
                 }
+                var msgManager = exec.Managers.Find(m => m.ContextId == message.ContextId);
+                message.ManagerName = msgManager?.Name;
             }
         }
 

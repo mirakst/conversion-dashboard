@@ -254,6 +254,7 @@
                             <Setter Property="FontFamily" Value="Consolas"/>
                             <Setter Property="FontSize" Value="14"/>
                             <Setter Property="Focusable" Value="False"/>
+                            <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Type}" Value="Info">
                                     <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
