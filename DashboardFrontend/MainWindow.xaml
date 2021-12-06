@@ -358,7 +358,8 @@
                                                                    Background="{DynamicResource BackgroundColor}" 
                                                                    Width="{TemplateBinding Width}" 
                                                                    TextAlignment="Left"
-                                                                   Foreground="White"
+                                                                   Foreground="{DynamicResource ForegroundColor}"
+
                                                                    TextWrapping="Wrap"/>
                                                             <Separator/>
                                                         </StackPanel>
