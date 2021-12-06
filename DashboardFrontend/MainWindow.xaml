@@ -141,11 +141,10 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="30,20,30,30" 
+            <Grid Margin="30,20,30,30"
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -198,6 +197,7 @@
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
 
@@ -468,6 +468,14 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        <GridSplitter Grid.Row="0"
+                                      Grid.RowSpan="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      Width="4"
+                                      Height="100"
+                                      Background="{DynamicResource BorderColor}"/>
+
                         <!-- Validations TreeView Header -->
                         <Grid>
                             <TextBlock Text="Validations"
@@ -657,17 +665,17 @@
                                            FontWeight="Bold"
                                            Foreground="LightGray"
                                            Margin="10 20 10 0"/>
-                                    
+
                                     <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
-                                        
+
                                         <Button Margin="0 0 5 0"
                                             Click="CopySrcSql_Click"
                                             MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
                                             Content="Source"/>
-                                        
+
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
@@ -707,6 +715,7 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
@@ -716,12 +725,14 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <TabControl Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="2"
                                 Margin="0,0,0,0">
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemCpuRam"
                                     Header="CPU &amp; RAM"
@@ -731,6 +742,18 @@
                                     DataContext="{Binding SystemLoadChart}">
                             <Border Margin="10">
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
                                     <TextBlock Name="TextBlockCurrentCpuLoad"
                                                 Text="{Binding LastCpuReading,
                                                         StringFormat='CPU Usage: {0:0}%'}"
@@ -741,6 +764,7 @@
                                                 Grid.Column="1"
                                                 Grid.Row="0"
                                                 Margin="0,0,40,5"/>
+
                                     <TextBlock Name="TextBlockCurrentRamUsage"
                                                 Text="{Binding LastRamReading,
                                                         StringFormat='RAM Usage: {0:0}%'}"
@@ -751,10 +775,12 @@
                                                 Grid.Column="2"
                                                 Grid.Row="0"
                                                 Margin="5,0,0,5"/>
+
                                     <Separator Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Grid.Column="1"
                                     Margin="-50,0"/>
+
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
                                             Series="{Binding ChartData.Series}"
@@ -768,17 +794,6 @@
                                             Grid.ColumnSpan="4"
                                             Grid.Row="1">
                                     </lvc:CartesianChart>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
                                 </Grid>
                             </Border>
                         </TabItem>
@@ -789,6 +804,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -806,6 +822,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -817,12 +834,14 @@
                                                 MouseEnter="CartesianChart_MouseEnter">
                             </lvc:CartesianChart>
                         </TabItem>
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
+
                             <lvc:CartesianChart  Margin="-6,14,0,-30"
                                                     Series="{Binding ChartData.Series}"
                                                     XAxes="{Binding ChartData.XAxis}"
@@ -835,6 +854,7 @@
                             </lvc:CartesianChart>
                         </TabItem>
                     </TabControl>
+
                     <ComboBox Name="ComboBoxMaxView"
                               VerticalAlignment="Center"
                               Grid.Column="1"
@@ -898,6 +918,16 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
+
+            <Control Name="ControlLoadingAnim"
+                     Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.ColumnSpan="2"
+                     Grid.RowSpan="2"
+                     Margin="0,100,0,0"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Style="{StaticResource LoadingAnimation}"/>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>

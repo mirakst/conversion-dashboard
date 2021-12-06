@@ -33,7 +33,7 @@ namespace DashboardFrontend.DetachedWindows
             UserSettings.ActiveProfile.BuildConnectionString(userId, password);
 
             ControlLoadingAnim.Visibility = Visibility.Visible;
-            
+
             Worker.DoWork += Worker_DoWork!;
             Worker.RunWorkerCompleted += Worker_RunWorkerCompleted!;
             Worker.RunWorkerAsync();

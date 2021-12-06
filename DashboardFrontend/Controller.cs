@@ -5,6 +5,7 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -322,6 +323,8 @@ namespace DashboardFrontend
                 }
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
+                    _vm.LoadingVisibility = Visibility.Visible;
+
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
                     if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
@@ -356,6 +359,11 @@ namespace DashboardFrontend
         /// <remarks><see cref="Thread.Sleep(int)"/> is used to drastically reduce the number of times the loop is executed, lowering the overall CPU load.</remarks>
         private void StartMonitoring()
         {
+            bool IsLogReady = false, 
+                 IsManagersReady = false, 
+                 IsValidationsReady = false,
+                 IsHRReady = false;
+
             _vm.IsRunning = true;
             UpdateExecutions();
             DU.BuildHealthReport(Conversion?.HealthReport);
@@ -368,24 +376,28 @@ namespace DashboardFrontend
                     Trace.WriteLine("log");
                     UpdateLog();
                     ShouldUpdateLog = false;
+                    IsLogReady = true;
                 }
                 if (ShouldUpdateManagers)
                 {
                     Trace.WriteLine("mgr");
                     UpdateManagerOverview();
                     ShouldUpdateManagers = false;
+                    IsManagersReady = true;
                 }
                 if (ShouldUpdateValidations)
                 {
                     Trace.WriteLine("vr");
                     UpdateValidationReport();
                     ShouldUpdateValidations = false;
+                    IsValidationsReady = true;
                 }
                 if (ShouldUpdateHealthReport)
                 {
                     Trace.WriteLine("hr");
                     UpdateHealthReport();
                     ShouldUpdateHealthReport = false;
+                    IsHRReady = true;
                 }
                 if (ShouldUpdateExecutions)
                 {
@@ -393,6 +405,11 @@ namespace DashboardFrontend
                     UpdateExecutions();
                     ShouldUpdateExecutions = false;
                 }
+                if (IsLogReady && IsManagersReady && IsValidationsReady && IsHRReady)
+                {
+                    _vm.LoadingVisibility = Visibility.Collapsed;
+                }
+
                 Thread.Sleep(100);
 
             }
@@ -458,7 +475,6 @@ namespace DashboardFrontend
                     }
                 }
                 Thread.Sleep(100);
-
             }
         }
 

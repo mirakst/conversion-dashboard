@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -19,6 +20,16 @@ namespace DashboardFrontend.ViewModels
             {
                 _isRunning = value;
                 OnPropertyChanged(nameof(IsRunning));
+            }
+        }
+        private Visibility _loadingVisibility = Visibility.Collapsed;
+        public Visibility LoadingVisibility
+        {
+            get => _loadingVisibility;
+            set
+            {
+                _loadingVisibility = value;
+                OnPropertyChanged(nameof(LoadingVisibility));
             }
         }
         public LogViewModel LogViewModel { get; set; }
