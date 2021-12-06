@@ -6,7 +6,7 @@
 
         public HealthReport()
         {
-
+            LastModified = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
         }
         public HealthReport(string hostName, string monitorName)
         {
@@ -29,7 +29,7 @@
         public Network Network { get; private set; } //Described in Network.cs
         public Ram Ram { get; private set; } //Described in Ram.cs
         public bool IsInitialized { get; private set; } //If the health report has been built.
-        public DateTime LastModified { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue; //Date of last modification.
+        public DateTime LastModified { get; set; } //Date of last modification.
         #endregion Properties
 
         public void Build(string hostName, string monitorName, Cpu cpu, Network network, Ram ram)

@@ -5,7 +5,6 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,12 +17,22 @@ namespace DashboardFrontend
 {
     public class Controller
     {
-        public Controller(MainWindowViewModel viewModel)
+        public Controller()
         {
-            TryLoadUserSettings();
-            _vm = viewModel;
             Conversion = new();
+            _logParseQueue = new();
+        }
+
+        public Controller(MainWindowViewModel viewModel) : this()
+        {
+            _vm = viewModel;
             _timers = new List<Timer>();
+            HealthReportViewModels = new();
+            LogViewModels = new();
+            ValidationReportViewModels = new();
+            ManagerViewModels = new();
+            UserSettings = new();
+            TryLoadUserSettings();
         }
 
         private enum DashboardStatus
@@ -40,20 +49,21 @@ namespace DashboardFrontend
             { DashboardStatus.UpdatingValidations, "Querying validations..." },
         };
 
+        private readonly Queue<LogMessage> _logParseQueue;
+        private readonly MainWindowViewModel _vm;
+        private readonly List<Timer> _timers;
+
         public bool ShouldUpdateExecutions { get; private set; }
         public bool ShouldUpdateLog { get; private set; }
         public bool ShouldUpdateValidations { get; private set; }
         public bool ShouldUpdateManagers { get; private set; }
         public bool ShouldUpdateHealthReport { get; private set; }
-        private readonly Queue<LogMessage> _logParseQueue = new();
-        private readonly MainWindowViewModel _vm;
-        private readonly List<Timer> _timers;
         public Conversion? Conversion { get; set; }
-        public List<HealthReportViewModel> HealthReportViewModels { get; private set; } = new();
-        public List<LogViewModel> LogViewModels { get; private set; } = new();
-        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; } = new();
-        public List<ManagerViewModel> ManagerViewModels { get; private set; } = new();
-        public UserSettings UserSettings { get; set; } = new();
+        public List<HealthReportViewModel> HealthReportViewModels { get; private set; }
+        public List<LogViewModel> LogViewModels { get; private set; }
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
+        public List<ManagerViewModel> ManagerViewModels { get; private set; }
+        public UserSettings UserSettings { get; set; }
 
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
@@ -145,11 +155,11 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog()
         {
-            if (Conversion?.ActiveExecution?.Log is null)
+            if (Conversion is null)
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
+            SetStatusMessage(DashboardStatus.UpdatingLog);
 
             List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
             Conversion.LastLogQuery = DateTime.Now;
@@ -250,7 +260,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingValidations];
+            SetStatusMessage(DashboardStatus.UpdatingValidations);
           
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
@@ -278,7 +288,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingHealthReport];
+            SetStatusMessage(DashboardStatus.UpdatingHealthReport);
 
             if (Conversion.HealthReport.IsInitialized)
             {
@@ -304,7 +314,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingManagers];
+            SetStatusMessage(DashboardStatus.UpdatingManagers);
 
             int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
@@ -341,7 +351,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingExecutions];
+            SetStatusMessage(DashboardStatus.UpdatingExecutions);
           
             List<Execution> result = DU.GetExecutions(Conversion.LastExecutionQuery);
             Conversion.LastExecutionQuery = DateTime.Now;
@@ -363,9 +373,17 @@ namespace DashboardFrontend
         private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
         {
             await Task.Delay(delay);
-            if (_vm.CurrentStatus == _statusMessages[status])
+            if (_vm is not null && _vm.CurrentStatus == _statusMessages[status])
             {
                 _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
+            }
+        }
+
+        private void SetStatusMessage(DashboardStatus status)
+        {
+            if (_vm is not null)
+            {
+                _vm.CurrentStatus = _statusMessages[status];
             }
         }
 
