@@ -139,22 +139,16 @@ namespace DashboardBackend
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="allManagers"></param>
         public static void GetAndUpdateManagers(List<Manager> allManagers) => GetAndUpdateManagers(SqlMinDateTime, allManagers);
-
-        /// <summary>
-        /// Queries the state database for managers added since the specified minimum date.
-        /// 
-        /// </summary>
-        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
-        /// <param name="minDate"></param>
-        /// <param name="allManagers"></param>
-        public static void GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
-        {
+        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        {
             List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
-            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-            foreach (var entry in engineEntries)
-            {
-                string name = entry.Manager.Split(',')[0];
-                entry.Manager = name;
+            int addedManagers = 0;
+
+            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
+            foreach (var entry in engineEntries)
+            {
+                string name = entry.Manager.Split(',')[0];
+                entry.Manager = name;
             }
             // For each entry: Find the associated manager and add the value to it. 
             // If the manager exists but already has all values set, it must be the same manager in a new execution.
@@ -182,11 +176,13 @@ namespace DashboardBackend
                         {
                             Name = entry.Manager,
                         };
-                        AddEnginePropertiesToManager(manager, entry);
-                        allManagers.Add(manager);
-                    }
-                }
-            }
+                        AddEnginePropertiesToManager(manager, entry);
+                        allManagers.Add(manager);
+                        addedManagers++;
+                    }
+                }
+            }
+            return addedManagers;
         }
 
         /// <summary>
@@ -246,7 +242,7 @@ namespace DashboardBackend
         /// <param name="hr">The conversion's health report</param>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <exception cref="FormatException">Thrown if somehow the query failed and an unexpected entry is met.</exception>
-        public static void AddHealthReportReadings(HealthReport hr, DateTime minDate)
+        public static int AddHealthReportReadings(HealthReport hr, DateTime minDate)
         {
             hr.LastModified = DateTime.Now;
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryPerformanceReadings(minDate);
@@ -279,6 +275,7 @@ namespace DashboardBackend
             hr.Cpu.Readings = cpuRes;
             hr.Ram.Readings = ramRes;
             hr.Network.Readings = netRes;
+            return queryResult.Count;
         }
 
         /// <summary>

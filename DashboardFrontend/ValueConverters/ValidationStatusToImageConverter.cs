@@ -16,12 +16,12 @@ namespace DashboardFrontend.ValueConverters
                 switch (test.Status)
                 {
                     case ValidationStatus.Ok:
-                        return "/Icons/Validation.png";
+                        return "/Icons/ValidationOk.png";
                     case ValidationStatus.Failed:
                     case ValidationStatus.FailMismatch:
-                        return "/Icons/Fatal.png";
+                        return "/Icons/ValidationFailed.png";
                     case ValidationStatus.Disabled:
-                        return "/Icons/Warning.png";
+                        return "/Icons/ValidationDisabled.png";
                     default:
                         break;
                 }

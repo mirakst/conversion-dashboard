@@ -9,19 +9,19 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ManagerValidationsWrapper entry)
+            if (value is ManagerObservable entry)
             {
                 if (entry.FailedCount == 0 && entry.DisabledCount > 0)
                 {
-                    return "/Icons/Warning.png";
+                    return "/Icons/ValidationDisabled.png";
                 }
                 else if (entry.FailedCount > 0)
                 {
-                    return "/Icons/Fatal.png";
+                    return "/Icons/ValidationFailed.png";
                 }
                 else
                 {
-                    return "/Icons/Validation.png";
+                    return "/Icons/ValidationOk.png";
                 }
             }
             return "";

@@ -1,6 +1,7 @@
 ﻿using Model;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static Model.LogMessage;
@@ -18,8 +19,10 @@ namespace DashboardFrontend.ViewModels
         {
             LogListView = logListView;
         }
-        
+
+        public System.DateTime LastUpdated { get; set; }
         public bool DoAutoScroll { get; set; } = true;
+        public int ShownExecution { get; set; }
         public ListView LogListView { get; set; }
         public ObservableCollection<LogMessage> MessageList { get; private set; } = new();
         private CollectionView _messageView;
@@ -149,7 +152,7 @@ namespace DashboardFrontend.ViewModels
             UpdateCounters(log);
             if (DoAutoScroll && LogListView is not null && !LogListView.Items.IsEmpty)
             {
-                LogListView.ScrollIntoView(LogListView.Items[^1]);
+                ScrollToLast(this, new RoutedEventArgs());
             }
         }
 
@@ -179,6 +182,15 @@ namespace DashboardFrontend.ViewModels
             ErrorCount = log.ErrorCount;
             FatalCount = log.FatalCount;
             ValidationCount = log.ValidationCount;
+        }
+
+        public void ScrollToLast(object sender, RoutedEventArgs e)
+        {
+            int itemCount = LogListView.Items.Count;
+            if (itemCount > 0)
+            {
+                LogListView.ScrollIntoView(LogListView.Items[^1]);
+            }
         }
     }
 }

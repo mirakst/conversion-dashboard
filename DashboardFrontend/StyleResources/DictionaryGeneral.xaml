@@ -7,6 +7,9 @@
     <SolidColorBrush x:Key="BorderColor" Color="#828790"/>
     <SolidColorBrush x:Key="CanvasColor" Color="#2f3136"/>
     <SolidColorBrush x:Key="HeaderColor" Color="#35373d"/>
+    <SolidColorBrush x:Key="HeaderForegroundColor" Color="LightGray"/>
+    <SolidColorBrush x:Key="DarkBorderColor" Color="DarkSlateGray"/>
+    <SolidColorBrush x:Key="BorderOnHoverColor" Color="White"/>
 
     <!-- Validation Report -->
     <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
@@ -42,30 +45,25 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TextBoxBase}">
-                    <Border Name="Border"
-                            CornerRadius="5" 
-                            Padding="2"
-                            BorderBrush="DarkSlateGray"
-                            BorderThickness="1" >
-                        <ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="#EEEEEE"/>
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#EEEEEE"/>
-                            <Setter Property="Foreground" Value="#888888"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="white"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border Name="Border"
+                            CornerRadius="5" 
+                            Padding="2"
+                            BorderBrush="{DynamicResource DarkBorderColor}"
+                            BorderThickness="1" >
+                        <ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource BorderOnHoverColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="DefaultScrollBar" TargetType="{x:Type ScrollBar}">
