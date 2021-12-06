@@ -5,7 +5,6 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,12 +17,22 @@ namespace DashboardFrontend
 {
     public class Controller
     {
-        public Controller(MainWindowViewModel viewModel)
+        public Controller()
         {
-            TryLoadUserSettings();
-            _vm = viewModel;
             Conversion = new();
+        }
+
+        public Controller(MainWindowViewModel viewModel) : this()
+        {
+            _vm = viewModel;
             _timers = new List<Timer>();
+            _logParseQueue = new();
+            HealthReportViewModels = new();
+            LogViewModels = new();
+            ValidationReportViewModels = new();
+            ManagerViewModels = new();
+            UserSettings = new();
+            TryLoadUserSettings();
         }
 
         private enum DashboardStatus
@@ -40,20 +49,21 @@ namespace DashboardFrontend
             { DashboardStatus.UpdatingValidations, "Querying validations..." },
         };
 
+        private readonly Queue<LogMessage> _logParseQueue;
+        private readonly MainWindowViewModel _vm;
+        private readonly List<Timer> _timers;
+
         public bool ShouldUpdateExecutions { get; private set; }
         public bool ShouldUpdateLog { get; private set; }
         public bool ShouldUpdateValidations { get; private set; }
         public bool ShouldUpdateManagers { get; private set; }
         public bool ShouldUpdateHealthReport { get; private set; }
-        private readonly Queue<LogMessage> _logParseQueue = new();
-        private readonly MainWindowViewModel _vm;
-        private readonly List<Timer> _timers;
         public Conversion? Conversion { get; set; }
-        public List<HealthReportViewModel> HealthReportViewModels { get; private set; } = new();
-        public List<LogViewModel> LogViewModels { get; private set; } = new();
-        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; } = new();
-        public List<ManagerViewModel> ManagerViewModels { get; private set; } = new();
-        public UserSettings UserSettings { get; set; } = new();
+        public List<HealthReportViewModel> HealthReportViewModels { get; private set; }
+        public List<LogViewModel> LogViewModels { get; private set; }
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
+        public List<ManagerViewModel> ManagerViewModels { get; private set; }
+        public UserSettings UserSettings { get; set; }
 
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
@@ -149,7 +159,10 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
+            if (_vm is not null)
+            {
+                _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
+            }
 
             List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
             Conversion.LastLogQuery = DateTime.Now;
