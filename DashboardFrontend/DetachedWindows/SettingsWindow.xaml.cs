@@ -2,6 +2,9 @@
 using DashboardFrontend.Settings;
 using System.Windows;
 using System;
+using System.Windows.Input;
+using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -10,12 +13,15 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow(UserSettings userSettings)
+        private readonly Controller controller;
+
+        public SettingsWindow(Controller controller)
         {
             InitializeComponent();
-            Settings = userSettings;
-            SettingsViewModel = new(userSettings);
+            Settings = controller.UserSettings;
+            SettingsViewModel = new(controller.UserSettings);
             DataContext = SettingsViewModel;
+            this.controller = controller;
         }
 
         private UserSettingsViewModel SettingsViewModel { get; }
@@ -23,17 +29,40 @@ namespace DashboardFrontend.DetachedWindows
 
         private void Button_SaveAndClose(object sender, RoutedEventArgs e)
         {
-            if (!SettingsViewModel.HasChangedActiveProfile || Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
+            List<bool> inputValidations = new()
             {
-                try
+                Validation.GetHasError(TextBoxLoggingInterval),
+                Validation.GetHasError(TextBoxHRInterval),
+                Validation.GetHasError(TextBoxValidationInterval),
+                Validation.GetHasError(TextBoxManagerInterval),
+                Validation.GetHasError(TextBoxAllInterval)
+            };
+
+            if (inputValidations.Contains(true))
+            {
+                MessageBox.Show("The specified properties are either empty or break validation rules", "Error");
+                return;
+            }
+            else if (SettingsViewModel.HasChangedActiveProfile && Settings.ActiveProfile?.HasStartedMonitoring is true)
+            {
+                if (Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
                 {
-                    Settings.OverwriteAllAndSave(SettingsViewModel);
-                    Close();
+                    Settings.ActiveProfile.HasStartedMonitoring = false;
+                    controller.Reset();
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n"+ex.Message);
+                    return;
                 }
+            }
+            try
+            {
+                Settings.OverwriteAllAndSave(SettingsViewModel);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n" + ex.Message);
             }
         }
 
@@ -45,6 +74,7 @@ namespace DashboardFrontend.DetachedWindows
         private void Button_NewProfile(object sender, RoutedEventArgs e)
         {
             NewProfileWindow newProfileWindow = new(SettingsViewModel);
+            newProfileWindow.Owner = this;
             newProfileWindow.ShowDialog();
         }
 
@@ -61,7 +91,7 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
-        private static bool Confirm(string message)
+        public static bool Confirm(string message)
         {
             MessageBoxResult result = MessageBox.Show(message, "Please confirm", MessageBoxButton.YesNo);
             return result == MessageBoxResult.Yes;
@@ -83,6 +113,16 @@ namespace DashboardFrontend.DetachedWindows
                 SettingsViewModel.ActiveProfile = SettingsViewModel.SelectedProfile;
                 SettingsViewModel.HasChangedActiveProfile = !(SettingsViewModel.ActiveProfile.Equals(Settings.ActiveProfile));
             }
+        }
+
+        private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
         }
     }
 }

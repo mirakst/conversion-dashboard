@@ -1,16 +1,14 @@
-using DashboardFrontend;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.Settings;
-using DashboardBackend;
-using DashboardBackend.Database;
 using Model;
-using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using DashboardFrontend.Charts;
+using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -33,7 +31,8 @@ namespace DashboardFrontend
         //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new(ViewModel.Controller.UserSettings);
+            SettingsWindow settingsWindow = new(ViewModel.Controller);
+            settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
 
@@ -44,7 +43,12 @@ namespace DashboardFrontend
             detachManager.Show();
             detachManager.Closed += delegate
             {
-                ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+                // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingManagers) { }
+                    ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
+                });
             };
         }
 
@@ -55,7 +59,11 @@ namespace DashboardFrontend
             detachLog.Show();
             detachLog.Closed += delegate
             {
-                ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
+                });
             };
         }
 
@@ -67,7 +75,11 @@ namespace DashboardFrontend
             detachVr.Show();
             detachVr.Closed += delegate
             {
-                ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+                });
             };
         }
 
@@ -78,7 +90,11 @@ namespace DashboardFrontend
             detachHr.Show();
             detachHr.Closed += delegate
             {
-                ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
+                _ = Task.Run(() =>
+                {
+                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
+                });
             };
         }
 
@@ -120,10 +136,11 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
         {
-
-            WindowStyle = WindowStyle.SingleBorderWindow;
+            System.Drawing.Rectangle rec = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle).WorkingArea;
+            MaxHeight = rec.Height;
+            MaxWidth = rec.Width;
+            ResizeMode = ResizeMode.NoResize;
             WindowState = WindowState.Maximized;
-            WindowStyle = WindowStyle.None;
             this.ButtonMaximize.Visibility = Visibility.Collapsed;
             this.ButtonRestore.Visibility = Visibility.Visible;
         }
@@ -135,6 +152,9 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs e)
         {
+            MaxHeight = double.PositiveInfinity;
+            MaxWidth = double.PositiveInfinity;
+            ResizeMode = ResizeMode.CanResize;
             SystemCommands.RestoreWindow(this);
             this.ButtonMaximize.Visibility = Visibility.Visible;
             this.ButtonRestore.Visibility = Visibility.Collapsed;
@@ -149,22 +169,24 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOn();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            ViewModel.HealthReportViewModel.SystemLoadChart.AutoFocusOff();
+            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            chart?.AutoFocusOff();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel is not null)
-            {
-                _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-                ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-                ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
-            }
+            if (ViewModel is null) return;
+            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkDeltaChart.ChangeMaxView(comboBoxItemValue);
+            ViewModel.HealthReportViewModel.NetworkSpeedChart.ChangeMaxView(comboBoxItemValue);
         }
 
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
@@ -180,15 +202,13 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
-            if (wrapper != null)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
             {
                 if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
                 {
                     ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
                 }
             }
-
         }
 
         /// <summary>
@@ -198,8 +218,8 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            var wrapper = tree.ItemContainerGenerator.ItemFromContainer(item) as ManagerValidationsWrapper;
-            if (wrapper != null)
+            item.IsSelected = false;
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
             {
                 if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
                 {
@@ -214,6 +234,8 @@ namespace DashboardFrontend
             if (button.DataContext is ValidationTest test)
             {
                 Clipboard.SetText(test.SrcSql);
+                TextBlockPopupSql.Content = "SQL source copied to clipboard";
+                PopupCopySql.IsOpen = true;
             }
         }
 
@@ -223,7 +245,14 @@ namespace DashboardFrontend
             if (button.DataContext is ValidationTest test)
             {
                 Clipboard.SetText(test.DstSql);
+                TextBlockPopupSql.Content = "SQL destination copied to clipboard";
+                PopupCopySql.IsOpen = true;
             }
+        }
+
+        private void ButtonCopySql_MouseLeave(object sender, MouseEventArgs e)
+        {
+            PopupCopySql.IsOpen = false;
         }
     }
 }

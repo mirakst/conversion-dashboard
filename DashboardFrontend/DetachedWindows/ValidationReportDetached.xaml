@@ -12,18 +12,24 @@
         Background="{DynamicResource BackgroundColor}"
         FontFamily="Segoe UI"
         FontSize="15">
-    
+
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        </Style>
     </Window.Resources>
-    
+
     <Border BorderThickness="10"
             Background="{DynamicResource BackgroundColor}">
+        
         <Grid Name="GridValidationReport">
             <Grid Grid.Row="1">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4.5*" MinWidth="280"/>
                     <ColumnDefinition Width="10"/>
@@ -37,103 +43,121 @@
                 <!-- Validations TreeView Header -->
                 <Grid>
                     <TextBlock Text="Validations"
-                                   Margin="5"
-                                   Foreground="LightGray"
-                                   FontWeight="Bold"/>
+                               Margin="5"
+                               Foreground="LightGray"
+                               FontWeight="Bold"/>
+
                     <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Right">
+                                Orientation="Horizontal" 
+                                HorizontalAlignment="Right">
+
                         <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                                      IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0">
+
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="6 0 6 0">
                                 <Image Source="/Icons/Validation.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                       Margin="0 0 2 0"
+                                       MaxHeight="20"/>
                                 <TextBlock Text="{Binding OkCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                                      IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="6 0 6 0">
                                 <Image Source="/Icons/Warning.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                       Margin="0 0 2 0"
+                                       MaxHeight="20"/>
                                 <TextBlock Text="{Binding DisabledCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </ToggleButton>
+
                         <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0">
-                            <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+                                      IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="6 0 6 0">
                                 <Image Source="/Icons/Fatal.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                       Margin="0 0 2 0"
+                                       MaxHeight="20"/>
                                 <TextBlock Text="{Binding FailedCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </ToggleButton>
-                        <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
+
+                        <StackPanel Orientation="Horizontal" 
+                                    Margin="6 0 6 0">
                             <TextBlock Text="{Binding TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
-                                           VerticalAlignment="Center"
-                                           Foreground="Gray"/>
+                                       VerticalAlignment="Center"
+                                       Foreground="Gray"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
+
                 <!-- Validations TreeView -->
-                <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                <Border Grid.Row="1" 
+                        BorderBrush="{DynamicResource BorderColor}" 
+                        BorderThickness="1">
                     <Grid Background="{DynamicResource CanvasColor}">
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+
                         <TextBox x:Name="TextBoxValidationsSearchBar"
-                                         Margin="2"
-                                         Style="{DynamicResource ValidationsSearchBox}"
-                                         Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
-                                         CaretBrush="White"/>
+                                 Margin="2"
+                                 Style="{DynamicResource ValidationsSearchBox}"
+                                 Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Foreground="White"
+                                 CaretBrush="White"/>
+
                         <Image Source="/Icons/Magnifyingglass.png"
-                                       HorizontalAlignment="Right"
-                                       Margin="0 0 5 0"
-                                       Width="20"/>
+                               HorizontalAlignment="Right"
+                               Margin="0 0 5 0"
+                               Width="20"/>
 
                         <TreeView Grid.Row="1"
-                                          Name="TreeViewValidations"
-                                          Background="Transparent"
-                                          BorderBrush="Transparent"
-                                          ItemsSource="{Binding ManagerView}"
-                                          VirtualizingPanel.IsVirtualizing="True"
-                                          VirtualizingPanel.VirtualizationMode="Recycling"
-                                          VirtualizingPanel.ScrollUnit="Pixel"
-                                          TreeViewItem.Expanded="TreeViewValidations_Expanded"
-                                          TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
+                                  Name="TreeViewValidations"
+                                  Background="Transparent"
+                                  BorderBrush="Transparent"
+                                  ItemsSource="{Binding ManagerView}"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
+                                  TreeViewItem.Expanded="TreeViewValidations_Expanded"
+                                  TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
                             <TreeView.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
                                     <StackPanel Orientation="Horizontal" 
-                                                        Height="20">
+                                                Height="20">
                                         <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
-                                                       Margin="0 0 4 0"/>
+                                               Margin="0 0 4 0"/>
                                         <TextBlock Text="{Binding ManagerName}" 
-                                                           VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
+
                                     <HierarchicalDataTemplate.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" 
-                                                                Height="20" 
-                                                                Margin="0 5 0 0">
+                                                        Height="20" 
+                                                        Margin="0 5 0 0">
                                                 <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}"
-                                                               Margin="10 0 5 0"/>
+                                                       Margin="10 0 5 0"/>
                                                 <TextBlock Text="{Binding Name}" 
-                                                                   VerticalAlignment="Center"/>
+                                                           VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </HierarchicalDataTemplate.ItemTemplate>
                                 </HierarchicalDataTemplate>
                             </TreeView.ItemTemplate>
+
                             <TreeView.Resources>
                                 <Style TargetType="TreeViewItem">
                                     <Setter Property="Foreground" Value="White"/>
@@ -152,75 +176,104 @@
 
                 <Grid Grid.Column="2">
                     <TextBlock Text="Summary"
-                                       Margin="0 5 5 5"
-                                       Foreground="LightGray"
-                                       FontWeight="Bold"/>
+                               Margin="0 5 5 5"
+                               Foreground="LightGray"
+                               FontWeight="Bold"/>
                 </Grid>
+
                 <Border BorderBrush="{DynamicResource BorderColor}"
-                                BorderThickness="1"
-                                Grid.Row="1"
-                                Grid.Column="2">
+                        BorderThickness="1"
+                        Grid.Row="1"
+                        Grid.Column="2">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical" 
-                                        Background="{DynamicResource CanvasColor}"
-                                        DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                                    Background="{DynamicResource CanvasColor}"
+                                    DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
                             <TextBlock Text="Name" 
-                                           FontWeight="Bold" 
-                                           Margin="10 10 10 0"
-                                           Foreground="LightGray"/>
+                                       FontWeight="Bold" 
+                                       Margin="10 10 10 0"
+                                       Foreground="LightGray"/>
+
                             <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
-                                           Margin="10 0 10 0"/>
+                                       Margin="10 0 10 0"/>
+
                             <TextBlock Text="Result" 
-                                           FontWeight="Bold" 
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
+                                       FontWeight="Bold" 
+                                       Foreground="LightGray"
+                                       Margin="10 20 10 0"/>
+
                             <StackPanel Orientation="Horizontal"
-                                            Margin="10 0 10 0">
-                                <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" Width="15"/>
+                                        Margin="10 0 10 0">
+
+                                <Image Source="{Binding Converter={StaticResource StatusToImageConverter}}" 
+                                       Width="15"/>
                                 <TextBlock Text="{Binding Status}"
-                                               Margin="5 0 0 0"
-                                               VerticalAlignment="Center"/>
+                                           Margin="5 0 0 0"
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
+
                             <TextBlock Text="Row count" 
-                                           FontWeight="Bold" 
-                                           Margin="10 20 10 0"
-                                           Foreground="LightGray"/>
+                                       FontWeight="Bold" 
+                                       Margin="10 20 10 0"
+                                       Foreground="LightGray"/>
+
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Source "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                           Foreground="LightGray"
+                                           Margin="10 0 5 0"/>
+
                                 <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                           Margin="0 0 10 0"/>
                             </StackPanel>
+
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Destination "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                           Foreground="LightGray"
+                                           Margin="10 0 5 0"/>
+
                                 <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                           Margin="0 0 10 0"/>
                             </StackPanel>
 
                             <TextBlock Text="Copy SQL"
-                                           FontWeight="Bold"
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
-                            <StackPanel Orientation="Horizontal"
+                                       FontWeight="Bold"
+                                       Foreground="LightGray"
+                                       Margin="10 20 10 0"/>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal"
                                             Margin="10 5 10 0"
                                             Height="30">
-                                <Button Margin="0 0 5 0"
+                                    <Button Margin="0,0,5,0"
                                             Click="CopySrcSql_Click"
+                                            MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Source"/>
-                                <Button Click="CopyDestSql_Click"
+                                            Content="Source">
+                                    </Button>
+
+                                    <Button Click="CopyDestSql_Click"
+                                            MouseLeave="ButtonCopySql_MouseLeave"
                                             IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Destination"/>
+                                            Content="Destination">
+                                    </Button>
+
+                                    <Popup x:Name="PopupCopySql"
+                                           Placement="Mouse">
+                                        <Border BorderBrush="{DynamicResource BorderColor}"
+                                                BorderThickness="1">
+                                            <Label x:Name="TextBlockPopupSql"
+                                                   Style="{DynamicResource PopupLabel}"/>
+                                        </Border>
+                                    </Popup>
+                                </StackPanel>
                             </StackPanel>
+
                             <StackPanel.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Foreground" Value="White"/>
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="TextWrapping" Value="Wrap"/>
                                 </Style>
+
                                 <Style TargetType="Button">
                                     <Setter Property="FontFamily" Value="Segoe UI"/>
                                     <Setter Property="FontSize" Value="14"/>

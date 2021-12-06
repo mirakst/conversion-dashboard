@@ -23,7 +23,6 @@ namespace DashboardBackend.Database
             return queryResult.ToList();
         }
 
-
         /// <inheritdoc />
         public List<ExecutionEntry> QueryExecutions(DateTime minDate)
         {
@@ -59,13 +58,13 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<LoggingContextEntry> QueryManagers()
+        public List<LoggingContextEntry> QueryLoggingContext()
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.LoggingContexts
                                 .Where(e => e.ContextId > 0)
-                                .OrderBy(e => e.ContextId);
-
+                                .OrderBy(e => e.ExecutionId)
+                                .ThenBy(e => e.ContextId);
             return queryResult.ToList();
         }
 
@@ -99,7 +98,11 @@ namespace DashboardBackend.Database
         {
             using NetcompanyDbContext db = new(ConnectionString);
             var queryResult = db.EngineProperties
-                                .Where(e => e.Timestamp > minDate)
+                                .Where(e => e.Timestamp > minDate 
+                                        && (e.Key == "START_TIME"
+                                        ||  e.Key == "END_TIME"
+                                        ||  e.Key == "Læste rækker"
+                                        ||  e.Key == "Skrevne rækker"))
                                 .OrderBy(e => e.Timestamp);
 
             return queryResult.ToList();

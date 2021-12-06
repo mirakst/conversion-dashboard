@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Creates an error message above the textbox generating it -->
+    <ControlTemplate x:Key="ValidationTemplate">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding [0].ErrorContent}" 
+                           Foreground="#EA3E33"/>
+            <AdornedElementPlaceholder/>
+        </StackPanel>
+    </ControlTemplate>
+</ResourceDictionary>

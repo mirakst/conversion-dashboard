@@ -5,12 +5,13 @@ namespace Model
     public class LogMessage
     {
         #region Constructors
-        public LogMessage(string content, LogMessageType type, int contextId, DateTime date)
+        public LogMessage(string content, LogMessageType type, int contextId, int executionId, DateTime date)
         {
             Content = content;
             Type = type;
             Date = date;
             ContextId = contextId;
+            ExecutionId = executionId;
         }
         #endregion Constructors
 
@@ -27,6 +28,7 @@ namespace Model
         public string Content { get; } //From [LOG_MESSAGE] in [dbo].[LOGGING].
         public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
         public int ContextId { get; } //From [CONTEXT_ID] in [dbo].[LOGGING].
+        public int ExecutionId { get; }
         public Manager Manager { get; set; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
         #endregion Properties
 

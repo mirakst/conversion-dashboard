@@ -70,6 +70,10 @@ namespace ConversionEngineSimulator
                     SetTimeout(offset).ContinueWith(t =>
                     {
                         entry.CREATED = DateTime.Now;
+                        if (entry is EngineProperty e && (e.KEY == "START_TIME" || e.KEY == "END_TIME"))
+                        {
+                            e.VALUE = entry.CREATED.ToString();
+                        }
                         using (SqlConnection conn = DBInfo.ConnectToDestDB())
                         {
                             conn.Execute(executionString, entry);

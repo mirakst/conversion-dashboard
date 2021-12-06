@@ -1,5 +1,4 @@
 ﻿using Model;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -9,9 +8,9 @@ namespace DashboardFrontend.ViewModels
 {
     public class ManagerViewModel : BaseViewModel
     {
-        public ManagerViewModel(HealthReport healthReport)
+        public ManagerViewModel()
         {
-            ManagerChartViewModel = new(healthReport);
+            ManagerChartViewModel = new();
         }
 
         public ManagerViewModel(DataGrid dataGrid)
@@ -19,7 +18,7 @@ namespace DashboardFrontend.ViewModels
             _datagrid = dataGrid;
         }
 
-        private DataGrid _datagrid;
+        private readonly DataGrid _datagrid;
         private ObservableCollection<ManagerWrapper> _managers = new();
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
@@ -73,7 +72,7 @@ namespace DashboardFrontend.ViewModels
         public void UpdateData(List<Manager> executionManagers)
         {
             Managers.Clear();
-            foreach (Manager manager in executionManagers)
+            foreach (var manager in executionManagers)
             {
                 Managers.Add(new ManagerWrapper(manager));
             }
