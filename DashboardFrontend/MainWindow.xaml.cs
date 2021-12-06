@@ -46,7 +46,7 @@ namespace DashboardFrontend
                 // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingManagers) { }
+                    while (ViewModel.Controller.ShouldUpdateManagers) { }
                     ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
                 });
             };
@@ -61,7 +61,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
                 });
             };
@@ -77,7 +77,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
                 });
             };
@@ -92,7 +92,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
                 });
             };

@@ -19,7 +19,8 @@ namespace DashboardFrontend.ViewModels
         {
             LogListView = logListView;
         }
-        
+
+        public System.DateTime LastUpdated { get; set; }
         public bool DoAutoScroll { get; set; } = true;
         public int ShownExecution { get; set; }
         public ListView LogListView { get; set; }
