@@ -41,7 +41,7 @@
             <Grid Background="{DynamicResource CanvasColor}"
                   Grid.Row="0"
                   Grid.ColumnSpan="2"
-                  MouseLeftButtonDown="DraggableGrid">
+                  MouseLeftButtonDown="ControlGridClick">
                 <TextBlock x:Name="TextBlockWindowTitle"
                            FontSize="14"
                            MinWidth="200"

@@ -134,7 +134,7 @@ namespace DashboardFrontend
             SystemCommands.CloseWindow(this);
         }
 
-        private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs? e)
         {
             System.Drawing.Rectangle rec = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle).WorkingArea;
             MaxHeight = rec.Height;
@@ -150,19 +150,35 @@ namespace DashboardFrontend
             SystemCommands.MinimizeWindow(this);
         }
 
-        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs? e)
         {
             MaxHeight = double.PositiveInfinity;
             MaxWidth = double.PositiveInfinity;
-            ResizeMode = ResizeMode.CanResize;
+            ResizeMode = ResizeMode.CanResizeWithGrip;
+            WindowState = WindowState.Normal;
             SystemCommands.RestoreWindow(this);
             this.ButtonMaximize.Visibility = Visibility.Visible;
             this.ButtonRestore.Visibility = Visibility.Collapsed;
         }
 
-        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        private void ControlGridClick(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            if (e.ClickCount == 2)
+            {
+                switch (WindowState)
+                {
+                    case WindowState.Maximized:
+                        CommandBinding_Executed_4(this, null);
+                        break;
+                    case WindowState.Normal:
+                        CommandBinding_Executed_2(this, null);
+                        break;
+                }
+            }
+            else
+            {
+                DragMove();
+            }
         }
 
         //Performance events
