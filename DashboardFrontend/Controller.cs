@@ -393,7 +393,8 @@ namespace DashboardFrontend
                     UpdateExecutions();
                     ShouldUpdateExecutions = false;
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(100);
+
             }
         }
 
