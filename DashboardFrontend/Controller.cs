@@ -26,6 +26,20 @@ namespace DashboardFrontend
             _timers = new List<Timer>();
         }
 
+        private enum DashboardStatus
+        {
+            Idle, UpdatingManagers, UpdatingLog, UpdatingExecutions, UpdatingHealthReport, UpdatingValidations, 
+        }
+        private readonly Dictionary<DashboardStatus, string> _statusMessages = new()
+        {
+            { DashboardStatus.Idle, "" },
+            { DashboardStatus.UpdatingLog, "Querying log..." },
+            { DashboardStatus.UpdatingManagers, "Querying managers..." },
+            { DashboardStatus.UpdatingExecutions, "Querying executions..." },
+            { DashboardStatus.UpdatingHealthReport, "Querying Health Report..." },
+            { DashboardStatus.UpdatingValidations, "Querying validations..." },
+        };
+
         public bool ShouldUpdateExecutions { get; private set; }
         public bool ShouldUpdateLog { get; private set; }
         public bool ShouldUpdateValidations { get; private set; }
@@ -106,6 +120,26 @@ namespace DashboardFrontend
             return result;
         }
 
+        public void UpdateEstimatedManagerCounts()
+        {
+            if (Conversion != null)
+            {
+                foreach (Execution exec in Conversion.Executions.Where(e => e.EstimatedManagerCount == 0))
+                {
+                    int estimatedMgrCount = DU.GetEstimatedManagerCount(exec.Id);
+                    if (estimatedMgrCount == 0)
+                    {
+                        if (exec.Log?.Messages.Find(m => m.Content.StartsWith("Loaded managerclasses:")) is LogMessage msg)
+                        {
+                            estimatedMgrCount = msg.Content.Split("\n").Length - 1;
+                        }
+                    }
+                    exec.EstimatedManagerCount = estimatedMgrCount;
+                }
+            }
+
+        }
+
         /// <summary>
         /// Updates the messages in the log.
         /// </summary>
@@ -115,6 +149,7 @@ namespace DashboardFrontend
             {
                 return;
             }
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
 
             List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
             Conversion.LastLogQuery = DateTime.Now;
@@ -128,6 +163,7 @@ namespace DashboardFrontend
                     {
                         // The first log message of an execution was logged before the execution was created
                         exec = new Execution(m.ExecutionId, m.Date);
+                        exec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
                         Conversion.AddExecution(exec);
                     }
                     exec.Log.Messages.Add(m);
@@ -135,6 +171,7 @@ namespace DashboardFrontend
                 });
                 Conversion.LastLogUpdated = DateTime.Now;
             }
+            ClearStatusMessage(DashboardStatus.UpdatingLog);
         }
 
         /// <summary>
@@ -162,7 +199,7 @@ namespace DashboardFrontend
                                 manager.ContextId = message.ContextId;
                                 if (!exec.Managers.Contains(manager))
                                 {
-                                    exec.Managers.Add(manager);
+                                    exec.AddManager(manager);
                                 }
                             }
                         }
@@ -175,7 +212,7 @@ namespace DashboardFrontend
                                 ContextId = message.ContextId,
                                 Status = Manager.ManagerStatus.Running
                             };
-                            exec.Managers.Add(manager);
+                            exec.AddManager(manager);
                             Conversion.AllManagers.Add(manager);
                         }
                     }
@@ -213,7 +250,8 @@ namespace DashboardFrontend
             {
                 return;
             }
-
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingValidations];
+          
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
 
@@ -226,9 +264,9 @@ namespace DashboardFrontend
                         mgr.Validations.Add(v);
                     }
                 });
-                Conversion.ActiveExecution.ValidationReport.ValidationTests = newData;
                 Conversion.LastValidationsUpdated = DateTime.Now;
             }
+            ClearStatusMessage(DashboardStatus.UpdatingValidations);
         }
 
         /// <summary>
@@ -240,6 +278,8 @@ namespace DashboardFrontend
             {
                 return;
             }
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingHealthReport];
+
             if (Conversion.HealthReport.IsInitialized)
             {
                 int dataCount = DU.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
@@ -252,6 +292,7 @@ namespace DashboardFrontend
             {
                 DU.BuildHealthReport(Conversion.HealthReport);
             }
+            ClearStatusMessage(DashboardStatus.UpdatingHealthReport);
         }
 
         /// <summary>
@@ -263,6 +304,7 @@ namespace DashboardFrontend
             {
                 return;
             }
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingManagers];
 
             int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
@@ -299,6 +341,8 @@ namespace DashboardFrontend
             {
                 return;
             }
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingExecutions];
+          
             List<Execution> result = DU.GetExecutions(Conversion.LastExecutionQuery);
             Conversion.LastExecutionQuery = DateTime.Now;
             if (result.Count > 0)
@@ -307,9 +351,21 @@ namespace DashboardFrontend
                 {
                     if (!Conversion.Executions.Any(e => e.Id == newExec.Id))
                     {
+                        newExec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
                         Conversion.AddExecution(newExec);
                     }
                 }
+            }
+            UpdateEstimatedManagerCounts();
+            ClearStatusMessage(DashboardStatus.UpdatingExecutions);
+        }
+
+        private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
+        {
+            await Task.Delay(delay);
+            if (_vm.CurrentStatus == _statusMessages[status])
+            {
+                _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
             }
         }
 
@@ -537,7 +593,9 @@ namespace DashboardFrontend
             StopMonitoring();
             Conversion = new();
             InitializeViewModels(LogViewModels[0].LogListView);
+            _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
             _vm.UpdateView();
+            _vm.CurrentProgress = 0;
         }
     }
 }
