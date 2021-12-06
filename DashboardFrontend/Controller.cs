@@ -204,8 +204,6 @@ namespace DashboardFrontend
             }
         }
 
-        private Queue<ValidationTest> _validationsQueue = new();
-
         /// <summary>
         /// Updates the validation tests in the validation report.
         /// </summary>
@@ -219,21 +217,6 @@ namespace DashboardFrontend
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
 
-            // This will block the program if it never finds a suitable manager for the validation test ...
-            while (_validationsQueue.Any())
-            {
-                ValidationTest v = _validationsQueue.Peek();
-                if (Conversion.AllManagers.Find(m => m.Name == v.ManagerName && v.Date < m.EndTime) is Manager mgr)
-                {
-                    mgr.Validations.Add(_validationsQueue.Dequeue());
-                    Conversion.LastValidationsUpdated = DateTime.Now;
-                }
-                else
-                {
-                    Trace.WriteLine("this bitch aint got no manager: " + v.ManagerName);
-                }
-            }
-
             if (newData.Any())
             {
                 newData.ForEach(v => 
@@ -241,10 +224,6 @@ namespace DashboardFrontend
                     if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                     {
                         mgr.Validations.Add(v);
-                    }
-                    else
-                    {
-                        _validationsQueue.Enqueue(v);
                     }
                 });
                 Conversion.ActiveExecution.ValidationReport.ValidationTests = newData;
