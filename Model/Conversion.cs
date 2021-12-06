@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Data.SqlTypes;
+
+namespace Model
 {
     public class Conversion
     {
@@ -14,9 +16,16 @@
         public bool IsInitialized { get; set; } //If the conversion has been built.
         public List<Execution> Executions { get; set; } = new(); //Created on new entry in [dbo].[EXECUTIONS]
         public Execution ActiveExecution  => Executions.LastOrDefault();
-        public DateTime LastExecutionUpdate { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-        public DateTime LastLogUpdate { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-        public DateTime LastManagerUpdate { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+
+        public DateTime LastExecutionQuery { get; set; } = (DateTime)SqlDateTime.MinValue;
+        public DateTime LastLogQuery { get; set; } = (DateTime)SqlDateTime.MinValue;
+        public DateTime LastManagerQuery { get; set; } = (DateTime)SqlDateTime.MinValue;
+        public DateTime LastValidationsQuery { get; set; } = (DateTime)SqlDateTime.MinValue;
+        public DateTime LastLogUpdated { get; set; } = DateTime.MinValue;
+        public DateTime LastManagerUpdated { get; set; } = DateTime.MinValue;
+        public DateTime LastHealthReportUpdated { get; set; } = DateTime.MinValue;
+        public DateTime LastValidationsUpdated { get; set; } = DateTime.MinValue;
+
         public List<Manager> AllManagers { get; set; } = new();
         public HealthReport HealthReport { get; set; } = new();
 

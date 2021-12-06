@@ -3,220 +3,228 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Log monitoring" 
         Height="450" 
         Width="800">
     <Border Background="{DynamicResource BackgroundColor}">
-        <Grid Name ="gridLog"
-              Margin="10,10,10,10">
-            <ToggleButton Name="toggleButtonLogInfo"
-                          Grid.Column="0"
-                          IsChecked="{Binding ShowInfo}"
-                          Style="{DynamicResource DefaultToggleButton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="../Icons/Info.png"
-                           Width="13"
-                           Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding InfoCount}"/>
-                    <TextBlock Text=" Messages"/>
-                </StackPanel>
-            </ToggleButton>
-            <Rectangle Width="1"
-                       Fill="{DynamicResource BorderColor}"
-                       Grid.Column="1"/>
-            <ToggleButton Name="toggleButtonlogWarning"
-                          Grid.Column="2"
-                          IsChecked="{Binding ShowWarn}"
-                          Style="{DynamicResource DefaultToggleButton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="../Icons/Warning.png"
-                           Width="13"
-                           Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding WarnCount}"/>
-                    <TextBlock Text=" Warnings"/>
-                </StackPanel>
-            </ToggleButton>
-            <Rectangle Width="1"
-                       Fill="{DynamicResource BorderColor}"
-                       Grid.Column="3"/>
-            <ToggleButton Name="toggleButtonLogError"
-                          IsChecked="{Binding ShowError}"
-                          Grid.Column="4"
-                          Style="{DynamicResource DefaultToggleButton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="../Icons/Error.png"
-                           Width="13"
-                           Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding ErrorCount}"/>
-                    <TextBlock Text=" Errors"/>
-                </StackPanel>
-            </ToggleButton>
-            <Rectangle Width="1"
-                       Fill="{DynamicResource BorderColor}"
-                       Grid.Column="5"/>
-            <ToggleButton Name="toggleButtonLogFatal"
-                          IsChecked="{Binding ShowFatal}"
-                          Grid.Column="6"
-                          Style="{DynamicResource DefaultToggleButton}">
-                <StackPanel Orientation="Horizontal">
-                <Image Source="../Icons/Fatal.png"
-                       Width="13"
-                       Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding FatalCount}"/>
-                <TextBlock Text=" Fatal"/>
-                </StackPanel>
-            </ToggleButton>
-            <Rectangle Width="1"
-                       Fill="{DynamicResource BorderColor}"
-                       Grid.Column="7"/>
-            <ToggleButton Name="toggleButtonLogValidation"
-                          IsChecked="{Binding ShowValidation}"
-                          Grid.Column="8"
-                          Style="{DynamicResource DefaultToggleButton}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="../Icons/Validation.png"
-                           Width="13"
-                           Margin="0,0,5,0"/> 
-                    <TextBlock Text="{Binding ValidationCount}"/>
-                    <TextBlock Text=" Validation"/>
-                </StackPanel>
-            </ToggleButton>
-            <Rectangle Width="1"
-                       Fill="{DynamicResource BorderColor}"
-                       Grid.Column="9"/>
-            <Button Name="buttonFilter"
-                    Grid.Column="10"
-                    Style="{DynamicResource DefaultButton}">
-                <Image Source="../Icons/Filter.png"/>
-            </Button>
-            <ListView x:Name="ListViewLog"
-                        Grid.Row="2"
-                        Grid.ColumnSpan="11"
-                        ItemsSource="{Binding Messages}"
-                        Background="White"
-                        Foreground="Black"
-                        BorderBrush="{StaticResource BorderColor}"
-                        MouseEnter="ListViewLog_MouseOverChanged"
-                        MouseLeave="ListViewLog_MouseOverChanged"
-                        MaxHeight="5000">
-                <ListView.View>
-                    <GridView>
-                        <GridView.ColumnHeaderContainerStyle>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                <Setter Property="Padding" Value="5,0,5,0"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="TextElement.Foreground" Value="Black"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </GridView.ColumnHeaderContainerStyle>
-                        <GridViewColumn Header="Date"
-                                        DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
-                                        Width="auto"/>
-                        <GridViewColumn Header="Type" 
-                                        DisplayMemberBinding="{Binding Type}"
-                                        Width="70"/>
-                        <GridViewColumn Header="Manager" 
-                                        DisplayMemberBinding="{Binding ContextId}"
-                                        Width="auto"/>
-                        <GridViewColumn Header="Content" 
-                                        Width="1000">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock TextWrapping="Wrap"
-                                               Text="{Binding Content}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Type}" Value="Info">
-                                <Setter Property="Background" Value="#FFFFFF"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="INFO"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                         Path=DataContext.ShowInfo}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                <Setter Property="Background" Value="#FCE283"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="WARNING"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                         Path=DataContext.ShowWarn}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="Error">
-                                <Setter Property="Background" Value="#ED4F47"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="ERROR"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                         Path=DataContext.ShowError}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="Fatal">
-                                <Setter Property="Background" Value="#CFCFCF"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="FATAL"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                         Path=DataContext.ShowFatal}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                <Setter Property="Background" Value="#FFFFFF"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="VALIDATION"/>
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}}, 
-                                                         Path=DataContext.ShowValidation}" Value="False"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </MultiDataTrigger>
-                            <Trigger Property="Control.IsMouseOver" Value="True">
-                                <Setter Property="Control.Background" Value="Transparent" />
-                                <Setter Property="ItemsControl.BorderBrush" Value="Transparent"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="50"/>
-            </Grid.ColumnDefinitions>
+        <Grid Name="GridLog" 
+                      Margin="20,10,20,20"
+                      Grid.Column="1" 
+                      Grid.Row="0">
+            <Grid Grid.Row="0"
+                          Margin="-4, 0, 0, 4">
+                <ToggleButton Name="ToggleButtonLogInfo"
+                                      Grid.Column="0"
+                                      IsChecked="{Binding ShowInfo}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/Info.png"
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding InfoCount}"/>
+                        <TextBlock Text=" Messages"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Rectangle Width="1"
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Center"/>
+                <ToggleButton Name="ToggleButtonLogWarning"
+                                      Grid.Column="2"
+                                      IsChecked="{Binding ShowWarn}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/Warning.png"
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding WarnCount}"/>
+                        <TextBlock Text=" Warnings"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Rectangle Width="1"
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="3"/>
+                <ToggleButton Name="ToggleButtonLogError"
+                                      Grid.Column="4"
+                                      IsChecked="{Binding ShowError}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/Error.png"
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding ErrorCount}"/>
+                        <TextBlock Text=" Errors"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Rectangle Width="1"
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="5"/>
+                <ToggleButton Name="ToggleButtonLogFatal"
+                                      Grid.Column="6"
+                                      IsChecked="{Binding ShowFatal}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/Fatal.png"
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding FatalCount}"/>
+                        <TextBlock Text=" Fatal"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Rectangle Width="1"
+                                   Fill="{DynamicResource BorderColor}"
+                                   Grid.Column="7"/>
+                <ToggleButton Name="ToggleButtonLogValidation"
+                                      Grid.Column="8"
+                                      IsChecked="{Binding ShowValidation}"
+                                      Style="{DynamicResource DefaultToggleButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/Validation.png" 
+                                       Width="13"
+                                       Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding ValidationCount}"/>
+                        <TextBlock Text=" Validation"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Button Name="ButtonLogFilter"
+                                Grid.Column="9"
+                                Style="{DynamicResource FilterButton}"
+                                Margin="0, 0, 0, -1">
+                    <Image Source="../Icons/Filter.png"/>
+                </Button>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="3"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="3"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="3"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="3"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.Resources>
+                    <valueConverters:WidthCalculationMultiConverter x:Key="lastColumnResizeConverter"/>
+                </Grid.Resources>
+                <ListView x:Name="ListViewLog"
+                                  ItemsSource="{Binding MessageView}"
+                                  Background="{DynamicResource BackgroundColor}"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  MouseEnter="ListViewLog_MouseOverChanged"
+                                  MouseLeave="ListViewLog_MouseOverChanged">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Text="{TemplateBinding Content}" 
+                                                                   Padding="4" 
+                                                                   Background="{DynamicResource BackgroundColor}" 
+                                                                   Width="{TemplateBinding Width}" 
+                                                                   TextAlignment="Left"
+                                                                   Foreground="White"
+                                                                   TextWrapping="Wrap"/>
+                                                    <Separator/>
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                            <GridViewColumn Header="Date"
+                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
+                                                    Width="120"/>
+                            <GridViewColumn Header="ID" 
+                                                    DisplayMemberBinding="{Binding ContextId}"
+                                                    Width="40"/>
+                            <GridViewColumn Header="Type" 
+                                                    Width="90">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextWrapping="Wrap"
+                                                           Text="{Binding Type}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Content">
+                                <GridViewColumn.Width>
+                                    <MultiBinding Converter="{StaticResource lastColumnResizeConverter}">
+                                        <Binding Path="ActualWidth" 
+                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                        <Binding Path="View.Columns" 
+                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                    </MultiBinding>
+                                </GridViewColumn.Width>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextWrapping="Wrap"
+                                                           Text="{Binding Content}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="VerticalContentAlignment" Value="Top"/>
+                            <Setter Property="FontFamily" Value="Consolas"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="Focusable" Value="False"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Type}" Value="Info">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageWarningColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="Fatal">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageFatalForegroundColor}"/>
+                                    <Setter Property="Background" Value="{DynamicResource LogMessageFatalBackgroundColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="Validation">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageValidationColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="Error">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
+                                    <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="Error, Validation">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
+                                    <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
+                                </DataTrigger>
+                                <Trigger Property="Control.IsMouseOver" Value="True">
+                                    <Setter Property="Control.Background" Value="{DynamicResource LogBackgroundHighlightedBackgroundColor}"/>
+                                    <Setter Property="Control.Foreground" Value="{DynamicResource LogBackgroundHighlightedForegroundColor}"/>
+                                    <Setter Property="Control.BorderBrush" Value="Transparent"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.05*"/>
-                <RowDefinition Height="5"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
         </Grid>

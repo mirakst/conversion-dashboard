@@ -140,9 +140,10 @@ namespace DashboardBackend
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="minDate"></param>
         /// <param name="allManagers"></param>
-        public static void GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
         {
             List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
+            int addedManagers = 0;
 
             // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
             foreach (var entry in engineEntries)
@@ -180,9 +181,11 @@ namespace DashboardBackend
                         };
                         AddEnginePropertiesToManager(manager, entry);
                         allManagers.Add(manager);
+                        addedManagers++;
                     }
                 }
             }
+            return addedManagers;
         }
 
         /// <summary>
@@ -247,7 +250,7 @@ namespace DashboardBackend
         /// <param name="hr">The conversion's health report</param>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <exception cref="FormatException">Thrown if somehow the query failed and an unexpected entry is met.</exception>
-        public static void AddHealthReportReadings(HealthReport hr, DateTime minDate)
+        public static int AddHealthReportReadings(HealthReport hr, DateTime minDate)
         {
             hr.LastModified = DateTime.Now;
             List<HealthReportEntry> queryResult = DatabaseHandler.QueryPerformanceReadings(minDate);
@@ -280,6 +283,7 @@ namespace DashboardBackend
             hr.Cpu.Readings = cpuRes;
             hr.Ram.Readings = ramRes;
             hr.Network.Readings = netRes;
+            return queryResult.Count;
         }
 
         /// <summary>

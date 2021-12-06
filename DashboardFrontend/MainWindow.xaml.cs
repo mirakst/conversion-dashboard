@@ -46,7 +46,7 @@ namespace DashboardFrontend
                 // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingManagers) { }
+                    while (ViewModel.Controller.ShouldUpdateManagers) { }
                     ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
                 });
             };
@@ -61,7 +61,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
                 });
             };
@@ -77,7 +77,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
                 });
             };
@@ -92,7 +92,7 @@ namespace DashboardFrontend
             {
                 _ = Task.Run(() =>
                 {
-                    while (ViewModel.Controller.IsUpdatingLog) { }
+                    while (ViewModel.Controller.ShouldUpdateLog) { }
                     ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
                 });
             };
@@ -134,7 +134,7 @@ namespace DashboardFrontend
             SystemCommands.CloseWindow(this);
         }
 
-        private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs? e)
         {
             System.Drawing.Rectangle rec = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle).WorkingArea;
             MaxHeight = rec.Height;
@@ -150,19 +150,35 @@ namespace DashboardFrontend
             SystemCommands.MinimizeWindow(this);
         }
 
-        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs? e)
         {
             MaxHeight = double.PositiveInfinity;
             MaxWidth = double.PositiveInfinity;
-            ResizeMode = ResizeMode.CanResize;
+            ResizeMode = ResizeMode.CanResizeWithGrip;
+            WindowState = WindowState.Normal;
             SystemCommands.RestoreWindow(this);
             this.ButtonMaximize.Visibility = Visibility.Visible;
             this.ButtonRestore.Visibility = Visibility.Collapsed;
         }
 
-        private void DraggableGrid(object sender, MouseButtonEventArgs e)
+        private void ControlGridClick(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            if (e.ClickCount == 2)
+            {
+                switch (WindowState)
+                {
+                    case WindowState.Maximized:
+                        CommandBinding_Executed_4(this, null);
+                        break;
+                    case WindowState.Normal:
+                        CommandBinding_Executed_2(this, null);
+                        break;
+                }
+            }
+            else
+            {
+                DragMove();
+            }
         }
 
         //Performance events
@@ -202,11 +218,11 @@ namespace DashboardFrontend
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(manager.Name);
                 }
             }
         }
@@ -219,11 +235,11 @@ namespace DashboardFrontend
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             item.IsSelected = false;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }
             }
         }
