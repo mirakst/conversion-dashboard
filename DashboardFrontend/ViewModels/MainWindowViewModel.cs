@@ -12,6 +12,26 @@ namespace DashboardFrontend.ViewModels
         }
 
         public Controller Controller { get; set; }
+        private string _currentStatus;
+        public string CurrentStatus
+        {
+            get => _currentStatus;
+            set
+            {
+                _currentStatus = value;
+                OnPropertyChanged(nameof(CurrentStatus));
+            }
+        }
+        private int _currentProgress;
+        public int CurrentProgress
+        {
+            get => _currentProgress;
+            set
+            {
+                _currentProgress = value;
+                OnPropertyChanged(nameof(CurrentProgress));
+            }
+        }
         private bool _isRunning;
         public bool IsRunning
         {
@@ -43,6 +63,11 @@ namespace DashboardFrontend.ViewModels
             OnPropertyChanged(nameof(ValidationReportViewModel));
             OnPropertyChanged(nameof(HealthReportViewModel));
             OnPropertyChanged(nameof(ManagerViewModel));
+        }
+
+        public void UpdateExecutionProgress(int currentProgress)
+        {
+            CurrentProgress = currentProgress;
         }
     }
 }

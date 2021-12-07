@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Model;
 using DashboardFrontend.ViewModels;
 using System.Windows.Controls.Primitives;
+using System.Diagnostics;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -26,11 +27,11 @@ namespace DashboardFrontend.DetachedWindows
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (!ViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ExpandedManagerNames.Add(wrapper.ManagerName);
+                    ViewModel.ExpandedManagerNames.Add(manager.Name);
                 }
             }
         }
@@ -43,11 +44,11 @@ namespace DashboardFrontend.DetachedWindows
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             item.IsSelected = false;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerValidationsWrapper wrapper)
+            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ExpandedManagerNames.Contains(wrapper.ManagerName))
+                if (ViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ExpandedManagerNames.Remove(wrapper.ManagerName);
+                    ViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }
             }
         }
