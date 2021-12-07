@@ -1,14 +1,13 @@
-using DashboardFrontend.ViewModels;
+using DashboardFrontend.Charts;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.ViewModels;
+using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using DashboardFrontend.Charts;
-using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -16,9 +15,16 @@ namespace DashboardFrontend
     {
         public MainWindow()
         {
+            this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
             InitializeComponent();
             ViewModel = new(ListViewLog);
             DataContext = ViewModel;
+        }
+
+        private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"An unexpected error occured: {e.Exception.Message}", "Error");
+            e.Handled = true;
         }
 
         public MainWindowViewModel ViewModel { get; }
@@ -237,7 +243,7 @@ namespace DashboardFrontend
             item.IsSelected = false;
             if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
+                if (ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
                     ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }

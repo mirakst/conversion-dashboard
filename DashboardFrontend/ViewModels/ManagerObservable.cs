@@ -12,7 +12,8 @@ namespace DashboardFrontend.ViewModels
         {
             Name = mgr.Name;
             ContextId = mgr.ContextId;
-            Validations = mgr.Validations;
+            StartTime = mgr.StartTime;
+            Validations = new(mgr.Validations);
             ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
         }
             
@@ -29,6 +30,7 @@ namespace DashboardFrontend.ViewModels
         }
         public string Name { get; private set; }
         public int ContextId { get; private set; }
+        public System.DateTime? StartTime { get; private set; }
         public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
         public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);
         public int OkCount => Validations.Count(v => v.Status is ValidationStatus.Ok);

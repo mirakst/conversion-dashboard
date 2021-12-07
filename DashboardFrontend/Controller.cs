@@ -251,6 +251,7 @@ namespace DashboardFrontend
             }
         }
 
+        public Queue<ValidationTest> ValidationQueue = new();
         /// <summary>
         /// Updates the validation tests in the validation report.
         /// </summary>
@@ -260,20 +261,42 @@ namespace DashboardFrontend
             {
                 return;
             }
+            bool hasUpdatedData = false;
             SetStatusMessage(DashboardStatus.UpdatingValidations);
-          
+
+            int retryCount = 0;
+            while (ValidationQueue.Any() && retryCount < 5)
+            {
+                var v = ValidationQueue.Peek();
+                if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
+                {
+                    mgr.Validations.Add(ValidationQueue.Dequeue());
+                    retryCount = 0;
+                    hasUpdatedData = true;
+                }
+                retryCount++;
+            }
+
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
 
             if (newData.Any())
             {
+                hasUpdatedData = true;
                 newData.ForEach(v => 
                 {
                     if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                     {
                         mgr.Validations.Add(v);
                     }
+                    else
+                    {
+                        ValidationQueue.Enqueue(v);
+                    }
                 });
+            }
+            if (hasUpdatedData)
+            {
                 Conversion.LastValidationsUpdated = DateTime.Now;
             }
             ClearStatusMessage(DashboardStatus.UpdatingValidations);
