@@ -274,7 +274,7 @@ namespace DashboardFrontend
                 var v = ValidationQueue.Peek();
                 if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                 {
-                    mgr.Validations.Add(ValidationQueue.Dequeue());
+                    mgr.AddValidation(ValidationQueue.Dequeue());
                     retryCount = 0;
                     hasUpdatedData = true;
                 }
@@ -291,7 +291,7 @@ namespace DashboardFrontend
                 {
                     if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                     {
-                        mgr.Validations.Add(v);
+                        mgr.AddValidation(v);
                     }
                     else
                     {

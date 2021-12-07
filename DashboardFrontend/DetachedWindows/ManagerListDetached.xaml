@@ -89,7 +89,7 @@
                                             Binding="{Binding Manager.ShortName}"
                                             Width="9*"/>
                         <DataGridTextColumn Header="Score" 
-                                            Binding="{Binding Manager.Score}"
+                                            Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                             Width="*"/>
                         <DataGridTextColumn Header="Status" 
                                             Binding="{Binding Manager.Status}"
