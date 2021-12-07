@@ -277,11 +277,13 @@
                                                 <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
                                                         ToolTip="Remove manager from detailed view"
-                                                        Content='f'
                                                         Width="20pt"
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
-                                                        Style="{DynamicResource DefaultButton}"/>
+                                                        Style="{DynamicResource DefaultButton}">
+                                                    <Image Source="../Icons/Remove.png"
+                                                           Margin="8"/>
+                                                </Button>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

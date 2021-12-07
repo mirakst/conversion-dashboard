@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
-        Height="900"
-        Width="1600"
+        Height="720"
+        Width="1280"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
@@ -24,13 +24,13 @@
         <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
         <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
-        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
     </Window.CommandBindings>
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <converters:WindowStateToWingdingsConverter x:Key="WindowStateToWingdingsConverter"/>
         <converters:FilterPopupHeightConverter x:Key="FilterPopupHeightConverter"/>
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
@@ -1013,14 +1013,8 @@
                 <Button Name="ButtonMaximize" 
                         Grid.Column="1" 
                         Style="{DynamicResource DefaultWindowButton}"
-                        Content="1"
+                        Content="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=WindowState, Converter={StaticResource WindowStateToWingdingsConverter}}"
                         Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
-                <Button Name="ButtonRestore" 
-                        Grid.Column="1" 
-                        Style="{DynamicResource DefaultWindowButton}"
-                        Content="2"
-                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
-                        Visibility="Collapsed"/>
                 <Button Name="ButtonClose" 
                         Grid.Column="2" 
                         Content="r"

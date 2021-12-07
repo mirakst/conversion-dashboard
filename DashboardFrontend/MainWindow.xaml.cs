@@ -19,6 +19,8 @@ namespace DashboardFrontend
         public MainWindow()
         {
             this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            MaxHeight = SystemParameters.WorkArea.Height;
+            MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
             ViewModel = new(ListViewLog);
             DataContext = ViewModel;
@@ -145,13 +147,17 @@ namespace DashboardFrontend
 
         private void CommandBinding_Executed_2(object sender, ExecutedRoutedEventArgs? e)
         {
-            System.Drawing.Rectangle rec = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle).WorkingArea;
-            MaxHeight = rec.Height;
-            MaxWidth = rec.Width;
-            ResizeMode = ResizeMode.NoResize;
-            WindowState = WindowState.Maximized;
-            this.ButtonMaximize.Visibility = Visibility.Collapsed;
-            this.ButtonRestore.Visibility = Visibility.Visible;
+            switch (WindowState)
+            {
+                case WindowState.Maximized:
+                    ResizeMode = ResizeMode.CanResizeWithGrip;
+                    WindowState = WindowState.Normal;
+                    break;
+                case WindowState.Normal:
+                    ResizeMode = ResizeMode.NoResize;
+                    WindowState = WindowState.Maximized;
+                    break;
+            }
         }
 
         private void CommandBinding_Executed_3(object sender, ExecutedRoutedEventArgs e)
@@ -159,30 +165,11 @@ namespace DashboardFrontend
             SystemCommands.MinimizeWindow(this);
         }
 
-        private void CommandBinding_Executed_4(object sender, ExecutedRoutedEventArgs? e)
-        {
-            MaxHeight = double.PositiveInfinity;
-            MaxWidth = double.PositiveInfinity;
-            ResizeMode = ResizeMode.CanResizeWithGrip;
-            WindowState = WindowState.Normal;
-            SystemCommands.RestoreWindow(this);
-            this.ButtonMaximize.Visibility = Visibility.Visible;
-            this.ButtonRestore.Visibility = Visibility.Collapsed;
-        }
-
         private void ControlGridClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
             {
-                switch (WindowState)
-                {
-                    case WindowState.Maximized:
-                        CommandBinding_Executed_4(this, null);
-                        break;
-                    case WindowState.Normal:
-                        CommandBinding_Executed_2(this, null);
-                        break;
-                }
+                CommandBinding_Executed_2(this, null);
             }
             else
             {
