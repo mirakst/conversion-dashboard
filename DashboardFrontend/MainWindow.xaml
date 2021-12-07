@@ -154,11 +154,10 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="30,20,30,30" 
+            <Grid Margin="30,20,30,30"
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -211,6 +210,7 @@
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
 
@@ -472,7 +472,7 @@
                     <!-- Body -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4.5*" MinWidth="280"/>
+                            <ColumnDefinition Width="4.5*" MinWidth="355"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="2*" MinWidth="100"/>
                         </Grid.ColumnDefinitions>
@@ -480,6 +480,14 @@
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+
+                        <GridSplitter Grid.Row="0"
+                                      Grid.RowSpan="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      Width="4"
+                                      Height="100"
+                                      Background="{DynamicResource BorderColor}"/>
 
                         <!-- Validations TreeView Header -->
                         <Grid>
@@ -759,6 +767,7 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
@@ -768,12 +777,14 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <TabControl Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="2"
                                 Margin="0,0,0,0">
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemCpuRam"
                                     Header="CPU &amp; RAM"
@@ -783,6 +794,18 @@
                                     DataContext="{Binding SystemLoadChart}">
                             <Border Margin="10">
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
                                     <TextBlock Name="TextBlockCurrentCpuLoad"
                                                 Text="{Binding LastCpuReading,
                                                         StringFormat='CPU Usage: {0:0}%'}"
@@ -793,6 +816,7 @@
                                                 Grid.Column="1"
                                                 Grid.Row="0"
                                                 Margin="0,0,40,5"/>
+
                                     <TextBlock Name="TextBlockCurrentRamUsage"
                                                 Text="{Binding LastRamReading,
                                                         StringFormat='RAM Usage: {0:0}%'}"
@@ -803,10 +827,12 @@
                                                 Grid.Column="2"
                                                 Grid.Row="0"
                                                 Margin="5,0,0,5"/>
+
                                     <Separator Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Grid.Column="1"
                                     Margin="-50,0"/>
+
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
                                             Series="{Binding ChartData.Series}"
@@ -820,17 +846,6 @@
                                             Grid.ColumnSpan="4"
                                             Grid.Row="1">
                                     </lvc:CartesianChart>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
                                 </Grid>
                             </Border>
                         </TabItem>
@@ -841,6 +856,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -858,6 +874,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -869,12 +886,14 @@
                                                 MouseEnter="CartesianChart_MouseEnter">
                             </lvc:CartesianChart>
                         </TabItem>
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
+
                             <lvc:CartesianChart  Margin="-6,14,0,-30"
                                                     Series="{Binding ChartData.Series}"
                                                     XAxes="{Binding ChartData.XAxis}"
@@ -887,6 +906,7 @@
                             </lvc:CartesianChart>
                         </TabItem>
                     </TabControl>
+
                     <ComboBox Name="ComboBoxMaxView"
                               VerticalAlignment="Center"
                               Grid.Column="1"
@@ -950,6 +970,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
+
+            <Control Name="ControlLoadingAnim"
+                     Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged, FallbackValue=Collapsed}"
+                     Grid.ColumnSpan="2"
+                     Grid.RowSpan="2"
+                     Margin="0,100,0,0"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Style="{StaticResource LoadingAnimation}"/>
         </Grid>
     </Border>
 </Window>

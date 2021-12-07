@@ -28,7 +28,7 @@
             Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="4.5*" MinWidth="280"/>
+                <ColumnDefinition Width="4.5*" MinWidth="400"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="2*" MinWidth="100"/>
             </Grid.ColumnDefinitions>
@@ -37,6 +37,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <GridSplitter Grid.Column="1"
+                          Grid.RowSpan="2"
+                          Height="100"
+                          Width="4"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Background="{DynamicResource BorderColor}"/>
+            
             <!-- Validations TreeView Header -->
             <Grid>
                 <TextBlock Text="Validations"
@@ -92,6 +100,7 @@
                                Foreground="Gray"/>
                 </StackPanel>
             </Grid>
+            
             <!-- Validations TreeView -->
             <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
                 <Grid Background="{DynamicResource CanvasColor}">
