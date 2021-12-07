@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using static Model.ValidationTest;
 
 namespace Model
 {
@@ -59,14 +60,28 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
+                    UpdateScore();
                 }
             }
         }
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
-        public double Score { get; set; }
+        public double? Score { get; set; }
         public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
         #endregion
+
+        private void UpdateScore()
+        {
+            int OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
+            int TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
+            Score = TotalCount > 0 ? (double)OkCount / (double)TotalCount * 100.0d : 100.0d;
+        }
+
+        public void AddValidation(ValidationTest v)
+        {
+            Validations.Add(v);
+            UpdateScore();
+        }
 
         /// <summary>
         /// Adds performance readings to the manager, and ensures that entries are never added twice.

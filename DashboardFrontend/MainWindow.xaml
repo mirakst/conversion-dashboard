@@ -210,7 +210,6 @@
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
-                              
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
 
@@ -222,7 +221,7 @@
                                                 Binding="{Binding Manager.ShortName}"
                                                 Width="8*"/>
                             <DataGridTextColumn Header="Score" 
-                                                Binding="{Binding Manager.Score}"
+                                                Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                 Width="*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
