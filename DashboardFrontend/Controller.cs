@@ -5,6 +5,7 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,12 +19,22 @@ namespace DashboardFrontend
 {
     public class Controller
     {
-        public Controller(MainWindowViewModel viewModel)
+        public Controller()
         {
-            TryLoadUserSettings();
-            _vm = viewModel;
             Conversion = new();
+            _logParseQueue = new();
+        }
+
+        public Controller(MainWindowViewModel viewModel) : this()
+        {
+            _vm = viewModel;
             _timers = new List<Timer>();
+            HealthReportViewModels = new();
+            LogViewModels = new();
+            ValidationReportViewModels = new();
+            ManagerViewModels = new();
+            UserSettings = new();
+            TryLoadUserSettings();
         }
 
         private enum DashboardStatus
@@ -40,20 +51,21 @@ namespace DashboardFrontend
             { DashboardStatus.UpdatingValidations, "Querying validations..." },
         };
 
+        private readonly Queue<LogMessage> _logParseQueue;
+        private readonly MainWindowViewModel _vm;
+        private readonly List<Timer> _timers;
+
         public bool ShouldUpdateExecutions { get; private set; }
         public bool ShouldUpdateLog { get; private set; }
         public bool ShouldUpdateValidations { get; private set; }
         public bool ShouldUpdateManagers { get; private set; }
         public bool ShouldUpdateHealthReport { get; private set; }
-        private readonly Queue<LogMessage> _logParseQueue = new();
-        private readonly MainWindowViewModel _vm;
-        private readonly List<Timer> _timers;
         public Conversion? Conversion { get; set; }
-        public List<HealthReportViewModel> HealthReportViewModels { get; private set; } = new();
-        public List<LogViewModel> LogViewModels { get; private set; } = new();
-        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; } = new();
-        public List<ManagerViewModel> ManagerViewModels { get; private set; } = new();
-        public UserSettings UserSettings { get; set; } = new();
+        public List<HealthReportViewModel> HealthReportViewModels { get; private set; }
+        public List<LogViewModel> LogViewModels { get; private set; }
+        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
+        public List<ManagerViewModel> ManagerViewModels { get; private set; }
+        public UserSettings UserSettings { get; set; }
 
         /// <summary>
         /// Initializes the view models in the <see cref="Controller"/>.
@@ -145,11 +157,11 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateLog()
         {
-            if (Conversion?.ActiveExecution?.Log is null)
+            if (Conversion is null)
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingLog];
+            SetStatusMessage(DashboardStatus.UpdatingLog);
 
             List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
             Conversion.LastLogQuery = DateTime.Now;
@@ -243,6 +255,7 @@ namespace DashboardFrontend
             }
         }
 
+        public Queue<ValidationTest> ValidationQueue = new();
         /// <summary>
         /// Updates the validation tests in the validation report.
         /// </summary>
@@ -252,20 +265,42 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingValidations];
-          
+            bool hasUpdatedData = false;
+            SetStatusMessage(DashboardStatus.UpdatingValidations);
+
+            int retryCount = 0;
+            while (ValidationQueue.Any() && retryCount < 5)
+            {
+                var v = ValidationQueue.Peek();
+                if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
+                {
+                    mgr.Validations.Add(ValidationQueue.Dequeue());
+                    retryCount = 0;
+                    hasUpdatedData = true;
+                }
+                retryCount++;
+            }
+
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
 
             if (newData.Any())
             {
+                hasUpdatedData = true;
                 newData.ForEach(v => 
                 {
                     if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                     {
                         mgr.Validations.Add(v);
                     }
+                    else
+                    {
+                        ValidationQueue.Enqueue(v);
+                    }
                 });
+            }
+            if (hasUpdatedData)
+            {
                 Conversion.LastValidationsUpdated = DateTime.Now;
             }
             ClearStatusMessage(DashboardStatus.UpdatingValidations);
@@ -280,7 +315,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingHealthReport];
+            SetStatusMessage(DashboardStatus.UpdatingHealthReport);
 
             if (Conversion.HealthReport.IsInitialized)
             {
@@ -306,7 +341,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingManagers];
+            SetStatusMessage(DashboardStatus.UpdatingManagers);
 
             int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
@@ -344,7 +379,7 @@ namespace DashboardFrontend
             {
                 return;
             }
-            _vm.CurrentStatus = _statusMessages[DashboardStatus.UpdatingExecutions];
+            SetStatusMessage(DashboardStatus.UpdatingExecutions);
           
             List<Execution> result = DU.GetExecutions(Conversion.LastExecutionQuery);
             Conversion.LastExecutionQuery = DateTime.Now;
@@ -366,9 +401,17 @@ namespace DashboardFrontend
         private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
         {
             await Task.Delay(delay);
-            if (_vm.CurrentStatus == _statusMessages[status])
+            if (_vm is not null && _vm.CurrentStatus == _statusMessages[status])
             {
                 _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
+            }
+        }
+
+        private void SetStatusMessage(DashboardStatus status)
+        {
+            if (_vm is not null)
+            {
+                _vm.CurrentStatus = _statusMessages[status];
             }
         }
 
@@ -390,6 +433,8 @@ namespace DashboardFrontend
                 }
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
+                    _vm.LoadingVisibility = Visibility.Visible;
+
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
                     if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
@@ -424,6 +469,11 @@ namespace DashboardFrontend
         /// <remarks><see cref="Thread.Sleep(int)"/> is used to drastically reduce the number of times the loop is executed, lowering the overall CPU load.</remarks>
         private void StartMonitoring()
         {
+            bool IsLogReady = false, 
+                 IsManagersReady = false, 
+                 IsValidationsReady = false,
+                 IsHRReady = false;
+
             _vm.IsRunning = true;
             UpdateExecutions();
             DU.BuildHealthReport(Conversion?.HealthReport);
@@ -435,27 +485,36 @@ namespace DashboardFrontend
                 {
                     UpdateLog();
                     ShouldUpdateLog = false;
+                    IsLogReady = true;
                 }
                 if (ShouldUpdateManagers)
                 {
                     UpdateManagerOverview();
                     ShouldUpdateManagers = false;
+                    IsManagersReady = true;
                 }
                 if (ShouldUpdateValidations)
                 {
                     UpdateValidationReport();
                     ShouldUpdateValidations = false;
+                    IsValidationsReady = true;
                 }
                 if (ShouldUpdateHealthReport)
                 {
                     UpdateHealthReport();
                     ShouldUpdateHealthReport = false;
+                    IsHRReady = true;
                 }
                 if (ShouldUpdateExecutions)
                 {
                     UpdateExecutions();
                     ShouldUpdateExecutions = false;
                 }
+                if (IsLogReady && IsManagersReady && IsValidationsReady && IsHRReady)
+                {
+                    _vm.LoadingVisibility = Visibility.Collapsed;
+                }
+
                 Thread.Sleep(100);
             }
         }

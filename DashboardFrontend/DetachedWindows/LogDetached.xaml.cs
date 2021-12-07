@@ -47,7 +47,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void GridPopupLogFilter_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!GridPopupLogFilter.IsMouseOver)
+            if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
             {
                 ButtonLogFilter.IsChecked = false;
                 this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);

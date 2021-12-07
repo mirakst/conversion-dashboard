@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Model;
 using DashboardFrontend.ViewModels;
 using System.Windows.Controls.Primitives;
+using System.Diagnostics;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -45,7 +46,7 @@ namespace DashboardFrontend.DetachedWindows
             item.IsSelected = false;
             if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ExpandedManagerNames.Contains(manager.Name))
+                if (ViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
                     ViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }

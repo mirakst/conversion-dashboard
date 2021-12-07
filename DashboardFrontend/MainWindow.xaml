@@ -155,11 +155,10 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="30,20,30,30" 
+            <Grid Margin="30,20,30,30"
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -212,6 +211,7 @@
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
 
@@ -535,7 +535,7 @@
                     <!-- Body -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4.5*" MinWidth="280"/>
+                            <ColumnDefinition Width="4.5*" MinWidth="355"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="2*" MinWidth="100"/>
                         </Grid.ColumnDefinitions>
@@ -544,53 +544,67 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        <GridSplitter Grid.Row="0"
+                                      Grid.RowSpan="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      Width="4"
+                                      Height="100"
+                                      Background="{DynamicResource BorderColor}"/>
+
                         <!-- Validations TreeView Header -->
                         <Grid>
                             <TextBlock Text="Validations"
-                                   Margin="5"
-                                   Foreground="LightGray"
-                                   FontWeight="Bold"/>
+                                       Margin="5"
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
+                                       FontWeight="Bold"/>
                             <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Right">
+                                        Orientation="Horizontal" 
+                                        HorizontalAlignment="Right">
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
+                                              IsChecked="{Binding ShowEmpty,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
+                                    <TextBlock Text="Show empty"
+                                                Padding="6"
+                                                VerticalAlignment="Center"/>
+                                </ToggleButton>
+                                <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                              IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Validation.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0, 2, 0, 2">
+                                              IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0, 2, 0, 2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Warning.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
+                                              IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Fatal.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
-                                <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                    <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
-                                           VerticalAlignment="Center"
-                                           Foreground="Gray"/>
-                                </StackPanel>
+                                <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                                            VerticalAlignment="Center"
+                                            Padding="6"
+                                            Foreground="Gray"/>
                             </StackPanel>
                         </Grid>
                         <!-- Validations TreeView -->
@@ -611,14 +625,9 @@
                                           SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="White"/>
-                                                <TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
-                                            </StackPanel>
+                                            <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource ForegroundColor}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -628,8 +637,9 @@
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
-                                         CaretBrush="White"/>
+                                         ToolTip="Search for managers by their name or context ID"
+                                         Foreground="{DynamicResource ForegroundColor}"
+                                         CaretBrush="{DynamicResource ForegroundColor}"/>
 
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        Grid.Column="1"
@@ -658,7 +668,7 @@
                                                            VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
                                                            VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
+                                                           Foreground="{DynamicResource HeaderForegroundColor}"/>
                                             </StackPanel>
                                             <HierarchicalDataTemplate.ItemTemplate>
                                                 <DataTemplate>
@@ -676,7 +686,7 @@
                                     </TreeView.ItemTemplate>
                                     <TreeView.Resources>
                                         <Style TargetType="TreeViewItem">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="MinHeight" Value="25"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
@@ -691,9 +701,9 @@
                         </Border>
 
                         <Grid Grid.Column="2">
-                            <TextBlock Text="Summary"
+                            <TextBlock Text="Details"
                                        Margin="0 5 5 5"
-                                       Foreground="LightGray"
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
                                        FontWeight="Bold"/>
                             <Button Name="ButtonValidationReportDetach" 
                                     Click="DetachValidationReportButtonClick"
@@ -709,28 +719,28 @@
                                 Grid.Column="2">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Orientation="Vertical" 
-                                        Background="{DynamicResource CanvasColor}"
-                                        DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                                            Background="{DynamicResource CanvasColor}"
+                                            DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
                                     <TextBlock Text="Description" 
-                                           FontWeight="Bold" 
-                                           Margin="10 10 10 0"
-                                           Foreground="LightGray"/>
+                                               FontWeight="Bold" 
+                                               Margin="10 10 10 0"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
-                                           Margin="10 0 10 0"/>
+                                               Margin="10 0 10 0"/>
                                     
                                     <TextBlock Text="Toolkit ID"
                                                FontWeight="Bold"
                                                Margin="10 20 10 0"
-                                               Foreground="LightGray"/>
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
                                                Margin="10 0 10 0"/>
 
                                     <TextBlock Text="Result" 
-                                           FontWeight="Bold" 
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
+                                               FontWeight="Bold" 
+                                               Foreground="{DynamicResource HeaderForegroundColor}"
+                                               Margin="10 20 10 0"/>
                                     <StackPanel Orientation="Horizontal"
-                                            Margin="10 0 10 0">
+                                                Margin="10 0 10 0">
                                         <Image Width="20">
                                             <Image.Style>
                                                 <Style TargetType="{x:Type Image}">
@@ -743,44 +753,46 @@
                                             </Image.Style>
                                         </Image>
                                         <TextBlock Text="{Binding Status}"
-                                               Margin="5 0 0 0"
-                                               VerticalAlignment="Center"/>
+                                                   Margin="5 0 0 0"
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                         
                                     <TextBlock Text="Row count" 
-                                           FontWeight="Bold" 
-                                           Margin="10 20 10 0"
-                                           Foreground="LightGray"/>
+                                               FontWeight="Bold" 
+                                               Margin="10 20 10 0"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Source "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                                   Margin="10 0 5 0"/>
                                         <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                                   Margin="0 0 10 0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Destination "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                                   Margin="10 0 5 0"/>
                                         <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                                   Margin="0 0 10 0"/>
                                     </StackPanel>
 
                                     <TextBlock Text="Copy SQL"
-                                           FontWeight="Bold"
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"
+                                               Margin="10 20 10 10"/>
                                     <StackPanel Orientation="Horizontal"
-                                            Margin="10 5 10 0"
-                                            Height="30">
-                                        <Button Margin="0 0 5 0"
-                                            Click="CopySrcSql_Click"
-                                            MouseLeave="ButtonCopySql_MouseLeave"
-                                            IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Source"/>
+                                                Margin="10 5 10 10"
+                                                Height="30">
+                                        <Button Margin="0 0 20 0"
+                                                Click="CopySrcSql_Click"
+                                                MouseLeave="ButtonCopySql_MouseLeave"
+                                                IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                                Template="{DynamicResource CopySqlButton}"
+                                                Content="Source"/>
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                                Template="{DynamicResource CopySqlButton}"
                                                 Content="Destination"/>
 
                                         <Popup x:Name="PopupCopySql"
@@ -794,13 +806,14 @@
                                     </StackPanel>
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="FontSize" Value="14"/>
                                             <Setter Property="TextWrapping" Value="Wrap"/>
                                         </Style>
                                         <Style TargetType="Button">
                                             <Setter Property="FontFamily" Value="Segoe UI"/>
                                             <Setter Property="FontSize" Value="14"/>
+                                            <Setter Property="Width" Value="80"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsEnabled" Value="False">
                                                     <Setter Property="Foreground" Value="Gray"/>
@@ -817,6 +830,7 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
@@ -826,12 +840,14 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <TabControl Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="2"
                                 Margin="0,0,0,0">
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemCpuRam"
                                     Header="CPU &amp; RAM"
@@ -841,6 +857,18 @@
                                     DataContext="{Binding SystemLoadChart}">
                             <Border Margin="10">
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
                                     <TextBlock Name="TextBlockCurrentCpuLoad"
                                                 Text="{Binding LastCpuReading,
                                                         StringFormat='CPU Usage: {0:0}%'}"
@@ -851,6 +879,7 @@
                                                 Grid.Column="1"
                                                 Grid.Row="0"
                                                 Margin="0,0,40,5"/>
+
                                     <TextBlock Name="TextBlockCurrentRamUsage"
                                                 Text="{Binding LastRamReading,
                                                         StringFormat='RAM Usage: {0:0}%'}"
@@ -861,10 +890,12 @@
                                                 Grid.Column="2"
                                                 Grid.Row="0"
                                                 Margin="5,0,0,5"/>
+
                                     <Separator Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Grid.Column="1"
                                     Margin="-50,0"/>
+
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
                                             Series="{Binding ChartData.Series}"
@@ -878,17 +909,6 @@
                                             Grid.ColumnSpan="4"
                                             Grid.Row="1">
                                     </lvc:CartesianChart>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
                                 </Grid>
                             </Border>
                         </TabItem>
@@ -899,6 +919,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -916,6 +937,7 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
+
                             <lvc:CartesianChart Margin="0,14,0,-30"
                                                 Series="{Binding ChartData.Series}"
                                                 XAxes="{Binding ChartData.XAxis}"
@@ -927,12 +949,14 @@
                                                 MouseEnter="CartesianChart_MouseEnter">
                             </lvc:CartesianChart>
                         </TabItem>
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
+
                             <lvc:CartesianChart  Margin="-6,14,0,-30"
                                                     Series="{Binding ChartData.Series}"
                                                     XAxes="{Binding ChartData.XAxis}"
@@ -945,6 +969,7 @@
                             </lvc:CartesianChart>
                         </TabItem>
                     </TabControl>
+
                     <ComboBox Name="ComboBoxMaxView"
                               VerticalAlignment="Center"
                               Grid.Column="1"
@@ -1008,6 +1033,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
+
+            <Control Name="ControlLoadingAnim"
+                     Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged, FallbackValue=Collapsed}"
+                     Grid.ColumnSpan="2"
+                     Grid.RowSpan="2"
+                     Margin="0,100,0,0"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Style="{StaticResource LoadingAnimation}"/>
         </Grid>
     </Border>
 </Window>
