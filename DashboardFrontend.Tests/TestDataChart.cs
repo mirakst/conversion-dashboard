@@ -13,7 +13,7 @@ namespace DashboardFrontend.Tests
         [Fact]
         public void UpdateData_Test()
         {
-            var dataChart = new DataChart(new PerformanceChart());
+            var dataChart = new DataChart(new PerformanceChart(), false);
             dataChart.AutoFocusOff();
 
             var expected = new List<ObservableCollection<ObservablePoint>>()
