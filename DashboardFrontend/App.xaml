@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="StyleResources/DictionaryAnimations.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryControlTemplates.xaml"/>
                 <ResourceDictionary Source="StyleResources/DictionaryComboBox.xaml"/>
+                <ResourceDictionary Source="StyleResources/DictionaryPopup.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

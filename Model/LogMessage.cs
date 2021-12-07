@@ -27,16 +27,8 @@
         public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
         public int ContextId { get; } //From [CONTEXT_ID] in [dbo].[LOGGING].
         public int ExecutionId { get; }
-        private string _managerName;
 
-        public string ManagerName
-        {
-            get => _managerName;
-            set
-            {
-                _managerName = value;
-            }
-        }
+        public string ManagerName { get; set; }
 
         #endregion Properties
 

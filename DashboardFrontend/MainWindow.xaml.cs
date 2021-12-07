@@ -1,3 +1,4 @@
+using System;
 using DashboardFrontend.ViewModels;
 using DashboardFrontend.DetachedWindows;
 using Model;

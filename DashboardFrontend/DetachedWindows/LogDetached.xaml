@@ -9,124 +9,117 @@
         Title="Log monitoring" 
         Height="450" 
         Width="800">
+    <Window.Resources>
+        <valueConverters:FilterPopupHeightConverter x:Key="FilterPopupHeightConverter"/>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Name="GridLog" 
-                      Margin="20,10,20,20"
-                      Grid.Column="1" 
-                      Grid.Row="0">
+              Margin="20,10,20,20">
             <Grid Grid.Row="0"
-                          Margin="-4, 0, 0, 4">
+              Margin="-4, 0, 0, 4">
                 <ToggleButton Name="ToggleButtonLogInfo"
-                                      Grid.Column="0"
-                                      IsChecked="{Binding ShowInfo}"
-                                      Style="{DynamicResource DefaultToggleButton}">
+                              Grid.Column="0"
+                              IsChecked="{Binding ShowInfo}"
+                              Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Info.png"
-                                       Width="13"
-                                       Margin="0,0,5,0"/>
+                               Width="13"
+                               Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding InfoCount}"/>
                         <TextBlock Text=" Messages"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <Rectangle Width="1"
-                                   Fill="{DynamicResource BorderColor}"
-                                   Grid.Column="1"
-                                   HorizontalAlignment="Center"/>
+                           Fill="{DynamicResource BorderColor}"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"/>
                 <ToggleButton Name="ToggleButtonLogWarning"
-                                      Grid.Column="2"
-                                      IsChecked="{Binding ShowWarn}"
-                                      Style="{DynamicResource DefaultToggleButton}">
+                              Grid.Column="2"
+                              IsChecked="{Binding ShowWarn}"
+                              Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Warning.png"
-                                       Width="13"
-                                       Margin="0,0,5,0"/>
+                               Width="13"
+                               Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding WarnCount}"/>
                         <TextBlock Text=" Warnings"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <Rectangle Width="1"
-                                   Fill="{DynamicResource BorderColor}"
-                                   Grid.Column="3"/>
+                           Fill="{DynamicResource BorderColor}"
+                           Grid.Column="3"/>
                 <ToggleButton Name="ToggleButtonLogError"
-                                      Grid.Column="4"
-                                      IsChecked="{Binding ShowError}"
-                                      Style="{DynamicResource DefaultToggleButton}">
+                              Grid.Column="4"
+                              IsChecked="{Binding ShowError}"
+                              Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Error.png"
-                                       Width="13"
-                                       Margin="0,0,5,0"/>
+                               Width="13"
+                               Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding ErrorCount}"/>
                         <TextBlock Text=" Errors"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <Rectangle Width="1"
-                                   Fill="{DynamicResource BorderColor}"
-                                   Grid.Column="5"/>
+                           Fill="{DynamicResource BorderColor}"
+                           Grid.Column="5"/>
                 <ToggleButton Name="ToggleButtonLogFatal"
-                                      Grid.Column="6"
-                                      IsChecked="{Binding ShowFatal}"
-                                      Style="{DynamicResource DefaultToggleButton}">
+                              Grid.Column="6"
+                              IsChecked="{Binding ShowFatal}"
+                              Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Fatal.png"
-                                       Width="13"
-                                       Margin="0,0,5,0"/>
+                               Width="13"
+                               Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding FatalCount}"/>
                         <TextBlock Text=" Fatal"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <Rectangle Width="1"
-                                   Fill="{DynamicResource BorderColor}"
-                                   Grid.Column="7"/>
+                           Fill="{DynamicResource BorderColor}"
+                           Grid.Column="7"/>
                 <ToggleButton Name="ToggleButtonLogValidation"
-                                      Grid.Column="8"
-                                      IsChecked="{Binding ShowValidation}"
-                                      Style="{DynamicResource DefaultToggleButton}">
+                              Grid.Column="8"
+                              IsChecked="{Binding ShowValidation}"
+                              Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Validation.png" 
-                                       Width="13"
-                                       Margin="0,0,5,0"/>
+                               Width="13"
+                               Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding ValidationCount}"/>
                         <TextBlock Text=" Validation"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <ToggleButton Name="ButtonLogFilter"
-                                Grid.Column="9"
-                                Style="{DynamicResource FilterButton}"
-                                Margin="0, 0, 0, -1">
+                              Grid.Column="9"
+                              Style="{DynamicResource FilterButton}"
+                              Margin="0, 0, 0, -1">
                     <Image Source="../Icons/Filter.png"/>
                 </ToggleButton>
                 <Popup x:Name="PopupLogFilter" 
-                               Grid.Column="9"
-                               StaysOpen="False" 
-                               IsOpen="{Binding IsChecked, ElementName=ButtonLogFilter, Mode=TwoWay}"
-                               PlacementTarget="{Binding ElementName=ListViewLog}"
-                               Placement="Left"
-                               HorizontalOffset="{Binding ActualWidth, ElementName=ListViewLog}">
-                    <Border Width="Auto" 
-                                    Height="Auto" 
-                                    Background="{DynamicResource CanvasColor}" 
-                                    BorderThickness="1" 
-                                    BorderBrush="{DynamicResource BorderColor}">
+                       Grid.Column="9"
+                       Style="{DynamicResource PopupStyleOverwrite}">
+                    <Border Style="{DynamicResource PopupBorderOverwrite}">
                         <StackPanel HorizontalAlignment="Center" Margin="10,5">
                             <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
                             <ComboBox Width="100"
-                                              Height="26"
-                                              Margin="0,0,18,0"
-                                              VerticalAlignment="Top"
-                                              Style="{DynamicResource ComboBoxExecutions}" 
-                                              ItemsSource="{Binding Executions}" 
-                                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                      Height="26"
+                                      Margin="0,0,18,10"
+                                      VerticalAlignment="Top"
+                                      Style="{DynamicResource ComboBoxExecutions}" 
+                                      ItemsSource="{Binding Executions}" 
+                                      SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                                               VerticalAlignment="Center"
-                                                               Foreground="White"/>
+                                                       VerticalAlignment="Center"
+                                                       Foreground="White"/>
                                             <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
                                                                VerticalAlignment="Center"
                                                                Foreground="LightGray"/>-->
@@ -135,14 +128,13 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                             <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
-                            <ItemsControl Height="200" 
-                                                  Background="{DynamicResource BackgroundColor}"
-                                                  Foreground="{DynamicResource ForegroundColor}"
-                                                  ItemsSource="{Binding SelectedExecution.Managers}"
-                                                  Margin="0,5">
+                            <ItemsControl Style="{DynamicResource PopupItemsControlOverwrite}"
+                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
+                                          ItemsSource="{Binding SelectedExecution.Managers}">
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{DynamicResource BackgroundColor}">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                                      Background="{DynamicResource BackgroundColor}">
                                             <ItemsPresenter/>
                                         </ScrollViewer>
                                     </ControlTemplate>
@@ -150,15 +142,20 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox Click="ContextIdCheckbox_OnToggle" 
-                                                              IsChecked="{Binding IsChecked}" 
-                                                              Content="{Binding ContextId}" 
-                                                              Foreground="{DynamicResource ForegroundColor}"/>
+                                                  IsChecked="{Binding IsChecked}" 
+                                                  Content="{Binding ContextId}" 
+                                                  Foreground="{DynamicResource ForegroundColor}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Disable all" Margin="0,0,5,0" Click="ContextIdFilter_OnClick" Tag="false"/>
-                                <Button Content="Enable all" Click="ContextIdFilter_OnClick" Tag="true"/>
+                                <Button Content="Disable all" 
+                                        Margin="0,0,5,0" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="false"/>
+                                <Button Content="Enable all" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="true"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -183,31 +180,32 @@
                     <valueConverters:WidthCalculationMultiConverter x:Key="lastColumnResizeConverter"/>
                 </Grid.Resources>
                 <ListView x:Name="ListViewLog"
-                                  ItemsSource="{Binding MessageView}"
-                                  Background="{DynamicResource BackgroundColor}"
-                                  VirtualizingPanel.ScrollUnit="Pixel"
-                                  VirtualizingPanel.IsVirtualizing="True"
-                                  VirtualizingPanel.VirtualizationMode="Recycling"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                                  MouseEnter="ListViewLog_MouseOverChanged"
-                                  MouseLeave="ListViewLog_MouseOverChanged">
+                          ItemsSource="{Binding MessageView}"
+                          Background="{DynamicResource BackgroundColor}"
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                          MouseEnter="ListViewLog_MouseOverChanged"
+                          MouseLeave="ListViewLog_MouseOverChanged">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
                             <GridView.ColumnHeaderContainerStyle>
                                 <Style TargetType="{x:Type GridViewColumnHeader}">
-                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="OverridesDefaultStyle" 
+                                            Value="True"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
 
                                                 <StackPanel Orientation="Vertical">
                                                     <TextBlock Text="{TemplateBinding Content}" 
-                                                                   Padding="4" 
-                                                                   Background="{DynamicResource BackgroundColor}" 
-                                                                   Width="{TemplateBinding Width}" 
-                                                                   TextAlignment="Left"
-                                                                   Foreground="White"
-                                                                   TextWrapping="Wrap"/>
+                                                               Padding="4" 
+                                                               Background="{DynamicResource BackgroundColor}" 
+                                                               Width="{TemplateBinding Width}" 
+                                                               TextAlignment="Left"
+                                                               Foreground="White"
+                                                               TextWrapping="Wrap"/>
                                                     <Separator/>
                                                 </StackPanel>
                                             </ControlTemplate>
@@ -216,17 +214,17 @@
                                 </Style>
                             </GridView.ColumnHeaderContainerStyle>
                             <GridViewColumn Header="Date"
-                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
-                                                    Width="120"/>
+                                            DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
+                                            Width="120"/>
                             <GridViewColumn Header="ID" 
-                                                    DisplayMemberBinding="{Binding ContextId}"
-                                                    Width="40"/>
+                                            DisplayMemberBinding="{Binding ContextId}"
+                                            Width="40"/>
                             <GridViewColumn Header="Type" 
-                                                    Width="90">
+                                            Width="90">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock TextWrapping="Wrap"
-                                                           Text="{Binding Type}"/>
+                                                   Text="{Binding Type}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -234,15 +232,15 @@
                                 <GridViewColumn.Width>
                                     <MultiBinding Converter="{StaticResource lastColumnResizeConverter}">
                                         <Binding Path="ActualWidth" 
-                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                                 RelativeSource="{RelativeSource AncestorType=ListView}"/>
                                         <Binding Path="View.Columns" 
-                                                         RelativeSource="{RelativeSource AncestorType=ListView}"/>
+                                                 RelativeSource="{RelativeSource AncestorType=ListView}"/>
                                     </MultiBinding>
                                 </GridViewColumn.Width>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock TextWrapping="Wrap"
-                                                           Text="{Binding Content}"/>
+                                                   Text="{Binding Content}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
