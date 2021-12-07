@@ -79,7 +79,7 @@ namespace DashboardBackend
                                                         .Count();
             if (bad > 0 && total > 0)
             {
-                return bad / total;
+                return 1 - (bad / total);
             }
             return 0;
         }
