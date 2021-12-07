@@ -16,7 +16,7 @@ namespace DashboardFrontend.ViewModels
             Validations = new(mgr.Validations);
             ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
         }
-            
+
         public List<ValidationTest> Validations = new();
         private CollectionView _validationView;
         public CollectionView ValidationView
@@ -30,6 +30,18 @@ namespace DashboardFrontend.ViewModels
         }
         public string Name { get; private set; }
         public int ContextId { get; private set; }
+        private bool _isChecked = true;
+
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set
+            {
+                _isChecked = value;
+                OnPropertyChanged(nameof(IsChecked));
+            }
+        }
+
         public System.DateTime? StartTime { get; private set; }
         public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
         public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);

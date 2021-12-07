@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Model
+﻿namespace Model
 {
     public class LogMessage
     {
@@ -29,7 +27,9 @@ namespace Model
         public DateTime Date { get; } //From [CREATED] in [dbo].[LOGGING].
         public int ContextId { get; } //From [CONTEXT_ID] in [dbo].[LOGGING].
         public int ExecutionId { get; }
-        public Manager Manager { get; set; } //Based on [CONTEXT_ID] in [dbo].[LOGGING], read function necessary, GetManagerById - returns a manager where Id = [CONTEXT_ID].
+
+        public string ManagerName { get; set; }
+
         #endregion Properties
 
         public override string ToString()

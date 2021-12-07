@@ -1,5 +1,5 @@
-using DashboardFrontend.Charts;
 using DashboardFrontend.DetachedWindows;
+using System;
 using DashboardFrontend.ViewModels;
 using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Threading.Tasks;
+using DashboardFrontend.Charts;
+using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -275,6 +278,38 @@ namespace DashboardFrontend
         private void ButtonCopySql_MouseLeave(object sender, MouseEventArgs e)
         {
             PopupCopySql.IsOpen = false;
+        }
+
+        private void ContextIdCheckbox_OnToggle(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LogViewModel.MessageView.Refresh();
+            ViewModel.LogViewModel.ScrollToLast();
+        }
+
+        private void ContextIdFilter_OnClick(object sender, RoutedEventArgs e)
+        {
+            bool buttonVal = bool.Parse((string) ((FrameworkElement) sender).Tag);
+            if (ViewModel.LogViewModel.SelectedExecution is null) return;
+            foreach (var manager in ViewModel.LogViewModel.SelectedExecution.Managers)
+            {
+                manager.IsChecked = buttonVal;
+            }
+            ViewModel.LogViewModel.MessageView.Refresh();
+            ViewModel.LogViewModel.ScrollToLast();
+        }
+
+        private void GridPopup_Opened(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            this.AddHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown, true);
+        }
+
+        private void GridPopupLogFilter_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
+            {
+                ButtonLogFilter.IsChecked = false;
+                this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
+            }
         }
     }
 }
