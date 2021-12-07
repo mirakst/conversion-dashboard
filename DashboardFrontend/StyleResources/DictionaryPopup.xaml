@@ -3,16 +3,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters">
     <converters:FilterPopupHeightConverter x:Key="FilterPopupHeightConverter"/>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-    <Style x:Key="PopupStyleOverwrite" TargetType="{x:Type Popup}">
-        <Setter Property="StaysOpen" Value="False"/>
-        <Setter Property="IsOpen" Value="{Binding IsChecked, ElementName=ButtonLogFilter, Mode=TwoWay}"/>
-        <Setter Property="PlacementTarget" Value="{Binding ElementName=ListViewLog}"/>
-        <Setter Property="Placement" Value="Left"/>
-        <Setter Property="HorizontalOffset" Value="{Binding ActualWidth, ElementName=ListViewLog}"/>
+    <Style x:Key="GridPopupStyleOverwrite" TargetType="{x:Type Grid}">
+        <Setter Property="Visibility" Value="{Binding IsChecked, ElementName=ButtonLogFilter, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="Width" Value="Auto"/>
     </Style>
 
-    <Style x:Key="PopupBorderOverwrite" TargetType="{x:Type Border}">
+    <Style x:Key="GridPopupBorderOverwrite" TargetType="{x:Type Border}">
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="{Binding ActualHeight, ElementName=ListViewLog}"/>
         <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
@@ -20,7 +19,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
     </Style>
 
-    <Style x:Key="PopupItemsControlOverwrite" TargetType="ItemsControl">
+    <Style x:Key="GridPopupItemsControlOverwrite" TargetType="ItemsControl">
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}"/>
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
         <Setter Property="Margin" Value="0,5"/>

@@ -101,65 +101,6 @@
                               Margin="0, 0, 0, -1">
                     <Image Source="../Icons/Filter.png"/>
                 </ToggleButton>
-                <Popup x:Name="PopupLogFilter" 
-                       Grid.Column="9"
-                       Style="{DynamicResource PopupStyleOverwrite}">
-                    <Border Style="{DynamicResource PopupBorderOverwrite}">
-                        <StackPanel HorizontalAlignment="Center" Margin="10,5">
-                            <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
-                            <ComboBox Width="100"
-                                      Height="26"
-                                      Margin="0,0,18,10"
-                                      VerticalAlignment="Top"
-                                      Style="{DynamicResource ComboBoxExecutions}" 
-                                      ItemsSource="{Binding Executions}" 
-                                      SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                                       VerticalAlignment="Center"
-                                                       Foreground="White"/>
-                                            <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
-                                                               VerticalAlignment="Center"
-                                                               Foreground="LightGray"/>-->
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
-                            <ItemsControl Style="{DynamicResource PopupItemsControlOverwrite}"
-                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
-                                          ItemsSource="{Binding SelectedExecution.Managers}">
-                                <ItemsControl.Template>
-                                    <ControlTemplate>
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
-                                                      Background="{DynamicResource BackgroundColor}">
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
-                                </ItemsControl.Template>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Click="ContextIdCheckbox_OnToggle" 
-                                                  IsChecked="{Binding IsChecked}" 
-                                                  Content="{Binding ContextId}" 
-                                                  Foreground="{DynamicResource ForegroundColor}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Disable all" 
-                                        Margin="0,0,5,0" 
-                                        Click="ContextIdFilter_OnClick" 
-                                        Tag="false"/>
-                                <Button Content="Enable all" 
-                                        Click="ContextIdFilter_OnClick" 
-                                        Tag="true"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Popup>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -284,6 +225,65 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
+                <Grid x:Name="GridPopupLogFilter" 
+                              Style="{DynamicResource GridPopupStyleOverwrite}">
+                    <Border Style="{DynamicResource GridPopupBorderOverwrite}"
+                            Margin="0,-1,0,1">
+                        <StackPanel HorizontalAlignment="Center" Margin="10,5">
+                            <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
+                            <ComboBox Width="100"
+                                      Height="26"
+                                      Margin="0,0,18,10"
+                                      VerticalAlignment="Top"
+                                      Style="{DynamicResource ComboBoxExecutions}" 
+                                      ItemsSource="{Binding Executions}" 
+                                      SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                       VerticalAlignment="Center"
+                                                       Foreground="White"/>
+                                            <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="LightGray"/>-->
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
+                            <ItemsControl Style="{DynamicResource GridPopupItemsControlOverwrite}"
+                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
+                                          ItemsSource="{Binding SelectedExecution.Managers}">
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                                      Background="{DynamicResource BackgroundColor}">
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Click="ContextIdCheckbox_OnToggle" 
+                                                  IsChecked="{Binding IsChecked}" 
+                                                  Content="{Binding ContextId}" 
+                                                  Foreground="{DynamicResource ForegroundColor}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Disable all" 
+                                        Margin="0,0,5,0" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="false"/>
+                                <Button Content="Enable all" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="true"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
