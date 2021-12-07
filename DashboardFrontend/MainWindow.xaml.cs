@@ -288,5 +288,19 @@ namespace DashboardFrontend
             ViewModel.LogViewModel.MessageView.Refresh();
             ViewModel.LogViewModel.ScrollToLast();
         }
+
+        private void GridPopup_Opened(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            this.AddHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown, true);
+        }
+
+        private void GridPopupLogFilter_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
+            {
+                ButtonLogFilter.IsChecked = false;
+                this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
+            }
+        }
     }
 }

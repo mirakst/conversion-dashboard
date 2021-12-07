@@ -460,7 +460,8 @@
                         </ListView>
                         <Grid x:Name="GridPopupLogFilter" 
                               Style="{DynamicResource GridPopupStyleOverwrite}"
-                              Margin="0,-1,0,1">
+                              IsVisibleChanged="GridPopup_Opened"
+                              Margin="0,-2,0,1">
                             <Border Style="{DynamicResource GridPopupBorderOverwrite}">
                                 <StackPanel HorizontalAlignment="Center" Margin="10,5">
                                     <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
