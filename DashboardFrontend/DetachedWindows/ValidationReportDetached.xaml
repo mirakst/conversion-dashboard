@@ -49,10 +49,9 @@
                     <ToggleButton Style="{DynamicResource DefaultToggleButton}"
                                   IsChecked="{Binding ShowEmpty,UpdateSourceTrigger=PropertyChanged}"
                                   Margin="0,2,0,2">
-                        <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                            <TextBlock Text="Show empty"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <TextBlock Text="Show empty"
+                                   Padding="6"
+                                   VerticalAlignment="Center"/>
                     </ToggleButton>
                     <ToggleButton Style="{DynamicResource DefaultToggleButton}"
                                   IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
@@ -87,11 +86,10 @@
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </ToggleButton>
-                    <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                        <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
-                                   VerticalAlignment="Center"
-                                   Foreground="Gray"/>
-                    </StackPanel>
+                    <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                               VerticalAlignment="Center"
+                               Padding="6"
+                               Foreground="Gray"/>
                 </StackPanel>
             </Grid>
             <!-- Validations TreeView -->
@@ -113,11 +111,9 @@
                               SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                               VerticalAlignment="Center"
-                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
-                                </StackPanel>
+                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource HeaderForegroundColor}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
