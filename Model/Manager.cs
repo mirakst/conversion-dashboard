@@ -1,32 +1,50 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using static Model.ValidationTest;
 
 namespace Model
 {
-    public delegate void ManagerFinished(Manager manager);
+    public delegate void ManagerFinished();
 
-    public class Manager
+    public enum ManagerStatus : byte
     {
-        #region Constructors
+        Ready, Running, Ok
+    }
+
+    public class Manager : BaseViewModel
+    {
         public Manager()
         {
             Status = ManagerStatus.Ready;
         }
-        #endregion
-
-        #region Enums
-        public enum ManagerStatus : byte
-        {
-            Ready, Running, Ok
-        }
-        #endregion Enums
 
         public event ManagerFinished OnManagerFinished;
 
-        #region Properties     
-        public List<ValidationTest> Validations { get; set; } = new();
-        public List<CpuLoad> CpuReadings { get; set; } = new();
-        public List<RamLoad> RamReadings { get; set; } = new();
+        public ObservableCollection<ValidationTest> Validations
+        {
+            get => _validations; set
+            {
+                _validations = value;
+                OnPropertyChanged(nameof(Validations));
+            }
+        }
+        public ObservableCollection<CpuLoad> CpuReadings
+        {
+            get => _cpuReadings; set
+            {
+                _cpuReadings = value;
+                OnPropertyChanged(nameof(CpuReadings));
+            }
+        }
+        public ObservableCollection<RamLoad> RamReadings
+        {
+            get => _ramReadings; set
+            {
+                _ramReadings = value;
+                OnPropertyChanged(nameof(RamReadings));
+            }
+        }
+
         private string _name;
         public string Name
         {
@@ -46,11 +64,25 @@ namespace Model
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
         public int ContextId { get; set; }
-        public string ShortName { get; set; }
+
+        private string _shortName;
+        public string ShortName
+        {
+            get => _shortName;
+            set
+            {
+                _shortName = value;
+                OnPropertyChanged(nameof(ShortName));
+            }
+        }
         public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
         public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
         public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
         private ManagerStatus _status;
+        private ObservableCollection<ValidationTest> _validations;
+        private ObservableCollection<CpuLoad> _cpuReadings;
+        private ObservableCollection<RamLoad> _ramReadings;
+
         public ManagerStatus Status
         {
             get => _status;
@@ -59,7 +91,7 @@ namespace Model
                 _status = value;
                 if (value is ManagerStatus.Ok)
                 {
-                    OnManagerFinished?.Invoke(this);
+                    OnManagerFinished?.Invoke();
                     UpdateScore();
                 }
             }
@@ -68,7 +100,7 @@ namespace Model
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
         public double? Score { get; set; }
         public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
-        #endregion
+#endregion
 
         private void UpdateScore()
         {

@@ -1,28 +1,59 @@
-﻿using System.Data.SqlTypes;
+﻿using System.Collections.ObjectModel;
 
 namespace Model
 {
-    public class Conversion
+    public class Conversion : BaseViewModel
     {
-        #region Constructors
         public Conversion()
         {
             Executions = new();
             AllManagers = new();
             HealthReport = new();
-            LastExecutionQuery = (DateTime)SqlDateTime.MinValue;
-            LastLogQuery = (DateTime)SqlDateTime.MinValue;
-            LastManagerQuery = (DateTime)SqlDateTime.MinValue;
-            LastValidationsQuery = (DateTime)SqlDateTime.MinValue;
+            LastExecutionQuery = _sqlMinDateTime;
+            LastLogQuery = _sqlMinDateTime;
+            LastManagerQuery = _sqlMinDateTime;
+            LastValidationsQuery = _sqlMinDateTime;
         }
-        #endregion
 
-        #region Properties
-        public string Name { get; set; } //Assigned by user in dialog popup.
-        public DateTime DateModified { get; set; } //DateTime.Now when configuration is updated.
-        public bool IsInitialized { get; set; } //If the conversion has been built.
-        public List<Execution> Executions { get; set; } //Created on new entry in [dbo].[EXECUTIONS]
-        public Execution ActiveExecution  => Executions.LastOrDefault();
+        private ObservableCollection<Execution> _executions;
+        public ObservableCollection<Execution> Executions
+        {
+            get => _executions;
+            set
+            {
+                _executions = value;
+                OnPropertyChanged(nameof(Executions));
+            }
+        }
+        private Execution _activeExecution;
+        public Execution ActiveExecution
+        {
+            get => _activeExecution;
+            set
+            {
+                _activeExecution = value;
+                OnPropertyChanged(nameof(ActiveExecution));
+            }
+        }
+        private ObservableCollection<Manager> _allManagers;
+        public ObservableCollection<Manager> AllManagers
+        {
+            get => _allManagers;
+            set
+            {
+                _allManagers = value;
+                OnPropertyChanged(nameof(AllManagers));
+            }
+        }
+        private HealthReport _healthReport;
+        public HealthReport HealthReport
+        {
+            get => _healthReport; set
+            {
+                _healthReport = value;
+                OnPropertyChanged(nameof(HealthReport));
+            }
+        }
 
         public DateTime LastExecutionQuery { get; set; }
         public DateTime LastLogQuery { get; set; }
@@ -33,17 +64,12 @@ namespace Model
         public DateTime LastHealthReportUpdated { get; set; }
         public DateTime LastValidationsUpdated { get; set; }
 
-        public List<Manager> AllManagers { get; set; }
-        public HealthReport HealthReport { get; set; }
-
-        #endregion
-
         public void AddExecution(Execution execution)
         {
             if (ActiveExecution != null)
             {
-                ActiveExecution.EndTime = DateTime.Now;
-                ActiveExecution.Status = Execution.ExecutionStatus.Finished;
+                ActiveExecution.EndTime = execution.StartTime;
+                ActiveExecution.Status = ExecutionStatus.Finished;
                 if (ActiveExecution.StartTime.HasValue && ActiveExecution.EndTime.HasValue)
                 {
                     ActiveExecution.Runtime = ActiveExecution.EndTime.Value.Subtract(ActiveExecution.StartTime.Value);
