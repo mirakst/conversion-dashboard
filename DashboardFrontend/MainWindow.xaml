@@ -167,6 +167,7 @@
                       DataContext="{Binding ManagerViewModel}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4.5*"/>
                         <ColumnDefinition Width="30"/>
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
@@ -175,23 +176,38 @@
                         <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
 
+                    <ComboBox Margin="0 2 2 2"  
+                              ToolTip="Choose which execution to show data from" 
+                              Style="{DynamicResource ComboBoxExecutions}"  
+                              ItemsSource="{Binding Executions}"  
+                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}"  
+                                           VerticalAlignment="Center" 
+                                           Foreground="{DynamicResource ForegroundColor}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
-                             Height="26"
-                             Style="{DynamicResource SearchBox}"
+                             Style="{DynamicResource ValidationsSearchBox}"
+                             Grid.Column="1"
                              Margin="0,0,0,1"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
 
-                    <DockPanel LastChildFill="False">
-                        <Image Source="Icons/MagnifyingglassAlt.png"
+                    <DockPanel LastChildFill="False"
+                               Grid.Column="1">
+                        <Image Source="Icons/Magnifyingglass.png"
                                Margin="0,5,10,5"
                                DockPanel.Dock="Right"/>
                     </DockPanel>
 
                     <ToggleButton Name="ButtonManagerFilter"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Margin="0, 0, 0, 1"
                             Style="{DynamicResource FilterButton}">
                         <Image Source="Icons/Filter.png"/>
@@ -199,7 +215,7 @@
 
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="0, -2, -2, 0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
@@ -208,7 +224,7 @@
                     <DataGrid x:Name="datagridManagers"
                               ItemsSource="{Binding Managers}"
                               Grid.Row="1"
-                              Grid.ColumnSpan="3"
+                              Grid.ColumnSpan="4"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
                               HorizontalScrollBarVisibility="Hidden"
@@ -634,9 +650,7 @@
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="Search for managers by their name or context ID"
-                                         Foreground="{DynamicResource ForegroundColor}"
-                                         CaretBrush="{DynamicResource ForegroundColor}"/>
+                                         ToolTip="Search for managers by their name or context ID"/>
 
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        Grid.Column="1"

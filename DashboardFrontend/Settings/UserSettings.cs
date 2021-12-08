@@ -39,11 +39,11 @@ namespace DashboardFrontend.Settings
                 OnPropertyChanged(nameof(ActiveProfile));
             }
         }
-        public int LoggingQueryInterval { get; set; } = 15; // seconds
+        public int LoggingQueryInterval { get; set; } = 1; // seconds
         public int HealthReportQueryInterval { get; set; } = 30;
-        public int ValidationQueryInterval { get; set; } = 120;
-        public int ManagerQueryInterval { get; set; } = 60;
-        public int AllQueryInterval { get; set; } = 30;
+        public int ValidationQueryInterval { get; set; } = 5;
+        public int ManagerQueryInterval { get; set; } = 5;
+        public int AllQueryInterval { get; set; } = 2;
         public bool SynchronizeAllQueries { get; set; } = false;
         [JsonIgnore]
         public bool HasActiveProfile => ActiveProfile is not null;

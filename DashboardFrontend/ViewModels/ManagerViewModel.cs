@@ -14,6 +14,18 @@ namespace DashboardFrontend.ViewModels
             ManagerChartViewModel = new();
         }
 
+        public ObservableCollection<ExecutionObservable> Executions { get; set; } = new();
+        private ExecutionObservable? _selectedExecution;
+        public ExecutionObservable? SelectedExecution
+        {
+            get => _selectedExecution;
+            set
+            {
+                _selectedExecution = value;
+                OnPropertyChanged(nameof(SelectedExecution));
+                SetExecution(value);
+            }
+        }
         public DateTime LastUpdated { get; set; } = DateTime.MinValue;
         private string _managerSearch = string.Empty;
         public string ManagerSearch { get => _managerSearch; 
@@ -47,12 +59,29 @@ namespace DashboardFrontend.ViewModels
         }
         public List<string> ExpandedManagerNames = new();
 
-        public void UpdateData(List<Manager> executionManagers)
+        public void UpdateData(List<Execution> executions)
         {
-            Managers.Clear();
-            foreach (var manager in executionManagers)
+            Executions.Clear();
+            int count = executions.Count;
+            for (int i = 0; i < count; i++)
             {
-                Managers.Add(new ManagerWrapper(manager));
+                Executions.Add(new ExecutionObservable(executions[i]));
+            }
+            if (SelectedExecution is null && count > 0)
+            {
+                SelectedExecution = Executions[^1];
+            }
+        }
+
+        private void SetExecution(ExecutionObservable exec)
+        {
+            if (exec is not null)
+            {
+                Managers.Clear();
+                foreach (var manager in exec.Managers)
+                {
+                    Managers.Add(new ManagerWrapper(manager.OriginalManager));
+                }
             }
         }
 

@@ -422,18 +422,24 @@ namespace DashboardBackend
                 distinctReports.Add(entries.Skip(i).Take(6).ToList());
             }
 
-            //Build system model network usage objects.
-            return (from item in distinctReports
-                    let executionId = item.First().ExecutionId.Value
-                    let logTime = item.First().LogTime.Value
-                    let bytesSend = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send").ReportNumericValue
-                    let bytesSendDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)").ReportNumericValue
-                    let bytesSendSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)").ReportNumericValue
-                    let bytesReceived = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received").ReportNumericValue
-                    let bytesReceivedDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)").ReportNumericValue
-                    let bytesReceivedSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)").ReportNumericValue
-                    select new NetworkUsage(executionId, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime))
-                    .ToList();
+            List<NetworkUsage> result = new();
+            foreach (var item in distinctReports)
+            {
+                int? execId = item.Find(i => i.ExecutionId.HasValue)?.ExecutionId.Value;
+                DateTime? logTime = item.Find(i => i.LogTime.HasValue)?.LogTime.Value;
+                long bytesSend = item.Find(e => e.ReportKey == "Interface 0: Bytes Send")?.ReportNumericValue ?? 0;
+                long bytesSendDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)")?.ReportNumericValue ?? 0;
+                long bytesSendSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)")?.ReportNumericValue ?? 0;
+                long bytesReceived = item.Find(e => e.ReportKey == "Interface 0: Bytes Received")?.ReportNumericValue ?? 0;
+                long bytesReceivedDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)")?.ReportNumericValue ?? 0;
+                long bytesReceivedSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)")?.ReportNumericValue ?? 0;
+
+                if (execId.HasValue && logTime.HasValue)
+                {
+                    result.Add(new NetworkUsage(execId.Value, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime.Value));
+                }
+            }
+            return result;
         }
     }
 }

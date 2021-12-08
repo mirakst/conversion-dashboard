@@ -16,8 +16,10 @@ namespace DashboardFrontend.ViewModels
             Score = mgr.Score;
             Validations = new(mgr.Validations);
             ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
+            OriginalManager = mgr;
         }
 
+        public Manager OriginalManager { get; private set; }
         public List<ValidationTest> Validations = new();
         private CollectionView _validationView;
         public CollectionView ValidationView
