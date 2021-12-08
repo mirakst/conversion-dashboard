@@ -23,6 +23,7 @@ namespace DashboardFrontend
             MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
             ViewModel = new(ListViewLog);
+            ViewModel.ManagerViewModel.DatagridManagers = datagridManagers;
             DataContext = ViewModel;
         }
 
@@ -51,6 +52,7 @@ namespace DashboardFrontend
         {
             ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
             ManagerListDetached detachManager = new(detachedManagerViewModel);
+            detachedManagerViewModel.DatagridManagers = detachManager.DatagridManagers;
             detachManager.Show();
             detachManager.Closed += delegate
             {

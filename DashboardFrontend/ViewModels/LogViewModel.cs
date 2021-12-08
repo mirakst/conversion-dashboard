@@ -173,7 +173,10 @@ namespace DashboardFrontend.ViewModels
 
         public void UpdateData(List<Execution> executions)
         {
-            Executions = new(executions.Select(e => new ExecutionObservable(e)));
+            lock(Executions)
+            {
+                Executions = new(executions.Select(e => new ExecutionObservable(e)));
+            }
             if (SelectedExecution is null)
             {
                 SelectedExecution = Executions.Last();

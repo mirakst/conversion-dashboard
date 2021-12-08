@@ -213,7 +213,6 @@
                               BorderBrush="{DynamicResource BorderColor}"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
-
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
@@ -319,8 +318,7 @@
                         <ToggleButton Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}"
-                                Margin="0, 0, 0, -1"
-                                IsEnabled="{Binding ElementName=PopupLogFilter, Path=IsOpen}">
+                                Margin="0, 0, 0, -1">
                             <Image Source="Icons/Filter.png"/>
                         </ToggleButton>
 

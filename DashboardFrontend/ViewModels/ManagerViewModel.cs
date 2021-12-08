@@ -14,14 +14,17 @@ namespace DashboardFrontend.ViewModels
             ManagerChartViewModel = new();
         }
 
-        public ManagerViewModel(DataGrid dataGrid)
-        {
-            _datagrid = dataGrid;
-        }
-
         public DateTime LastUpdated { get; set; } = DateTime.MinValue;
-        private readonly DataGrid _datagrid;
+        private string _managerSearch = string.Empty;
+        public string ManagerSearch { get => _managerSearch; 
+            set
+            {
+                _managerSearch = value;
+                SearchManagers();
+            }
+        }
         private ObservableCollection<ManagerWrapper> _managers = new();
+        public DataGrid DatagridManagers;
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
         {
@@ -42,34 +45,7 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(WrappedManagers));
             }
         }
-
-        private string _managerSearch = string.Empty;
-        public string ManagerSearch
-        {
-            get => _managerSearch;
-            set
-            {
-                _managerSearch = value;
-                OnPropertyChanged(nameof(ManagerSearch));
-                SearchManagers();
-            }
-        }
-
-        public void SearchManagers()
-        {
-            foreach (ManagerWrapper manager in Managers)
-            {
-                DataGridRow row = (DataGridRow)_datagrid.ItemContainerGenerator.ContainerFromItem(manager);
-                if (!manager.Manager.Name.Contains(ManagerSearch))
-                {
-                    row.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    row.Visibility = Visibility.Visible;
-                }
-            }
-        }
+        public List<string> ExpandedManagerNames = new();
 
         public void UpdateData(List<Manager> executionManagers)
         {
@@ -77,6 +53,27 @@ namespace DashboardFrontend.ViewModels
             foreach (var manager in executionManagers)
             {
                 Managers.Add(new ManagerWrapper(manager));
+            }
+        }
+
+        private void SearchManagers()
+        {
+            DatagridManagers.SelectedItems.Clear();
+            if (!string.IsNullOrEmpty(ManagerSearch))
+            {
+                List<ManagerWrapper> foundManagers = new();
+                foreach (ManagerWrapper manager in DatagridManagers.Items)
+                {
+                    if (manager.Manager.Name.ToLower().Contains(ManagerSearch.ToLower()) || manager.Manager.ContextId.ToString() == ManagerSearch)
+                    {
+                        foundManagers.Add(manager);
+                        DatagridManagers.SelectedItems.Add(manager);
+                    }
+                }
+            }
+            else
+            {
+                DatagridManagers.SelectedItems.Clear();
             }
         }
     }

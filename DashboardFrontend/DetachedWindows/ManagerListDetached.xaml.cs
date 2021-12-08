@@ -70,28 +70,6 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         /// <summary>
-        /// Searches through the manager overview based on the text present in the searchbar.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TextboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            DatagridManagers.SelectedItems.Clear();
-            if (TextboxSearchbar.Text != null)
-            {
-                List<ManagerWrapper> foundManagers = new();
-                foreach (ManagerWrapper manager in DatagridManagers.Items)
-                {
-                    if (manager.Manager.Name.Contains(TextboxSearchbar.Text) || manager.Manager.ContextId.ToString() == TextboxSearchbar.Text)
-                    {
-                        foundManagers.Add(manager);
-                        DatagridManagers.SelectedItems.Add(manager);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Helper function assembling all the manager mover functionality.
         /// </summary>
         /// The function to be done to the manager <param name="method"></param>

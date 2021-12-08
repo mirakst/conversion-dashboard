@@ -13,7 +13,10 @@ namespace DashboardFrontend.ViewModels
         {
             Id = exec.Id;
             StartTime = exec.StartTime;
-            Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+            lock(Managers)
+            {
+                Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+            }
             LogMessages = new(exec.Log.Messages);
         }
         public ExecutionObservable(Execution exec, ValidationReportViewModel vm) : this(exec)
