@@ -23,7 +23,7 @@ namespace DashboardFrontend
             MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
             ViewModel = new(ListViewLog);
-            ViewModel.ManagerViewModel.DatagridManagers = datagridManagers;
+            ViewModel.ManagerViewModel.DataGridManagers = datagridManagers;
             DataContext = ViewModel;
         }
 
@@ -51,10 +51,10 @@ namespace DashboardFrontend
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
             ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
-            ManagerListDetached detachManager = new(detachedManagerViewModel);
-            detachedManagerViewModel.DatagridManagers = detachManager.DatagridManagers;
-            detachManager.Show();
-            detachManager.Closed += delegate
+            ManagerListDetached detachedManagerWindow = new(detachedManagerViewModel);
+            detachedManagerViewModel.DataGridManagers = detachedManagerWindow.DatagridManagers;
+            detachedManagerWindow.Show();
+            detachedManagerWindow.Closed += delegate
             {
                 // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
                 _ = Task.Run(() =>

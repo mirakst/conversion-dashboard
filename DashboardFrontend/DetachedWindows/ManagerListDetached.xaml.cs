@@ -94,5 +94,33 @@ namespace DashboardFrontend.DetachedWindows
                     break;
             }
         }
+
+        private void DatagridManagersAdd_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                AddManager_Click(sender, e);
+            }
+        }
+
+        private void DatagridManagersAdd_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AddManager_Click((object)sender, e);
+        }
+
+        private void DatagridManagersRemove_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                RemoveManager_Click(sender, e);
+            }
+        }
+
+        private void DatagridManagersRemove_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            RemoveManager_Click((object)sender, e);
+        }
     }
 }

@@ -26,6 +26,16 @@ namespace DashboardFrontend
                 OnPropertyChanged(nameof(IsDetailedInfoShown));
             }
         }
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+                OnPropertyChanged(nameof(IsVisible));
+            }
+        }
 
         public ManagerWrapper(Manager manager)
         {

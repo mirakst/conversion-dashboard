@@ -77,7 +77,9 @@
                           Grid.ColumnSpan="2"
                           Style="{DynamicResource DefaultDatagrid}"
                           BorderBrush="{DynamicResource BorderColor}"
-                          ItemsSource="{Binding Managers}" 
+                          ItemsSource="{Binding Managers}"
+                          PreviewKeyDown="DatagridManagersAdd_PreviewKeyDown"
+                          MouseDoubleClick="DatagridManagersAdd_MouseDoubleClick"
                           HorizontalScrollBarVisibility="Hidden"
                           HorizontalAlignment="Left">
 
@@ -139,7 +141,9 @@
                                       Style="{DynamicResource DefaultDatagrid}"
                                       ItemsSource="{Binding WrappedManagers}"
                                       HorizontalScrollBarVisibility="Hidden"
-                                      HorizontalAlignment="Left">
+                                      HorizontalAlignment="Left"
+                                      PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown" 
+                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
@@ -256,7 +260,9 @@
                                       BorderBrush="Transparent"
                                       Style="{DynamicResource DefaultDatagrid}"
                                       Background="{DynamicResource BackgroundColor}"
-                                      CanUserResizeColumns="False">
+                                      CanUserResizeColumns="False"
+                                      PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown"
+                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
                                 
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Width="*">

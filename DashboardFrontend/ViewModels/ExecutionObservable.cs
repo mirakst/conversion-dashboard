@@ -13,7 +13,7 @@ namespace DashboardFrontend.ViewModels
         {
             Id = exec.Id;
             StartTime = exec.StartTime;
-            lock(Managers)
+            lock (executionLock)
             {
                 Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
             }
@@ -36,6 +36,7 @@ namespace DashboardFrontend.ViewModels
 
         public DateTime? StartTime { get; set; }
         private int _failedTotalCount;
+        private readonly object executionLock = new();
         public int FailedTotalCount
         {
             get => _failedTotalCount; set

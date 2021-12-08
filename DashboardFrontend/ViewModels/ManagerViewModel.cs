@@ -20,11 +20,18 @@ namespace DashboardFrontend.ViewModels
             set
             {
                 _managerSearch = value;
-                SearchManagers();
+                if (DataGridManagers != null) _dataGridManagers.Items.Filter = OnManagersFilter;
             }
         }
         private ObservableCollection<ManagerWrapper> _managers = new();
-        public DataGrid DatagridManagers;
+        private DataGrid _dataGridManagers;
+        public DataGrid DataGridManagers { 
+            get => _dataGridManagers; 
+            set
+            {
+                _dataGridManagers = value;
+            }
+        }
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
         {
@@ -54,27 +61,13 @@ namespace DashboardFrontend.ViewModels
             {
                 Managers.Add(new ManagerWrapper(manager));
             }
+            if (DataGridManagers != null) DataGridManagers.Items.Filter = OnManagersFilter;
         }
 
-        private void SearchManagers()
+        private bool OnManagersFilter(object item)
         {
-            DatagridManagers.SelectedItems.Clear();
-            if (!string.IsNullOrEmpty(ManagerSearch))
-            {
-                List<ManagerWrapper> foundManagers = new();
-                foreach (ManagerWrapper manager in DatagridManagers.Items)
-                {
-                    if (manager.Manager.Name.ToLower().Contains(ManagerSearch.ToLower()) || manager.Manager.ContextId.ToString() == ManagerSearch)
-                    {
-                        foundManagers.Add(manager);
-                        DatagridManagers.SelectedItems.Add(manager);
-                    }
-                }
-            }
-            else
-            {
-                DatagridManagers.SelectedItems.Clear();
-            }
+            ManagerWrapper mgr = (ManagerWrapper)item;
+            return (mgr.Manager.Name.ToLower().Contains(ManagerSearch.ToLower()) || mgr.Manager.ContextId.ToString() == ManagerSearch);
         }
     }
 }

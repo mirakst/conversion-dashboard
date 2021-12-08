@@ -170,13 +170,15 @@ namespace DashboardFrontend.ViewModels
                 ScrollToLast();
             }
         }
+        private readonly object LocalLock = new();
 
         public void UpdateData(List<Execution> executions)
         {
-            lock(Executions)
+            lock(LocalLock)
             {
                 Executions = new(executions.Select(e => new ExecutionObservable(e)));
             }
+
             if (SelectedExecution is null)
             {
                 SelectedExecution = Executions.Last();
