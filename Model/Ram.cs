@@ -1,25 +1,36 @@
-﻿namespace Model
+﻿using System.Collections.ObjectModel;
+
+namespace Model
 {
-    public class Ram
+    public class Ram : BaseViewModel
     {
-        #region Constructors
         public Ram(long? total)
         {
             Total = total;
+            Readings = new();
         }
-        #endregion Constructors
 
-        #region Properties
-        public long? Total { get; set; } //bytes //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'TOTAL'.
+        private long? _total; // bytes
+        public long? Total
+        {
+            get => _total; set
+            {
+                _total = value;
+                OnPropertyChanged(nameof(Total));
+            }
+        }
         //The property above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'CPU_INIT'.
-        private readonly List<RamLoad> _readings = new();
 
-        public List<RamLoad> Readings
+        private ObservableCollection<RamLoad> _readings;
+        public ObservableCollection<RamLoad> Readings
         {
             get => _readings;
-            set => _readings.AddRange(value);
+            set
+            {
+                _readings = value;
+                OnPropertyChanged(nameof(Readings));
+            }
         }
-        #endregion Properties
 
         public override string ToString()
         {

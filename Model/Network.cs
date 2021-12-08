@@ -1,29 +1,30 @@
-﻿namespace Model
+﻿using System.Collections.ObjectModel;
+
+namespace Model
 {
-    public class Network
+    public class Network : BaseViewModel
     {
-        #region Constructors
         public Network(string name, string macAddress, long? speed)
         {
             Name = name;
             MacAddress = macAddress;
             Speed = speed;
         }
-        #endregion Constructors
 
-        #region Properties
         public string Name { get; } //From [REPORT_STRING_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'Interface 0: Name'.
         public string MacAddress { get; } //From [REPORT_STRING_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'Interface 0: MAC address'.
         public long? Speed { get; } //bps //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'Interface 0: Speed'.
         //The properties above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'NETWORK_INIT'.
-        private readonly List<NetworkUsage> _readings = new();
-
-        public List<NetworkUsage> Readings
+        private ObservableCollection<NetworkUsage> _readings;
+        public ObservableCollection<NetworkUsage> Readings
         {
             get => _readings;
-            set => _readings.AddRange(value);
+            set
+            {
+                _readings = value;
+                OnPropertyChanged(nameof(Readings));
+            }
         }
-        #endregion Properties
 
         public override string ToString()
         {

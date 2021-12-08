@@ -19,7 +19,7 @@ namespace Model
         }
 
         public int Id { get; }
-        public Log Log { get; set; }
+        public Log Log { get; }
         //public ValidationReport ValidationReport { get; set; }
         //public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
         private ObservableCollection<Manager> _managers;
@@ -32,7 +32,20 @@ namespace Model
                 OnPropertyChanged(nameof(Managers));
             }
         }
-        public DateTime? StartTime { get; }
+        private DateTime? _startTime;
+        public DateTime? StartTime
+        {
+            get => _startTime;
+            set
+            {
+                _startTime = value;
+                OnPropertyChanged(nameof(StartTime));
+                if (StartTime.HasValue && EndTime.HasValue)
+                {
+                    Runtime = EndTime.Value.Subtract(StartTime.Value);
+                }
+            }
+        }
         private DateTime? _endTime;
         public DateTime? EndTime
         {
@@ -41,6 +54,10 @@ namespace Model
             {
                 _endTime = value;
                 OnPropertyChanged(nameof(EndTime));
+                if (StartTime.HasValue && EndTime.HasValue)
+                {
+                    Runtime = EndTime.Value.Subtract(StartTime.Value);
+                }
             }
         }
         private TimeSpan? _runtime;
@@ -62,6 +79,10 @@ namespace Model
                 if (value is ExecutionStatus.Finished)
                 {
                     CurrentProgress = 100;
+                    if (StartTime.HasValue && EndTime.HasValue)
+                    {
+                        Runtime = EndTime.Value.Subtract(StartTime.Value);
+                    }
                 }
                 OnPropertyChanged(nameof(Status));
             }

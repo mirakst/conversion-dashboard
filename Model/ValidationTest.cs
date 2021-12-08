@@ -1,8 +1,12 @@
 ﻿namespace Model
 {
+    public enum ValidationStatus
+    {
+        Failed, FailMismatch, Disabled, Ok
+    }
+
     public class ValidationTest
     {
-        #region Constructors
         public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
             Date = date;
@@ -15,16 +19,7 @@
             SrcSql = srcSql;
             DstSql = dstSql;
         }
-        #endregion Constructors
 
-        #region Enums
-        public enum ValidationStatus
-        {
-            Failed, FailMismatch, Disabled, Ok
-        }
-        #endregion Enums
-
-        #region Properties
         public ValidationStatus Status { get; } //From [AFSTEMRESULTAT] in [dbo].[AFSTEMNING]
         public string Name { get; } //From [DESCRIPTION] in [dbo].[AFSTEMNING]
         public DateTime Date { get; } //From [AFSTEMTDATO] in [dbo].[AFSTEMNING]
@@ -34,7 +29,6 @@
         public int? ToolkitId { get; }
         public string SrcSql { get; }
         public string DstSql { get; }
-        #endregion Properties
         
         public override string ToString()
         {

@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using static Model.ValidationTest;
 
 namespace Model
 {
@@ -20,6 +18,7 @@ namespace Model
 
         public event ManagerFinished OnManagerFinished;
 
+        private ObservableCollection<ValidationTest> _validations;
         public ObservableCollection<ValidationTest> Validations
         {
             get => _validations; set
@@ -28,6 +27,7 @@ namespace Model
                 OnPropertyChanged(nameof(Validations));
             }
         }
+        private ObservableCollection<CpuLoad> _cpuReadings;
         public ObservableCollection<CpuLoad> CpuReadings
         {
             get => _cpuReadings; set
@@ -36,6 +36,7 @@ namespace Model
                 OnPropertyChanged(nameof(CpuReadings));
             }
         }
+        private ObservableCollection<RamLoad> _ramReadings;
         public ObservableCollection<RamLoad> RamReadings
         {
             get => _ramReadings; set
@@ -44,7 +45,6 @@ namespace Model
                 OnPropertyChanged(nameof(RamReadings));
             }
         }
-
         private string _name;
         public string Name
         {
@@ -52,6 +52,7 @@ namespace Model
             set
             {
                 _name = value;
+                OnPropertyChanged(nameof(Name));
                 var splitName = value.Split('.');
                 if (splitName.Contains("managers"))
                 {
@@ -63,7 +64,16 @@ namespace Model
                 }
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
-        public int ContextId { get; set; }
+        private int _contextId;
+        public int ContextId
+        {
+            get => _contextId;
+            set
+            {
+                _contextId = value;
+                OnPropertyChanged(nameof(ContextId));
+            }
+        }
 
         private string _shortName;
         public string ShortName
@@ -75,32 +85,88 @@ namespace Model
                 OnPropertyChanged(nameof(ShortName));
             }
         }
-        public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
-        public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
-        public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
+        private DateTime? _startTime;
+        public DateTime? StartTime
+        {
+            get => _startTime; set
+            {
+                _startTime = value;
+                OnPropertyChanged(nameof(StartTime));
+                if (StartTime.HasValue && EndTime.HasValue)
+                {
+                    Runtime = EndTime.Value.Subtract(StartTime.Value);
+                }
+            }
+        }
+        private DateTime? _endTime;
+        public DateTime? EndTime
+        {
+            get => _endTime; set
+            {
+                _endTime = value;
+                OnPropertyChanged(nameof(EndTime));
+                if (StartTime.HasValue && EndTime.HasValue)
+                {
+                    Runtime = EndTime.Value.Subtract(StartTime.Value);
+                }
+            }
+        }
+        private TimeSpan? _runtime;
+        public TimeSpan? Runtime
+        {
+            get => _runtime; set
+            {
+                _runtime = value;
+                OnPropertyChanged(nameof(Runtime));
+            }
+        }
         private ManagerStatus _status;
-        private ObservableCollection<ValidationTest> _validations;
-        private ObservableCollection<CpuLoad> _cpuReadings;
-        private ObservableCollection<RamLoad> _ramReadings;
-
         public ManagerStatus Status
         {
             get => _status;
             set
             {
                 _status = value;
+                OnPropertyChanged(nameof(Status));
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke();
                     UpdateScore();
                 }
+                if (StartTime.HasValue && EndTime.HasValue)
+                {
+                    Runtime = EndTime.Value.Subtract(StartTime.Value);
+                }
             }
         }
-        public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
-        public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
-        public double? Score { get; set; }
-        public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
-#endregion
+        private int? _rowsRead;
+        public int? RowsRead
+        {
+            get => _rowsRead; set
+            {
+                _rowsRead = value;
+                OnPropertyChanged(nameof(RowsRead));
+            }
+        }
+        private int? _rowsWritten;
+        public int? RowsWritten
+        {
+            get => _rowsWritten; set
+            {
+                _rowsWritten = value;
+                OnPropertyChanged(nameof(RowsWritten));
+            }
+        }
+        private double? _score;
+        public double? Score
+        {
+            get => _score; set
+            {
+                _score = value;
+                OnPropertyChanged(nameof(Score));
+            }
+        }
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
 
         private void UpdateScore()
         {
@@ -109,6 +175,10 @@ namespace Model
             Score = TotalCount > 0 ? (double)OkCount / (double)TotalCount * 100.0d : 100.0d;
         }
 
+        /// <summary>
+        /// Adds a validation test to the manager and updates its score.
+        /// </summary>
+        /// <param name="v">The validation test to add.</param>
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
@@ -116,29 +186,27 @@ namespace Model
         }
 
         /// <summary>
-        /// Adds performance readings to the manager, and ensures that entries are never added twice.
+        /// Adds performance readings to the manager as long as they are not older than the latest entry in their respective list.
         /// </summary>
         /// <param name="cpuReadings">A list of CPU readings.</param>
         /// <param name="ramReadings">A list of RAM readings.</param>
-        public void AddReadings(List<CpuLoad> cpuReadings, List<RamLoad> ramReadings)
+        public void AddReadings(IList<CpuLoad> cpuReadings, IList<RamLoad> ramReadings)
         {
-            if (CpuReadings.Any())
+            DateTime minDate = CpuReadings.Last()?.Date ?? DateTime.MinValue;
+            foreach (var reading in cpuReadings.ToList())
             {
-                DateTime lastReading = CpuReadings.Last().Date;
-                CpuReadings.AddRange(cpuReadings.Where(r => r.Date > lastReading));
+                if (reading.Date > minDate)
+                {
+                    CpuReadings.Add(reading);
+                }
             }
-            else
+            minDate = RamReadings.Last()?.Date ?? DateTime.MinValue;
+            foreach (var reading in ramReadings.ToList())
             {
-                CpuReadings.AddRange(cpuReadings);
-            }
-            if (RamReadings.Any())
-            {
-                DateTime lastReading = RamReadings.Last().Date;
-                RamReadings.AddRange(ramReadings.Where(r => r.Date > lastReading));
-            }
-            else
-            {
-                RamReadings.AddRange(ramReadings);
+                if (reading.Date > minDate)
+                {
+                    RamReadings.Add(reading);
+                }
             }
         }
 

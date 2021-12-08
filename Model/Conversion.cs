@@ -9,10 +9,13 @@ namespace Model
             Executions = new();
             AllManagers = new();
             HealthReport = new();
-            LastExecutionQuery = _sqlMinDateTime;
-            LastLogQuery = _sqlMinDateTime;
-            LastManagerQuery = _sqlMinDateTime;
-            LastValidationsQuery = _sqlMinDateTime;
+            LastExecutionQuery = SqlMinDateTime;
+            LastLogQuery = SqlMinDateTime;
+            LastLogUpdated = DateTime.MinValue;
+            LastManagerQuery = SqlMinDateTime;
+            LastManagerUpdated = DateTime.MinValue;
+            LastValidationsQuery = SqlMinDateTime;
+            LastValidationsUpdated = DateTime.MinValue;
         }
 
         private ObservableCollection<Execution> _executions;
@@ -66,14 +69,10 @@ namespace Model
 
         public void AddExecution(Execution execution)
         {
-            if (ActiveExecution != null)
+            if (ActiveExecution is not null)
             {
                 ActiveExecution.EndTime = execution.StartTime;
                 ActiveExecution.Status = ExecutionStatus.Finished;
-                if (ActiveExecution.StartTime.HasValue && ActiveExecution.EndTime.HasValue)
-                {
-                    ActiveExecution.Runtime = ActiveExecution.EndTime.Value.Subtract(ActiveExecution.StartTime.Value);
-                }
             }
             Executions.Add(execution);
         }
