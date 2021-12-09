@@ -100,10 +100,6 @@ namespace DashboardFrontend
                 StopMonitoring();
             }
             Conversion = new();
-            Conversion.AddExecution(new(1, DateTime.MinValue));
-            Conversion.AddExecution(new(2, DateTime.MinValue));
-            Conversion.AddExecution(new(3, DateTime.MinValue));
-            Conversion.AddExecution(new(4, DateTime.MinValue));
             _logMessageParser = new(Conversion);
         }
 
@@ -167,40 +163,36 @@ namespace DashboardFrontend
             {
                 throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
             }
-            if (!Conversion.Executions.Any())
-            {
-                // Assume no executions have been started or found yet.
-                return;
-            }
+
+            var newData = DatabaseHandler.GetLogMessagesSince(Conversion.LastLogQuery);
+            Conversion.LastLogQuery = DateTime.Now;
+
+            var managers = _logMessageParser.Parse(newData);
+            // AllManagers list may not be necessary
+            //lock (Conversion.AllManagers)
+            //{
+            //    Conversion.AllManagers.AddRange(managers);
+            //}
 
             foreach (Execution exec in Conversion.Executions)
             {
-                var newData = DatabaseHandler.GetLogMessagesFromExecutionSince(exec.Log.LastModified, exec.Id);
-                exec.Log.LastModified = DateTime.Now;
-
+                if (managers.Any())
+                {
+                    var newExecManagers = managers.Where(m => m.ExecutionId == exec.Id).ToList();
+                    lock (exec.Managers)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            exec.AddManagers(newExecManagers);
+                        });
+                    }
+                }
                 if (newData.Any())
                 {
-                    var managers = _logMessageParser.Parse(newData);
-                    if (managers.Any())
-                    {
-                        lock (Conversion.AllManagers)
-                        {
-                            Conversion.AllManagers.AddRange(managers);
-                        }
-
-                        lock (exec.Managers)
-                        {
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                exec.AddManagers(managers);
-                            });
-                        }
-                    }
-
-                    // Ensure that data is only updated on the UI thread as required by WPF.
+                    var newExecMessages = newData.Where(m => m.ExecutionId == exec.Id);
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        exec.Log.Messages.AddRange(newData);
+                        exec.Log.Messages.AddRange(newExecMessages);
                     });
                 }
             }
