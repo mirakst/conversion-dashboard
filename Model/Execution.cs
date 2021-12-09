@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public delegate void ExecutionProgressUpdated(int currentProgress);
 
@@ -73,7 +75,7 @@
 
         public override string ToString()
         {
-            return $"Execution {Id}: Status={Status} Start={StartTime:G} End={EndTime:G}";
+            return $"Execution {Id}: Status={Status} Start={StartTime?.ToString(new CultureInfo("da-DK"))} End={EndTime?.ToString(new CultureInfo("da-DK"))}";
         }
 
         public override bool Equals(object obj)

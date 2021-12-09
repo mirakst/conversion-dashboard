@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Model
 {
@@ -34,7 +35,7 @@ namespace Model
 
         public override string ToString()
         {
-            return $"{Date:G} [{Type}]: {Content}";
+            return $"{Date.ToString(new CultureInfo("da-DK"))} [{Type}]: {Content}";
         }
 
         public override int GetHashCode()

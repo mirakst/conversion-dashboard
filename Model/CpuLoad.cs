@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class CpuLoad : PerformanceMetric
     {
@@ -13,7 +15,7 @@
 
         public override string ToString()
         {
-            return $"{Date:G}: {Load}%";
+            return $"{Date.ToString(new CultureInfo("da-DK"))}: {Load}%";
         }
 
         public override int GetHashCode()

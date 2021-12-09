@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class ManagerUsage
     {
@@ -22,7 +24,7 @@
         public override string ToString()
         {
             return $"Execution Id: {ExecutionId}\n" +
-                   $"Date: {Date:G}\n" +
+                   $"Date: {Date.ToString(new CultureInfo("da-DK"))}\n" +
                    $"Rows read: {RowsRead}\n" +
                    $"Rows written: {RowsWritten}\n";
         }
