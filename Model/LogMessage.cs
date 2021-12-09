@@ -34,7 +34,7 @@ namespace Model
 
         public override string ToString()
         {
-            return $"{Date} [{Type}]: {Content}";
+            return $"{Date:G} [{Type}]: {Content}";
         }
 
         public override int GetHashCode()

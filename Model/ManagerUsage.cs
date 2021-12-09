@@ -22,7 +22,7 @@
         public override string ToString()
         {
             return $"Execution Id: {ExecutionId}\n" +
-                   $"Date: {Date}\n" +
+                   $"Date: {Date:G}\n" +
                    $"Rows read: {RowsRead}\n" +
                    $"Rows written: {RowsWritten}\n";
         }

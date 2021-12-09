@@ -13,7 +13,7 @@
 
         public override string ToString()
         {
-            return $"{Date.ToLongTimeString()}: {Load}%";
+            return $"{Date:G}: {Load}%";
         }
 
         public override int GetHashCode()

@@ -73,7 +73,7 @@
 
         public override string ToString()
         {
-            return $"Execution {Id}: Status={Status} Start={StartTime} End={EndTime}";
+            return $"Execution {Id}: Status={Status} Start={StartTime:G} End={EndTime:G}";
         }
 
         public override bool Equals(object obj)
