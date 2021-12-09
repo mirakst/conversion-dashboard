@@ -19,6 +19,7 @@
         <Setter Property="IsReadOnly" Value="True"/>
         <Setter Property="CanUserReorderColumns" Value="False"/>
         <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BackgroundColor}"/>
         <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="Background" Value="{DynamicResource HeaderColor}"/>
@@ -28,6 +29,7 @@
                 <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
                 <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                 <Setter Property="FontSize" Value="14"/>
+                <Setter Property="MinHeight" Value="22"/>
                 <Style.Triggers>
                     <Trigger Property="IsSelected" Value="True">
                         <Setter Property="Background" Value="{DynamicResource TabItem.Selected.Background}"/>
