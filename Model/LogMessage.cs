@@ -17,53 +17,12 @@
             ExecutionId = executionId;
         }
 
-        public LogMessageType Type
-        {
-            get => _type; set
-            {
-                _type = value;
-                OnPropertyChanged(nameof(Type));
-            }
-        }
-        public string Content
-        {
-            get => _content; set
-            {
-                _content = value;
-                OnPropertyChanged(nameof(Content));
-            }
-        }
-        public DateTime Date
-        {
-            get => _date; set
-            {
-                _date = value;
-                OnPropertyChanged(nameof(Date));
-            }
-        }
-        public int ContextId
-        {
-            get => _contextId; set
-            {
-                _contextId = value;
-                OnPropertyChanged(nameof(ContextId));
-            }
-        }
-        public int ExecutionId
-        {
-            get => _executionId; set
-            {
-                _executionId = value;
-                OnPropertyChanged(nameof(ExecutionId));
-            }
-        }
+        public LogMessageType Type { get; }
+        public string Content { get; }
+        public DateTime Date { get; }
+        public int ContextId { get; }
+        public int ExecutionId { get; }
         private string _managerName;
-        private LogMessageType _type;
-        private string _content;
-        private DateTime _date;
-        private int _contextId;
-        private int _executionId;
-
         public string ManagerName
         {
             get => _managerName; set

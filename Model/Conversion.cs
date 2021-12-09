@@ -2,6 +2,8 @@
 
 namespace Model
 {
+    public delegate void ActiveExecutionChanged(Execution exec);
+
     public class Conversion : ObservableObject
     {
         public Conversion()
@@ -17,6 +19,8 @@ namespace Model
             LastValidationsQuery = SqlMinDateTime;
             LastValidationsUpdated = DateTime.MinValue;
         }
+
+        public event ActiveExecutionChanged OnActiveExecutionChanged;
 
         private ObservableCollection<Execution> _executions;
         public ObservableCollection<Execution> Executions
@@ -36,6 +40,7 @@ namespace Model
             {
                 _activeExecution = value;
                 OnPropertyChanged(nameof(ActiveExecution));
+                OnActiveExecutionChanged?.Invoke(ActiveExecution);
             }
         }
         private ObservableCollection<Manager> _allManagers;

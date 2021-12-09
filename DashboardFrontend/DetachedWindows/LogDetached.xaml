@@ -20,7 +20,7 @@
               Margin="-4, 0, 0, 4">
                 <ToggleButton Name="ToggleButtonLogInfo"
                               Grid.Column="0"
-                              IsChecked="{Binding Log.ShowInfo}"
+                              IsChecked="{Binding ShowInfo}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Info.png"
@@ -37,7 +37,7 @@
                            HorizontalAlignment="Center"/>
                 <ToggleButton Name="ToggleButtonLogWarning"
                               Grid.Column="2"
-                              IsChecked="{Binding Log.ShowWarn}"
+                              IsChecked="{Binding ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Warning.png"
@@ -53,7 +53,7 @@
                            Grid.Column="3"/>
                 <ToggleButton Name="ToggleButtonLogError"
                               Grid.Column="4"
-                              IsChecked="{Binding Log.ShowErrors}"
+                              IsChecked="{Binding ShowErrors}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Error.png"
@@ -69,7 +69,7 @@
                            Grid.Column="5"/>
                 <ToggleButton Name="ToggleButtonLogFatal"
                               Grid.Column="6"
-                              IsChecked="{Binding Log.ShowFatal}"
+                              IsChecked="{Binding ShowFatal}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Fatal.png"
@@ -85,7 +85,7 @@
                            Grid.Column="7"/>
                 <ToggleButton Name="ToggleButtonLogValidation"
                               Grid.Column="8"
-                              IsChecked="{Binding Log.ShowValidations}"
+                              IsChecked="{Binding ShowValidations}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Validation.png" 
@@ -98,6 +98,7 @@
 
                 <ToggleButton Name="ButtonLogFilter"
                               Grid.Column="9"
+                              Click="ButtonLogFilter_Click"
                               Style="{DynamicResource FilterButton}"
                               Margin="0, 0, 0, -1">
                     <Image Source="../Icons/Filter.png"/>
@@ -122,7 +123,7 @@
                     <valueConverters:WidthCalculationMultiConverter x:Key="lastColumnResizeConverter"/>
                 </Grid.Resources>
                 <ListView x:Name="ListViewLog"
-                          ItemsSource="{Binding Log.Messages, Mode=OneWay}"
+                          ItemsSource="{Binding MessageView}"
                           Background="{DynamicResource BackgroundColor}"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           VirtualizingPanel.IsVirtualizing="True"
@@ -239,7 +240,7 @@
                                       VerticalAlignment="Top"
                                       Style="{DynamicResource ComboBoxExecutions}" 
                                       ItemsSource="{Binding Executions}" 
-                                      SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                      SelectedItem="{Binding SelectedExecution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">

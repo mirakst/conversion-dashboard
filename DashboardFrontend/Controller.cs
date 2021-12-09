@@ -161,17 +161,21 @@ namespace DashboardFrontend
                 throw new ArgumentNullException(nameof(Conversion));
             }
 
-            //var newData = DU.GetLogMessages(Conversion.ActiveExecution.Log.LastModified);
-            var newData = new List<LogMessage>()
-            {
-                new("hej1", LogMessageType.Info, 1, 1, DateTime.Now),
-                new("hej2", LogMessageType.Info, 1, 1, DateTime.Now),
-                new("hej3", LogMessageType.Info, 1, 1, DateTime.Now),
-            };
+            var newData = DU.GetLogMessages(Conversion.ActiveExecution.Log.LastModified);
             Conversion.ActiveExecution.Log.LastModified = DateTime.Now;
+
+            if (!newData.Any())
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Conversion.ActiveExecution.Log.Messages.AddRange(newData);
+                foreach (Execution e in Conversion.Executions)
+                {
+                    var messages = newData.Where(m => m.ExecutionId == e.Id);
+                    e.Log.Messages.AddRange(messages);
+                }
             });
         }
 
@@ -434,10 +438,20 @@ namespace DashboardFrontend
                     //monitoring.Start();
                     //updateViews.Start();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
-                    Conversion?.AddExecution(new(1, DateTime.MinValue));
+                    Conversion = new();
+                    Execution e = new(1, DateTime.Now);
+                    Conversion.AddExecution(e);
+                    Execution e2 = new(2, DateTime.Now);
+                    Conversion.AddExecution(e2);
+                    Execution e3 = new(3, DateTime.Now);
+                    Conversion.AddExecution(e3);
+                    Execution e4 = new(4, DateTime.Now);
+                    Conversion.AddExecution(e4);
                     Task.Run(() =>
                     {
+                        _vm.IsRunning = true;
                         Timer t = new(x => { UpdateLog(); }, null, 0, 500);
+                        while (_vm.IsRunning) { }
                     });
                 }
             }

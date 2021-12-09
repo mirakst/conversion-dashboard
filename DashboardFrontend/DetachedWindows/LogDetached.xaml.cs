@@ -2,6 +2,7 @@
 using DashboardFrontend.ViewModels;
 using System.Windows.Input;
 using DashboardFrontend.NewViewModels;
+using System;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -55,9 +56,9 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
-        private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
+        private void ButtonLogFilter_Click(object sender, RoutedEventArgs e)
         {
-            e.Accepted = ((NewLogViewModel)DataContext).OnMessagesFilter(e.Item);
+            ((NewLogViewModel)DataContext).Log?.Messages.Add(new Model.LogMessage("ass", Model.LogMessageType.Info, 1, 1, DateTime.Now));
         }
     }
 }
