@@ -2,7 +2,7 @@
 
 namespace Model
 {
-    public class Cpu : BaseViewModel
+    public class Cpu : ObservableObject
     {
         public Cpu(string name, int? cores, long? maxFreq)
         {

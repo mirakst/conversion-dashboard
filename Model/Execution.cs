@@ -7,7 +7,7 @@ namespace Model
         Started, Finished
     }
 
-    public class Execution : BaseViewModel
+    public class Execution : ObservableObject
     {
         public Execution(int id, DateTime startTime)
         {

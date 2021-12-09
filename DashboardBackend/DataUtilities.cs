@@ -280,9 +280,9 @@ namespace DashboardBackend
             }
             netRes = BuildNetworkUsage(networkEntries);
 
-            hr.Cpu.Readings = cpuRes;
-            hr.Ram.Readings = ramRes;
-            hr.Network.Readings = netRes;
+            //hr.Cpu.Readings = cpuRes;
+            //hr.Ram.Readings = ramRes;
+            //hr.Network.Readings = netRes;
             return queryResult.Count;
         }
 

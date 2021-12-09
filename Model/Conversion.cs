@@ -2,7 +2,7 @@
 
 namespace Model
 {
-    public class Conversion : BaseViewModel
+    public class Conversion : ObservableObject
     {
         public Conversion()
         {
@@ -75,6 +75,7 @@ namespace Model
                 ActiveExecution.Status = ExecutionStatus.Finished;
             }
             Executions.Add(execution);
+            ActiveExecution = execution;
         }
     }
 }

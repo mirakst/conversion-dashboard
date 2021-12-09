@@ -68,11 +68,11 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(TotalCount));
             }
         }
-        public int InfoCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Info));
-        public int WarnCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Warning));
-        public int ErrorCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Error));
-        public int FatalCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Fatal));
-        public int ValidationCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Validation));
+        public int InfoCount => LogMessages.Count(m => m.Type.HasFlag(LogMessageType.Info));
+        public int WarnCount => LogMessages.Count(m => m.Type.HasFlag(LogMessageType.Warning));
+        public int ErrorCount => LogMessages.Count(m => m.Type.HasFlag(LogMessageType.Error));
+        public int FatalCount => LogMessages.Count(m => m.Type.HasFlag(LogMessageType.Fatal));
+        public int ValidationCount => LogMessages.Count(m => m.Type.HasFlag(LogMessageType.Validation));
         public int Id { get; set; }
         private ObservableCollection<ManagerObservable> _managers = new();
         public ObservableCollection<ManagerObservable> Managers

@@ -1,6 +1,6 @@
 ﻿namespace Model
 {
-    public class HealthReport : BaseViewModel
+    public class HealthReport : ObservableObject
     {
         public HealthReport()
         {

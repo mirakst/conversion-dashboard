@@ -1,5 +1,4 @@
 using DashboardFrontend.DetachedWindows;
-using System;
 using DashboardFrontend.ViewModels;
 using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
@@ -8,9 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
 using DashboardFrontend.Charts;
-using LiveChartsCore.SkiaSharpView.WPF;
+using DashboardFrontend.NewViewModels;
 
 namespace DashboardFrontend
 {
@@ -65,17 +63,9 @@ namespace DashboardFrontend
 
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
-            LogDetached detachLog = new(detachedLogViewModel);
+            NewLogViewModel viewModel = ViewModel.Controller.CreateLogViewModel();
+            LogDetached detachLog = new(viewModel);
             detachLog.Show();
-            detachLog.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
-                });
-            };
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)

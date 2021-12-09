@@ -1,5 +1,6 @@
 ﻿using DashboardBackend.Database;
 using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.NewViewModels;
 using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using Model;
@@ -85,15 +86,13 @@ namespace DashboardFrontend
             ManagerViewModels = new() { _vm.ManagerViewModel };
         }
 
-        public LogViewModel CreateLogViewModel()
+        public NewLogViewModel CreateLogViewModel()
         {
-            LogViewModel result = new();
-            if (Conversion != null && Conversion.Executions.Any())
+            if (Conversion is null)
             {
-                result.UpdateData(Conversion.Executions);
+                throw new ArgumentNullException(nameof(Conversion));
             }
-            LogViewModels.Add(result);
-            return result;
+            return new NewLogViewModel(Conversion);
         }
 
         public ValidationReportViewModel CreateValidationReportViewModel()
@@ -101,7 +100,7 @@ namespace DashboardFrontend
             ValidationReportViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.Executions);
+                //result.UpdateData(Conversion.Executions);
             }
             ValidationReportViewModels.Add(result);
             return result;
@@ -126,7 +125,7 @@ namespace DashboardFrontend
             ManagerViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.Managers);
+                //result.UpdateData(Conversion.ActiveExecution.Managers);
             }
             ManagerViewModels.Add(result);
             return result;
@@ -141,10 +140,10 @@ namespace DashboardFrontend
                     int estimatedMgrCount = DU.GetEstimatedManagerCount(exec.Id);
                     if (estimatedMgrCount == 0)
                     {
-                        if (exec.Log?.Messages.Find(m => m.Content.StartsWith("Loaded managerclasses:")) is LogMessage msg)
-                        {
-                            estimatedMgrCount = msg.Content.Split("\n").Length - 1;
-                        }
+                        //if (exec.Log?.Messages.Find(m => m.Content.StartsWith("Loaded managerclasses:")) is LogMessage msg)
+                        //{
+                        //    estimatedMgrCount = msg.Content.Split("\n").Length - 1;
+                        //}
                     }
                     exec.EstimatedManagerCount = estimatedMgrCount;
                 }
@@ -159,31 +158,21 @@ namespace DashboardFrontend
         {
             if (Conversion is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(Conversion));
             }
-            SetStatusMessage(DashboardStatus.UpdatingLog);
 
-            List<LogMessage> newData = DU.GetLogMessages(Conversion.LastLogQuery);
-            Conversion.LastLogQuery = DateTime.Now;
-
-            if (newData.Count > 0)
+            //var newData = DU.GetLogMessages(Conversion.ActiveExecution.Log.LastModified);
+            var newData = new List<LogMessage>()
             {
-                newData.ForEach(logMessage =>
-                {
-                    Execution? exec = Conversion.Executions.Find(e => e.Id == logMessage.ExecutionId);
-                    if (exec is null)
-                    {
-                        // The first log message of an execution was logged before the execution was created
-                        exec = new Execution(logMessage.ExecutionId, logMessage.Date);
-                        exec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
-                        Conversion.AddExecution(exec);
-                    }
-                    exec.Log.Messages.Add(logMessage);
-                    _logParseQueue.Enqueue(logMessage);
-                });
-                Conversion.LastLogUpdated = DateTime.Now;
-            }
-            ClearStatusMessage(DashboardStatus.UpdatingLog);
+                new("hej1", LogMessageType.Info, 1, 1, DateTime.Now),
+                new("hej2", LogMessageType.Info, 1, 1, DateTime.Now),
+                new("hej3", LogMessageType.Info, 1, 1, DateTime.Now),
+            };
+            Conversion.ActiveExecution.Log.LastModified = DateTime.Now;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Conversion.ActiveExecution.Log.Messages.AddRange(newData);
+            });
         }
 
         /// <summary>
@@ -191,69 +180,69 @@ namespace DashboardFrontend
         /// The method also updates the status of managers when possible.
         /// </summary>
         /// <param name="message">The log message to parse.</param>
-        private void ParseLogMessage(LogMessage message)
-        {
-            if (Conversion?.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
-            {
-                if (message.Content.StartsWith("Automatic manager execution: Starting manager"))
-                {
-                    Match match = Regex.Match(message.Content, @"^Automatic manager execution: Starting manager (?<Name>[\w.]*)");
-                    if (match.Success)
-                    {
-                        string name = match.Groups["Name"].Value;
-                        // Find all managers with the name parsed from the log message
-                        List<Manager> mgrs = Conversion.AllManagers.FindAll(m => m.Name == name);
-                        if (mgrs.Any())
-                        {
-                            // Check if any of the managers are created from ENGINE_PROPERTIES (context ID=0)
-                            if (mgrs.Find(m => m.ContextId == 0) is Manager manager)
-                            {
-                                manager.ContextId = message.ContextId + 1;
-                                if (!exec.Managers.Contains(manager))
-                                {
-                                    exec.AddManager(manager);
-                                }
-                            }
-                        }
-                        // If a manager with the found name doesn't exist, create it
-                        else
-                        {
-                            Manager manager = new()
-                            {
-                                Name = name,
-                                ContextId = message.ContextId + 1,
-                                Status = Manager.ManagerStatus.Running
-                            };
-                            exec.AddManager(manager);
-                            Conversion.AllManagers.Add(manager);
-                        }
-                    }
-                }
-                // Check if a manager has finished its execution
-                else if (message.Content == "Manager execution done.")
-                {
-                    if (exec.Managers.Find(m => m.ContextId == message.ContextId) is Manager mgr)
-                    {
-                        mgr.Status = Manager.ManagerStatus.Ok;
-                        if (!mgr.EndTime.HasValue)
-                        {
-                            mgr.EndTime = message.Date;
-                        }
-                    }
-                }
-                // Check if an execution might have ended
-                else if (message.Content.StartsWith("Program closing due to the following error:")
-                    || message.Content == "Exiting from GuiManager..."
-                    || message.Content == "No managers left to start automatically for BATCH"
-                    || message.Content == "Deploy is finished!!")
-                {
-                    exec.Status = Execution.ExecutionStatus.Finished;
-                    exec.EndTime = message.Date;
-                }
-                var msgManager = exec.Managers.Find(m => m.ContextId == message.ContextId);
-                message.ManagerName = msgManager?.Name;
-            }
-        }
+        //private void ParseLogMessage(LogMessage message)
+        //{
+        //    //if (Conversion?.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
+        //    {
+        //        if (message.Content.StartsWith("Automatic manager execution: Starting manager"))
+        //        {
+        //            Match match = Regex.Match(message.Content, @"^Automatic manager execution: Starting manager (?<Name>[\w.]*)");
+        //            if (match.Success)
+        //            {
+        //                string name = match.Groups["Name"].Value;
+        //                // Find all managers with the name parsed from the log message
+        //                List<Manager> mgrs = Conversion.AllManagers.FindAll(m => m.Name == name);
+        //                if (mgrs.Any())
+        //                {
+        //                    // Check if any of the managers are created from ENGINE_PROPERTIES (context ID=0)
+        //                    if (mgrs.Find(m => m.ContextId == 0) is Manager manager)
+        //                    {
+        //                        manager.ContextId = message.ContextId + 1;
+        //                        if (!exec.Managers.Contains(manager))
+        //                        {
+        //                            exec.AddManager(manager);
+        //                        }
+        //                    }
+        //                }
+        //                // If a manager with the found name doesn't exist, create it
+        //                else
+        //                {
+        //                    Manager manager = new()
+        //                    {
+        //                        Name = name,
+        //                        ContextId = message.ContextId + 1,
+        //                        Status = Manager.ManagerStatus.Running
+        //                    };
+        //                    exec.AddManager(manager);
+        //                    Conversion.AllManagers.Add(manager);
+        //                }
+        //            }
+        //        }
+        //        // Check if a manager has finished its execution
+        //        else if (message.Content == "Manager execution done.")
+        //        {
+        //            if (exec.Managers.Find(m => m.ContextId == message.ContextId) is Manager mgr)
+        //            {
+        //                mgr.Status = Manager.ManagerStatus.Ok;
+        //                if (!mgr.EndTime.HasValue)
+        //                {
+        //                    mgr.EndTime = message.Date;
+        //                }
+        //            }
+        //        }
+        //        // Check if an execution might have ended
+        //        else if (message.Content.StartsWith("Program closing due to the following error:")
+        //            || message.Content == "Exiting from GuiManager..."
+        //            || message.Content == "No managers left to start automatically for BATCH"
+        //            || message.Content == "Deploy is finished!!")
+        //        {
+        //            exec.Status = Execution.ExecutionStatus.Finished;
+        //            exec.EndTime = message.Date;
+        //        }
+        //        var msgManager = exec.Managers.Find(m => m.ContextId == message.ContextId);
+        //        message.ManagerName = msgManager?.Name;
+        //    }
+        //}
 
         public Queue<ValidationTest> ValidationQueue = new();
         /// <summary>
@@ -269,17 +258,17 @@ namespace DashboardFrontend
             SetStatusMessage(DashboardStatus.UpdatingValidations);
 
             int retryCount = 0;
-            while (ValidationQueue.Any() && retryCount < 5)
-            {
-                var v = ValidationQueue.Peek();
-                if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
-                {
-                    mgr.AddValidation(ValidationQueue.Dequeue());
-                    retryCount = 0;
-                    hasUpdatedData = true;
-                }
-                retryCount++;
-            }
+            //while (ValidationQueue.Any() && retryCount < 5)
+            //{
+            //    var v = ValidationQueue.Peek();
+            //    if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
+            //    {
+            //        mgr.AddValidation(ValidationQueue.Dequeue());
+            //        retryCount = 0;
+            //        hasUpdatedData = true;
+            //    }
+            //    retryCount++;
+            //}
 
             List<ValidationTest> newData = DU.GetAfstemninger(Conversion.LastValidationsQuery);
             Conversion.LastValidationsQuery = DateTime.Now;
@@ -289,14 +278,14 @@ namespace DashboardFrontend
                 hasUpdatedData = true;
                 newData.ForEach(v => 
                 {
-                    if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
-                    {
-                        mgr.AddValidation(v);
-                    }
-                    else
-                    {
-                        ValidationQueue.Enqueue(v);
-                    }
+                    //if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
+                    //{
+                    //    mgr.AddValidation(v);
+                    //}
+                    //else
+                    //{
+                    //    ValidationQueue.Enqueue(v);
+                    //}
                 });
             }
             if (hasUpdatedData)
@@ -343,31 +332,31 @@ namespace DashboardFrontend
             }
             SetStatusMessage(DashboardStatus.UpdatingManagers);
 
-            int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
+            //int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
 
-            while (_logParseQueue.Any())
-            {
-                ParseLogMessage(_logParseQueue.Dequeue());
-                managerCount = 1;
-            }
+            //while (_logParseQueue.Any())
+            //{
+            //    //ParseLogMessage(_logParseQueue.Dequeue());
+            //    managerCount = 1;
+            //}
 
             // Check for any health report readings
             if (Conversion.HealthReport?.Cpu is not null && Conversion.HealthReport?.Ram is not null)
             {
-                Conversion.AllManagers.ForEach(m =>
-                {
-                    List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                    List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                    m.AddReadings(cpuReadings, ramReadings);
-                });
+                //Conversion.AllManagers.ForEach(m =>
+                //{
+                //    List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                //    List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                //    m.AddReadings(cpuReadings, ramReadings);
+                //});
             }
 
-            if (managerCount > 0)
-            {
-                Conversion.LastManagerUpdated = DateTime.Now;
-                Conversion.LastLogUpdated = DateTime.Now;
-            }
+            //if (managerCount > 0)
+            //{
+            //    Conversion.LastManagerUpdated = DateTime.Now;
+            //    Conversion.LastLogUpdated = DateTime.Now;
+            //}
         }
 
         /// <summary>
@@ -389,7 +378,7 @@ namespace DashboardFrontend
                 {
                     if (!Conversion.Executions.Any(e => e.Id == newExec.Id))
                     {
-                        newExec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
+                        //newExec.OnExecutionProgressUpdated += _vm.UpdateExecutionProgress;
                         Conversion.AddExecution(newExec);
                     }
                 }
@@ -433,18 +422,23 @@ namespace DashboardFrontend
                 }
                 if (UserSettings.ActiveProfile.HasReceivedCredentials)
                 {
-                    _vm.LoadingVisibility = Visibility.Visible;
+                    //_vm.LoadingVisibility = Visibility.Visible;
 
                     DU.DatabaseHandler = new SqlDatabase(UserSettings.ActiveProfile.ConnectionString);
                     if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
                     }
-                    Task monitoring = new(StartMonitoring);
-                    Task updateViews = new(UpdateViews);
-                    monitoring.Start();
-                    updateViews.Start();
+                    //Task monitoring = new(StartMonitoring);
+                    //Task updateViews = new(UpdateViews);
+                    //monitoring.Start();
+                    //updateViews.Start();
                     UserSettings.ActiveProfile.HasStartedMonitoring = true;
+                    Conversion?.AddExecution(new(1, DateTime.MinValue));
+                    Task.Run(() =>
+                    {
+                        Timer t = new(x => { UpdateLog(); }, null, 0, 500);
+                    });
                 }
             }
             else
@@ -538,7 +532,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.Executions);
+                            //vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
@@ -549,7 +543,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.Executions);
+                            //vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
@@ -560,7 +554,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.Managers);
+                            //vm.UpdateData(Conversion.ActiveExecution.Managers);
                         });
                     }
                 }

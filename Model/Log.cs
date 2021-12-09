@@ -2,17 +2,28 @@
 
 namespace Model
 {
-    public class Log : BaseViewModel
+    public delegate void OnFilterChanged();
+
+    public class Log : ObservableObject
     {
         public Log()
         {
+            Messages = new();
             LastModified = SqlMinDateTime;
+            ShowInfo = true;
+            ShowWarn = true;
+            ShowErrors = true;
+            ShowFatal = true;
+            ShowValidations = true;
         }
 
-        private ObservableCollection<LogMessage> _messages;
-        public ObservableCollection<LogMessage> Messages
+        public event OnFilterChanged OnFilterChanged;
+
+        private SmartCollection<LogMessage> _messages;
+        public SmartCollection<LogMessage> Messages
         {
-            get => _messages; set
+            get => _messages;
+            set
             {
                 _messages = value;
                 OnPropertyChanged(nameof(Messages));
@@ -34,6 +45,7 @@ namespace Model
             {
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
+                OnFilterChanged?.Invoke();
             }
         }
         private bool _showWarn;
@@ -44,16 +56,18 @@ namespace Model
             {
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
+                OnFilterChanged?.Invoke();
             }
         }
-        private bool _showFailed;
-        public bool ShowFailed
+        private bool _showErrors;
+        public bool ShowErrors
         {
-            get => _showFailed;
+            get => _showErrors;
             set
             {
-                _showFailed = value;
-                OnPropertyChanged(nameof(ShowFailed));
+                _showErrors = value;
+                OnPropertyChanged(nameof(ShowErrors));
+                OnFilterChanged?.Invoke();
             }
         }
         private bool _showFatal;
@@ -64,6 +78,7 @@ namespace Model
             {
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
+                OnFilterChanged?.Invoke();
             }
         }
         private bool _showValidations;
@@ -74,8 +89,10 @@ namespace Model
             {
                 _showValidations = value;
                 OnPropertyChanged(nameof(ShowValidations));
+                OnFilterChanged?.Invoke();
             }
         }
+        public int InfoCount => Messages.Count(m => m.Type.HasFlag(LogMessageType.Info));
         public int WarnCount => Messages.Count(m => m.Type.HasFlag(LogMessageType.Warning));
         public int ErrorCount => Messages.Count(m => m.Type.HasFlag(LogMessageType.Error));
         public int FatalCount => Messages.Count(m => m.Type.HasFlag(LogMessageType.Fatal));

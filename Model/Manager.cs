@@ -9,7 +9,7 @@ namespace Model
         Ready, Running, Ok
     }
 
-    public class Manager : BaseViewModel
+    public class Manager : ObservableObject
     {
         public Manager()
         {

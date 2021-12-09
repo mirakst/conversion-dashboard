@@ -2,7 +2,7 @@
 
 namespace Model
 {
-    public class Ram : BaseViewModel
+    public class Ram : ObservableObject
     {
         public Ram(long? total)
         {

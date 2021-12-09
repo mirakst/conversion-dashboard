@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:valueConverters="clr-namespace:DashboardFrontend.ValueConverters"
+        xmlns:model="clr-namespace:Model;assembly=Model"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Log monitoring" 
@@ -19,13 +20,13 @@
               Margin="-4, 0, 0, 4">
                 <ToggleButton Name="ToggleButtonLogInfo"
                               Grid.Column="0"
-                              IsChecked="{Binding ShowInfo}"
+                              IsChecked="{Binding Log.ShowInfo}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Info.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding InfoCount}"/>
+                        <TextBlock Text="{Binding Log.InfoCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Messages"/>
                     </StackPanel>
                 </ToggleButton>
@@ -36,13 +37,13 @@
                            HorizontalAlignment="Center"/>
                 <ToggleButton Name="ToggleButtonLogWarning"
                               Grid.Column="2"
-                              IsChecked="{Binding ShowWarn}"
+                              IsChecked="{Binding Log.ShowWarn}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Warning.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding WarnCount}"/>
+                        <TextBlock Text="{Binding Log.WarnCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Warnings"/>
                     </StackPanel>
                 </ToggleButton>
@@ -52,13 +53,13 @@
                            Grid.Column="3"/>
                 <ToggleButton Name="ToggleButtonLogError"
                               Grid.Column="4"
-                              IsChecked="{Binding ShowError}"
+                              IsChecked="{Binding Log.ShowErrors}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Error.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding ErrorCount}"/>
+                        <TextBlock Text="{Binding Log.ErrorCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Errors"/>
                     </StackPanel>
                 </ToggleButton>
@@ -68,13 +69,13 @@
                            Grid.Column="5"/>
                 <ToggleButton Name="ToggleButtonLogFatal"
                               Grid.Column="6"
-                              IsChecked="{Binding ShowFatal}"
+                              IsChecked="{Binding Log.ShowFatal}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Fatal.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding FatalCount}"/>
+                        <TextBlock Text="{Binding Log.FatalCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Fatal"/>
                     </StackPanel>
                 </ToggleButton>
@@ -84,13 +85,13 @@
                            Grid.Column="7"/>
                 <ToggleButton Name="ToggleButtonLogValidation"
                               Grid.Column="8"
-                              IsChecked="{Binding ShowValidation}"
+                              IsChecked="{Binding Log.ShowValidations}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Icons/Validation.png" 
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding ValidationCount}"/>
+                        <TextBlock Text="{Binding Log.ValidationCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Validation"/>
                     </StackPanel>
                 </ToggleButton>
@@ -115,13 +116,13 @@
                     <ColumnDefinition Width="30"/>
                 </Grid.ColumnDefinitions>
             </Grid>
-
+            
             <Grid Grid.Row="1">
                 <Grid.Resources>
                     <valueConverters:WidthCalculationMultiConverter x:Key="lastColumnResizeConverter"/>
                 </Grid.Resources>
                 <ListView x:Name="ListViewLog"
-                          ItemsSource="{Binding MessageView}"
+                          ItemsSource="{Binding Log.Messages, Mode=OneWay}"
                           Background="{DynamicResource BackgroundColor}"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           VirtualizingPanel.IsVirtualizing="True"

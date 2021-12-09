@@ -1,23 +1,24 @@
 ﻿using System.Windows;
 using DashboardFrontend.ViewModels;
 using System.Windows.Input;
+using DashboardFrontend.NewViewModels;
 
 namespace DashboardFrontend.DetachedWindows
 {
     public partial class LogDetached
     {
-        public LogDetached(LogViewModel logViewModel)
+        public LogDetached(NewLogViewModel logViewModel)
         {
             InitializeComponent();
-            logViewModel.LogListView = ListViewLog;
+            //logViewModel.LogListView = ListViewLog;
             DataContext = logViewModel;
-            ListViewLog.Loaded += logViewModel.ScrollToLast;
+            //ListViewLog.Loaded += logViewModel.ScrollToLast;
         }
 
         private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
         {
-            var vm = (LogViewModel)DataContext;
-            vm.DoAutoScroll = !vm.DoAutoScroll;
+            //var vm = (LogViewModel)DataContext;
+            //vm.DoAutoScroll = !vm.DoAutoScroll;
         }
 
         private void ContextIdCheckbox_OnToggle(object sender, RoutedEventArgs e)
@@ -52,6 +53,11 @@ namespace DashboardFrontend.DetachedWindows
                 ButtonLogFilter.IsChecked = false;
                 this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
             }
+        }
+
+        private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
+        {
+            e.Accepted = ((NewLogViewModel)DataContext).OnMessagesFilter(e.Item);
         }
     }
 }

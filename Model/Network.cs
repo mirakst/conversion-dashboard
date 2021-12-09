@@ -2,7 +2,7 @@
 
 namespace Model
 {
-    public class Network : BaseViewModel
+    public class Network : ObservableObject
     {
         public Network(string name, string macAddress, long? speed)
         {
