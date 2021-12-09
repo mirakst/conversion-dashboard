@@ -36,6 +36,9 @@
             <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         </Style>
+        <Style TargetType="{x:Type lvc:CartesianChart}">
+            <Setter Property="Cursor" Value="Cross"/>
+        </Style>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -228,6 +231,12 @@
                                                 Binding="{Binding Manager.Status}"
                                                 Width="2*"/>
                         </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ToolTip" Value="Double click to open view"/>
+                                <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                     </DataGrid>
                 </Grid>
 
@@ -425,6 +434,7 @@
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="Focusable" Value="False"/>
                                     <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
+                                    <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
@@ -1028,6 +1038,7 @@
 
             <Control Name="ControlLoadingAnim"
                      Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged, FallbackValue=Collapsed}"
+                     Cursor="Wait"
                      Grid.ColumnSpan="2"
                      Grid.RowSpan="2"
                      Margin="0,100,0,0"

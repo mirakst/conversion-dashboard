@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -29,16 +30,6 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private ObservableCollection<ManagerWrapper> _managers = new();
-        private DataGrid _dataGridManagers;
-        public DataGrid DataGridManagers { 
-            get => _dataGridManagers; 
-            set
-            {
-                _dataGridManagers = value;
-            }
-        }
-        public ManagerChartViewModel ManagerChartViewModel { get; set; }
-        public Window Window { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
         {
             get => _managers;
@@ -48,18 +39,35 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(Managers));
             }
         }
-        private ObservableCollection<ManagerWrapper> _wrappedManagers = new();
-        public ObservableCollection<ManagerWrapper> WrappedManagers
+
+        private ObservableCollection<ManagerWrapper> _detailedManagers = new();
+        public ObservableCollection<ManagerWrapper> DetailedManagers
         {
-            get => _wrappedManagers;
+            get => _detailedManagers;
             set
             {
-                _wrappedManagers = value;
-                OnPropertyChanged(nameof(WrappedManagers));
+                _detailedManagers = value;
+                OnPropertyChanged(nameof(DetailedManagers));
             }
         }
-        public List<string> ExpandedManagerNames = new();
+        private DataGrid _dataGridManagers;
+        public DataGrid DataGridManagers { 
+            get => _dataGridManagers; 
+            set
+            {
+                _dataGridManagers = value;
+            }
+        }
+        public int HiddenManagers { get; set; }
 
+        public void UpdateHiddenManagers()
+        {
+            HiddenManagers = DetailedManagers.Where(m => m.Manager.CpuReadings.Count < 2).Count();
+            OnPropertyChanged(nameof(HiddenManagers));
+        }
+        public ManagerChartViewModel ManagerChartViewModel { get; set; }
+        public Window Window { get; set; }
+        
         public void UpdateData(List<Manager> executionManagers)
         {
             Managers.Clear();

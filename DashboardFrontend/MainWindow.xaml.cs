@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DashboardFrontend.Charts;
+using System.Linq;
 
 namespace DashboardFrontend
 {
@@ -300,7 +301,7 @@ namespace DashboardFrontend
             }
         }
 
-        private void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             ManagerViewModel vm;
             if (ViewModel.Controller.ManagerViewModels.Count > 1)
@@ -312,12 +313,21 @@ namespace DashboardFrontend
                 DetachManagerButtonClick(this, null);
                 vm = ViewModel.Controller.ManagerViewModels[1];
             }
+            await Task.Delay(5);
             vm.Window.Activate();
-            vm.DataGridManagers.SelectedItem = vm.DataGridManagers.Items[datagridManagers.SelectedIndex];
-            MouseButtonEventArgs doubleClickEvent = new MouseButtonEventArgs(Mouse.PrimaryDevice, (int)DateTime.Now.Ticks, MouseButton.Left);
-            doubleClickEvent.RoutedEvent = Control.MouseDoubleClickEvent;
-            doubleClickEvent.Source = this;
-            vm.DataGridManagers.RaiseEvent(doubleClickEvent);
+            var wrapper = (ManagerWrapper)datagridManagers.SelectedItem;
+            var foreignManager = vm.Managers.FirstOrDefault(m => m.Manager.ContextId == wrapper.Manager.ContextId);
+            if (foreignManager != null)
+            {
+                vm.Managers.Remove(foreignManager);
+                if (!vm.DetailedManagers.Contains(foreignManager))
+                {
+                    vm.DetailedManagers.Add(foreignManager);
+                    vm.UpdateHiddenManagers();
+                    foreignManager.IsDetailedInfoShown = true;
+                    vm.ManagerChartViewModel.AddChartLinesHelper(foreignManager);
+                }
+            }
         }
     }
 }

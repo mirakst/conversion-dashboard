@@ -19,7 +19,7 @@ namespace DashboardFrontend.Charts
                 new Axis
                 {
                     Name = "Time",
-                    Labeler = value => DateTime.FromOADate(value).ToString("HH:mm:ss"),
+                    Labeler = value => DateTime.FromOADate(value).ToString("mm:ss"),
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(500),
@@ -34,10 +34,10 @@ namespace DashboardFrontend.Charts
                     Labeler = (value) => value.ToString("P"),
                     MaxLimit = 1,
                     MinLimit = 0,
-                    LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     MinStep = 0.25,
                     ForceStepToMin = true,
+                    LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(500),
                 }
             };

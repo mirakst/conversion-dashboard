@@ -81,7 +81,7 @@ namespace DashboardFrontend.Charts
             ChartData.Values.Remove(data);
             string shortName = dataName.Split('.').Last();
             int managerIndex = ChartData.Series.FindIndex(e => e.Name == shortName);
-            ChartData.Series.RemoveAt(managerIndex);
+            if (managerIndex > -1) ChartData.Series.RemoveAt(managerIndex);
         }
 
         /// <summary>

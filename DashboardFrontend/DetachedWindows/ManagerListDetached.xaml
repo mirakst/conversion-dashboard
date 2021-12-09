@@ -11,15 +11,21 @@
         mc:Ignorable="d"
         Title="Manager statistics" 
         Height="720" 
-        Width="1280"
+        Width="1440"
         WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <Style TargetType="{x:Type lvc:CartesianChart}">
+            <Setter Property="Cursor" Value="Cross"/>
+        </Style>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="15"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -35,7 +41,7 @@
                           Height="100"
                           Width="5"
                           Background="{DynamicResource CanvasColor}"/>
-            
+
             <Grid x:Name="GridManagerList"
                   Grid.Row="1"
                   Grid.Column="1">
@@ -86,17 +92,17 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Manager.ContextId}"
-                                            Width="25pt"/>
-                        <DataGridTextColumn Header="Manager name" 
+                                            Width="0.5*"/>
+                        <DataGridTextColumn Header="Name" 
                                             Binding="{Binding Manager.ShortName}"
-                                            Width="9*"/>
+                                            Width="5*"/>
                         <DataGridTextColumn Header="Score" 
                                             Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                             Width="*"/>
                         <DataGridTextColumn Header="Status" 
                                             Binding="{Binding Manager.Status}"
                                             Width="*"/>
-                        <DataGridTemplateColumn Width="*">
+                        <!--<DataGridTemplateColumn Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Name="buttonAddManager"
@@ -112,8 +118,14 @@
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        </DataGridTemplateColumn>-->
                     </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="ToolTip" Value="Double click to move - Press Enter to move selection"/>
+                            <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                        </Style>
+                    </DataGrid.RowStyle>
                 </DataGrid>
             </Grid>
 
@@ -121,53 +133,68 @@
                   Grid.Column="3"
                   Grid.Row="1"
                   Margin="0,-1,0,0">
-                
+
                 <!-- The details tab -->
                 <TabControl Name="TabcontrolStatistics"
                             Background="{DynamicResource BackgroundColor}"
                             BorderBrush="Transparent">
-                    
+
                     <TabItem x:Name="TabInfo"
                              Header="Info"
                              Style="{DynamicResource TabItemStyleOverwrite}"
                              Margin="-2,0,0,0"
                              Height="27">
-                        
+
                         <Grid x:Name="GridInfoTab"
                               Margin="-4,-6,-3,-3">
-                            
                             <DataGrid x:Name="DatagridManagerDetails"
                                       Margin = "0, 3, 0, 0"
                                       Style="{DynamicResource DefaultDatagrid}"
-                                      ItemsSource="{Binding WrappedManagers}"
+                                      ItemsSource="{Binding DetailedManagers}"
                                       HorizontalScrollBarVisibility="Hidden"
                                       HorizontalAlignment="Left"
                                       PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown" 
                                       MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
-                                
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
                                                         Binding="{Binding Manager.ContextId}"
-                                                        Width="25pt"/>
-                                    <DataGridTextColumn Header="Start time"
+                                                        Width="0.7*"/>
+                                    <DataGridTextColumn Header="Name" 
+                                                        Binding="{Binding Manager.ShortName}"
+                                                        Width="6*"/>
+                                    <DataGridTextColumn Header="Score" 
+                                                        Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Start"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"
-                                                        Width="2*"/>
-                                    <DataGridTextColumn Header="End time"
+                                                        Width="2.5*"/>
+                                    <DataGridTextColumn Header="End"
                                                         Binding="{Binding Manager.EndTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"
-                                                        Width="2*"/>
-                                    <DataGridTextColumn Header="Runtime"
+                                                        Width="2.5*"/>
+                                    <DataGridTextColumn Header="Total"
                                                         Binding="{Binding Manager.Runtime, StringFormat=\{0:hh\\:mm\\:ss\}, TargetNullValue='N/A'}"
                                                         Width="2*"/>
                                     <DataGridTextColumn Header="Rows read"
                                                         Binding="{Binding Manager.RowsRead, TargetNullValue='N/A'}"
-                                                        Width="1.5*"/>
+                                                        Width="1.8*"/>
                                     <DataGridTextColumn Header="Rows written"
                                                         Binding="{Binding Manager.RowsWritten, TargetNullValue='N/A'}"
-                                                        Width="1.5*"/>
-                                    <DataGridTemplateColumn>
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Name="buttonRemoveManager"
+                                                        Width="1.8*"/>
+                                </DataGrid.Columns>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="ToolTip" Value="Double click to move - Press Enter to move selection"/>
+                                        <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    <!--<DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
                                                         ToolTip="Remove manager from detailed view"
                                                         FontFamily="wingdings 3"
@@ -175,30 +202,27 @@
                                                         Tag="{Binding}"
                                                         Style="{StaticResource DetachButton}"
                                                         Margin="0,0,4,0">
-                                                    <Image Source="../Icons/Remove.png"
+                                    <Image Source="../Icons/Remove.png"
                                                            Margin="8"/>
-                                                </Button>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </TabItem>
-                    
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>-->
+
                     <!-- The charting tab -->
                     <TabItem
                         x:Name="TabPerformance"
                         Header="Performance"
                         Style="{DynamicResource TabItemStyleOverwrite}"
                         Height="27">
-                        
+
                         <Grid x:Name="GridPerformanceTab"
                               Margin="-4,-6,-3,-3">
-                            
+
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="311*"/>
+                                <RowDefinition Height="13*"/>
+                                <RowDefinition Height="325*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -206,20 +230,23 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Row="0"
-                                  Margin="0,5,0,5">
-                                
+                                  Margin="0,5,0,5" Grid.RowSpan="2">
+
                                 <StackPanel>
                                     <Label Content="CPU Usage"
                                            Style="{DynamicResource ChartLabels}"/>
                                 </StackPanel>
-                                
+
                                 <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.CPUChart}"
                                                     Grid.Row="1"
                                                     Series="{Binding ChartData.Series}"
                                                     ZoomMode="X"
                                                     XAxes="{Binding ChartData.XAxis}"
                                                     YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Center">
+                                                    AnimationsSpeed="0">
+                                    <lvc:CartesianChart.TooltipTemplate>
+                                        <DataTemplate></DataTemplate>
+                                    </lvc:CartesianChart.TooltipTemplate>
                                 </lvc:CartesianChart>
 
                                 <Grid.RowDefinitions>
@@ -228,7 +255,7 @@
                                 </Grid.RowDefinitions>
                             </Grid>
 
-                            <Grid Grid.Row="1"
+                            <Grid Grid.Row="2"
                                   Margin="0,5,0,5">
 
                                 <Grid.RowDefinitions>
@@ -247,15 +274,17 @@
                                                     ZoomMode="X"
                                                     XAxes="{Binding ChartData.XAxis}"
                                                     YAxes="{Binding ChartData.YAxis}"
-                                                    TooltipPosition="Top">
+                                                    AnimationsSpeed="0">
+                                    <lvc:CartesianChart.TooltipTemplate>
+                                        <DataTemplate></DataTemplate>
+                                    </lvc:CartesianChart.TooltipTemplate>
                                 </lvc:CartesianChart>
                             </Grid>
-
                             <DataGrid Name="DatagridManagerCharts"
-                                      ItemsSource="{Binding WrappedManagers}"
                                       Grid.Row="0"
                                       Grid.Column="1"
                                       Grid.RowSpan="4"
+                                      ItemsSource="{Binding DetailedManagers}"
                                       Margin="15,5,0,10"
                                       BorderBrush="Transparent"
                                       Style="{DynamicResource DefaultDatagrid}"
@@ -263,42 +292,55 @@
                                       CanUserResizeColumns="False"
                                       PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown"
                                       MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
-                                
-                                <DataGrid.Columns>
-                                    <DataGridTemplateColumn Width="*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Rectangle Height="auto"
+
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Rectangle Height="auto"
                                                            Width="auto"
                                                            Fill="{Binding LineColor}">
-                                                </Rectangle>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                    <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
+                                                    </Rectangle>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
                                                         Header="ID"
                                                         Width="2*"/>
-                                    <DataGridTemplateColumn Width="*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Name="buttonRemoveManager"
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Name="buttonRemoveManager"
                                                         Click="RemoveManager_Click"
                                                         ToolTip="Remove manager from detailed view"
                                                         Width="20pt"
                                                         FontFamily="wingdings 3"
                                                         Tag="{Binding}"
                                                         Style="{DynamicResource DefaultButton}">
-                                                    <Image Source="../Icons/Remove.png"
+                                                        <Image Source="../Icons/Remove.png"
                                                            Margin="8"/>
-                                                </Button>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="Visibility" Value="{Binding Manager.CpuReadings.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                                            <Setter Property="ToolTip" Value="{Binding Manager.ShortName}"/>
+                                            <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                </DataGrid>
                         </Grid>
                     </TabItem>
                 </TabControl>
+                <TextBlock Text="{Binding HiddenManagers, StringFormat=Managers not shown in chart due to few data points: {0}}" 
+                           Foreground="{DynamicResource ForegroundColor}"
+                           TextWrapping="Wrap" 
+                           FontSize="14"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Right"/>
             </Grid>
         </Grid>
     </Border>

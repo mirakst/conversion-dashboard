@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -30,13 +31,18 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
+            List<ManagerWrapper> managers = new();
             foreach (ManagerWrapper manager in DatagridManagers.SelectedItems)
             {
-                if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
+                if (!Vm.DetailedManagers.Any(m => m.Manager.ContextId == manager.Manager.ContextId))
                 {
                     DatagridManagerMover("Add", manager);
-                    manager.IsDetailedInfoShown = true;
                 }
+                managers.Add(manager);
+            }
+            foreach (var manager in managers)
+            {
+                Vm.Managers.Remove(manager);
             }
         }
 
@@ -55,7 +61,7 @@ namespace DashboardFrontend.DetachedWindows
             foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
             {
                 DatagridManagerMover("Remove", manager);
-                manager.IsDetailedInfoShown = false;
+                Vm.Managers.Add(manager);
             }
         }
 
@@ -79,17 +85,22 @@ namespace DashboardFrontend.DetachedWindows
             switch (method)
             {
                 case "Add" when manager is not null:
-                    Vm.WrappedManagers.Add(manager);
+                    manager.IsDetailedInfoShown = true;
+                    Vm.DetailedManagers.Add(manager);
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.AddChartLinesHelper(manager);
                     break;
 
                 case "Remove" when manager is not null:
-                    Vm.WrappedManagers.Remove(manager);
+                    manager.IsDetailedInfoShown = false;
+                    Vm.DetailedManagers.Remove(manager);
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.RemoveChartLinesHelper(manager);
                     break;
 
                 case "Clear":
-                    Vm.WrappedManagers.Clear();
+                    Vm.DetailedManagers.Clear();
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.ClearChartLinesHelper();
                     break;
             }
