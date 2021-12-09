@@ -12,16 +12,5 @@ namespace Model.Tests
 
             Assert.Equal(expected, actual);
         }
-
-        [Fact]
-        public void ToString_SameRam_ReturnTrue()
-        {
-            var ram = new Ram(123);
-            var expected = "TOTAL MEMORY: 123 bytes";
-
-            var actual = ram.ToString();
-
-            Assert.Equal(expected, actual);
-        }
     }
 }

@@ -91,20 +91,5 @@ namespace Model.Tests
 
             Assert.Equal(expected, actual);
         }
-
-        [Fact]
-        public void ToString_SameManager_ReturnsTrue()
-        {
-            var manager = new Manager()
-            {
-                Name = "managerOne",
-                ContextId = 1
-            };
-            var expected = "Manager [managerOne], status [Ready]";
-
-            var actual = manager.ToString();
-
-            Assert.Equal(expected, actual);
-        }
     }
 }

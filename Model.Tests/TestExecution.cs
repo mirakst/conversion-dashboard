@@ -15,17 +15,6 @@ namespace Model.Tests
         }
 
         [Fact]
-        public void ToString_SameExecution_ReturnsTrue()
-        {
-            var execution = new Execution(1, DateTime.Parse("01-01-2020 12:00:00"));
-            var expected = "Execution 1: Status=Started Start=01-01-2020 12:00:00 End=";
-
-            var actual = execution.ToString();
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
         public void AddManager_AddsANewManagerToTheExecution_ReturnsTrue()
         {
             var expected = 1;

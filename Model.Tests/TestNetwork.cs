@@ -12,16 +12,5 @@ namespace Model.Tests
 
             Assert.Equal(expected, actual);
         }
-
-        [Fact]
-        public void ToString_SameNetwork_ReturnsTrue()
-        {
-            var network = new Network("Name", "MAC", 1234567890);
-            var expected = $"ADAPTER NAME: Name\nMAC ADDRESS: MAC\nSPEED: 1234567890 bps";
-
-            var actual = network.ToString();
-
-            Assert.Equal(expected, actual);
-        }
     }
 }
