@@ -304,16 +304,18 @@ namespace DashboardFrontend
         private async void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             ManagerViewModel vm;
-            if (ViewModel.Controller.ManagerViewModels.Count > 1)
+            int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
+            if (ViewModel.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution.Id == selectedExecutionId))
             {
-                vm = ViewModel.Controller.ManagerViewModels[1];
+                vm = ViewModel.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution.Id == selectedExecutionId);
             }
             else
             {
                 DetachManagerButtonClick(this, null);
-                vm = ViewModel.Controller.ManagerViewModels[1];
+                vm = ViewModel.Controller.ManagerViewModels.Last();
+                await Task.Delay(5);
+                vm.SelectedExecution = vm.Executions.First(exec => exec.Id == selectedExecutionId);
             }
-            await Task.Delay(5);
             vm.Window.Activate();
             var wrapper = (ManagerWrapper)datagridManagers.SelectedItem;
             var foreignManager = vm.Managers.FirstOrDefault(m => m.Manager.ContextId == wrapper.Manager.ContextId);

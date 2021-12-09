@@ -13,6 +13,19 @@ namespace DashboardFrontend.ViewModels
         public ManagerViewModel()
         {
             ManagerChartViewModel = new();
+        }
+
+        public ObservableCollection<ExecutionObservable> Executions { get; set; } = new();
+        public ExecutionObservable? _selectedExecution;
+        public ExecutionObservable? SelectedExecution
+        {
+            get => _selectedExecution;
+            set
+            {
+                _selectedExecution = value;
+                OnPropertyChanged(nameof(SelectedExecution));
+                SetExecution(value);
+            }
         }
 
         public ManagerViewModel(Window detachedWindow) : this()
@@ -67,17 +80,31 @@ namespace DashboardFrontend.ViewModels
         }
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public Window Window { get; set; }
-        
-        public void UpdateData(List<Manager> executionManagers)
+        public void UpdateData(List<Execution> executions)
         {
-            Managers.Clear();
-            foreach (var manager in executionManagers)
+            Executions.Clear();
+            int count = executions.Count;
+            for (int i = 0; i < count; i++)
             {
-                Managers.Add(new ManagerWrapper(manager));
+                Executions.Add(new ExecutionObservable(executions[i]));
+            }
+            if (SelectedExecution is null && count > 0)
+            {
+                SelectedExecution = Executions[^1];
             }
-            if (DataGridManagers != null) DataGridManagers.Items.Filter = OnManagersFilter;
+        }
+        private void SetExecution(ExecutionObservable exec)
+        {
+            if (exec is not null)
+            {
+                Managers.Clear();
+                DetailedManagers.Clear();
+                foreach (var manager in exec.Managers)
+                {
+                    Managers.Add(new ManagerWrapper(manager.OriginalManager));
+                }
+            }
         }
-
         private bool OnManagersFilter(object item)
         {
             ManagerWrapper mgr = (ManagerWrapper)item;

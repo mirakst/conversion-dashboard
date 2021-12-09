@@ -8,8 +8,11 @@
         Height="200" 
         Width="350"
         Background="{DynamicResource BackgroundColor}"
+        BorderBrush="{DynamicResource BorderColor}"
+        BorderThickness="1"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
+        FocusManager.FocusedElement="{Binding ElementName=TextBoxUserId}"
         ResizeMode="NoResize">
     <Border Margin="10">
         <Grid>

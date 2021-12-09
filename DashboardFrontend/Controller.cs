@@ -126,7 +126,7 @@ namespace DashboardFrontend
             ManagerViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.Managers);
+                result.UpdateData(Conversion.Executions);
             }
             ManagerViewModels.Add(result);
             return result;
@@ -560,7 +560,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.Managers);
+                            vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
