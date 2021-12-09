@@ -51,26 +51,24 @@
         public int EstimatedManagerCount { get; set; }
         #endregion
 
-        public void AddManager(Manager manager)
-        {
-            if (manager.Status == Manager.ManagerStatus.Ok)
-            {
-                UpdateProgress(manager);
-            }
-            else
-            {
-                manager.OnManagerFinished += UpdateProgress;
-            }
-            Managers.Add(manager);
+        public void AddManager(Manager manager)        {
+            if (manager.Status == Manager.ManagerStatus.Ok)
+            {
+                UpdateProgress(manager);
+            }
+            else
+            {
+                manager.OnManagerFinished += UpdateProgress;
+            }
+            Managers.Add(manager);
         }
-
-        private void UpdateProgress(Manager manager)
-        {
-            if (EstimatedManagerCount > 0)
-            {
-                CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
-            }
-            OnExecutionProgressUpdated?.Invoke(CurrentProgress);
+        private void UpdateProgress(Manager manager)
+        {
+            if (EstimatedManagerCount > 0)
+            {
+                CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
+            }
+            OnExecutionProgressUpdated?.Invoke(CurrentProgress);
         }
 
         public override string ToString()
@@ -78,14 +76,13 @@
             return $"Execution {Id}: Status={Status} Start={StartTime} End={EndTime}";
         }
 
-        public override bool Equals(object obj)
-        {
-            return (obj as Execution)?.Id == Id;
+        public override bool Equals(object obj)
+        {
+            return (obj as Execution)?.Id == Id;
         }
-
-        public override int GetHashCode()
-        {
-            return Id;
-        }
+        public override int GetHashCode()
+        {
+            return Id;
+        }
     }
 }

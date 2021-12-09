@@ -19,13 +19,13 @@ namespace DashboardBackend.Tests
                 new Execution(2, DateTime.Parse("01-01-2020 13:00:00")),
             };
 
-            var actual = DataUtilities.GetExecutions();
+            var actual = DataUtilities.GetExecutions(DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void GetExecution_GetsExecutionsFromTestDatabaseWithNewerSQLMinTimeThanLatestExecution_ReturnEmpty()
+        public void GetExecution_GetsExecutionsFromTestDatabaseWithNewerMinDateThanLatestExecution_ReturnEmpty()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
 
@@ -35,18 +35,13 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public void GetExecution_GetsExecutionsFromTestDatabaseNegativeExecutionId_ReturnFalse()
+        public void GetExecution_GetsExecutionsFromTestDatabaseWhereExecutionsWithSameIdExists_ReturnExecutions()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
-            var expected = new List<Execution>()
-            {
-                new Execution(-1, DateTime.Parse("01-01-2020 12:00:00")),
-                new Execution(-2, DateTime.Parse("01-01-2020 13:00:00")),
-            };
+            var expected = 2;
+            var actual = DataUtilities.GetExecutions().FindAll(e => e.Id == 1);
 
-            var actual = DataUtilities.GetExecutions();
-
-            Assert.False(expected == actual);
+            Assert.True(expected == actual.Count);
         }
         #endregion
         #region GetAfstemninger
@@ -82,11 +77,22 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
+        public void GetAfstemninger_GetsAfstemningerFromTestDatabaseWhereOneAfstemningIsDuplicated_ReturnTrue()
+        {
+            DataUtilities.DatabaseHandler = new TestDatabase();
+            var expected = 2;
+
+            var actual = DataUtilities.GetAfstemninger(DateTime.Parse("01-01-2020 10:00:00")).FindAll(a => a.Name == "validationOne").Count;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void GetAfstemninger_GetsAfstemningerFromTestDatabase_ThrowsArgumentException()
         {
             DataUtilities.DatabaseHandler = new TestDatabase();
 
-            Assert.Throws<ArgumentException>(() =>DataUtilities.GetAfstemninger(DateTime.Parse("01-01-2020 10:00:00")));
+            Assert.Throws<ArgumentException>(() =>DataUtilities.GetAfstemninger(DateTime.Parse("01-01-2020 08:00:00")));
         }
 
         [Fact]
@@ -180,7 +186,7 @@ namespace DashboardBackend.Tests
 
             Assert.Equal(expected, actual);
         }
-
+        
         [Fact]
         public void GetLogMessage_GetsLogMessagesWithTooLowExecutionIdAndNewerMinDateThanNewestLogMessage_ThrowsArgumentOutOfRangeException()
         {
