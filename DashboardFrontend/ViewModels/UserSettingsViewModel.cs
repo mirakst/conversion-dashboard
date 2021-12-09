@@ -6,7 +6,7 @@ namespace DashboardFrontend.ViewModels
 {
     public class UserSettingsViewModel : BaseViewModel, IUserSettings
     {
-        public UserSettingsViewModel(UserSettings userSettings)
+        public UserSettingsViewModel(IUserSettings userSettings)
         {
             Profiles = new ObservableCollection<Profile>(userSettings.Profiles);
             ActiveProfile = userSettings.ActiveProfile;
@@ -48,6 +48,16 @@ namespace DashboardFrontend.ViewModels
                 _activeProfile = value;
                 OnPropertyChanged(nameof(ActiveProfile));
             }
+        }
+
+        public void Save(IUserSettings userSettings)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Load()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

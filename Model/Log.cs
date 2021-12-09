@@ -9,6 +9,38 @@ namespace Model
         {
             Messages = new();
             LastModified = SqlMinDateTime;
+            Messages.CollectionChanged += UpdateCounters;
+        }
+
+        private void UpdateCounters(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            // Assume that items are only added to the list, not replaced or removed.
+            foreach (var item in e.NewItems)
+            {
+                if (item is LogMessage m)
+                {
+                    if (m.Type.HasFlag(LogMessageType.Info))
+                    {
+                        InfoCount++;
+                    }
+                    if (m.Type.HasFlag(LogMessageType.Warning))
+                    {
+                        WarnCount++;
+                    }
+                    if (m.Type.HasFlag(LogMessageType.Error))
+                    {
+                        ErrorCount++;
+                    }
+                    if (m.Type.HasFlag(LogMessageType.Fatal))
+                    {
+                        FatalCount++;
+                    }
+                    if (m.Type.HasFlag(LogMessageType.Validation))
+                    {
+                        ValidationCount++;
+                    }
+                }
+            }
         }
 
         public WpfObservableRangeCollection<LogMessage> Messages { get; }

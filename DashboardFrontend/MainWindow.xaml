@@ -6,6 +6,7 @@
         xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
+        xmlns:local="clr-namespace:DashboardFrontend"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
@@ -86,10 +87,10 @@
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                        <DataTrigger Binding="{Binding Controller.IsRunning}" Value="True">
                                             <Setter Property="Source" Value="/Icons/Stop.png"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                        <DataTrigger Binding="{Binding Controller.IsRunning}" Value="False">
                                             <Setter Property="Source" Value="/Icons/Start.png"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -246,7 +247,7 @@
                                 <Image Source="Icons/Info.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding InfoCount}"/>
+                                <TextBlock Text="{Binding SelectedExecution.Log.InfoCount, Mode=OneWay, FallbackValue=0}"/>
                                 <TextBlock Text=" Messages"/>
                             </StackPanel>
                         </ToggleButton>
@@ -263,7 +264,7 @@
                                 <Image Source="Icons/Warning.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding WarnCount}"/>
+                                <TextBlock Text="{Binding SelectedExecution.Log.WarnCount, Mode=OneWay, FallbackValue=0}"/>
                                 <TextBlock Text=" Warnings"/>
                             </StackPanel>
                         </ToggleButton>
@@ -273,13 +274,13 @@
                                    Grid.Column="3"/>
                         <ToggleButton Name="ToggleButtonLogError"
                                       Grid.Column="4"
-                                      IsChecked="{Binding ShowError}"
+                                      IsChecked="{Binding ShowErrors}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Error.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding ErrorCount}"/>
+                                <TextBlock Text="{Binding SelectedExecution.Log.ErrorCount, Mode=OneWay, FallbackValue=0}"/>
                                 <TextBlock Text=" Errors"/>
                             </StackPanel>
                         </ToggleButton>
@@ -295,7 +296,7 @@
                                 <Image Source="Icons/Fatal.png"
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding FatalCount}"/>
+                                <TextBlock Text="{Binding SelectedExecution.Log.FatalCount, Mode=OneWay, FallbackValue=0}"/>
                                 <TextBlock Text=" Fatal"/>
                             </StackPanel>
                         </ToggleButton>
@@ -305,13 +306,13 @@
                                    Grid.Column="7"/>
                         <ToggleButton Name="ToggleButtonLogValidation"
                                       Grid.Column="8"
-                                      IsChecked="{Binding ShowValidation}"
+                                      IsChecked="{Binding ShowValidations}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Icons/Validation.png" 
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding ValidationCount}"/>
+                                <TextBlock Text="{Binding SelectedExecution.Log.ValidationCount, Mode=OneWay, FallbackValue=0}"/>
                                 <TextBlock Text=" Validation"/>
                             </StackPanel>
                         </ToggleButton>
@@ -477,9 +478,6 @@
                                                     <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
                                                        VerticalAlignment="Center"
                                                        Foreground="White"/>
-                                                    <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
-                                                               VerticalAlignment="Center"
-                                                               Foreground="LightGray"/>-->
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>

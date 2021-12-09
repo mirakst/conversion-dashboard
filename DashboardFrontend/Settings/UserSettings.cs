@@ -50,6 +50,8 @@ namespace DashboardFrontend.Settings
         // For JSON serialization
         public int ActiveProfileId => ActiveProfile?.Id ?? 0;
 
+        public bool HasReceivedCredentials { get; set; }
+
         private void OverwriteAll(IUserSettings settings)
         {
             Profiles = new List<Profile>(settings.Profiles);
@@ -62,7 +64,7 @@ namespace DashboardFrontend.Settings
             SynchronizeAllQueries = settings.SynchronizeAllQueries;
         }
         
-        public void OverwriteAllAndSave(IUserSettings settings)
+        public void Save(IUserSettings settings)
         {
             OverwriteAll(settings);
             SaveToFile();
@@ -80,7 +82,7 @@ namespace DashboardFrontend.Settings
         /// <exception cref="FileNotFoundException"/>
         /// <exception cref="IOException"/>
         /// <exception cref="JsonException"/>
-        public void LoadFromFile()
+        public void Load()
         {
             string rawJson = File.ReadAllText(_fileName);
             UserSettings? loadedSettings = JsonSerializer.Deserialize<UserSettings>(rawJson);

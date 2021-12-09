@@ -13,5 +13,8 @@ namespace DashboardFrontend.Settings
         int AllQueryInterval { get; set; }
         bool SynchronizeAllQueries { get; set; }
         bool HasActiveProfile { get; }
+
+        void Save(IUserSettings userSettings);
+        void Load();
     }
 }

@@ -1,64 +1,70 @@
-﻿using System.Windows;
-using DashboardFrontend.ViewModels;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+
 using DashboardFrontend.NewViewModels;
-using System;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class LogDetached
+    public partial class LogWindow
     {
-        public LogDetached(NewLogViewModel logViewModel)
+        private bool _listViewLogShouldAutoScroll;
+
+        public LogWindow(NewLogViewModel logViewModel)
         {
             InitializeComponent();
-            //logViewModel.LogListView = ListViewLog;
+            ((ICollectionView)ListViewLog.Items).CollectionChanged += ListViewLog_CollectionChanged;
             DataContext = logViewModel;
-            //ListViewLog.Loaded += logViewModel.ScrollToLast;
-        }
-
-        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
-        {
-            //var vm = (LogViewModel)DataContext;
-            //vm.DoAutoScroll = !vm.DoAutoScroll;
         }
 
         private void ContextIdCheckbox_OnToggle(object sender, RoutedEventArgs e)
         {
-            var vm = (LogViewModel) DataContext;
-            vm.MessageView.Refresh();
-            vm.ScrollToLast();
+            //LogViewModel? vm = (LogViewModel)DataContext;
+            //vm.MessageView.Refresh();
+            //vm.ScrollToLast();
         }
 
         private void ContextIdFilter_OnClick(object sender, RoutedEventArgs e)
         {
-            var vm = (LogViewModel)DataContext;
-            bool buttonVal = bool.Parse((string)((FrameworkElement)sender).Tag);
-            if (vm.SelectedExecution is null) return;
-            foreach (var manager in vm.SelectedExecution.Managers)
-            {
-                manager.IsChecked = buttonVal;
-            }
-            vm.MessageView.Refresh();
-            vm.ScrollToLast();
+            //LogViewModel? vm = (LogViewModel)DataContext;
+            //bool buttonVal = bool.Parse((string)((FrameworkElement)sender).Tag);
+            //if (vm.SelectedExecution is null) return;
+            //foreach (ManagerObservable? manager in vm.SelectedExecution.Managers)
+            //{
+            //    manager.IsChecked = buttonVal;
+            //}
+            //vm.MessageView.Refresh();
+            //vm.ScrollToLast();
         }
 
         private void GridPopup_Opened(object sender, DependencyPropertyChangedEventArgs e)
         {
-            this.AddHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown, true);
+            //AddHandler(MouseDownEvent, GridPopupLogFilter_PreviewMouseDown, true);
         }
 
         private void GridPopupLogFilter_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
-            {
-                ButtonLogFilter.IsChecked = false;
-                this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
-            }
+            //if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
+            //{
+            //    ButtonLogFilter.IsChecked = false;
+            //    RemoveHandler(MouseDownEvent, GridPopupLogFilter_PreviewMouseDown);
+            //}
         }
 
-        private void ButtonLogFilter_Click(object sender, RoutedEventArgs e)
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
         {
-            ((NewLogViewModel)DataContext).Log?.Messages.Add(new Model.LogMessage("ass", Model.LogMessageType.Info, 1, 1, DateTime.Now));
+            _listViewLogShouldAutoScroll = !_listViewLogShouldAutoScroll;
+        }
+
+        private void ListViewLog_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (sender is ItemCollection l && l.Count > 0 && _listViewLogShouldAutoScroll)
+            {
+                int lastIndex = l.Count - 1;
+                ListViewLog.ScrollIntoView(ListViewLog.Items[lastIndex]);
+            }
         }
     }
 }

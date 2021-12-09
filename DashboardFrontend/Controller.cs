@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using DU = DashboardBackend.DataUtilities;
+using DU = DashboardBackend.DatabaseHandler;
 
 namespace DashboardFrontend
 {
@@ -637,7 +637,7 @@ namespace DashboardFrontend
         {
             try
             {
-                UserSettings.LoadFromFile();
+                UserSettings.Load();
             }
             catch (System.IO.FileNotFoundException)
             {

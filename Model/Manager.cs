@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace Model
 {
@@ -11,15 +12,21 @@ namespace Model
 
     public class Manager : ObservableObject
     {
+        private static int _nextId = 1;
+
         public Manager()
         {
+            Id = Interlocked.Increment(ref _nextId);
             Status = ManagerStatus.Ready;
+            Validations.CollectionChanged += UpdateValidationCounters;
         }
 
         public event ManagerFinished OnManagerFinished;
 
-        private ObservableCollection<ValidationTest> _validations;
-        public ObservableCollection<ValidationTest> Validations
+        /// Unique identifier for the Manager in the Dashboard system. Do not confuse with Context ID, which is only unique within an execution.
+        public int Id { get; }
+        private WpfObservableRangeCollection<ValidationTest> _validations;
+        public WpfObservableRangeCollection<ValidationTest> Validations
         {
             get => _validations; set
             {
@@ -27,8 +34,48 @@ namespace Model
                 OnPropertyChanged(nameof(Validations));
             }
         }
-        private ObservableCollection<CpuLoad> _cpuReadings;
-        public ObservableCollection<CpuLoad> CpuReadings
+        private int _validationsTotal;
+        public int ValidationsTotal
+        {
+            get => _validationsTotal;
+            set
+            {
+                _validationsTotal = value;
+                OnPropertyChanged(nameof(ValidationsTotal));
+            }
+        }
+        private int _validationsOk;
+        public int ValidationsOk
+        {
+            get => _validationsOk;
+            set
+            {
+                _validationsOk = value;
+                OnPropertyChanged(nameof(ValidationsOk));
+            }
+        }
+        private int _validationsDisabled;
+        public int ValidationsDisabled
+        {
+            get => _validationsDisabled;
+            set
+            {
+                _validationsDisabled = value;
+                OnPropertyChanged(nameof(ValidationsDisabled));
+            }
+        }
+        private int _validationsFailed;
+        public int ValidationsFailed
+        {
+            get => _validationsFailed; 
+            set
+            {
+                _validationsFailed = value;
+                OnPropertyChanged(nameof(ValidationsFailed));
+            }
+        }
+        private List<CpuLoad> _cpuReadings;
+        public List<CpuLoad> CpuReadings
         {
             get => _cpuReadings; set
             {
@@ -36,8 +83,8 @@ namespace Model
                 OnPropertyChanged(nameof(CpuReadings));
             }
         }
-        private ObservableCollection<RamLoad> _ramReadings;
-        public ObservableCollection<RamLoad> RamReadings
+        private List<RamLoad> _ramReadings;
+        public List<RamLoad> RamReadings
         {
             get => _ramReadings; set
             {
@@ -53,17 +100,9 @@ namespace Model
             {
                 _name = value;
                 OnPropertyChanged(nameof(Name));
-                var splitName = value.Split('.');
-                if (splitName.Contains("managers"))
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
-                }
-                else
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.Skip(4));
-                }
+                ShortName = value.Split('.').Last();
             }
-        } //[MANAGER_NAME] from [dbo].[MANAGERS]
+        }
         private int _contextId;
         public int ContextId
         {
@@ -74,7 +113,6 @@ namespace Model
                 OnPropertyChanged(nameof(ContextId));
             }
         }
-
         private string _shortName;
         public string ShortName
         {
@@ -170,9 +208,7 @@ namespace Model
 
         private void UpdateScore()
         {
-            int OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
-            int TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
-            Score = TotalCount > 0 ? (double)OkCount / (double)TotalCount * 100.0d : 100.0d;
+            Score = ValidationsTotal > 0 ? ValidationsOk / (double)ValidationsTotal * 100.0d : 100.0d;
         }
 
         /// <summary>
@@ -182,6 +218,12 @@ namespace Model
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
+            UpdateScore();
+        }
+
+        public void AddValidation(IEnumerable<ValidationTest> v)
+        {
+            Validations.AddRange(v);
             UpdateScore();
         }
 
@@ -224,5 +266,29 @@ namespace Model
         {
             return HashCode.Combine(Name, ContextId);
         }
+
+        private void UpdateValidationCounters(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var item in e.NewItems)
+            {
+                ValidationsTotal++;
+                switch ((item as ValidationTest)?.Status)
+                {
+                    case ValidationStatus.Ok:
+                        ValidationsOk++;
+                        break;
+                    case ValidationStatus.FailMismatch:
+                    case ValidationStatus.Failed:
+                        ValidationsFailed++;
+                        break;
+                    case ValidationStatus.Disabled:
+                        ValidationsDisabled++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
     }
 }

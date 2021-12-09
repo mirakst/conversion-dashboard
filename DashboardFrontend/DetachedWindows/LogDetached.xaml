@@ -1,4 +1,4 @@
-﻿<Window x:Class="DashboardFrontend.DetachedWindows.LogDetached"
+﻿<Window x:Class="DashboardFrontend.DetachedWindows.LogWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -26,7 +26,7 @@
                         <Image Source="../Icons/Info.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Log.InfoCount, Mode=OneWay, FallbackValue=0}"/>
+                        <TextBlock Text="{Binding SelectedExecution.Log.InfoCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Messages"/>
                     </StackPanel>
                 </ToggleButton>
@@ -43,7 +43,7 @@
                         <Image Source="../Icons/Warning.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Log.WarnCount, Mode=OneWay, FallbackValue=0}"/>
+                        <TextBlock Text="{Binding SelectedExecution.Log.WarnCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Warnings"/>
                     </StackPanel>
                 </ToggleButton>
@@ -59,7 +59,7 @@
                         <Image Source="../Icons/Error.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Log.ErrorCount, Mode=OneWay, FallbackValue=0}"/>
+                        <TextBlock Text="{Binding SelectedExecution.Log.ErrorCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Errors"/>
                     </StackPanel>
                 </ToggleButton>
@@ -75,7 +75,7 @@
                         <Image Source="../Icons/Fatal.png"
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Log.FatalCount, Mode=OneWay, FallbackValue=0}"/>
+                        <TextBlock Text="{Binding SelectedExecution.Log.FatalCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Fatal"/>
                     </StackPanel>
                 </ToggleButton>
@@ -91,14 +91,13 @@
                         <Image Source="../Icons/Validation.png" 
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Log.ValidationCount, Mode=OneWay, FallbackValue=0}"/>
+                        <TextBlock Text="{Binding SelectedExecution.Log.ValidationCount, Mode=OneWay, FallbackValue=0}"/>
                         <TextBlock Text=" Validation"/>
                     </StackPanel>
                 </ToggleButton>
 
                 <ToggleButton Name="ButtonLogFilter"
                               Grid.Column="9"
-                              Click="ButtonLogFilter_Click"
                               Style="{DynamicResource FilterButton}"
                               Margin="0, 0, 0, -1">
                     <Image Source="../Icons/Filter.png"/>

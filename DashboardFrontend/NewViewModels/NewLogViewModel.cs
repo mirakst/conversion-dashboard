@@ -1,34 +1,52 @@
-﻿using Model;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using Model;
 
 namespace DashboardFrontend.NewViewModels
 {
     public class NewLogViewModel : BaseViewModel
     {
-        public NewLogViewModel(Conversion conversion)
+        public NewLogViewModel(IDashboardController controller)
         {
-            if (conversion is null)
-            {
-                throw new ArgumentNullException(nameof(conversion), "Conversion cannot be null");
-            }
+            _executions = new();
+            _messageView = CollectionViewSource.GetDefaultView(null);
             ShowInfo = true;
             ShowWarn = true;
             ShowErrors = true;
             ShowFatal = true;
             ShowValidations = true;
-            Executions = conversion.Executions;
-            SelectedExecution = conversion.ActiveExecution;
+
+            if (controller.Conversion is not null)
+            {
+                Controller_OnConversionCreated(controller.Conversion);
+            }
+            else
+            {
+                controller.OnConversionCreated += Controller_OnConversionCreated;
+            }
         }
 
-        public ObservableCollection<Execution> Executions { get; }
+        private void Controller_OnConversionCreated(Conversion conversion)
+        {
+            Executions = conversion.Executions;
+            SelectedExecution = conversion.ActiveExecution;
+            Executions.CollectionChanged += Executions_CollectionChanged;
+        }
+
+        private ObservableCollection<Execution> _executions;
+        public ObservableCollection<Execution> Executions
+        {
+            get => _executions; 
+            private set
+            {
+                _executions = value;
+                OnPropertyChanged(nameof(Executions));
+            }
+        }
         private Execution? _selectedExecution;
         public Execution? SelectedExecution
         {
@@ -39,20 +57,9 @@ namespace DashboardFrontend.NewViewModels
                 OnPropertyChanged(nameof(SelectedExecution));
                 if (SelectedExecution is not null)
                 {
-                    SetupLog();
                     SetupView();
                 }
             }
-        }
-        private Log? _log;
-        public Log? Log 
-        { 
-            get => _log; 
-            set
-            {
-                _log = value;
-                OnPropertyChanged(nameof(Log));
-            } 
         }
         private ICollectionView _messageView;
         public ICollectionView MessageView
@@ -108,6 +115,7 @@ namespace DashboardFrontend.NewViewModels
             }
         }
         private bool _showValidations;
+
         public bool ShowValidations
         {
             get => _showValidations;
@@ -119,22 +127,13 @@ namespace DashboardFrontend.NewViewModels
             }
         }
 
-        private void SetupLog()
+        public void SetupView()
         {
             if (SelectedExecution is null)
             {
-                throw new ArgumentException("Expected a non-null execution when setting up the log", nameof(SelectedExecution));
+                throw new ArgumentNullException(nameof(SelectedExecution), "The selected execution must not be null when creating a CollectionView from its log");
             }
-            Log = SelectedExecution.Log;
-        }
-
-        public void SetupView()
-        {
-            if (Log is null)
-            {
-                throw new ArgumentNullException(nameof(Log), "Cannot create default view when Log is null");
-            }
-            MessageView = new CollectionViewSource { Source = Log.Messages }.View;
+            MessageView = new CollectionViewSource { Source = SelectedExecution.Log.Messages }.View;
             MessageView.Filter += OnMessagesFilter;
         }
 
@@ -146,6 +145,15 @@ namespace DashboardFrontend.NewViewModels
                 || (ShowFatal && msg.Type.HasFlag(LogMessageType.Fatal))
                 || (ShowWarn && msg.Type.HasFlag(LogMessageType.Warning))
                 || (ShowValidations && msg.Type.HasFlag(LogMessageType.Validation));
+        }
+
+        private void Executions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Trace.WriteLine("HMM");
+            if (Executions.Any())
+            {
+                SelectedExecution = Executions.Last();
+            }
         }
     }
 }

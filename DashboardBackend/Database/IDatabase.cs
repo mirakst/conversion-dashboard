@@ -5,7 +5,7 @@ namespace DashboardBackend.Database
     /// <summary>
     /// Contains utilities to handle all interaction with the state database.
     /// </summary>
-    public interface IDatabaseHandler
+    public interface IDatabase
     {
         /// <summary>
         /// Retrieves all entries in the AFSTEMNING table of the state database added after the specified DateTime.

@@ -3,7 +3,7 @@
 namespace DashboardBackend.Database
 {   
     /// <inheritdoc />
-    public class SqlDatabase : IDatabaseHandler
+    public class SqlDatabase : IDatabase
     {
         public SqlDatabase(string connString)
         {

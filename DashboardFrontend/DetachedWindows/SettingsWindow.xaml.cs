@@ -13,9 +13,9 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        private readonly Controller controller;
+        private readonly IDashboardController controller;
 
-        public SettingsWindow(Controller controller)
+        public SettingsWindow(IDashboardController controller)
         {
             InitializeComponent();
             Settings = controller.UserSettings;
@@ -25,7 +25,7 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         private UserSettingsViewModel SettingsViewModel { get; }
-        private UserSettings Settings { get; }
+        private IUserSettings Settings { get; }
 
         private void Button_SaveAndClose(object sender, RoutedEventArgs e)
         {
@@ -48,7 +48,7 @@ namespace DashboardFrontend.DetachedWindows
                 if (Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
                 {
                     Settings.ActiveProfile.HasStartedMonitoring = false;
-                    controller.Reset();
+                    controller.SetupNewConversion();
                 }
                 else
                 {
@@ -57,7 +57,7 @@ namespace DashboardFrontend.DetachedWindows
             }
             try
             {
-                Settings.OverwriteAllAndSave(SettingsViewModel);
+                Settings.Save(SettingsViewModel);
                 Close();
             }
             catch (Exception ex)

@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controller.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Icons\Add.png" />
     <None Remove="Icons\Cog.png" />
     <None Remove="Icons\Detach.png" />
@@ -44,6 +48,10 @@
 
   <ItemGroup>
     <Content Include="Icons\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controller.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />

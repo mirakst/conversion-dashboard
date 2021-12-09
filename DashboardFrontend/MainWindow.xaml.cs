@@ -1,130 +1,73 @@
 using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.ViewModels;
-using LiveChartsCore.SkiaSharpView.WPF;
-using Model;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using DashboardFrontend.Charts;
 using DashboardFrontend.NewViewModels;
+using DashboardBackend;
+using DashboardFrontend.Settings;
+using System.Collections.Specialized;
 
 namespace DashboardFrontend
 {
     public partial class MainWindow : Window
     {
+        private bool _listViewLogShouldAutoScroll = true;
+
         public MainWindow()
         {
-            this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            // Setup views
             MaxHeight = SystemParameters.WorkArea.Height;
             MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
-            ViewModel = new(ListViewLog);
-            DataContext = ViewModel;
+            ((ICollectionView)ListViewLog.Items).CollectionChanged += ListViewLog_CollectionChanged;
+
+            // Setup back-end
+            IDatabaseHandler dbHandler = new DatabaseHandler();
+            IUserSettings userSettings = new UserSettings();
+            Controller = new DashboardController(userSettings, dbHandler);
+            DataContext = new MainViewModel(Controller);
         }
 
-        private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show($"An unexpected error occured: {e.Exception.Message}", "Error");
-            e.Handled = true;
-        }
+        public IDashboardController Controller { get; }
 
-        public MainWindowViewModel ViewModel { get; }
-
+        #region Main Window Events
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.Controller.OnStartPressed();
+            Controller.OnChangeMonitoringStateRequested();
         }
 
-        //Detach window events
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new(ViewModel.Controller);
+            SettingsWindow settingsWindow = new(Controller);
             settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
 
         public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
-            ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
-            ManagerListDetached detachManager = new(detachedManagerViewModel);
-            detachManager.Show();
-            detachManager.Closed += delegate
-            {
-                // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateManagers) { }
-                    ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
-                });
-            };
+
         }
 
         public void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
-            NewLogViewModel viewModel = ViewModel.Controller.CreateLogViewModel();
-            LogDetached detachLog = new(viewModel);
-            detachLog.Show();
+            var viewModel = new NewLogViewModel(Controller);
+            var logWindow = new LogWindow(viewModel);
+            logWindow.Show();
         }
 
         public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportViewModel detachedValidationReportViewModel =
-                ViewModel.Controller.CreateValidationReportViewModel();
-            ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
-            detachVr.Show();
-            detachVr.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
-                });
-            };
+
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
         {
-            HealthReportViewModel detachedHealthReportViewModel = ViewModel.Controller.CreateHealthReportViewModel();
-            HealthReportDetached detachHr = new(detachedHealthReportViewModel);
-            detachHr.Show();
-            detachHr.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
-                });
-            };
-        }
 
-        //OnWindowClosing events
-        private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonSettings.IsEnabled = true;
         }
+        #endregion
 
-        private void OnManagerWindowClosing(object sender, CancelEventArgs e)
-        {
-            ButtonDetachManager.IsEnabled = true;
-        }
-
-        private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            ButtonLogDetach.IsEnabled = true;
-        }
-
-        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonValidationReportDetach.IsEnabled = true;
-        }
-
-        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonHealthReportDetach.IsEnabled = true;
-        }
-
+        #region Window Commands
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -166,51 +109,48 @@ namespace DashboardFrontend
                 DragMove();
             }
         }
+        #endregion
 
-        //Performance events
-
+        #region Health Report Component
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
-            chart?.AutoFocusOn();
+            //DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            //chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
-            chart?.AutoFocusOff();
+            //DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            //chart?.AutoFocusOff();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel is null) return;
-            _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
-            ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkDeltaChart.ChangeMaxView(comboBoxItemValue);
-            ViewModel.HealthReportViewModel.NetworkSpeedChart.ChangeMaxView(comboBoxItemValue);
+            //if (ViewModel is null) return;
+            //_ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
+            //ViewModel.HealthReportViewModel.SystemLoadChart.ChangeMaxView(comboBoxItemValue);
+            //ViewModel.HealthReportViewModel.NetworkChart.ChangeMaxView(comboBoxItemValue);
+            //ViewModel.HealthReportViewModel.NetworkDeltaChart.ChangeMaxView(comboBoxItemValue);
+            //ViewModel.HealthReportViewModel.NetworkSpeedChart.ChangeMaxView(comboBoxItemValue);
         }
+        #endregion
 
-        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
-        {
-            ViewModel.LogViewModel.DoAutoScroll = !ViewModel.LogViewModel.DoAutoScroll;
-        }
-
+        #region Validation Report Component
         /// <summary>
         /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
         /// </summary>
         /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
         private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
         {
-            TreeView tree = (TreeView)sender;
-            TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
-            {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
-                {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(manager.Name);
-                }
-            }
+            //TreeView tree = (TreeView)sender;
+            //TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            //if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
+            //{
+            //    if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
+            //    {
+            //        ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(manager.Name);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -218,75 +158,92 @@ namespace DashboardFrontend
         /// </summary>
         private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
         {
-            TreeView tree = (TreeView)sender;
-            TreeViewItem item = (TreeViewItem)e.OriginalSource;
-            item.IsSelected = false;
-            if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
-            {
-                if (ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
-                {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
-                }
-            }
+            //TreeView tree = (TreeView)sender;
+            //TreeViewItem item = (TreeViewItem)e.OriginalSource;
+            //item.IsSelected = false;
+            //if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
+            //{
+            //    if (ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
+            //    {
+            //        ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
+            //    }
+            //}
         }
 
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)
         {
-            var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.SrcSql);
-                TextBlockPopupSql.Content = "SQL source copied to clipboard";
-                PopupCopySql.IsOpen = true;
-            }
+            //var button = (Button)sender;
+            //if (button.DataContext is ValidationTest test)
+            //{
+            //    Clipboard.SetText(test.SrcSql);
+            //    TextBlockPopupSql.Content = "SQL source copied to clipboard";
+            //    PopupCopySql.IsOpen = true;
+            //}
         }
 
         private void CopyDestSql_Click(object sender, RoutedEventArgs e)
         {
-            var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
-            {
-                Clipboard.SetText(test.DstSql);
-                TextBlockPopupSql.Content = "SQL destination copied to clipboard";
-                PopupCopySql.IsOpen = true;
-            }
+            //var button = (Button)sender;
+            //if (button.DataContext is ValidationTest test)
+            //{
+            //    Clipboard.SetText(test.DstSql);
+            //    TextBlockPopupSql.Content = "SQL destination copied to clipboard";
+            //    PopupCopySql.IsOpen = true;
+            //}
         }
 
         private void ButtonCopySql_MouseLeave(object sender, MouseEventArgs e)
         {
-            PopupCopySql.IsOpen = false;
+            //PopupCopySql.IsOpen = false;
         }
+        #endregion
 
+        #region Log Component
         private void ContextIdCheckbox_OnToggle(object sender, RoutedEventArgs e)
         {
-            ViewModel.LogViewModel.MessageView.Refresh();
-            ViewModel.LogViewModel.ScrollToLast();
+            //ViewModel.LogViewModel.MessageView.Refresh();
+            //ViewModel.LogViewModel.ScrollToLast();
         }
 
         private void ContextIdFilter_OnClick(object sender, RoutedEventArgs e)
         {
-            bool buttonVal = bool.Parse((string) ((FrameworkElement) sender).Tag);
-            if (ViewModel.LogViewModel.SelectedExecution is null) return;
-            foreach (var manager in ViewModel.LogViewModel.SelectedExecution.Managers)
-            {
-                manager.IsChecked = buttonVal;
-            }
-            ViewModel.LogViewModel.MessageView.Refresh();
-            ViewModel.LogViewModel.ScrollToLast();
+            //bool buttonVal = bool.Parse((string) ((FrameworkElement) sender).Tag);
+            //if (ViewModel.LogViewModel.SelectedExecution is null) return;
+            //foreach (var manager in ViewModel.LogViewModel.SelectedExecution.Managers)
+            //{
+            //    manager.IsChecked = buttonVal;
+            //}
+            //ViewModel.LogViewModel.MessageView.Refresh();
+            //ViewModel.LogViewModel.ScrollToLast();
         }
 
         private void GridPopup_Opened(object sender, DependencyPropertyChangedEventArgs e)
         {
-            this.AddHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown, true);
+            //this.AddHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown, true);
         }
 
         private void GridPopupLogFilter_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
+            //if (!GridPopupLogFilter.IsMouseOver && !ButtonLogFilter.IsMouseOver)
+            //{
+            //    ButtonLogFilter.IsChecked = false;
+            //    this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
+            //}
+        }
+
+        private void ListViewLog_MouseOverChanged(object sender, MouseEventArgs e)
+        {
+            _listViewLogShouldAutoScroll = !_listViewLogShouldAutoScroll;
+        }
+
+        private void ListViewLog_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (sender is ItemCollection l && l.Count > 0 && _listViewLogShouldAutoScroll) 
             {
-                ButtonLogFilter.IsChecked = false;
-                this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
+                int lastIndex = l.Count - 1;
+                ListViewLog.ScrollIntoView(ListViewLog.Items[lastIndex]);
             }
         }
+        #endregion
     }
 }

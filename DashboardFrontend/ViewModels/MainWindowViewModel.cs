@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using DashboardBackend;
+using DashboardFrontend.Settings;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace DashboardFrontend.ViewModels
@@ -7,11 +9,10 @@ namespace DashboardFrontend.ViewModels
     {
         public MainWindowViewModel(ListView listViewLog)
         {
-            Controller = new(this);
-            Controller.InitializeViewModels(listViewLog);
+            
         }
 
-        public Controller Controller { get; set; }
+        public IDashboardController Controller { get; set; }
         private string _currentStatus;
         public string CurrentStatus
         {
