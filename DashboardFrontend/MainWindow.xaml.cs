@@ -64,6 +64,7 @@ namespace DashboardFrontend
                 });
             };
             await Task.Delay(5);
+            if (ViewModel.ManagerViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
             detachedManagerViewModel.SelectedExecution = detachedManagerViewModel.Executions[selectedExecutionId - 1];
         }

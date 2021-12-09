@@ -99,6 +99,10 @@ namespace DashboardFrontend.DetachedWindows
                     break;
 
                 case "Clear":
+                    foreach (var wrapper in Vm.DetailedManagers)
+                    {
+                        Vm.Managers.Add(wrapper);
+                    }
                     Vm.DetailedManagers.Clear();
                     Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.ClearChartLinesHelper();
@@ -117,6 +121,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void DatagridManagersAdd_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
             AddManager_Click((object)sender, e);
         }
 
@@ -131,6 +136,7 @@ namespace DashboardFrontend.DetachedWindows
 
         private void DatagridManagersRemove_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
             RemoveManager_Click((object)sender, e);
         }
     }

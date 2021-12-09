@@ -236,13 +236,13 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
-                                                Width="25pt"/>
+                                                Width="32pt"/>
                             <DataGridTextColumn Header="Manager name" 
                                                 Binding="{Binding Manager.ShortName}"
                                                 Width="8*"/>
                             <DataGridTextColumn Header="Score" 
                                                 Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
-                                                Width="*"/>
+                                                Width="1.3*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
                                                 Width="2*"/>
