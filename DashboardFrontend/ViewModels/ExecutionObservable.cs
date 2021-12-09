@@ -14,7 +14,11 @@ namespace DashboardFrontend.ViewModels
             Id = exec.Id;
             StartTime = exec.StartTime;
 
-            Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+            Managers = new();
+            for(int i = 0; i < exec.Managers.Count; i++)
+            {
+                Managers.Add(new ManagerObservable(exec.Managers[i]));
+            }
 
             LogMessages = new(exec.Log.Messages);
         }

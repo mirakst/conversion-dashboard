@@ -34,7 +34,7 @@ namespace DashboardFrontend.DetachedWindows
             List<ManagerWrapper> managers = new();
             foreach (ManagerWrapper manager in DatagridManagers.SelectedItems)
             {
-                if (!Vm.DetailedManagers.Any(m => m.Manager.ContextId == manager.Manager.ContextId))
+                if (!Vm.DetailedManagers.Any(m => m.Manager.Name == manager.Manager.Name))
                 {
                     DatagridManagerMover("Add", manager);
                 }
