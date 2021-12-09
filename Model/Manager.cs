@@ -34,15 +34,7 @@ namespace Model
             set
             {
                 _name = value;
-                var splitName = value.Split('.');
-                if (splitName.Contains("managers"))
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
-                }
-                else
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.Skip(4));
-                }
+                ShortName = value.Split(".").Last();
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
         public int ContextId { get; set; }

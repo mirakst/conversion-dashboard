@@ -5,7 +5,7 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(ListView listViewLog)
+        public MainWindowViewModel(ListView listViewLog, Window window)
         {
             Controller = new(this);
             Controller.InitializeViewModels(listViewLog);

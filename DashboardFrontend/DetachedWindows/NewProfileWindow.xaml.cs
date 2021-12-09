@@ -85,6 +85,10 @@ namespace DashboardFrontend.DetachedWindows
                 if (!UserSettings.Profiles.Contains(Profile))
                 {
                     UserSettings.Profiles.Add(Profile);
+                    if (UserSettings.ActiveProfile is null)
+                    {
+                        UserSettings.ActiveProfile = Profile;
+                    }
                 }
 
                 if (ProfileDataChanged)

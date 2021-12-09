@@ -126,7 +126,7 @@ namespace DashboardFrontend
             ManagerViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.Managers);
+                result.UpdateData(Conversion.Executions);
             }
             ManagerViewModels.Add(result);
             return result;
@@ -560,7 +560,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.Managers);
+                            vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
@@ -658,6 +658,49 @@ namespace DashboardFrontend
             _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
             _vm.UpdateView();
             _vm.CurrentProgress = 0;
+        }
+
+        public async void ExpandManagerView(ManagerWrapper wrapper)
+        {
+            ManagerViewModel vm;
+            if (wrapper == null) return;
+            int selectedExecutionId = _vm.ManagerViewModel.SelectedExecution.Id;
+            if (_vm.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution.Id == selectedExecutionId))
+            {
+                vm = _vm.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution.Id == selectedExecutionId);
+            }
+            else
+            {
+                vm = CreateManagerViewModel();
+                ManagerListDetached managerWindow = new ManagerListDetached(vm);
+                vm.Window = managerWindow;
+                vm.DataGridManagers = managerWindow.DatagridManagers;
+                vm.Window.Show();
+                vm.Window.Closed += delegate
+                {
+                    // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
+                    _ = Task.Run(() =>
+                    {
+                        while (ShouldUpdateManagers) { }
+                        ManagerViewModels.Remove(vm);
+                    });
+                };
+                await Task.Delay(5);
+                vm.SelectedExecution = vm.Executions[selectedExecutionId - 1];
+            }
+            vm.Window.Activate();
+            var foreignManager = vm.Managers.FirstOrDefault(m => m.Manager.ContextId == wrapper.Manager.ContextId);
+            if (foreignManager != null)
+            {
+                vm.Managers.Remove(foreignManager);
+                if (!vm.DetailedManagers.Contains(foreignManager))
+                {
+                    vm.DetailedManagers.Add(foreignManager);
+                    vm.UpdateHiddenManagers();
+                    foreignManager.IsDetailedInfoShown = true;
+                    vm.ManagerChartViewModel.AddChartLinesHelper(foreignManager);
+                }
+            }
         }
     }
 }

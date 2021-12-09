@@ -1,9 +1,9 @@
 ﻿using Model;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using static Model.ValidationTest;
-using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -13,7 +13,13 @@ namespace DashboardFrontend.ViewModels
         {
             Id = exec.Id;
             StartTime = exec.StartTime;
-            Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+
+            Managers = new();
+            for(int i = 0; i < exec.Managers.Count; i++)
+            {
+                Managers.Add(new ManagerObservable(exec.Managers[i]));
+            }
+
             LogMessages = new(exec.Log.Messages);
         }
         public ExecutionObservable(Execution exec, ValidationReportViewModel vm) : this(exec)

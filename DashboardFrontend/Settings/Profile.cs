@@ -25,7 +25,7 @@ namespace DashboardFrontend.Settings
             _nextId = id + 1;
         }
 
-        public Profile() : this("", "", "", "", 30)
+        public Profile() : this("", "", "", "", 5)
         {
         }
 

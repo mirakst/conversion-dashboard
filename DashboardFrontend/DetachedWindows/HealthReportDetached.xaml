@@ -10,6 +10,11 @@
         Height="450"
         Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+        <Style TargetType="{x:Type lvc:CartesianChart}">
+            <Setter Property="Cursor" Value="Cross"/>
+        </Style>
+    </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Margin="10">
             <TabControl Background="{DynamicResource BackgroundColor}"
