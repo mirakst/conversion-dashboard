@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Windows.Data;
 
 namespace Model
 {
@@ -20,10 +20,8 @@ namespace Model
 
         public int Id { get; }
         public Log Log { get; }
-        //public ValidationReport ValidationReport { get; set; }
-        //public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-        private ObservableCollection<Manager> _managers;
-        public ObservableCollection<Manager> Managers
+        private WpfObservableRangeCollection<Manager> _managers;
+        public WpfObservableRangeCollection<Manager> Managers
         {
             get => _managers;
             set
@@ -123,6 +121,24 @@ namespace Model
                 manager.OnManagerFinished += UpdateProgress;
             }
             Managers.Add(manager);
+        }
+
+        /// <summary>
+        /// Adds a list of managers to the execution.
+        /// </summary>
+        /// <remarks>This method is similar to <see cref="AddManager(Manager)"/>, but only updates progress and invokes OnCollectionChanged after all managers have been processed.</remarks>
+        /// <param name="managers">The list of managers to add.</param>
+        public void AddManagers(IList<Manager> managers)
+        {
+            foreach (Manager manager in managers)
+            {
+                if (manager.Status is not ManagerStatus.Ok)
+                {
+                    manager.OnManagerFinished += UpdateProgress;
+                }
+            }
+            UpdateProgress();
+            Managers.AddRange(managers);
         }
 
         /// <summary>

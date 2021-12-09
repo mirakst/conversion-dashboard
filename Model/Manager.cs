@@ -18,6 +18,9 @@ namespace Model
         {
             Id = Interlocked.Increment(ref _nextId);
             Status = ManagerStatus.Ready;
+            _validations = new();
+            _ramReadings = new();
+            _cpuReadings = new();
             Validations.CollectionChanged += UpdateValidationCounters;
         }
 
@@ -205,6 +208,8 @@ namespace Model
             }
         }
         public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
+
+        public int ExecutionId { get; set; }
 
         private void UpdateScore()
         {

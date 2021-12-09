@@ -18,7 +18,6 @@ namespace DashboardFrontend
         IDatabaseHandler DatabaseHandler { get; }
         IUserSettings UserSettings { get; }
         Conversion? Conversion { get; set; }
-        bool HasConversion { get; }
         bool IsRunning { get; }
 
         void SetupNewConversion();

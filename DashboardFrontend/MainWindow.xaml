@@ -458,7 +458,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
-                        <Grid x:Name="GridPopupLogFilter" 
+                        <!--<Grid x:Name="GridPopupLogFilter" 
                               Style="{DynamicResource GridPopupStyleOverwrite}"
                               IsVisibleChanged="GridPopup_Opened"
                               Margin="0,-2,0,1">
@@ -514,7 +514,7 @@
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
-                        </Grid>
+                        </Grid>-->
                     </Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>

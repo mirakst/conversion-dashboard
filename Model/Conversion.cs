@@ -2,8 +2,6 @@
 
 namespace Model
 {
-    public delegate void ActiveExecutionChanged(Execution exec);
-
     public class Conversion : ObservableObject
     {
         public Conversion()
@@ -13,14 +11,12 @@ namespace Model
             HealthReport = new();
             LastExecutionQuery = SqlMinDateTime;
             LastLogQuery = SqlMinDateTime;
-            LastLogUpdated = DateTime.MinValue;
             LastManagerQuery = SqlMinDateTime;
             LastManagerUpdated = DateTime.MinValue;
             LastValidationsQuery = SqlMinDateTime;
             LastValidationsUpdated = DateTime.MinValue;
         }
 
-        public event ActiveExecutionChanged OnActiveExecutionChanged;
 
         private ObservableCollection<Execution> _executions;
         public ObservableCollection<Execution> Executions
@@ -40,11 +36,10 @@ namespace Model
             {
                 _activeExecution = value;
                 OnPropertyChanged(nameof(ActiveExecution));
-                OnActiveExecutionChanged?.Invoke(ActiveExecution);
             }
         }
-        private ObservableCollection<Manager> _allManagers;
-        public ObservableCollection<Manager> AllManagers
+        private List<Manager> _allManagers;
+        public List<Manager> AllManagers
         {
             get => _allManagers;
             set
@@ -67,12 +62,11 @@ namespace Model
         public DateTime LastLogQuery { get; set; }
         public DateTime LastManagerQuery { get; set; }
         public DateTime LastValidationsQuery { get; set; }
-        public DateTime LastLogUpdated { get; set; }
         public DateTime LastManagerUpdated { get; set; }
         public DateTime LastHealthReportUpdated { get; set; }
         public DateTime LastValidationsUpdated { get; set; }
 
-        public void AddExecution(Execution execution)
+        public Conversion AddExecution(Execution execution)
         {
             if (ActiveExecution is not null)
             {
@@ -81,6 +75,7 @@ namespace Model
             }
             Executions.Add(execution);
             ActiveExecution = execution;
+            return this;
         }
     }
 }

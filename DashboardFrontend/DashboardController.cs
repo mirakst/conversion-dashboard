@@ -1,21 +1,25 @@
-﻿using DashboardBackend;
-using DashboardBackend.Database;
-using DashboardFrontend.DetachedWindows;
-using DashboardFrontend.NewViewModels;
-using DashboardFrontend.Settings;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 
+using DashboardBackend;
+using DashboardBackend.Database;
+
+using DashboardFrontend.DetachedWindows;
+using DashboardFrontend.NewViewModels;
+using DashboardFrontend.Settings;
+
+using Model;
+
 namespace DashboardFrontend
 {
     public class DashboardController : BaseViewModel, IDashboardController
     {
         private readonly List<Timer> _timers;
+        private LogMessageParser _logMessageParser;
 
         public DashboardController(IUserSettings userSettings, IDatabaseHandler databaseHandler)
         {
@@ -41,16 +45,6 @@ namespace DashboardFrontend
                 {
                     OnConversionCreated?.Invoke(value);
                 }
-            }
-        }
-        private bool _hasConversion;
-        public bool HasConversion
-        {
-            get => _hasConversion;
-            set
-            {
-                _hasConversion = value;
-                OnPropertyChanged(nameof(HasConversion));
             }
         }
         private bool _isRunning;
@@ -106,10 +100,11 @@ namespace DashboardFrontend
                 StopMonitoring();
             }
             Conversion = new();
-            HasConversion = true;
-            //////
             Conversion.AddExecution(new(1, DateTime.MinValue));
             Conversion.AddExecution(new(2, DateTime.MinValue));
+            Conversion.AddExecution(new(3, DateTime.MinValue));
+            Conversion.AddExecution(new(4, DateTime.MinValue));
+            _logMessageParser = new(Conversion);
         }
 
         private void LoadUserSettings()
@@ -131,7 +126,7 @@ namespace DashboardFrontend
             }
             IsRunning = true;
             DatabaseHandler.BuildHealthReport(Conversion.HealthReport);
-            
+
             if (UserSettings.SynchronizeAllQueries)
             {
                 Timer synchronizedTimer = new(x =>
@@ -161,6 +156,11 @@ namespace DashboardFrontend
             _timers.Clear();
         }
 
+        /// <summary>
+        /// Queries any new Log data through the <see cref="DatabaseHandler"/>, parses it (which involves creating and/or updating executions and managers), and adds it to the Log of the associated execution.
+        /// </summary>
+        /// <remarks>Any changes that will affect the UI are done one the UI thread (as dictated by WPF), and collections at risk of being modified during this method's execution are locked.</remarks>
+        /// <exception cref="ArgumentNullException"></exception>
         private void TryUpdateLog()
         {
             if (Conversion is null)
@@ -170,23 +170,38 @@ namespace DashboardFrontend
             if (!Conversion.Executions.Any())
             {
                 // Assume no executions have been started or found yet.
-                return; 
+                return;
             }
 
-            lock (Conversion.Executions)
+            foreach (Execution exec in Conversion.Executions)
             {
-                foreach (Execution exec in Conversion.Executions)
+                var newData = DatabaseHandler.GetLogMessagesFromExecutionSince(exec.Log.LastModified, exec.Id);
+                exec.Log.LastModified = DateTime.Now;
+
+                if (newData.Any())
                 {
-                    var newData = DatabaseHandler.GetLogMessagesFromExecutionSince(exec.Log.LastModified, exec.Id);
-                    exec.Log.LastModified = DateTime.Now;
-                    if (newData.Any())
+                    var managers = _logMessageParser.Parse(newData);
+                    if (managers.Any())
                     {
-                        // Ensure that data is only updated on the UI thread as required by WPF.
-                        Application.Current.Dispatcher.Invoke(() =>
+                        lock (Conversion.AllManagers)
                         {
-                            exec.Log.Messages.AddRange(newData);
-                        });
+                            Conversion.AllManagers.AddRange(managers);
+                        }
+
+                        lock (exec.Managers)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                exec.AddManagers(managers);
+                            });
+                        }
                     }
+
+                    // Ensure that data is only updated on the UI thread as required by WPF.
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        exec.Log.Messages.AddRange(newData);
+                    });
                 }
             }
         }
