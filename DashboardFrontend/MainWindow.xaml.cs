@@ -47,7 +47,7 @@ namespace DashboardFrontend
             settingsWindow.ShowDialog();
         }
 
-        public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
             ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
             ManagerListDetached detachedManagerWindow = new(detachedManagerViewModel);
@@ -63,9 +63,12 @@ namespace DashboardFrontend
                     ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
                 });
             };
+            await Task.Delay(5);
+            int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
+            detachedManagerViewModel.SelectedExecution = detachedManagerViewModel.Executions[selectedExecutionId - 1];
         }
 
-        public void DetachLogButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
             LogDetached detachLog = new(detachedLogViewModel);
@@ -78,9 +81,12 @@ namespace DashboardFrontend
                     ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
                 });
             };
+            await Task.Delay(5);
+            int selectedExecutionId = ViewModel.LogViewModel.SelectedExecution.Id;
+            detachedLogViewModel.SelectedExecution = detachedLogViewModel.Executions[selectedExecutionId - 1];
         }
 
-        public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
             ValidationReportViewModel detachedValidationReportViewModel =
                 ViewModel.Controller.CreateValidationReportViewModel();
@@ -94,6 +100,9 @@ namespace DashboardFrontend
                     ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
                 });
             };
+            await Task.Delay(5);
+            int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
+            detachedValidationReportViewModel.SelectedExecution = detachedValidationReportViewModel.Executions[selectedExecutionId - 1];
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
@@ -303,33 +312,7 @@ namespace DashboardFrontend
 
         private async void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ManagerViewModel vm;
-            int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
-            if (ViewModel.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution.Id == selectedExecutionId))
-            {
-                vm = ViewModel.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution.Id == selectedExecutionId);
-            }
-            else
-            {
-                DetachManagerButtonClick(this, null);
-                vm = ViewModel.Controller.ManagerViewModels.Last();
-                await Task.Delay(5);
-                vm.SelectedExecution = vm.Executions.First(exec => exec.Id == selectedExecutionId);
-            }
-            vm.Window.Activate();
-            var wrapper = (ManagerWrapper)datagridManagers.SelectedItem;
-            var foreignManager = vm.Managers.FirstOrDefault(m => m.Manager.ContextId == wrapper.Manager.ContextId);
-            if (foreignManager != null)
-            {
-                vm.Managers.Remove(foreignManager);
-                if (!vm.DetailedManagers.Contains(foreignManager))
-                {
-                    vm.DetailedManagers.Add(foreignManager);
-                    vm.UpdateHiddenManagers();
-                    foreignManager.IsDetailedInfoShown = true;
-                    vm.ManagerChartViewModel.AddChartLinesHelper(foreignManager);
-                }
-            }
+            ViewModel.Controller.ExpandManagerView((ManagerWrapper)datagridManagers.SelectedItem);
         }
     }
 }
