@@ -1,9 +1,9 @@
 ﻿using Model;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using static Model.ValidationTest;
-using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -13,10 +13,9 @@ namespace DashboardFrontend.ViewModels
         {
             Id = exec.Id;
             StartTime = exec.StartTime;
-            lock (executionLock)
-            {
-                Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
-            }
+
+            Managers = new(exec.Managers.Select(m => new ManagerObservable(m)));
+
             LogMessages = new(exec.Log.Messages);
         }
         public ExecutionObservable(Execution exec, ValidationReportViewModel vm) : this(exec)
@@ -36,7 +35,6 @@ namespace DashboardFrontend.ViewModels
 
         public DateTime? StartTime { get; set; }
         private int _failedTotalCount;
-        private readonly object executionLock = new();
         public int FailedTotalCount
         {
             get => _failedTotalCount; set

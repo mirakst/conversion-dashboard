@@ -5,9 +5,10 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(ListView listViewLog)
+        public MainWindowViewModel(ListView listViewLog, Window window)
         {
             Controller = new(this);
+            Window = window;
             Controller.InitializeViewModels(listViewLog);
         }
 
@@ -52,6 +53,8 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(LoadingVisibility));
             }
         }
+
+        public Window Window { get; set; }
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public HealthReportViewModel HealthReportViewModel { get; set; }

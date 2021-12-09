@@ -211,6 +211,7 @@
                               Grid.ColumnSpan="3"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              MouseDoubleClick="DatagridManagers_MouseDoubleClick"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
                         <DataGrid.Columns>

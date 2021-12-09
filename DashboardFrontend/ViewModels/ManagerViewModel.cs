@@ -14,6 +14,11 @@ namespace DashboardFrontend.ViewModels
             ManagerChartViewModel = new();
         }
 
+        public ManagerViewModel(Window detachedWindow) : this()
+        {
+            Window = detachedWindow;
+        }
+
         public DateTime LastUpdated { get; set; } = DateTime.MinValue;
         private string _managerSearch = string.Empty;
         public string ManagerSearch { get => _managerSearch; 
@@ -33,6 +38,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
+        public Window Window { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
         {
             get => _managers;

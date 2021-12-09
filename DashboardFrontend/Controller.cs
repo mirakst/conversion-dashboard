@@ -81,7 +81,7 @@ namespace DashboardFrontend
             _vm.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels = new() { _vm.HealthReportViewModel };
 
-            _vm.ManagerViewModel = new ManagerViewModel();
+            _vm.ManagerViewModel = new ManagerViewModel(_vm.Window);
             ManagerViewModels = new() { _vm.ManagerViewModel };
         }
 

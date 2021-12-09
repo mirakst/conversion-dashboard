@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
 using DashboardFrontend.Charts;
-using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -22,7 +20,7 @@ namespace DashboardFrontend
             MaxHeight = SystemParameters.WorkArea.Height;
             MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
-            ViewModel = new(ListViewLog);
+            ViewModel = new(ListViewLog, this);
             ViewModel.ManagerViewModel.DataGridManagers = datagridManagers;
             DataContext = ViewModel;
         }
@@ -52,6 +50,7 @@ namespace DashboardFrontend
         {
             ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
             ManagerListDetached detachedManagerWindow = new(detachedManagerViewModel);
+            detachedManagerViewModel.Window = detachedManagerWindow;
             detachedManagerViewModel.DataGridManagers = detachedManagerWindow.DatagridManagers;
             detachedManagerWindow.Show();
             detachedManagerWindow.Closed += delegate
@@ -299,6 +298,26 @@ namespace DashboardFrontend
                 ButtonLogFilter.IsChecked = false;
                 this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
             }
+        }
+
+        private void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ManagerViewModel vm;
+            if (ViewModel.Controller.ManagerViewModels.Count > 1)
+            {
+                vm = ViewModel.Controller.ManagerViewModels[1];
+            }
+            else
+            {
+                DetachManagerButtonClick(this, null);
+                vm = ViewModel.Controller.ManagerViewModels[1];
+            }
+            vm.Window.Activate();
+            vm.DataGridManagers.SelectedItem = vm.DataGridManagers.Items[datagridManagers.SelectedIndex];
+            MouseButtonEventArgs doubleClickEvent = new MouseButtonEventArgs(Mouse.PrimaryDevice, (int)DateTime.Now.Ticks, MouseButton.Left);
+            doubleClickEvent.RoutedEvent = Control.MouseDoubleClickEvent;
+            doubleClickEvent.Source = this;
+            vm.DataGridManagers.RaiseEvent(doubleClickEvent);
         }
     }
 }
