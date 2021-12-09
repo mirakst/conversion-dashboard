@@ -22,6 +22,7 @@ namespace DashboardFrontend.ViewModels
             get => _selectedExecution;
             set
             {
+                ManagerChartViewModel.ClearChartLinesHelper();
                 _selectedExecution = value;
                 OnPropertyChanged(nameof(SelectedExecution));
                 SetExecution(value);

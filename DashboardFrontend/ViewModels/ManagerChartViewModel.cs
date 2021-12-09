@@ -90,6 +90,7 @@ namespace DashboardFrontend.ViewModels
             {
                 chart.ChartData.Series.Clear();
             }
+            FurthestPoints = new();
             UpdateView();
         }
 
