@@ -64,15 +64,17 @@
                         MinWidth="100"
                         Margin="0,0,20,0"
                         Grid.Column="0"
-                        HorizontalAlignment="Right"/>
+                        HorizontalAlignment="Right"
+                        Cursor="Hand"/>
                 <Button Name="ButtonConnectDb"
-                        Content="Connect"
+                        Content="_Connect"
                         IsDefault="True"
                         Click="OnButtonConnectDBClick"
                         MinWidth="100"
                         Margin="20,0,0,0"
                         Grid.Column="1"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left"
+                        Cursor="Hand"/>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

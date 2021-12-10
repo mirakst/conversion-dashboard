@@ -181,27 +181,31 @@
                                 Content="Set as active" 
                                 Margin="5" 
                                 Click="Button_SetActiveProfile" 
+                                Cursor="Hand"
                                 IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
 
                             <Button Grid.Row="2" 
                                 Grid.Column="1" 
                                 Grid.ColumnSpan="2" 
-                                Content="New" 
+                                Content="_New" 
                                 Margin="5" 
-                                Click="Button_NewProfile"/>
+                                Click="Button_NewProfile"
+                                Cursor="Hand"/>
 
                             <Button Grid.Row="3" 
                                 Grid.Column="1" 
                                 Content="Edit" 
                                 Margin="5" 
                                 Click="Button_EditProfile" 
-                                IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
+                                IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"
+                                Cursor="Hand"/>
 
                             <Button Grid.Row="3" 
                                 Grid.Column="2" 
                                 Content="Delete" 
                                 Margin="5" 
-                                Click="Button_DeleteProfile" 
+                                Click="Button_DeleteProfile"
+                                Cursor="Hand"
                                 IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
                         </Grid>
                     </Grid>
@@ -360,12 +364,14 @@
                     IsCancel="True" 
                     Margin="0 5 10 5" 
                     Width="100" 
-                    Click="Button_Close"/>
-                <Button Content="Save and close" 
+                    Click="Button_Close"
+                    Cursor="Hand"/>
+                <Button Content="_Save and close" 
                     IsDefault="True" 
                     Margin="0 5 0 5" 
                     Width="100" 
-                    Click="Button_SaveAndClose"/>
+                    Click="Button_SaveAndClose"
+                    Cursor="Hand"/>
             </StackPanel>
         </Grid>
     </Border>

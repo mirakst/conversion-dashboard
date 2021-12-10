@@ -28,25 +28,25 @@ namespace DashboardFrontend.Charts
 
         public BaseChart ChartData { get; set; }
 
-        private double? _lastRamReading = 0;
-        public double? LastRamReading
+        private double? _lastPrimaryReading = 0;
+        public double? LastPrimaryReading
         {
-            get => _lastRamReading;
+            get => _lastPrimaryReading;
             set
             {
-                _lastRamReading = value;
-                OnPropertyChanged(nameof(LastRamReading));
+                _lastPrimaryReading = value;
+                OnPropertyChanged(nameof(LastPrimaryReading));
             }
         }
         private DateTime LastRamPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
-        private double? _lastCpuReading = 0;
-        public double? LastCpuReading
+        private double? _lastSecondaryReading = 0;
+        public double? LastSecondaryReading
         {
-            get => _lastCpuReading;
+            get => _lastSecondaryReading;
             set
             {
-                _lastCpuReading = value;
-                OnPropertyChanged(nameof(LastCpuReading));
+                _lastSecondaryReading = value;
+                OnPropertyChanged(nameof(LastSecondaryReading));
             }
         }
         private DateTime LastCpuPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
@@ -101,8 +101,8 @@ namespace DashboardFrontend.Charts
             }
             if (cpu.Readings.Count > 0 && ram.Readings.Count > 0) 
             {
-                LastRamReading = ram.Readings.Last().Load * 100;
-                LastCpuReading = cpu.Readings.Last().Load * 100;
+                LastPrimaryReading = cpu.Readings.Last().Load * 100;
+                LastSecondaryReading = ram.Readings.Last().Load * 100;
                 UpdatePlots(ram.Readings.Last().Date, cpu.Readings.Last().Date);
             }
         }
@@ -115,12 +115,18 @@ namespace DashboardFrontend.Charts
                 switch (ChartData.Type)
                 {
                     case BaseChart.ChartType.Network:
+                        LastPrimaryReading = item.BytesSend / Math.Pow(1024, 3);
+                        LastSecondaryReading = item.BytesReceived / Math.Pow(1024, 3);
                         UpdateNetworkData(item);
                         break;
                     case BaseChart.ChartType.NetworkDelta:
+                        LastPrimaryReading = item.BytesSendDelta / Math.Pow(1024, 2);
+                        LastSecondaryReading = item.BytesReceivedDelta / Math.Pow(1024, 2);
                         UpdateNetworkDeltaData(item);
                         break;
                     case BaseChart.ChartType.NetworkSpeed:
+                        LastPrimaryReading = item.BytesSendSpeed / Math.Pow(1024, 2);
+                        LastSecondaryReading = item.BytesReceivedSpeed / Math.Pow(1024, 2);
                         UpdateNetworkSpeedData(item);
                         break;
                     default:

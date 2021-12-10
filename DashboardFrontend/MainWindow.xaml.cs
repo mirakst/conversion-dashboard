@@ -83,6 +83,7 @@ namespace DashboardFrontend
                 });
             };
             await Task.Delay(5);
+            if (ViewModel.LogViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.LogViewModel.SelectedExecution.Id;
             detachedLogViewModel.SelectedExecution = detachedLogViewModel.Executions[selectedExecutionId - 1];
         }
@@ -102,6 +103,7 @@ namespace DashboardFrontend
                 });
             };
             await Task.Delay(5);
+            if (ViewModel.ValidationReportViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
             detachedValidationReportViewModel.SelectedExecution = detachedValidationReportViewModel.Executions[selectedExecutionId - 1];
         }
@@ -311,7 +313,7 @@ namespace DashboardFrontend
             }
         }
 
-        private async void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
             ViewModel.Controller.ExpandManagerView((ManagerWrapper)datagridManagers.SelectedItem);
