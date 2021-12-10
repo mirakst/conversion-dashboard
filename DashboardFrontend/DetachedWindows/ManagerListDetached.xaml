@@ -119,23 +119,6 @@
                         <DataGridTextColumn Header="Status" 
                                             Binding="{Binding Manager.Status}"
                                             Width="1.1*"/>
-                        <!--<DataGridTemplateColumn Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Name="buttonAddManager"
-                                            Click="AddManager_Click"
-                                            ToolTip="Add manager to detailed view"
-                                            FontFamily="wingdings 3"
-                                            Width="20pt"
-                                            Tag="{Binding}"
-                                            Style="{StaticResource ManagerButton}"
-                                            Margin="2,0,2,0">
-                                        <Image Source="../Icons/Add.png"
-                                               Margin="8"/>
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>-->
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
@@ -208,24 +191,6 @@
                             </DataGrid>
                         </Grid>
                     </TabItem>
-                    <!--<DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Name="buttonRemoveManager"
-                                                        Click="RemoveManager_Click"
-                                                        ToolTip="Remove manager from detailed view"
-                                                        FontFamily="wingdings 3"
-                                                        Width="20pt"
-                                                        Tag="{Binding}"
-                                                        Style="{StaticResource DetachButton}"
-                                                        Margin="0,0,4,0">
-                                    <Image Source="../Icons/Remove.png"
-                                                           Margin="8"/>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>-->
-
                     <!-- The charting tab -->
                     <TabItem
                         x:Name="TabPerformance"
@@ -315,25 +280,25 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Rectangle Height="auto"
-                                                           Width="auto"
-                                                           Fill="{Binding LineColor}">
+                                                               Width="auto"
+                                                               Fill="{Binding LineColor}">
                                                     </Rectangle>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Binding="{Binding Manager.ContextId, FallbackValue='N/A'}"
-                                                        Header="ID"
-                                                        Width="2*"/>
+                                                            Header="ID"
+                                                            Width="2*"/>
                                         <DataGridTemplateColumn Width="*">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Button Name="buttonRemoveManager"
-                                                        Click="RemoveManager_Click"
-                                                        ToolTip="Remove manager from detailed view"
-                                                        Width="20pt"
-                                                        FontFamily="wingdings 3"
-                                                        Tag="{Binding}"
-                                                        Style="{DynamicResource DefaultButton}">
+                                                            Click="RemoveManager_Click"
+                                                            ToolTip="Remove manager from detailed view"
+                                                            Width="20pt"
+                                                            FontFamily="wingdings 3"
+                                                            Tag="{Binding}"
+                                                            Style="{DynamicResource DefaultButton}">
                                                         <Image Source="../Icons/Remove.png"
                                                            Margin="8"/>
                                                     </Button>

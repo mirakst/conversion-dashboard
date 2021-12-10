@@ -16,7 +16,7 @@
         <Grid Name="GridLog" 
               Margin="20,10,20,20">
             <Grid Grid.Row="0"
-              Margin="-4, 0, 0, 4">
+                  Margin="-4, 0, 0, 4">
                 <ToggleButton Name="ToggleButtonLogInfo"
                               Grid.Column="0"
                               IsChecked="{Binding ShowInfo}"
