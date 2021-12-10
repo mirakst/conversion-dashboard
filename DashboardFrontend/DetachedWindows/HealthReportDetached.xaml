@@ -21,12 +21,12 @@
                         Grid.RowSpan="2"
                         Grid.ColumnSpan="2">
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                    Name="TabItemCpuRam"
-                                    Header="CPU &amp; RAM"
-                                    Height="28"
-                                    FontSize="16"
-                                    Margin="-2,0,0,0"
-                                    DataContext="{Binding SystemLoadChart}">
+                         Name="TabItemCpuRam"
+                         Header="CPU &amp; RAM"
+                         Height="28"
+                         FontSize="16"
+                         Margin="-2,0,0,0"
+                         DataContext="{Binding SystemLoadChart}">
                     <Border Margin="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -42,55 +42,54 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Name="TextBlockCurrentCpuLoad"
-                                                Text="{Binding LastPrimaryReading,
-                                                        StringFormat='CPU Usage: {0:0}%'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="1"
-                                                Grid.Row="0"
-                                                Margin="0,0,40,5"/>
+                                       Text="{Binding LastPrimaryReading,
+                                              StringFormat='CPU Usage: {0:0}%'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="0,0,40,5"/>
 
                             <TextBlock Name="TextBlockCurrentRamUsage"
-                                                Text="{Binding LastSecondaryReading,
-                                                        StringFormat='RAM Usage: {0:0}%'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Margin="5,0,0,5"/>
+                                       Text="{Binding LastSecondaryReading,
+                                              StringFormat='RAM Usage: {0:0}%'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0"
+                                       Margin="5,0,0,5"/>
 
                             <Separator Grid.ColumnSpan="2"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1"
-                                    Margin="-50,0"/>
+                                       VerticalAlignment="Bottom"
+                                       Grid.Column="1"
+                                       Margin="-50,0"/>
 
-                            <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
+                            <lvc:CartesianChart Margin="-7,0,5,-40"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
                             </lvc:CartesianChart>
                         </Grid>
                     </Border>
                 </TabItem>
 
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                    Name="TabItemNetwork"
-                                    Header="Network"
-                                    Height="28"
-                                    FontSize="16"
-                                    DataContext="{Binding NetworkChart}">
+                         Name="TabItemNetwork"
+                         Header="Network"
+                         Height="28"
+                         FontSize="16"
+                         DataContext="{Binding NetworkChart}">
                     <Border Margin="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -106,54 +105,53 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Name="TextBlockCurrentNetSent"
-                                                Text="{Binding LastPrimaryReading,
-                                                        StringFormat='Network data sent: {0:0}GB'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="1"
-                                                Grid.Row="0"
-                                                Margin="0,0,40,5"/>
+                                       Text="{Binding LastPrimaryReading,
+                                              StringFormat='Network data sent: {0:0}GB'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="0,0,40,5"/>
 
                             <TextBlock Name="TextBlockCurrentNetReceived"
-                                                Text="{Binding LastSecondaryReading,
-                                                        StringFormat='Network data received: {0:0}GB'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Margin="5,0,0,5"/>
+                                       Text="{Binding LastSecondaryReading,
+                                              StringFormat='Network data received: {0:0}GB'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0"
+                                       Margin="5,0,0,5"/>
 
                             <Separator Grid.ColumnSpan="2"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1"
-                                    Margin="-50,0"/>
+                                       VerticalAlignment="Bottom"
+                                       Grid.Column="1"
+                                       Margin="-50,0"/>
 
-                            <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
+                            <lvc:CartesianChart Margin="-7,0,5,-40"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
                             </lvc:CartesianChart>
                         </Grid>
                     </Border>
                 </TabItem>
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                    Name="TabItemNetworkDelta"
-                                    Header="Network Delta"
-                                    Height="28"
-                                    FontSize="16"
-                                    DataContext="{Binding NetworkDeltaChart}">
+                         Name="TabItemNetworkDelta"
+                         Header="Network Delta"
+                         Height="28"
+                         FontSize="16"
+                         DataContext="{Binding NetworkDeltaChart}">
                     <Border Margin="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -169,55 +167,53 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Name="TextBlockCurrentNetSendDelta"
-                                                Text="{Binding LastPrimaryReading,
-                                                        StringFormat='Network data sent (Delta): {0:0}MB'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="1"
-                                                Grid.Row="0"
-                                                Margin="0,0,40,5"/>
+                                       Text="{Binding LastPrimaryReading,
+                                              StringFormat='Network data sent (Delta): {0:0}MB'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="0,0,40,5"/>
 
                             <TextBlock Name="TextBlockCurrentNetReceiveDelta"
-                                                Text="{Binding LastSecondaryReading,
-                                                        StringFormat='Network received (Delta): {0:0}MB'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Margin="5,0,0,5"/>
-
+                                       Text="{Binding LastSecondaryReading,
+                                              StringFormat='Network received (Delta): {0:0}MB'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0"
+                                       Margin="5,0,0,5"/>
                             <Separator Grid.ColumnSpan="2"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1"
-                                    Margin="-50,0"/>
+                                       VerticalAlignment="Bottom"
+                                       Grid.Column="1"
+                                       Margin="-50,0"/>
 
-                            <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
+                            <lvc:CartesianChart Margin="-7,0,5,-40"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
                             </lvc:CartesianChart>
                         </Grid>
                     </Border>
                 </TabItem>
 
                 <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
-                                    Name="TabItemNetworkSpeed"
-                                    Header="Network Speed"
-                                    Height="28"
-                                    FontSize="16"
-                                    DataContext="{Binding NetworkSpeedChart}">
+                         Name="TabItemNetworkSpeed"
+                         Header="Network Speed"
+                         Height="28"
+                         FontSize="16"
+                         DataContext="{Binding NetworkSpeedChart}">
                     <Border Margin="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -233,44 +229,42 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Name="TextBlockCurrentNetSendSpeed"
-                                                Text="{Binding LastPrimaryReading,
-                                                        StringFormat='Network send speed: {0:0.00}Mbps'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="1"
-                                                Grid.Row="0"
-                                                Margin="0,0,40,5"/>
-
+                                       Text="{Binding LastPrimaryReading,
+                                              StringFormat='Network send speed: {0:0.00}Mbps'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="0,0,40,5"/>
                             <TextBlock Name="TextBlockCurrentNetReceiveSpeed"
-                                                Text="{Binding LastSecondaryReading,
-                                                        StringFormat='Network receive speed: {0:0.00}Mbps'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Margin="5,0,0,5"/>
+                                       Text="{Binding LastSecondaryReading,
+                                              StringFormat='Network receive speed: {0:0.00}Mbps'}"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0"
+                                       Margin="5,0,0,5"/>
 
                             <Separator Grid.ColumnSpan="2"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1"
-                                    Margin="-50,0"/>
+                                       VerticalAlignment="Bottom"
+                                       Grid.Column="1"
+                                       Margin="-50,0"/>
 
-                            <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
+                            <lvc:CartesianChart Margin="-7,0,5,-40"
+                                                Series="{Binding ChartData.Series}"
+                                                XAxes="{Binding ChartData.XAxis}"
+                                                YAxes="{Binding ChartData.YAxis}"
+                                                ZoomMode="X"
+                                                TooltipPosition="Top"
+                                                MouseLeave="CartesianChart_MouseLeave"
+                                                MouseEnter="CartesianChart_MouseEnter"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="4"
+                                                Grid.Row="1">
                             </lvc:CartesianChart>
                         </Grid>
                     </Border>
