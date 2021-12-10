@@ -9,12 +9,12 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
-    public class NetworkSpeedChart : BaseChart
+    public class NetworkSpeedChartTemplate : ChartTemplate
     {
         public ObservableCollection<ObservablePoint> SendSpeedValues { get; private set; } = new();
         public ObservableCollection<ObservablePoint> ReceiveSpeedValues { get; private set; } = new();
 
-        public NetworkSpeedChart()
+        public NetworkSpeedChartTemplate()
         {
             Type = ChartType.NetworkSpeed;
 

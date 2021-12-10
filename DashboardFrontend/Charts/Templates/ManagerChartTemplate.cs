@@ -8,9 +8,9 @@ namespace DashboardFrontend.Charts
     /// <summary>
     /// Empty chart class to add manager data to.
     /// </summary>
-    public class ManagerChart : BaseChart
+    public class ManagerChartTemplate : ChartTemplate
     {
-        public ManagerChart(string YAxisLabel)
+        public ManagerChartTemplate(string YAxisLabel)
         {
             Values = new();
             Series = new();

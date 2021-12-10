@@ -14,9 +14,9 @@ namespace DashboardFrontend.ViewModels
     {
 
         #region Chart objects
-        public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"), false);
-        public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"), false);
-        public List<DataChart> Charts { get; private set; } = new();
+        public ManagerChartWrapper CPUChart { get; private set; } = new(new ManagerChartTemplate("load"), false);
+        public ManagerChartWrapper RAMChart { get; private set; } = new(new ManagerChartTemplate("load"), false);
+        public List<ManagerChartWrapper> Charts { get; private set; } = new();
         public List<double> FurthestPoints { get; private set; } = new();
         #endregion
 
@@ -40,7 +40,7 @@ namespace DashboardFrontend.ViewModels
             wrapper.ManagerValues[1] = new(wrapper.Manager.RamReadings.Select(p => CreatePoint(p, firstRam)));
 
             int index = 0;
-            foreach (DataChart chart in Charts)
+            foreach (ManagerChartWrapper chart in Charts)
             {
                 chart.AddLine(new LineSeries<ObservablePoint>
                 {
@@ -86,9 +86,9 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void ClearChartLinesHelper()
         {
-            foreach (DataChart chart in Charts)
+            foreach (ManagerChartWrapper chart in Charts)
             {
-                chart.ChartData.Series.Clear();
+                chart.Chart.Series.Clear();
             }
             FurthestPoints = new();
             UpdateView();
@@ -101,8 +101,8 @@ namespace DashboardFrontend.ViewModels
             {
                 MaxLimit = FurthestPoints.Max();
             }
-            CPUChart.ChartData.XAxis[0].MaxLimit = MaxLimit;
-            RAMChart.ChartData.XAxis[0].MaxLimit = MaxLimit;
+            CPUChart.Chart.XAxis[0].MaxLimit = MaxLimit;
+            RAMChart.Chart.XAxis[0].MaxLimit = MaxLimit;
         }
     }
 }

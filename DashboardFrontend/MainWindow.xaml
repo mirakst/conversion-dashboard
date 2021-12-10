@@ -913,9 +913,9 @@
 
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"
@@ -977,9 +977,9 @@
 
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"
@@ -1040,9 +1040,9 @@
 
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"
@@ -1104,9 +1104,9 @@
 
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"

@@ -31,13 +31,13 @@ namespace DashboardFrontend.DetachedWindows
 
         private void CartesianChart_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOff();
         }
     }
