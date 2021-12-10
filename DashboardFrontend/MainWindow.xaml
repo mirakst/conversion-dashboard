@@ -103,11 +103,10 @@
 
                     <Button Name="ButtonSettings" 
                             Click="ButtonSettingsClick" 
+                            Style="{StaticResource DefaultButton}"
                             Grid.Column="1" 
                             Grid.Row="0" 
-                            Grid.RowSpan="2" 
-                            Background="Transparent" 
-                            BorderBrush="Transparent">
+                            Grid.RowSpan="2">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
 
@@ -198,23 +197,18 @@
                              ToolTip="Search by manager Name or ID"
                              Style="{DynamicResource ValidationsSearchBox}"
                              Grid.Column="1"
+                             Grid.ColumnSpan="2"
                              Margin="0,0,0,1"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
 
                     <DockPanel LastChildFill="False"
-                               Grid.Column="1">
+                               Grid.Column="2">
                         <Image Source="Icons/Magnifyingglass.png"
                                Margin="0,5,10,5"
                                DockPanel.Dock="Right"/>
                     </DockPanel>
 
-                    <ToggleButton Name="ButtonManagerFilter"
-                            Grid.Column="2"
-                            Margin="0, 0, 0, 1"
-                            Style="{DynamicResource FilterButton}">
-                        <Image Source="Icons/Filter.png"/>
-                    </ToggleButton>
 
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
@@ -384,7 +378,6 @@
                                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   MouseEnter="ListViewLog_MouseOverChanged"
                                   MouseLeave="ListViewLog_MouseOverChanged"
-                                  
                                   Margin="0,-2,0,0">
                             <ListView.View>
                                 <GridView AllowsColumnReorder="False">

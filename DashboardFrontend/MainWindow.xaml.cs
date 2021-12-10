@@ -311,7 +311,7 @@ namespace DashboardFrontend
             }
         }
 
-        private async void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
             ViewModel.Controller.ExpandManagerView((ManagerWrapper)datagridManagers.SelectedItem);

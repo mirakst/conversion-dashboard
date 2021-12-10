@@ -440,6 +440,10 @@ namespace DashboardFrontend
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
                     }
+                    if (!UserSettings.HasEventListeners())
+                    {
+                        UserSettings.SettingsChanged += ResetTimers;
+                    }
                     Task monitoring = new(StartMonitoring);
                     Task updateViews = new(UpdateViews);
                     monitoring.Start();
@@ -608,6 +612,21 @@ namespace DashboardFrontend
                 _timers.Add(new Timer(x => ShouldUpdateManagers = true, null, 0, UserSettings.ManagerQueryInterval * 1000));
             }
         }
+
+        /// <summary>
+        /// Disposes all timers in <see cref="_timers"/>, and sets them up with new query intervals.
+        /// </summary>
+        private void ResetTimers()
+        {
+            foreach (var timer in _timers)
+            {
+                timer.Dispose();
+            }
+            _timers.Clear();
+            SetupTimers();
+        }
+
+
 
         /// <summary>
         /// Stops the periodic monitoring functions.

@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace DashboardFrontend.Settings
 {
+    public delegate void SettingsChanged();
     public class UserSettings : BaseViewModel, IUserSettings
     {
         public UserSettings()
@@ -49,6 +50,16 @@ namespace DashboardFrontend.Settings
         public bool HasActiveProfile => ActiveProfile is not null;
         // For JSON serialization
         public int ActiveProfileId => ActiveProfile?.Id ?? 0;
+        public event SettingsChanged SettingsChanged;
+        public void OnSettingsChange()
+        {
+            SettingsChanged?.Invoke();
+        }
+
+        public bool HasEventListeners()
+        {
+            return SettingsChanged != null;
+        }
 
         private void OverwriteAll(IUserSettings settings)
         {
@@ -60,6 +71,7 @@ namespace DashboardFrontend.Settings
             ManagerQueryInterval = settings.ManagerQueryInterval;
             AllQueryInterval = settings.AllQueryInterval;
             SynchronizeAllQueries = settings.SynchronizeAllQueries;
+            OnSettingsChange();
         }
         
         public void OverwriteAllAndSave(IUserSettings settings)
