@@ -1,10 +1,8 @@
-﻿using System.Text.RegularExpressions;
-
-using Model;
+﻿using Model;
 
 namespace DashboardBackend
 {
-    public class LogMessageParser
+    public class LogMessageParser : IDataParser<LogMessage, Manager>
     {
         private readonly Conversion _conversion;
 
@@ -28,11 +26,11 @@ namespace DashboardBackend
         /// <remarks>The main output is a list of newly created managers, but the method updates existing managers and executions as a side-effect.</remarks>
         /// <param name="messages">The list of messages to parse.</param>
         /// <returns>A list of any managers that were created during parsing.</returns>
-        public List<Manager> Parse(IList<LogMessage> messages)
+        public IList<Manager> Parse(IList<LogMessage> data)
         {
             List<Manager> managers = new();
 
-            foreach (LogMessage message in messages)
+            foreach (LogMessage message in data)
             {
                 string associatedManager = null;
 
