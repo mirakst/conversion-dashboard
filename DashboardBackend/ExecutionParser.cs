@@ -13,19 +13,16 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<IList<Execution>> Parse(IList<Execution> data)
+        public IList<Execution> Parse(IList<Execution> data)
         {
             List<Execution> result = new();
-            await Task.Run(() =>
+            foreach (Execution execution in data)
             {
-                foreach (Execution execution in data)
-                {
-                    //if (!conversion.Executions.Any(e => e.Id == execution.Id))
-                    //{
-                    //    result.Add(execution);
-                    //}
-                }
-            });
+                //if (!conversion.Executions.Any(e => e.Id == execution.Id))
+                //{
+                //    result.Add(execution);
+                //}
+            }
             return result;
         }
     }

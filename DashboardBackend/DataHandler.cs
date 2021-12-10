@@ -33,23 +33,23 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public async Task<Tuple<List<Manager>, List<Execution>>> GetParsedLogDataAsync(IList<LogMessage> messages)
+        public Tuple<List<Manager>, List<Execution>> GetParsedLogData(IList<LogMessage> messages)
         {
-            var result = await _logParser.Parse(messages);
+            var result = _logParser.Parse(messages);
             return result;
         }
 
-        public Task<Tuple<List<Manager>, List<Execution>>> GetLogMessagesAsync(DateTime minDate)
+        public List<LogMessage> GetLogMessages(DateTime minDate)
         {
-            var rawData = await Database.QueryLogMessages(minDate);
-            List<LogMessage> processedData = await (from item in rawData.AsQueryable()
-                                                    let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
-                                                    let type = GetLogMessageType(item, content)
-                                                    let contextId = (int)item.ContextId.Value
-                                                    let executionId = (int)item.ExecutionId.Value
-                                                    let created = item.Created.Value
-                                                    select new LogMessage(content, type, contextId, executionId, created)).ToListAsync();
-            return processedData;
+            var rawData = Database.QueryLogMessages(minDate);
+            var processedData = from item in rawData
+                                let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
+                                let type = GetLogMessageType(item, content)
+                                let contextId = (int)item.ContextId.Value
+                                let executionId = (int)item.ExecutionId.Value
+                                let created = item.Created.Value
+                                select new LogMessage(content, type, contextId, executionId, created);
+            return processedData.ToList();
         }
 
         /// <summary>

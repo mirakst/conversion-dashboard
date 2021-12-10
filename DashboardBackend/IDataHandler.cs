@@ -8,8 +8,8 @@ namespace DashboardBackend
     {
         IDatabase Database { get; set; }
         public void SetupDatabase(Profile profile);
-        Task<List<LogMessage>> GetLogMessagesAsync(DateTime minDate);
-        Task<Tuple<List<Manager>, List<Execution>>> GetParsedLogDataAsync(IList<LogMessage> messages);
+        List<LogMessage> GetLogMessages(DateTime minDate);
+        Tuple<List<Manager>, List<Execution>> GetParsedLogData(IList<LogMessage> messages);
         //void GetExecutionsSince(DateTime minDate);
         //void GetValidationsSince(DateTime minDate);
         //void GetLogMessagesFromExecutionSince(DateTime minDate, int executionId);

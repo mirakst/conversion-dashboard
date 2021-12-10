@@ -19,6 +19,6 @@ namespace DashboardBackend
         where TInput : class
         where TOutput : class
     {
-        Task<TOutput> Parse(IList<TInput> data);
+        TOutput Parse(IList<TInput> data);
     }
 }

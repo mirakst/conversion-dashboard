@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DashboardBackend.Database.Models
 {
+    [Keyless]
     [Table("LOGGING")]
     public partial class LoggingEntry
     {
         [Column("CREATED", TypeName = "datetime")]
         public DateTime? Created { get; set; }
-        [Key]
         [Column("LOG_MESSAGE")]
         public string LogMessage { get; set; }
         [Column("LOG_LEVEL")]

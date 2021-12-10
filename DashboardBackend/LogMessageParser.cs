@@ -20,50 +20,47 @@ namespace DashboardBackend
         };
 
         // at this point we do not care if the found objects already exist or not, we will check this before adding them
-        public async Task<Tuple<List<Manager>, List<Execution>>> Parse(IList<LogMessage> data)
+        public Tuple<List<Manager>, List<Execution>> Parse(IList<LogMessage> data)
         {
             List<Manager> managers = new();
             List<Execution> executions = new();
 
-            await Task.Run(() =>
+            foreach (LogMessage message in data)
             {
-                foreach (LogMessage message in data)
+                Execution execution = executions.FirstOrDefault(e => e?.Id == message.ExecutionId);
+                if (execution is null)
                 {
-                    Execution execution = executions.FirstOrDefault(e => e?.Id == message.ExecutionId);
-                    if (execution is null)
-                    {
-                        execution = new(message.ExecutionId, message.Date);
-                        executions.Add(execution);
-                    }
-                    if (ExecutionFinishedMessages.Contains(message.Content))
-                    {
-                        execution.Status = ExecutionStatus.Finished;
-                    }
-
-                    // Ensure that a manager is created with the specified context ID
-                    if (message.ContextId > 0)
-                    {
-                        Manager manager = managers.Find(m => m?.ContextId == message.ContextId && m?.ExecutionId == message.ExecutionId);
-                        if (manager is null)
-                        {
-                            manager = new() { ContextId = message.ContextId, ExecutionId = message.ExecutionId };
-                            managers.Add(manager);
-                        }
-
-                        if (message.Content.StartsWith("Starting manager: ") && message.Content.Split(": ") is string[] args)
-                        {
-                            manager.Name = args[1].Split(',')[0];
-                            manager.Status = ManagerStatus.Running;
-                        }
-                        else if (message.Content == "Manager execution done.")
-                        {
-                            manager.Status = ManagerStatus.Ok;
-                        }
-
-                        message.ManagerName = manager.Name ?? "Context not found";
-                    }
+                    execution = new(message.ExecutionId, message.Date);
+                    executions.Add(execution);
                 }
-            });
+                if (ExecutionFinishedMessages.Contains(message.Content))
+                {
+                    execution.Status = ExecutionStatus.Finished;
+                }
+
+                // Ensure that a manager is created with the specified context ID
+                if (message.ContextId > 0)
+                {
+                    Manager manager = managers.Find(m => m?.ContextId == message.ContextId && m?.ExecutionId == message.ExecutionId);
+                    if (manager is null)
+                    {
+                        manager = new() { ContextId = message.ContextId, ExecutionId = message.ExecutionId };
+                        managers.Add(manager);
+                    }
+
+                    if (message.Content.StartsWith("Starting manager: ") && message.Content.Split(": ") is string[] args)
+                    {
+                        manager.Name = args[1].Split(',')[0];
+                        manager.Status = ManagerStatus.Running;
+                    }
+                    else if (message.Content == "Manager execution done.")
+                    {
+                        manager.Status = ManagerStatus.Ok;
+                    }
+
+                    message.ManagerName = manager.Name ?? "Context not found";
+                }
+            }
             return new(managers, executions);
         }
 

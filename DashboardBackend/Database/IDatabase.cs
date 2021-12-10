@@ -27,7 +27,7 @@ namespace DashboardBackend.Database
         /// </summary>
         /// <param name="minDate">A date constraint for the returned objects.</param>
         /// <returns>A list of log messages no older than the specified DateTime.</returns>
-        Task<IList<LoggingEntry>> QueryLogMessages(DateTime minDate);
+        IList<LoggingEntry> QueryLogMessages(DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries from the LOGGING_CONTEXT table of the state database .

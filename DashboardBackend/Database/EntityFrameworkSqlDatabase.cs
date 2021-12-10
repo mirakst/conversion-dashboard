@@ -15,14 +15,14 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public async Task<IList<LoggingEntry>> QueryLogMessages(DateTime minDate)
+        public IList<LoggingEntry> QueryLogMessages(DateTime minDate)
         {
             using NetcompanyDbContext db = new(_options);
-            IList<LoggingEntry> queryResult = await (from item in db.Loggings
-                                                     where item.Created > minDate
-                                                     orderby item.Created
-                                                     select item).ToListAsync();
-            await db.DisposeAsync();
+            IList<LoggingEntry> queryResult = (from item in db.Loggings
+                                               where item.Created > minDate
+                                               orderby item.Created
+                                               select item).ToList();
+            db.Dispose();
             return queryResult;
         }
 

@@ -157,7 +157,7 @@ namespace DashboardFrontend
                 // For testing, these timers should invoke some event which we can subscribe to, in order to fully test the integration.
                 // Even better would be to turn these callback functions into a seperate class...
                 //Timer executionTimer = new(x => { }, null, 0, 1000);
-                _timers.Add(new(x => { _ = TryUpdateLog(); }, null, 0, 200));
+                _timers.Add(new(x => { TryUpdateLog(); }, null, 0, 1000));
                 //Timer managerTimer = new(x => { }, null, 200, UserSettings.ManagerQueryInterval * 1000);
                 //Timer validationsTimer = new(x => { }, null, 200, UserSettings.ValidationQueryInterval * 1000);
                 //Timer healthReportTimer = new(x => { }, null, 200, UserSettings.HealthReportQueryInterval * 1000);
@@ -257,64 +257,74 @@ namespace DashboardFrontend
 
         public void TryUpdateLog()
         {
-            if (Conversion is null)
+            lock (_lockLog)
             {
-                throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+                if (Conversion is null)
+                {
+                    throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+                }
+
+                var messages = DataHandler.GetLogMessages(Conversion.LastLogQuery);
+                var (managers, executions) = DataHandler.GetParsedLogData(messages);
+
+                _dispatcher.Invoke(() =>
+                {
+                    // Update executions
+                    lock (Conversion.Executions)
+                    {
+                        foreach (var newExecution in executions)
+                        {
+                            // If the execution already exists, update its status (since it might be finished)
+                            if (Conversion.Executions.FirstOrDefault(e => e.Id == newExecution.Id) is Execution e)
+                            {
+                                e.Status = newExecution.Status;
+                            }
+                            // Otherwise, add it
+                            else
+                            {
+                                Conversion.AddExecution(newExecution);
+                            }
+                        }
+                    }
+                    // Update managers
+                    lock (Conversion.AllManagers)
+                    {
+                        foreach (var newManager in managers)
+                        {
+                            // If the manager already exists, update its context and execution ID's
+                            if (Conversion.AllManagers.Find(m => m.Name == newManager.Name && m.ContextId == 0) is Manager existingManager)
+                            {
+                                existingManager.ContextId = newManager.ContextId;
+                                existingManager.ExecutionId = newManager.ExecutionId;
+                            }
+                            // Otherwise, add it
+                            else
+                            {
+                                Conversion.AllManagers.Add(newManager);
+                                if (Conversion.Executions.FirstOrDefault(e => e.Id == newManager.ExecutionId) is Execution execution)
+                                {
+                                    execution.AddManager(newManager);
+                                }
+                                else
+                                {
+                                    Trace.WriteLine($"Did not find execution for manager: {newManager.ShortName}, ContextID={newManager.ContextId}, ExecutionID={newManager.ExecutionId}");
+                                }
+                            }
+                        }
+                    }
+                    // Add managers and log messages to executions
+                    lock (Conversion.Executions)
+                    {
+                        foreach (var execution in Conversion.Executions)
+                        {
+                            execution.Log.Messages.AddRange(messages.Where(m => m.ExecutionId == execution.Id));
+                        }
+                    }
+                });
+                Conversion.LastLogQuery = DateTime.Now;
             }
-
-            var messages = DataHandler.GetLogMessagesAsync(Conversion.LastLogQuery);
-            var (managers, executions) = DataHandler.GetParsedLogDataAsync(messages);
-
-            _dispatcher.Invoke(() =>
-            {
-                // Update executions
-                lock (Conversion.Executions)
-                {
-                    foreach (var newExecution in executions)
-                    {
-                        // If the execution already exists, update its status (since it might be finished)
-                        if (Conversion.Executions.FirstOrDefault(e => e.Id == newExecution.Id) is Execution e)
-                        {
-                            e.Status = newExecution.Status;
-                        }
-                        // Otherwise, add it
-                        else
-                        {
-                            Conversion.AddExecution(newExecution);
-                        }
-                    }
-                }
-
-                // Update managers
-                lock (Conversion.AllManagers)
-                {
-                    foreach (var newManager in managers)
-                    {
-                        // If the manager already exists, update its context and execution ID's
-                        if (Conversion.AllManagers.Find(m => m.Name == newManager.Name && m.ContextId == 0) is Manager existingManager)
-                        {
-                            existingManager.ContextId = newManager.ContextId;
-                            existingManager.ExecutionId = newManager.ExecutionId;
-                        }
-                        // Otherwise, add it
-                        else
-                        {
-                            Conversion.AllManagers.Add(newManager);
-                        }
-                    }
-                }
-
-                // Add managers and log messages to executions
-                lock (Conversion.Executions)
-                {
-                    foreach (var execution in Conversion.Executions)
-                    {
-                        //var messages = 
-                    }
-                }
-            });
-            Conversion.LastLogQuery = DateTime.Now;
         }
+        private object _lockLog = new();
 
         private void TryUpdateExecutions()
         {
