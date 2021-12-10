@@ -186,7 +186,7 @@
                             <Button Grid.Row="2" 
                                 Grid.Column="1" 
                                 Grid.ColumnSpan="2" 
-                                Content="New" 
+                                Content="_New" 
                                 Margin="5" 
                                 Click="Button_NewProfile"/>
 
@@ -361,7 +361,7 @@
                     Margin="0 5 10 5" 
                     Width="100" 
                     Click="Button_Close"/>
-                <Button Content="Save and close" 
+                <Button Content="_Save and close" 
                     IsDefault="True" 
                     Margin="0 5 0 5" 
                     Width="100" 

@@ -66,7 +66,7 @@
                         Grid.Column="0"
                         HorizontalAlignment="Right"/>
                 <Button Name="ButtonConnectDb"
-                        Content="Connect"
+                        Content="_Connect"
                         IsDefault="True"
                         Click="OnButtonConnectDBClick"
                         MinWidth="100"
