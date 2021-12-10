@@ -4,7 +4,7 @@ namespace Model
 {
     public static class ManagerScore
     {
-        public static List<double> MaxPerformanceScore { get; private set; }
+        public static List<double> MaxPerformanceScore { get; private set; } = new();
 
         /// <summary>
         /// Calculates the managers performance score
@@ -13,9 +13,9 @@ namespace Model
         /// <returns></returns>
         public static double GetPerformanceScore(Manager manager)
         {
-            double score = RuntimeHasValue(manager);
+            double score = CalculatePerformanceScore(manager);
             IsNewMaxScore(score, 0 /* manager.ExecutionId */);
-            return PerformanceScoreToPercent(score, 0/* manager.ExecutionId */);
+            return PerformanceScoreToPercent(score, 0 /* manager.ExecutionId */);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Model
             return TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
-        private static double RuntimeHasValue(Manager manager)
+        private static double CalculatePerformanceScore(Manager manager)
         {
             if (manager.Runtime.HasValue)
                 return (double)(manager.RowsRead + manager.RowsWritten) / manager.Runtime.Value.Seconds;
@@ -41,7 +41,9 @@ namespace Model
         private static void IsNewMaxScore(double score, int execution)
         {
             if (score > MaxPerformanceScore[execution])
+            {
                 MaxPerformanceScore[execution] = score;
+            }
         }
 
         private static double PerformanceScoreToPercent(double performanceScore, int execution)
