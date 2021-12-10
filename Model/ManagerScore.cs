@@ -13,7 +13,7 @@ namespace Model
         /// <returns></returns>
         public static double GetPerformanceScore(Manager manager)
         {
-            double score = (double)(manager.RowsRead + manager.RowsWritten) / (manager.Runtime.HasValue ? manager.Runtime.Value.Seconds : 0);
+            double score = RuntimeHasValue(manager);
             IsNewMaxScore(score, 0 /* manager.ExecutionId */);
             return PerformanceScoreToPercent(score, 0/* manager.ExecutionId */);
         }
@@ -30,12 +30,18 @@ namespace Model
             return TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
+        private static double RuntimeHasValue(Manager manager)
+        {
+            if (manager.Runtime.HasValue)
+                return (double)(manager.RowsRead + manager.RowsWritten) / manager.Runtime.Value.Seconds;
+            else
+                return 0;
+        }
+        
         private static void IsNewMaxScore(double score, int execution)
         {
-            if (score > MaxPerformanceScore.ElementAt(execution))
-            {
+            if (score > MaxPerformanceScore[execution])
                 MaxPerformanceScore[execution] = score;
-            }
         }
 
         private static double PerformanceScoreToPercent(double performanceScore, int execution)
