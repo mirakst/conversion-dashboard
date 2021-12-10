@@ -12,7 +12,7 @@ namespace IntegrationTests
 {
     public class DashboardControllerTests
     {
-        public IDashboardController ControllerSeed => new DashboardController(new FakeUserSettings(), new DatabaseHandler());
+        public IDashboardController ControllerSeed => new DashboardController(new FakeUserSettings());
 
         [Fact]
         public void DashboardController_GetsExecutionAndManagerFromLOGGING()
@@ -49,20 +49,24 @@ namespace IntegrationTests
 
             // Setup test
             var controller = ControllerSeed;
-            controller.DatabaseHandler.Database = new SqlDatabase(options);
             controller.SetupNewConversion();
+            controller.DataHandler.Database = new EntityFrameworkSqlDatabase(options);
+
+            // This is probably awful, but hey - it works!
+            controller.OnLogsUpdated += delegate
+            {
+                // Assert
+                var execution = Assert.Single(controller.Conversion!.Executions);
+                Assert.NotNull(execution);
+                Assert.Equal(1, execution.Id);
+                var manager = Assert.Single(execution.Managers);
+                Assert.NotNull(manager);
+                Assert.Equal(1, manager.ContextId);
+                Assert.Equal("manager.test.name", manager.Name);
+            };
 
             // Perform test
             controller.TryUpdateLog();
-
-            // Assert
-            var execution = Assert.Single(controller.Conversion!.Executions);
-            Assert.NotNull(execution);
-            Assert.Equal(1, execution.Id);
-            var manager = Assert.Single(execution.Managers);
-            Assert.NotNull(manager);
-            Assert.Equal(1, manager.ContextId);
-            Assert.Equal("manager.test.name", manager.Name);
         }
     }
 }

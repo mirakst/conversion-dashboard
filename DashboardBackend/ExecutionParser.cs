@@ -2,13 +2,10 @@
 
 namespace DashboardBackend
 {
-    public class ExecutionParser : IDataParser<Execution, Execution>
+    public class ExecutionParser : IDataParser<Execution, IList<Execution>>
     {
-        private readonly Conversion _conversion;
-
-        public ExecutionParser(Conversion conversion)
+        public ExecutionParser()
         {
-            _conversion = conversion;
         }
 
         /// <summary>
@@ -16,16 +13,19 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public IList<Execution> Parse(IList<Execution> data)
+        public async Task<IList<Execution>> Parse(IList<Execution> data)
         {
             List<Execution> result = new();
-            foreach (Execution execution in data)
+            await Task.Run(() =>
             {
-                if (!_conversion.Executions.Any(e => e.Id == execution.Id))
+                foreach (Execution execution in data)
                 {
-                    result.Add(execution);
+                    //if (!conversion.Executions.Any(e => e.Id == execution.Id))
+                    //{
+                    //    result.Add(execution);
+                    //}
                 }
-            }
+            });
             return result;
         }
     }

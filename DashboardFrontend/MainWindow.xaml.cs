@@ -23,9 +23,9 @@ namespace DashboardFrontend
             ((ICollectionView)ListViewLog.Items).CollectionChanged += ListViewLog_CollectionChanged;
 
             // Setup back-end
-            IDatabaseHandler dbHandler = new DatabaseHandler();
             IUserSettings userSettings = new UserSettings();
-            Controller = new DashboardController(userSettings, dbHandler);
+            IDataHandler dataHandler = new DataHandler();
+            Controller = new DashboardController(userSettings, dataHandler);
             DataContext = new MainViewModel(Controller);
         }
 

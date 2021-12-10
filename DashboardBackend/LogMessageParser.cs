@@ -1,14 +1,13 @@
-﻿using Model;
+﻿using System.Windows.Threading;
+using Model;
 
 namespace DashboardBackend
 {
-    public class LogMessageParser : IDataParser<LogMessage, Manager>
+    public class LogMessageParser : IDataParser<LogMessage, Tuple<List<Manager>, List<Execution>>>
     {
-        private readonly Conversion _conversion;
-
-        public LogMessageParser(Conversion conversion)
+        public LogMessageParser()
         {
-            _conversion = conversion;
+
         }
 
         // Log messages that indicate the end of an execution.
@@ -20,62 +19,52 @@ namespace DashboardBackend
             "Deploy is finished!!",
         };
 
-        /// <summary>
-        /// Iteratively parses the specified list of log messages and performs the relevant actions based on their contents.
-        /// </summary>
-        /// <remarks>The main output is a list of newly created managers, but the method updates existing managers and executions as a side-effect.</remarks>
-        /// <param name="messages">The list of messages to parse.</param>
-        /// <returns>A list of any managers that were created during parsing.</returns>
-        public IList<Manager> Parse(IList<LogMessage> data)
+        // at this point we do not care if the found objects already exist or not, we will check this before adding them
+        public async Task<Tuple<List<Manager>, List<Execution>>> Parse(IList<LogMessage> data)
         {
             List<Manager> managers = new();
+            List<Execution> executions = new();
 
-            foreach (LogMessage message in data)
+            await Task.Run(() =>
             {
-                string associatedManager = null;
-
-                #region Check for any execution updates
-                Execution execution = _conversion.Executions.FirstOrDefault(e => e?.Id == message.ExecutionId);
-                if (execution is null)
+                foreach (LogMessage message in data)
                 {
-                    execution = new(message.ExecutionId, message.Date);
-                    _conversion.AddExecution(execution);
-                }
-                if (ExecutionFinishedMessages.Contains(message.Content))
-                {
-                    execution.Status = ExecutionStatus.Finished;
-                }
-                #endregion
-
-                #region Check for any manager started/finished updates
-                if (message.Content.StartsWith("Starting manager: ") && message.Content.Split(": ") is string[] args)
-                {
-                    if (TryGetManager(execution, message, args, out Manager manager))
+                    Execution execution = executions.FirstOrDefault(e => e?.Id == message.ExecutionId);
+                    if (execution is null)
                     {
-                        managers.Add(manager);
-                        associatedManager = manager.Name;
+                        execution = new(message.ExecutionId, message.Date);
+                        executions.Add(execution);
+                    }
+                    if (ExecutionFinishedMessages.Contains(message.Content))
+                    {
+                        execution.Status = ExecutionStatus.Finished;
+                    }
+
+                    // Ensure that a manager is created with the specified context ID
+                    if (message.ContextId > 0)
+                    {
+                        Manager manager = managers.Find(m => m?.ContextId == message.ContextId && m?.ExecutionId == message.ExecutionId);
+                        if (manager is null)
+                        {
+                            manager = new() { ContextId = message.ContextId, ExecutionId = message.ExecutionId };
+                            managers.Add(manager);
+                        }
+
+                        if (message.Content.StartsWith("Starting manager: ") && message.Content.Split(": ") is string[] args)
+                        {
+                            manager.Name = args[1].Split(',')[0];
+                            manager.Status = ManagerStatus.Running;
+                        }
+                        else if (message.Content == "Manager execution done.")
+                        {
+                            manager.Status = ManagerStatus.Ok;
+                        }
+
+                        message.ManagerName = manager.Name ?? "Context not found";
                     }
                 }
-                else if (message.Content.StartsWith("Manager execution done."))
-                {
-                    if (execution.Managers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager manager)
-                    {
-                        manager.Status = ManagerStatus.Ok;
-                    }
-                }
-                #endregion
-
-                #region Set context tooltip
-                // execution.Managers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager m 
-                if (associatedManager is null && managers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager m) // FIX DET!
-                {
-                    associatedManager = m.Name;
-                }
-                message.ManagerName = associatedManager ?? "Context not found";
-                #endregion
-            }
-
-            return managers;
+            });
+            return new(managers, executions);
         }
 
         /// <summary>

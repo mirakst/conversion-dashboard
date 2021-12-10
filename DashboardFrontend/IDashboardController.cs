@@ -10,12 +10,14 @@ using Model;
 namespace DashboardFrontend
 {
     public delegate void ConversionCreated(Conversion conversion);
+    public delegate void LogsUpdated();
 
     public interface IDashboardController
     {
         event ConversionCreated OnConversionCreated;
+        event LogsUpdated OnLogsUpdated;
 
-        IDatabaseHandler DatabaseHandler { get; set; }
+        IDataHandler DataHandler { get; set; }
         IUserSettings UserSettings { get; set; }
         Conversion? Conversion { get; set; }
         bool IsRunning { get; }
@@ -24,6 +26,6 @@ namespace DashboardFrontend
         void ChangeMonitoringState();
         void StartMonitoring();
         void StopMonitoring();
-        void TryUpdateLog();
+        Task TryUpdateLog();
     }
 }

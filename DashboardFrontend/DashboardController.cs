@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows;
-
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using DashboardBackend;
 using DashboardBackend.Settings;
 
@@ -18,25 +18,30 @@ namespace DashboardFrontend
     public class DashboardController : BaseViewModel, IDashboardController
     {
         private readonly List<Timer> _timers;
-        private LogMessageParser _logMessageParser;
         private readonly System.Windows.Threading.Dispatcher _dispatcher;
+        private readonly SemaphoreSlim _logSemaphore;
+
 
         public DashboardController(IUserSettings userSettings)
         {
             _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
-            UserSettings = userSettings;
+            _timers = new();
+            _logSemaphore = new(1, 1);
+
+            DataHandler = new DataHandler();
+            UserSettings = userSettings; 
             LoadUserSettings();
         }
 
-        public DashboardController(IUserSettings userSettings, IDatabaseHandler databaseHandler) : this(userSettings)
+        public DashboardController(IUserSettings userSettings, IDataHandler dataHandler) : this(userSettings)
         {
-            DatabaseHandler = databaseHandler;
-            _timers = new();
+            DataHandler = dataHandler;
         }
 
+        public event LogsUpdated OnLogsUpdated;
         public event ConversionCreated OnConversionCreated;
 
-        public IDatabaseHandler DatabaseHandler { get; set; }
+        public IDataHandler DataHandler { get; set; }
         public IUserSettings UserSettings { get; set; }
         private Conversion? _conversion;
         public Conversion? Conversion
@@ -84,8 +89,20 @@ namespace DashboardFrontend
                             UserSettings.ActiveProfile.ProfileChanged += SetupNewConversion;
                         }
                         UserSettings.ActiveProfile.HasStartedMonitoring = true;
-                        DatabaseHandler.SetupDatabase(UserSettings.ActiveProfile);
                         SetupNewConversion();
+                        DataHandler.SetupDatabase(UserSettings.ActiveProfile);
+
+                        //Conversion!.AddExecution(new(1, DateTime.Now));
+                        //Conversion.ActiveExecution.AddManager(new()
+                        //{
+                        //    Name = "dk.aes.ans.konvertering.managers.conversionUser.AnsConversionUserManager",
+                        //    ContextId = 0,
+                        //    RowsRead = 10,
+                        //    RowsWritten = 20,
+                        //    StartTime = new DateTime(1999, 02, 23),
+                        //    Status = ManagerStatus.Ready
+                        //});
+
                         StartMonitoring();
                     }
                 }
@@ -105,7 +122,6 @@ namespace DashboardFrontend
                 StopMonitoring();
             }
             Conversion = new();
-            _logMessageParser = new(Conversion);
         }
 
         private void LoadUserSettings()
@@ -126,7 +142,7 @@ namespace DashboardFrontend
                 throw new ArgumentNullException(nameof(Conversion), "Expected a non-null Conversion when starting monitoring");
             }
             IsRunning = true;
-            DatabaseHandler.BuildHealthReport(Conversion.HealthReport);
+            //DataHandler.BuildHealthReport(Conversion.HealthReport);
 
             if (UserSettings.SynchronizeAllQueries)
             {
@@ -140,12 +156,12 @@ namespace DashboardFrontend
             {
                 // For testing, these timers should invoke some event which we can subscribe to, in order to fully test the integration.
                 // Even better would be to turn these callback functions into a seperate class...
-                Timer executionTimer = new(x => { }, null, 0, 1000);
-                Timer logTimer = new(x => { TryUpdateLog(); }, null, 200, UserSettings.LoggingQueryInterval * 1000);
-                Timer managerTimer = new(x => { }, null, 200, UserSettings.ManagerQueryInterval * 1000);
-                Timer validationsTimer = new(x => { }, null, 200, UserSettings.ValidationQueryInterval * 1000);
-                Timer healthReportTimer = new(x => { }, null, 200, UserSettings.HealthReportQueryInterval * 1000);
-                _timers.AddRange(new List<Timer> { executionTimer, healthReportTimer, logTimer, validationsTimer, managerTimer });
+                //Timer executionTimer = new(x => { }, null, 0, 1000);
+                _timers.Add(new(x => { _ = TryUpdateLog(); }, null, 0, 200));
+                //Timer managerTimer = new(x => { }, null, 200, UserSettings.ManagerQueryInterval * 1000);
+                //Timer validationsTimer = new(x => { }, null, 200, UserSettings.ValidationQueryInterval * 1000);
+                //Timer healthReportTimer = new(x => { }, null, 200, UserSettings.HealthReportQueryInterval * 1000);
+                //_timers.AddRange(new List<Timer> { executionTimer, healthReportTimer, logTimer, validationsTimer, managerTimer });
             }
         }
 
@@ -160,10 +176,85 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Queries any new Log data through the <see cref="DatabaseHandler"/>, parses it (which involves creating and/or updating executions and managers), and adds it to the Log of the associated execution.
+        /// Queries any new Log data through the <see cref="DataHandler"/>, parses it (which involves creating and/or updating executions and managers), and adds it to the Log of the associated execution.
         /// </summary>
-        /// <remarks>Any changes that will affect the UI are done one the UI thread (as dictated by WPF), and collections at risk of being modified during this method's execution are locked.</remarks>
+        /// <remarks>Any changes that will affect the UI are done one the UI thread (as dictated by WPF).</remarks>
         /// <exception cref="ArgumentNullException"></exception>
+        //public async Task TryUpdateLog()
+        //{
+        //    // This function uses a 'Semaphore', which works kind of like 'locking' does.
+        //    // The particular semaphore is limited to only one thread (during its initialization), which means that only one thread can access it at a given time.
+        //    // Basically, we wait for the previous '_logSemaphore-thread' to finish its work before starting this one, and consequently, the updates will not clash.
+        //    await _logSemaphore.WaitAsync();
+        //    try
+        //    {
+        //        if (Conversion is null)
+        //        {
+        //            throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+        //        }
+
+        //        var messages = await DataHandler.GetLogMessagesAsync(Conversion.LastLogQuery);
+        //        var (managers, executions) = await DataHandler.GetParsedLogDataAsync(messages);
+
+        //        await _dispatcher.InvokeAsync(() =>
+        //        {
+        //            // Update executions
+        //            lock (Conversion.Executions)
+        //            {
+        //                foreach (var newExecution in executions)
+        //                {
+        //                    // If the execution already exists, update its status (since it might be finished)
+        //                    if (Conversion.Executions.FirstOrDefault(e => e.Id == newExecution.Id) is Execution e)
+        //                    {
+        //                        e.Status = newExecution.Status;
+        //                    }
+        //                    // Otherwise, add it
+        //                    else
+        //                    {
+        //                        Conversion.AddExecution(newExecution);
+        //                    }
+        //                }
+        //            }
+
+        //            // Update managers
+        //            lock (Conversion.AllManagers)
+        //            {
+        //                foreach (var newManager in managers)
+        //                {
+        //                    // If the manager already exists, update its context and execution ID's
+        //                    if (Conversion.AllManagers.Find(m => m.Name == newManager.Name && m.ContextId == 0) is Manager existingManager)
+        //                    {
+        //                        existingManager.ContextId = newManager.ContextId;
+        //                        existingManager.ExecutionId = newManager.ExecutionId;
+        //                    }
+        //                    // Otherwise, add it
+        //                    else
+        //                    {
+        //                        Conversion.AllManagers.Add(newManager);
+        //                    }
+        //                }
+        //            }
+
+        //            // Add managers and log messages to executions
+        //            lock (Conversion.Executions)
+        //            {
+        //                foreach (var execution in Conversion.Executions)
+        //                {
+        //                    //var messages = 
+        //                }
+        //            }
+        //        });
+        //        Conversion.LastLogQuery = DateTime.Now;
+        //    }
+        //    finally
+        //    {
+        //        // Releasing the semaphore means that the thread has finished its work.
+        //        // This is done in a 'try-finally' clause since it is important to ensure that the semaphore is always released, even in case of exceptions, etc.
+        //        // If it is not released, it will always be 'occupied', and future updates will endlessly wait for the semaphore to be released before doing anything.
+        //        _logSemaphore.Release();
+        //    }
+        //}
+
         public void TryUpdateLog()
         {
             if (Conversion is null)
@@ -171,38 +262,58 @@ namespace DashboardFrontend
                 throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
             }
 
-            IList<LogMessage>? newData = DatabaseHandler.GetLogMessagesSince(Conversion.LastLogQuery);
-            Conversion.LastLogQuery = DateTime.Now;
+            var messages = DataHandler.GetLogMessagesAsync(Conversion.LastLogQuery);
+            var (managers, executions) = DataHandler.GetParsedLogDataAsync(messages);
 
-            List<Manager>? managers = _logMessageParser.Parse(newData);
-            // AllManagers list may not be necessary
-            //lock (Conversion.AllManagers)
-            //{
-            //    Conversion.AllManagers.AddRange(managers);
-            //}
-
-            foreach (Execution exec in Conversion.Executions)
+            _dispatcher.Invoke(() =>
             {
-                if (managers.Any())
+                // Update executions
+                lock (Conversion.Executions)
                 {
-                    List<Manager>? newExecManagers = managers.Where(m => m.ExecutionId == exec.Id).ToList();
-                    lock (exec.Managers)
+                    foreach (var newExecution in executions)
                     {
-                        _dispatcher.Invoke(() =>
+                        // If the execution already exists, update its status (since it might be finished)
+                        if (Conversion.Executions.FirstOrDefault(e => e.Id == newExecution.Id) is Execution e)
                         {
-                            exec.AddManagers(newExecManagers);
-                        });
+                            e.Status = newExecution.Status;
+                        }
+                        // Otherwise, add it
+                        else
+                        {
+                            Conversion.AddExecution(newExecution);
+                        }
                     }
                 }
-                if (newData.Any())
+
+                // Update managers
+                lock (Conversion.AllManagers)
                 {
-                    IEnumerable<LogMessage>? newExecMessages = newData.Where(m => m.ExecutionId == exec.Id);
-                    _dispatcher.Invoke(() =>
+                    foreach (var newManager in managers)
                     {
-                        exec.Log.Messages.AddRange(newExecMessages);
-                    });
+                        // If the manager already exists, update its context and execution ID's
+                        if (Conversion.AllManagers.Find(m => m.Name == newManager.Name && m.ContextId == 0) is Manager existingManager)
+                        {
+                            existingManager.ContextId = newManager.ContextId;
+                            existingManager.ExecutionId = newManager.ExecutionId;
+                        }
+                        // Otherwise, add it
+                        else
+                        {
+                            Conversion.AllManagers.Add(newManager);
+                        }
+                    }
                 }
-            }
+
+                // Add managers and log messages to executions
+                lock (Conversion.Executions)
+                {
+                    foreach (var execution in Conversion.Executions)
+                    {
+                        //var messages = 
+                    }
+                }
+            });
+            Conversion.LastLogQuery = DateTime.Now;
         }
 
         private void TryUpdateExecutions()
