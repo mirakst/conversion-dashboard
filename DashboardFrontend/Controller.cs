@@ -677,16 +677,43 @@ namespace DashboardFrontend
             _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
             _vm.UpdateView();
             _vm.CurrentProgress = 0;
+            KillAllChildren();
+        }
+
+        internal void KillAllChildren()
+        {
+            if (LogViewModels.Count > 1)
+            {
+                LogViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (ManagerViewModels.Count > 1)
+            {
+                ManagerViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (ValidationReportViewModels.Count > 1)
+            {
+                ValidationReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (HealthReportViewModels.Count > 1)
+            {
+                HealthReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            foreach (Window item in App.Current.Windows)
+            {
+                if (item != App.Current.MainWindow)
+                    item.Close();
+            }
         }
 
         public async void ExpandManagerView(ManagerWrapper wrapper)
         {
             ManagerViewModel vm;
             if (wrapper == null) return;
+            if (_vm.ManagerViewModel.SelectedExecution == null) return;
             int selectedExecutionId = _vm.ManagerViewModel.SelectedExecution.Id;
-            if (_vm.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution.Id == selectedExecutionId))
+            if (_vm.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution?.Id == selectedExecutionId))
             {
-                vm = _vm.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution.Id == selectedExecutionId);
+                vm = _vm.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution?.Id == selectedExecutionId);
             }
             else
             {

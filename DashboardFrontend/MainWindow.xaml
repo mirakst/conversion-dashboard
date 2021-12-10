@@ -178,7 +178,7 @@
                         <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
 
-                    <ComboBox Margin="0 2 2 2"  
+                    <ComboBox Margin="0 0 2 2"  
                               ToolTip="Choose which execution to show data from" 
                               Style="{DynamicResource ComboBoxExecutions}"  
                               ItemsSource="{Binding Executions}"  
@@ -196,6 +196,7 @@
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
                              Style="{DynamicResource ValidationsSearchBox}"
+                             Height="26"
                              Grid.Column="1"
                              Grid.ColumnSpan="2"
                              Margin="0,0,0,1"
@@ -795,9 +796,8 @@
                                                FontWeight="Bold"
                                                Foreground="{DynamicResource HeaderForegroundColor}"
                                                Margin="10 20 10 10"/>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="10 5 10 10"
-                                                Height="30">
+                                    <WrapPanel Orientation="Horizontal"
+                                                Margin="10 5 10 10">
                                         <Button Margin="0 0 20 0"
                                                 Click="CopySrcSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
@@ -818,7 +818,7 @@
                                                        Style="{DynamicResource PopupLabel}"/>
                                             </Border>
                                         </Popup>
-                                    </StackPanel>
+                                    </WrapPanel>
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>

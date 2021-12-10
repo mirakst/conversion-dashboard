@@ -83,6 +83,7 @@ namespace DashboardFrontend
                 });
             };
             await Task.Delay(5);
+            if (ViewModel.LogViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.LogViewModel.SelectedExecution.Id;
             detachedLogViewModel.SelectedExecution = detachedLogViewModel.Executions[selectedExecutionId - 1];
         }
@@ -102,6 +103,7 @@ namespace DashboardFrontend
                 });
             };
             await Task.Delay(5);
+            if (ViewModel.ValidationReportViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
             detachedValidationReportViewModel.SelectedExecution = detachedValidationReportViewModel.Executions[selectedExecutionId - 1];
         }
