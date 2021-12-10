@@ -1,13 +1,12 @@
-﻿using DashboardFrontend.ViewModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Linq;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
-    public class UserSettings : BaseViewModel, IUserSettings
+    public class UserSettings : Model.ObservableObject, IUserSettings
     {
         public UserSettings()
         {

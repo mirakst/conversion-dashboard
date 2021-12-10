@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using System.Text.Json.Serialization;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
     public delegate void ProfileChanged();
 

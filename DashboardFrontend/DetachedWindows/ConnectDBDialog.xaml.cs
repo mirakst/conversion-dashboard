@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.Settings;
+﻿using DashboardBackend.Settings;
 using Microsoft.Data.SqlClient;
 using System.ComponentModel;
 using System.Windows;

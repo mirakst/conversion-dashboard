@@ -1,5 +1,5 @@
 ﻿using DashboardBackend;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using System.Windows;
 using System.Windows.Controls;
 

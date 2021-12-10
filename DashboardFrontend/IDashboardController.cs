@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DashboardBackend;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using Model;
 
 namespace DashboardFrontend
@@ -15,12 +15,15 @@ namespace DashboardFrontend
     {
         event ConversionCreated OnConversionCreated;
 
-        IDatabaseHandler DatabaseHandler { get; }
-        IUserSettings UserSettings { get; }
+        IDatabaseHandler DatabaseHandler { get; set; }
+        IUserSettings UserSettings { get; set; }
         Conversion? Conversion { get; set; }
         bool IsRunning { get; }
 
         void SetupNewConversion();
-        void OnChangeMonitoringStateRequested();
+        void ChangeMonitoringState();
+        void StartMonitoring();
+        void StopMonitoring();
+        void TryUpdateLog();
     }
 }

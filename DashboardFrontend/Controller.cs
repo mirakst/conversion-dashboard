@@ -1,7 +1,7 @@
 ﻿using DashboardBackend.Database;
 using DashboardFrontend.DetachedWindows;
 using DashboardFrontend.NewViewModels;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using DashboardFrontend.ViewModels;
 using Model;
 using System;

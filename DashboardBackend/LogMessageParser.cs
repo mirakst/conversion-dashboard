@@ -37,7 +37,7 @@ namespace DashboardBackend
                 string associatedManager = null;
 
                 #region Check for any execution updates
-                Execution execution = _conversion.Executions.FirstOrDefault(e => e.Id == message.ExecutionId);
+                Execution execution = _conversion.Executions.FirstOrDefault(e => e?.Id == message.ExecutionId);
                 if (execution is null)
                 {
                     execution = new(message.ExecutionId, message.Date);
@@ -68,7 +68,8 @@ namespace DashboardBackend
                 #endregion
 
                 #region Set context tooltip
-                if (associatedManager is null && _conversion.AllManagers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager m)
+                // execution.Managers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager m 
+                if (associatedManager is null && managers.FirstOrDefault(m => m.ContextId == message.ContextId) is Manager m) // FIX DET!
                 {
                     associatedManager = m.Name;
                 }

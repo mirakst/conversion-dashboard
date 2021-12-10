@@ -1,7 +1,12 @@
-﻿using System.Text.RegularExpressions;
-using System.Data.SqlTypes;
+﻿using System.Data.SqlTypes;
+using System.Text.RegularExpressions;
+
 using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
+using DashboardBackend.Settings;
+
+using Microsoft.EntityFrameworkCore;
+
 using Model;
 
 namespace DashboardBackend
@@ -103,7 +108,7 @@ namespace DashboardBackend
             int addedManagers = 0;
 
             // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-            foreach (var entry in engineEntries)
+            foreach (EnginePropertyEntry entry in engineEntries)
             {
                 string name = entry.Manager.Split(',')[0];
                 entry.Manager = name;
@@ -112,7 +117,7 @@ namespace DashboardBackend
             // For each entry: Find the associated manager and add the value to it. 
             // If the manager exists but already has all values set, it must be the same manager in a new execution.
             // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
-            foreach (var entry in engineEntries)
+            foreach (EnginePropertyEntry entry in engineEntries)
             {
                 // If manager was created by the log first (context id is set), find the first manager that is missing a property.
                 // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
@@ -281,7 +286,7 @@ namespace DashboardBackend
         /// <returns>A RAM usage reading.</returns>
         public RamLoad GetRamReading(long? totalRam, HealthReportEntry item)
         {
-            if (!item.ReportNumericValue.HasValue || !totalRam.HasValue || !item.LogTime.HasValue) 
+            if (!item.ReportNumericValue.HasValue || !totalRam.HasValue || !item.LogTime.HasValue)
             {
                 throw new ArgumentException("Cannot create reading without a log time, a report value, and a total RAM value.");
             }
@@ -302,7 +307,7 @@ namespace DashboardBackend
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
         public LogMessageType GetLogMessageType(LoggingEntry entry, string content)
         {
-            var type = entry.LogLevel switch
+            LogMessageType type = entry.LogLevel switch
             {
                 "INFO" => LogMessageType.Info,
                 "WARN" => LogMessageType.Warning,
@@ -360,7 +365,7 @@ namespace DashboardBackend
 
             //CPU INIT
             string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
-            int? cpuCores = (int?) queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
+            int? cpuCores = (int?)queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
             long? cpuMaxFreq = queryResult.FindLast(e => e.ReportKey == "CPU Max frequency")?.ReportNumericValue;
 
             Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
@@ -393,8 +398,8 @@ namespace DashboardBackend
             {
                 distinctReports.Add(entries.Skip(i).Take(6).ToList());
             }
-            
-            foreach (var report in distinctReports)
+
+            foreach (List<HealthReportEntry> report in distinctReports)
             {
                 int? execId = report.First().ExecutionId.Value;
                 DateTime? logTime = report.First().LogTime.Value;
@@ -407,7 +412,7 @@ namespace DashboardBackend
                           bytesRcv = 0,
                           bytesRcvDelta = 0,
                           bytesRcvSpeed = 0;
-                    foreach (var reading in report)
+                    foreach (HealthReportEntry reading in report)
                     {
                         switch (reading.ReportKey)
                         {
@@ -444,6 +449,14 @@ namespace DashboardBackend
                 }
             }
             return result;
+        }
+
+        public void SetupDatabase(Profile profile)
+        {
+            DbContextOptions<NetcompanyDbContext> options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(profile.ConnectionString)
+                .Options;
+            Database = new SqlDatabase(options);
         }
     }
 }

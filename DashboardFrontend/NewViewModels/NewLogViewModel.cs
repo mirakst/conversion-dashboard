@@ -149,7 +149,6 @@ namespace DashboardFrontend.NewViewModels
 
         private void Executions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Trace.WriteLine("HMM");
             if (Executions.Any())
             {
                 SelectedExecution = Executions.Last();

@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using DashboardFrontend.NewViewModels;
 using DashboardBackend;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using System.Collections.Specialized;
 
 namespace DashboardFrontend
@@ -34,7 +34,7 @@ namespace DashboardFrontend
         #region Main Window Events
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            Controller.OnChangeMonitoringStateRequested();
+            Controller.ChangeMonitoringState();
         }
 
         public void ButtonSettingsClick(object sender, RoutedEventArgs e)

@@ -1,5 +1,5 @@
 ﻿using DashboardFrontend.ViewModels;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using System.Windows;
 using System;
 using System.Windows.Input;

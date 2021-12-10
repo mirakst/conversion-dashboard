@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
     public interface IUserSettings
     {

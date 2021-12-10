@@ -1,5 +1,7 @@
 ﻿using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
+using DashboardBackend.Settings;
+
 using Model;
 
 namespace DashboardBackend
@@ -7,6 +9,7 @@ namespace DashboardBackend
     public interface IDatabaseHandler
     {
         IDatabase Database { get; set; }
+        public void SetupDatabase(Profile profile);
         IList<Execution> GetExecutionsSince(DateTime minDate);
         IList<ValidationTest> GetValidationsSince(DateTime minDate);
         IList<LogMessage> GetLogMessagesSince(DateTime minDate);

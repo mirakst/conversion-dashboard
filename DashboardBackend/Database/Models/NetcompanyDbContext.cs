@@ -4,7 +4,7 @@
 
 namespace DashboardBackend.Database.Models
 {
-    public partial class NetcompanyDbContext : DbContext, INetcompanyDbContext
+    public partial class NetcompanyDbContext : DbContext
     {
         public NetcompanyDbContext()
         {
