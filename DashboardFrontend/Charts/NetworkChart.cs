@@ -74,8 +74,6 @@ namespace DashboardFrontend.Charts
                     Labeler = (value) => value.ToString("N0") + "GB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)), 
-                    MinLimit = 0,
-                    MaxLimit = 100,
                     Padding = new Padding(0),
                     NamePadding = new Padding(0),
                 }
