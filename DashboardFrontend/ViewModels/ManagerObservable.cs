@@ -1,4 +1,4 @@
-﻿using Model;
+using Model;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Data;
@@ -48,6 +48,7 @@ namespace DashboardFrontend.ViewModels
 
         public System.DateTime? StartTime { get; private set; }
         public double? PerformanceScore { get; private set; }
+        public double? ValidationScore { get; private set; }
         public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
         public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);
         public int OkCount => Validations.Count(v => v.Status is ValidationStatus.Ok);

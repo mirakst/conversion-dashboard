@@ -44,7 +44,7 @@
                           VerticalAlignment="Center"
                           HorizontalAlignment="Center"
                           Background="{DynamicResource BorderColor}"/>
-            
+
             <!-- Validations TreeView Header -->
             <Grid>
                 <TextBlock Text="Validations"
@@ -100,7 +100,7 @@
                                Foreground="Gray"/>
                 </StackPanel>
             </Grid>
-            
+
             <!-- Validations TreeView -->
             <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
                 <Grid Background="{DynamicResource CanvasColor}">
