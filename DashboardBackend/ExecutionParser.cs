@@ -15,15 +15,7 @@ namespace DashboardBackend
         /// <returns></returns>
         public IList<Execution> Parse(IList<Execution> data)
         {
-            List<Execution> result = new();
-            foreach (Execution execution in data)
-            {
-                //if (!conversion.Executions.Any(e => e.Id == execution.Id))
-                //{
-                //    result.Add(execution);
-                //}
-            }
-            return result;
+            return data;
         }
     }
 }

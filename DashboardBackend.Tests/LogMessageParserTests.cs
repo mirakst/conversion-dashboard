@@ -13,7 +13,7 @@ namespace DashboardBackend.Tests
             => new Conversion().AddExecution(new(1, DateTime.MinValue));
 
         [Fact]
-        public async void Parse_StartingNonExistingManager_CreatesManager()
+        public void Parse_StartingNonExistingManager_CreatesManager()
         {
             LogMessageParser parser = new();
             List<LogMessage> input = new()
@@ -21,7 +21,7 @@ namespace DashboardBackend.Tests
                 new("Starting manager: manager.test.name", LogMessageType.Info, 1, 1, DateTime.MinValue),
             };
 
-            var (managers, executions) = await parser.Parse(input, ConversionSeed);
+            var (managers, executions) = parser.Parse(input);
 
             var execution = Assert.Single(executions);
             Assert.NotNull(execution);
@@ -33,16 +33,15 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public async void Parse_ManagerExecutionDone_UpdatesManager()
+        public void Parse_ManagerExecutionDone_UpdatesManager()
         {
-            Conversion conversion = ConversionSeed;
             LogMessageParser parser = new();
             List<LogMessage> input = new()
             {
                 new("Manager execution done.", LogMessageType.Info, 1, 1, DateTime.MinValue),
             };
 
-            var (managers, executions) = await parser.Parse(input, conversion);
+            var (managers, executions) = parser.Parse(input);
 
             var execution = Assert.Single(executions);
             Assert.Equal(1, execution.Id);
@@ -52,16 +51,15 @@ namespace DashboardBackend.Tests
         }
 
         [Fact]
-        public async void Parse_NoExecutions_CreatesExecution()
+        public void Parse_NoExecutions_CreatesExecution()
         {
-            Conversion conversion = ConversionSeed;
             LogMessageParser parser = new();
             List<LogMessage> input = new()
             {
                 new("Test message", LogMessageType.Info, 0, 1, DateTime.MinValue),
             };
 
-            var (managers, executions) = await parser.Parse(input, conversion);
+            var (managers, executions) = parser.Parse(input);
 
             Assert.Empty(managers);
             var execution = Assert.Single(executions);
@@ -75,16 +73,15 @@ namespace DashboardBackend.Tests
         [InlineData("Exiting from GuiManager...")]
         [InlineData("No managers left to start automatically for BATCH")]
         [InlineData("Deploy is finished!!")]
-        public async void Parse_ExecutionFinished_ValidDomain(string inputContent)
+        public void Parse_ExecutionFinished_ValidDomain(string inputContent)
         {
-            Conversion conversion = ConversionSeed;
             LogMessageParser parser = new();
             List<LogMessage> input = new()
             {
                 new(inputContent, LogMessageType.Info, 0, 1, DateTime.MinValue),
             };
 
-            var (managers, executions) = await parser.Parse(input, conversion);
+            var (managers, executions) = parser.Parse(input);
 
             Assert.Empty(managers);
             var execution = Assert.Single(executions);

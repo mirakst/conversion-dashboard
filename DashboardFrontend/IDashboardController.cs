@@ -27,5 +27,7 @@ namespace DashboardFrontend
         void StartMonitoring();
         void StopMonitoring();
         void TryUpdateLog();
+        void TryUpdateExecutions();
+        void TryUpdateManagers();
     }
 }

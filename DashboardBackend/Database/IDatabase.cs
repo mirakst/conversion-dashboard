@@ -20,7 +20,7 @@ namespace DashboardBackend.Database
         /// </summary>
         /// <param name="minDate">A date constraint for the returned objects</param>
         /// <returns>A list of Executions no older than the specified DateTime</returns>
-        //List<ExecutionEntry> QueryExecutions(DateTime minDate);
+        List<ExecutionEntry> QueryExecutions(DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime.

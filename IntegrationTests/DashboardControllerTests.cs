@@ -1,72 +1,94 @@
 using System;
-using System.Collections.Generic;
-using DashboardBackend;
 using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using DashboardFrontend;
 using Microsoft.EntityFrameworkCore;
-using Model;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 
 namespace IntegrationTests
 {
     public class DashboardControllerTests
     {
-        public IDashboardController ControllerSeed => new DashboardController(new FakeUserSettings());
+        private readonly string _testConnectionString;
+        private readonly IDashboardController _controllerSeed;
+
+        public DashboardControllerTests()
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddUserSecrets<DashboardControllerTests>()
+                .Build();
+            _testConnectionString = config.GetConnectionString("TestDb");
+
+            _controllerSeed = new DashboardController(new FakeUserSettings());
+        }
 
         [Fact]
-        public void DashboardController_GetsExecutionAndManagerFromLOGGING()
+        public void TryUpdateLog_NoExistingData_CreatesExecutionsAndManagers()
         {
-            // Setup database
             var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
-                .UseInMemoryDatabase("IntegrationTesting")
+                .UseSqlServer(_testConnectionString)
                 .Options;
-            using (var context = new NetcompanyDbContext(options))
-            {
-                var loggingData = new List<LoggingEntry>
-                {
-                    new()
-                    {
-                        Created = DateTime.Now,
-                        LogMessage = "Starting execution",
-                        LogLevel = "INFO",
-                        ExecutionId = 1,
-                        ContextId = 0,
-                    },
-                    new()
-                    {
-                        Created = DateTime.Now,
-                        LogMessage = "Starting manager: manager.test.name",
-                        LogLevel = "INFO",
-                        ExecutionId = 1,
-                        ContextId = 1,
-                    },
-                };
-                context.Loggings.AddRange(loggingData);
-                context.SaveChanges();
-                context.Dispose();
-            }
-
-            // Setup test
-            var controller = ControllerSeed;
+            var controller = _controllerSeed;
             controller.SetupNewConversion();
-            controller.DataHandler.Database = new EntityFrameworkSqlDatabase(options);
+            controller.DataHandler.Database = new EntityFrameworkDatabase(options);
 
-            // This is probably awful, but hey - it works!
-            controller.OnLogsUpdated += delegate
-            {
-                // Assert
-                var execution = Assert.Single(controller.Conversion!.Executions);
-                Assert.NotNull(execution);
-                Assert.Equal(1, execution.Id);
-                var manager = Assert.Single(execution.Managers);
-                Assert.NotNull(manager);
-                Assert.Equal(1, manager.ContextId);
-                Assert.Equal("manager.test.name", manager.Name);
-            };
-
-            // Perform test
             controller.TryUpdateLog();
+
+            Assert.Collection(controller.Conversion!.Executions,
+                item => Assert.Equal(1, item.Id),
+                item => Assert.Equal(2, item.Id));
+            var exec1 = controller.Conversion.Executions[0];
+            Assert.Collection(exec1.Log.Messages,
+                item => Assert.Equal(1, item.ExecutionId),
+                item => Assert.Equal(1, item.ExecutionId),
+                item => Assert.Equal(1, item.ExecutionId),
+                item => Assert.Equal(1, item.ExecutionId));
+            var manager = Assert.Single(exec1.Managers);
+            Assert.NotNull(manager);
+            Assert.Equal(1, manager.ContextId);
+            Assert.Equal("test.manager", manager.Name);
+            var exec2 = controller.Conversion.Executions[1];
+            Assert.Collection(exec2.Log.Messages,
+                item => Assert.Equal(2, item.ExecutionId));
+            Assert.Empty(exec2.Managers);
+        }
+
+        [Fact]
+        public void TryUpdateExecutions_GotExecutionFromLog_DoesNotCreateDuplicate()
+        {
+            var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(_testConnectionString)
+                .Options;
+            var controller = _controllerSeed;
+            controller.SetupNewConversion();
+            controller.DataHandler.Database = new EntityFrameworkDatabase(options);
+            controller.TryUpdateLog();
+
+            controller.TryUpdateExecutions();
+
+            Assert.Collection(controller.Conversion!.Executions,
+                item => Assert.Equal(1, item.Id),
+                item => Assert.Equal(2, item.Id));
+        }
+
+        [Fact]
+        public void TryUpdateLog_OneExecutionExists_DoesNotCreateDuplicate()
+        {
+            var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(_testConnectionString)
+                .Options;
+            var controller = _controllerSeed;
+            controller.SetupNewConversion();
+            controller.DataHandler.Database = new EntityFrameworkDatabase(options);
+            controller.TryUpdateExecutions();
+
+            controller.TryUpdateLog();
+
+            Assert.Collection(controller.Conversion!.Executions,
+                item => Assert.Equal(1, item.Id),
+                item => Assert.Equal(2, item.Id));
         }
     }
 }

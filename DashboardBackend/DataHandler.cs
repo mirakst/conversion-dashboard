@@ -53,6 +53,23 @@ namespace DashboardBackend
         }
 
         /// <summary>
+        /// Queries the state database for executions newer than minDate, 
+        /// then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of executions, matching the supplied constraints.</returns>
+        public List<Execution> GetExecutions(DateTime minDate)
+        {
+            List<ExecutionEntry> queryResult = Database.QueryExecutions(minDate);
+
+            return (from item in queryResult
+                    let executionId = (int)item.ExecutionId.Value
+                    let created = item.Created.Value
+                    select new Execution(executionId, created))
+                    .ToList();
+        }
+
+        /// <summary>
         /// Returns the type of the log message parameter 'entry'.
         /// </summary>
         /// <param name="entry">A single entry from the [LOGGING] table in the state database.</param>
@@ -85,22 +102,7 @@ namespace DashboardBackend
         }
 
         #region Obsolete
-        ///// <summary>
-        ///// Queries the state database for executions newer than minDate, 
-        ///// then creates a list of them for the system model, which is returned.
-        ///// </summary>
-        ///// <param name="minDate">The minimum DateTime for the query results.</param>
-        ///// <returns>A list of executions, matching the supplied constraints.</returns>
-        //public IList<Execution> GetExecutionsSince(DateTime minDate)
-        //{
-        //    List<ExecutionEntry> queryResult = Database.QueryExecutions(minDate);
 
-        //    return (from item in queryResult
-        //            let executionId = (int)item.ExecutionId.Value
-        //            let created = item.Created.Value
-        //            select new Execution(executionId, created))
-        //            .ToList();
-        //}
 
         ///// <summary>
         ///// Queries the state database for validation tests newer than minDate, 
@@ -494,7 +496,7 @@ namespace DashboardBackend
             DbContextOptions<NetcompanyDbContext> options = new DbContextOptionsBuilder<NetcompanyDbContext>()
                 .UseSqlServer(profile.ConnectionString)
                 .Options;
-            Database = new EntityFrameworkSqlDatabase(options);
+            Database = new EntityFrameworkDatabase(options);
         }
     }
 }

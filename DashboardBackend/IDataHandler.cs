@@ -10,6 +10,8 @@ namespace DashboardBackend
         public void SetupDatabase(Profile profile);
         List<LogMessage> GetLogMessages(DateTime minDate);
         Tuple<List<Manager>, List<Execution>> GetParsedLogData(IList<LogMessage> messages);
+        List<Execution> GetExecutions(DateTime minDate);
+
         //void GetExecutionsSince(DateTime minDate);
         //void GetValidationsSince(DateTime minDate);
         //void GetLogMessagesFromExecutionSince(DateTime minDate, int executionId);

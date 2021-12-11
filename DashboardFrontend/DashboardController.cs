@@ -180,81 +180,6 @@ namespace DashboardFrontend
         /// </summary>
         /// <remarks>Any changes that will affect the UI are done one the UI thread (as dictated by WPF).</remarks>
         /// <exception cref="ArgumentNullException"></exception>
-        //public async Task TryUpdateLog()
-        //{
-        //    // This function uses a 'Semaphore', which works kind of like 'locking' does.
-        //    // The particular semaphore is limited to only one thread (during its initialization), which means that only one thread can access it at a given time.
-        //    // Basically, we wait for the previous '_logSemaphore-thread' to finish its work before starting this one, and consequently, the updates will not clash.
-        //    await _logSemaphore.WaitAsync();
-        //    try
-        //    {
-        //        if (Conversion is null)
-        //        {
-        //            throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
-        //        }
-
-        //        var messages = await DataHandler.GetLogMessagesAsync(Conversion.LastLogQuery);
-        //        var (managers, executions) = await DataHandler.GetParsedLogDataAsync(messages);
-
-        //        await _dispatcher.InvokeAsync(() =>
-        //        {
-        //            // Update executions
-        //            lock (Conversion.Executions)
-        //            {
-        //                foreach (var newExecution in executions)
-        //                {
-        //                    // If the execution already exists, update its status (since it might be finished)
-        //                    if (Conversion.Executions.FirstOrDefault(e => e.Id == newExecution.Id) is Execution e)
-        //                    {
-        //                        e.Status = newExecution.Status;
-        //                    }
-        //                    // Otherwise, add it
-        //                    else
-        //                    {
-        //                        Conversion.AddExecution(newExecution);
-        //                    }
-        //                }
-        //            }
-
-        //            // Update managers
-        //            lock (Conversion.AllManagers)
-        //            {
-        //                foreach (var newManager in managers)
-        //                {
-        //                    // If the manager already exists, update its context and execution ID's
-        //                    if (Conversion.AllManagers.Find(m => m.Name == newManager.Name && m.ContextId == 0) is Manager existingManager)
-        //                    {
-        //                        existingManager.ContextId = newManager.ContextId;
-        //                        existingManager.ExecutionId = newManager.ExecutionId;
-        //                    }
-        //                    // Otherwise, add it
-        //                    else
-        //                    {
-        //                        Conversion.AllManagers.Add(newManager);
-        //                    }
-        //                }
-        //            }
-
-        //            // Add managers and log messages to executions
-        //            lock (Conversion.Executions)
-        //            {
-        //                foreach (var execution in Conversion.Executions)
-        //                {
-        //                    //var messages = 
-        //                }
-        //            }
-        //        });
-        //        Conversion.LastLogQuery = DateTime.Now;
-        //    }
-        //    finally
-        //    {
-        //        // Releasing the semaphore means that the thread has finished its work.
-        //        // This is done in a 'try-finally' clause since it is important to ensure that the semaphore is always released, even in case of exceptions, etc.
-        //        // If it is not released, it will always be 'occupied', and future updates will endlessly wait for the semaphore to be released before doing anything.
-        //        _logSemaphore.Release();
-        //    }
-        //}
-
         public void TryUpdateLog()
         {
             lock (_lockLog)
@@ -324,11 +249,47 @@ namespace DashboardFrontend
                 Conversion.LastLogQuery = DateTime.Now;
             }
         }
-        private object _lockLog = new();
+        private readonly object _lockLog = new();
 
-        private void TryUpdateExecutions()
+        public void TryUpdateExecutions()
         {
+            lock (_lockExecutions)
+            {
+                if (Conversion is null)
+                {
+                    throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+                }
 
+                var data = DataHandler.GetExecutions(Conversion.LastExecutionQuery);
+
+                _dispatcher.Invoke(() =>
+                {
+                    lock (Conversion.Executions)
+                    {
+                        foreach (var execution in data)
+                        {
+                            if (Conversion.Executions.FirstOrDefault(e => e.Id == execution.Id) is Execution existingExecution)
+                            {
+                                existingExecution.StartTime = execution.StartTime;
+                            }
+                            else
+                            {
+                                Conversion.AddExecution(execution);
+                            }
+                        }
+                    }
+                });
+            }
         }
+        private readonly object _lockExecutions = new();
+
+        public void TryUpdateManagers()
+        {
+            lock (_lockManagers)
+            {
+                // do some shit!
+            }
+        }
+        private readonly object _lockManagers = new();
     }
 }
