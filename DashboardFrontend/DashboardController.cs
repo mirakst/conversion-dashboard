@@ -154,6 +154,8 @@ namespace DashboardFrontend
             Trace.WriteLine("Got logs");
             TryUpdateManagers();
             Trace.WriteLine("Got managers");
+            TryUpdateValidations();
+
         }
 
         public void StopMonitoring()
@@ -336,5 +338,43 @@ namespace DashboardFrontend
             }
         }
         private readonly object _lockManagers = new();
+
+        public void TryUpdateValidations()
+        {
+            lock (_lockValidations)
+            {
+                if (Conversion is null)
+                {
+                    throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+                }
+
+                var data = DataHandler.GetValidations(Conversion.LastValidationsQuery);
+                data.AddRange(_homelessValidations); // Add any validations that have not yet been assigned to a manager
+                _homelessValidations.Clear();
+
+                _dispatcher.Invoke(() =>
+                {
+                    lock (Conversion.AllManagers)
+                    {
+                        foreach (var test in data)
+                        {
+                            // Try to find the associated manager (and ensure that it is in the right execution as well)
+                            if (Conversion.AllManagers.Find(m => m.Name.Contains(test.ManagerName) && test.Date < m.EndTime) is Manager mgr)
+                            {
+                                mgr.AddValidation(test);
+                            }
+                            // Otherwise, the manager has not yet been created - it is passed to a list and we will try again next time
+                            else
+                            {
+                                _homelessValidations.Add(test);
+                            }
+                        }
+                    }
+                });
+                Conversion.LastValidationsQuery = DateTime.Now;
+            }
+        }
+        private readonly object _lockValidations = new();
+        private readonly List<ValidationTest> _homelessValidations = new();
     }
 }

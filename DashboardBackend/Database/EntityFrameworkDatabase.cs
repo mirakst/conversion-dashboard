@@ -44,17 +44,18 @@ namespace DashboardBackend.Database
             return queryResult.ToList();
         }
 
-        #region Obsolete
         /// <inheritdoc/>
-        //public List<AfstemningEntry> QueryAfstemninger(DateTime minDate)
-        //{
-        //    using NetcompanyDbContext db = new(_options);
-        //    var queryResult = db.Afstemnings
-        //                        .Where(e => e.Afstemtdato > minDate)
-        //                        .OrderBy(e => e.Afstemtdato);
-        //    db.Dispose();
-        //    return queryResult.ToList();
-        //}
+        public List<AfstemningEntry> QueryAfstemninger(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new(_options);
+            var queryResult = db.Afstemnings
+                                .Where(e => e.Afstemtdato > minDate)
+                                .OrderBy(e => e.Afstemtdato);
+            return queryResult.ToList();
+        }
+
+        #region Obsolete
+
 
 
         ///// <inheritdoc/>

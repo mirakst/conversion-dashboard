@@ -44,7 +44,6 @@ namespace DashboardBackend.Tests
                     Key = "END_TIME",
                     Value = "2010-01-01 12:00:01.000",
                 }
-
             };
 
             var managers = parser.Parse(input);

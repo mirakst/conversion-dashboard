@@ -84,6 +84,29 @@ namespace DashboardBackend
             return _managerParser.Parse(engineEntries);
         }
 
+        /// <summary>
+        /// Queries the state database for validation tests newer than minDate, 
+        /// then creates a list of them for the system model, which is returned.
+        /// </summary>
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of validation tests, matching the supplied constraints.</returns>
+        public List<ValidationTest> GetValidations(DateTime minDate)
+        {
+            List<AfstemningEntry> queryResult = Database.QueryAfstemninger(minDate);
+
+            return (from item in queryResult
+                    let date = item.Afstemtdato
+                    let name = item.Description
+                    let managerName = item.Manager
+                    let status = GetValidationStatus(item)
+                    let srcCount = item.Srcantal
+                    let dstCount = item.Dstantal
+                    let toolkitId = item.ToolkitId
+                    let srcSql = item.SrcSql
+                    let dstSql = item.DstSql
+                    select new ValidationTest(date, name, status, managerName, srcCount, dstCount, toolkitId, srcSql, dstSql))
+                    .ToList();
+        }
 
         /// <summary>
         /// Returns the type of the log message parameter 'entry'.
@@ -117,53 +140,25 @@ namespace DashboardBackend
             return type;
         }
 
+        /// <summary>
+        /// Returns the status of the validation test parameter 'entry'.
+        /// </summary>
+        /// <param name="entry">A single entry from the [AFSTEMNING] table in the state database.</param>
+        /// <returns>A validation status based on the enum in the validation class.</returns>
+        /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal validation status.</exception>
+        private static ValidationStatus GetValidationStatus(AfstemningEntry entry)
+        {
+            return entry.Afstemresultat switch
+            {
+                "OK" => ValidationStatus.Ok,
+                "DISABLED" => ValidationStatus.Disabled,
+                "FAILED" => ValidationStatus.Failed,
+                "FAIL MISMATCH" => ValidationStatus.FailMismatch,
+                _ => throw new ArgumentException(nameof(entry) + " is not a known validation test result.")
+            };
+        }
 
         #region Obsolete
-
-
-        ///// <summary>
-        ///// Queries the state database for validation tests newer than minDate, 
-        ///// then creates a list of them for the system model, which is returned.
-        ///// </summary>
-        ///// <param name="minDate">The minimum DateTime for the query results.</param>
-        ///// <returns>A list of validation tests, matching the supplied constraints.</returns>
-        //public IList<ValidationTest> GetValidationsSince(DateTime minDate)
-        //{
-        //    List<AfstemningEntry> queryResult = Database.QueryAfstemninger(minDate);
-
-        //    return (from item in queryResult
-        //            let date = item.Afstemtdato
-        //            let name = item.Description
-        //            let managerName = item.Manager
-        //            let status = GetValidationStatus(item)
-        //            let srcCount = item.Srcantal
-        //            let dstCount = item.Dstantal
-        //            let toolkitId = item.ToolkitId
-        //            let srcSql = item.SrcSql
-        //            let dstSql = item.DstSql
-        //            select new ValidationTest(date, name, status, managerName, srcCount, dstCount, toolkitId, srcSql, dstSql))
-        //            .ToList();
-        //}
-
-
-
-        //public IList<LogMessage> GetLogMessagesFromExecutionSince(DateTime minDate, int executionId)
-        //{
-        //    return GetLogMessagesSince(minDate).Where(m => m.ExecutionId == executionId).ToList();
-        //}
-
-
-
-        //public IList<Manager> GetManagersSince(DateTime minDate)
-        //{
-        //    return new List<Manager>();
-        //}
-
-        //public bool TryUpdateManagerProperties(IList<Manager> managers, DateTime lastUpdate)
-        //{
-        //    return true;
-        //}
-
         //public int GetEstimatedManagerCount(int executionId)
         //{
         //    return Database.QueryLoggingContext(executionId).Count;
@@ -285,23 +280,7 @@ namespace DashboardBackend
         //    return type;
         //}
 
-        ///// <summary>
-        ///// Returns the status of the validation test parameter 'entry'.
-        ///// </summary>
-        ///// <param name="entry">A single entry from the [AFSTEMNING] table in the state database.</param>
-        ///// <returns>A validation status based on the enum in the validation class.</returns>
-        ///// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal validation status.</exception>
-        //public ValidationStatus GetValidationStatus(AfstemningEntry entry)
-        //{
-        //    return entry.Afstemresultat switch
-        //    {
-        //        "OK" => ValidationStatus.Ok,
-        //        "DISABLED" => ValidationStatus.Disabled,
-        //        "FAILED" => ValidationStatus.Failed,
-        //        "FAIL MISMATCH" => ValidationStatus.FailMismatch,
-        //        _ => throw new ArgumentException(nameof(entry) + " is not a known validation test result.")
-        //    };
-        //}
+
 
         ///// <summary>
         ///// Builds the system model health report with CPU, Memory and Network, 

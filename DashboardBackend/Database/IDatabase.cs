@@ -13,7 +13,7 @@ namespace DashboardBackend.Database
         /// </summary>
         /// <param name="minDate">A date constraint for the returned objects</param>
         /// <returns>A list of all Validations no older than the specified DateTime</returns>
-        //List<AfstemningEntry> QueryAfstemninger(DateTime minDate);
+        List<AfstemningEntry> QueryAfstemninger(DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries in the EXECUTIONS table of the state database added after the specified DateTime.
