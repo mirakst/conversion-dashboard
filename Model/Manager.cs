@@ -207,7 +207,7 @@ namespace Model
                 OnPropertyChanged(nameof(Score));
             }
         }
-        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
 
         public int ExecutionId { get; set; }
 

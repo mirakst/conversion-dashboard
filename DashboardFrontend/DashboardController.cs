@@ -19,14 +19,11 @@ namespace DashboardFrontend
     {
         private readonly List<Timer> _timers;
         private readonly System.Windows.Threading.Dispatcher _dispatcher;
-        private readonly SemaphoreSlim _logSemaphore;
-
 
         public DashboardController(IUserSettings userSettings)
         {
             _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
             _timers = new();
-            _logSemaphore = new(1, 1);
 
             DataHandler = new DataHandler();
             UserSettings = userSettings; 
@@ -38,7 +35,6 @@ namespace DashboardFrontend
             DataHandler = dataHandler;
         }
 
-        public event LogsUpdated OnLogsUpdated;
         public event ConversionCreated OnConversionCreated;
 
         public IDataHandler DataHandler { get; set; }
@@ -91,17 +87,6 @@ namespace DashboardFrontend
                         UserSettings.ActiveProfile.HasStartedMonitoring = true;
                         SetupNewConversion();
                         DataHandler.SetupDatabase(UserSettings.ActiveProfile);
-
-                        //Conversion!.AddExecution(new(1, DateTime.Now));
-                        //Conversion.ActiveExecution.AddManager(new()
-                        //{
-                        //    Name = "dk.aes.ans.konvertering.managers.conversionUser.AnsConversionUserManager",
-                        //    ContextId = 0,
-                        //    RowsRead = 10,
-                        //    RowsWritten = 20,
-                        //    StartTime = new DateTime(1999, 02, 23),
-                        //    Status = ManagerStatus.Ready
-                        //});
 
                         StartMonitoring();
                     }
@@ -156,13 +141,19 @@ namespace DashboardFrontend
             {
                 // For testing, these timers should invoke some event which we can subscribe to, in order to fully test the integration.
                 // Even better would be to turn these callback functions into a seperate class...
-                //Timer executionTimer = new(x => { }, null, 0, 1000);
-                _timers.Add(new(x => { TryUpdateLog(); }, null, 0, 1000));
-                //Timer managerTimer = new(x => { }, null, 200, UserSettings.ManagerQueryInterval * 1000);
+                //Timer executionTimer = new(x => { /*TryUpdateExecutions();*/ }, null, 0, 10000);
+                //Timer logTimer = new(x => { TryUpdateLog(); }, null, 200, 1000);
+                //Timer managerTimer = new(x => { /*TryUpdateManagers();*/ }, null, 200, UserSettings.ManagerQueryInterval * 1000);
                 //Timer validationsTimer = new(x => { }, null, 200, UserSettings.ValidationQueryInterval * 1000);
                 //Timer healthReportTimer = new(x => { }, null, 200, UserSettings.HealthReportQueryInterval * 1000);
                 //_timers.AddRange(new List<Timer> { executionTimer, healthReportTimer, logTimer, validationsTimer, managerTimer });
             }
+            TryUpdateExecutions();
+            Trace.WriteLine("Got executions");
+            TryUpdateLog();
+            Trace.WriteLine("Got logs");
+            TryUpdateManagers();
+            Trace.WriteLine("Got managers");
         }
 
         public void StopMonitoring()
@@ -247,7 +238,7 @@ namespace DashboardFrontend
                     }
                 });
                 Conversion.LastLogQuery = DateTime.Now;
-            }
+            }   
         }
         private readonly object _lockLog = new();
 
@@ -260,13 +251,13 @@ namespace DashboardFrontend
                     throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
                 }
 
-                var data = DataHandler.GetExecutions(Conversion.LastExecutionQuery);
+                var executions = DataHandler.GetExecutions(Conversion.LastExecutionQuery);
 
                 _dispatcher.Invoke(() =>
                 {
                     lock (Conversion.Executions)
                     {
-                        foreach (var execution in data)
+                        foreach (var execution in executions)
                         {
                             if (Conversion.Executions.FirstOrDefault(e => e.Id == execution.Id) is Execution existingExecution)
                             {
@@ -279,6 +270,7 @@ namespace DashboardFrontend
                         }
                     }
                 });
+                Conversion.LastExecutionQuery = DateTime.Now;
             }
         }
         private readonly object _lockExecutions = new();
@@ -287,7 +279,60 @@ namespace DashboardFrontend
         {
             lock (_lockManagers)
             {
-                // do some shit!
+                if (Conversion is null)
+                {
+                    throw new ArgumentNullException(nameof(Conversion), "Conversion must not be null when monitoring");
+                }
+
+                var managers = DataHandler.GetManagers(Conversion.LastManagerQuery);
+
+                _dispatcher.Invoke(() =>
+                {
+                    lock (Conversion.AllManagers)
+                    {
+                        foreach (var manager in managers)
+                        {
+                            // Check if the manager already exists but does not have parsed data yet (it may have been created from the log)
+                            if (Conversion.AllManagers.Find(m => m.Name == manager.Name && m.IsMissingValues) is Manager existingManager)
+                            {
+                                // Ensure that we do not overwrite any existing values with null
+                                if (!existingManager.StartTime.HasValue && manager.StartTime.HasValue)
+                                {
+                                    existingManager.StartTime = manager.StartTime.Value;
+                                }
+                                if (!existingManager.RowsRead.HasValue && manager.RowsRead.HasValue)
+                                {
+                                    existingManager.RowsRead = manager.RowsRead;
+                                }
+                                if (!existingManager.RowsWritten.HasValue && manager.RowsWritten.HasValue)
+                                {
+                                    existingManager.RowsWritten = manager.RowsWritten;
+                                }
+                                if (!existingManager.EndTime.HasValue && manager.EndTime.HasValue)
+                                {
+                                    existingManager.EndTime = manager.EndTime;
+                                }
+                            }
+                            // If the manager does not exist, it is added to both the conversion and an appropriate execution.
+                            else
+                            {
+                                Conversion.AllManagers.Add(manager);
+                                lock (Conversion.Executions)
+                                {
+                                    if (Conversion.Executions.FirstOrDefault(e => (e.StartTime <= manager.StartTime) && (!e.EndTime.HasValue || e.EndTime >= manager.EndTime)) is Execution execution)
+                                    {
+                                        execution.Managers.Add(manager);
+                                    }
+                                    else
+                                    {
+                                        Trace.WriteLine("Did not find execution for manager " + manager.Name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                Conversion.LastManagerQuery = DateTime.Now;
             }
         }
         private readonly object _lockManagers = new();

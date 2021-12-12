@@ -25,7 +25,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void TryUpdateLog_NoExistingData_CreatesExecutionsAndManagers()
+        public void TryUpdateLog_NoExistingData_AddsExecutionsAndManagers()
         {
             var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
                 .UseSqlServer(_testConnectionString)
@@ -56,7 +56,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void TryUpdateExecutions_GotExecutionFromLog_DoesNotCreateDuplicate()
+        public void TryUpdateExecutions_GotExecutionFromLog_DoesNotAddDuplicate()
         {
             var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
                 .UseSqlServer(_testConnectionString)
@@ -74,7 +74,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void TryUpdateLog_OneExecutionExists_DoesNotCreateDuplicate()
+        public void TryUpdateLog_OneExecutionExists_DoesNotAddDuplicate()
         {
             var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
                 .UseSqlServer(_testConnectionString)
@@ -89,6 +89,54 @@ namespace IntegrationTests
             Assert.Collection(controller.Conversion!.Executions,
                 item => Assert.Equal(1, item.Id),
                 item => Assert.Equal(2, item.Id));
+        }
+
+        [Fact]
+        public void TryUpdateManagers_NoManagersExist_AddsManagers()
+        {
+            var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(_testConnectionString)
+                .Options;
+            var controller = _controllerSeed;
+            controller.SetupNewConversion();
+            controller.DataHandler.Database = new EntityFrameworkDatabase(options);
+            controller.TryUpdateExecutions();
+
+            controller.TryUpdateManagers();
+
+            var execution = controller.Conversion!.Executions[0];
+            var manager = Assert.Single(execution.Managers);
+            Assert.NotNull(manager);
+            Assert.Equal(0, manager.ContextId);
+            Assert.Equal("test.manager", manager.Name);
+            Assert.Equal(DateTime.Parse("2010-01-01 12:00:01"), manager.StartTime);
+            Assert.Equal(DateTime.Parse("2010-01-01 12:00:02"), manager.EndTime);
+            Assert.Equal(10, manager.RowsRead);
+            Assert.Equal(20, manager.RowsWritten);
+        }
+
+        [Fact]
+        public void TryUpdateManagers_ManagerExists_UpdatesManagerWithNoDuplicate()
+        {
+            var options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(_testConnectionString)
+                .Options;
+            var controller = _controllerSeed;
+            controller.SetupNewConversion();
+            controller.DataHandler.Database = new EntityFrameworkDatabase(options);
+            controller.TryUpdateLog();
+
+            controller.TryUpdateManagers();
+
+            var execution = controller.Conversion!.Executions[0];
+            var manager = Assert.Single(execution.Managers);
+            Assert.NotNull(manager);
+            Assert.Equal(1, manager.ContextId);
+            Assert.Equal("test.manager", manager.Name);
+            Assert.Equal(DateTime.Parse("2010-01-01 12:00:01"), manager.StartTime);
+            Assert.Equal(DateTime.Parse("2010-01-01 12:00:02"), manager.EndTime);
+            Assert.Equal(10, manager.RowsRead);
+            Assert.Equal(20, manager.RowsWritten);
         }
     }
 }

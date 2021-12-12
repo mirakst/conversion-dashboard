@@ -53,6 +53,6 @@ namespace DashboardBackend.Database
         /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database.
         /// </summary>
         /// <returns>A list of manager data.</returns>
-        //List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate);
+        List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate);
     }
 }

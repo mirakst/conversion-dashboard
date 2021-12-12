@@ -18,10 +18,12 @@ namespace DashboardBackend
     public class DataHandler : IDataHandler
     {
         private readonly LogMessageParser _logParser;
+        private readonly ManagerParser _managerParser;
 
         public DataHandler()
         {
             _logParser = new LogMessageParser();
+            _managerParser = new ManagerParser();
         }
 
         public IDatabase Database { get; set; }
@@ -41,6 +43,7 @@ namespace DashboardBackend
 
         public List<LogMessage> GetLogMessages(DateTime minDate)
         {
+            Stopwatch sw = Stopwatch.StartNew();
             var rawData = Database.QueryLogMessages(minDate);
             var processedData = from item in rawData
                                 let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
@@ -68,6 +71,19 @@ namespace DashboardBackend
                     select new Execution(executionId, created))
                     .ToList();
         }
+
+        /// <summary>
+        /// Queries the state database for managers added since the specified minimum date.
+        /// </summary>
+        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
+        /// <param name="minDate"></param>
+        /// <param name="allManagers"></param>
+        public List<Manager> GetManagers(DateTime minDate)
+        {
+            List<EnginePropertyEntry> engineEntries = Database.QueryEngineProperties(minDate);
+            return _managerParser.Parse(engineEntries);
+        }
+
 
         /// <summary>
         /// Returns the type of the log message parameter 'entry'.
@@ -100,6 +116,7 @@ namespace DashboardBackend
 
             return type;
         }
+
 
         #region Obsolete
 
@@ -135,109 +152,7 @@ namespace DashboardBackend
         //    return GetLogMessagesSince(minDate).Where(m => m.ExecutionId == executionId).ToList();
         //}
 
-        ///// <summary>
-        ///// Queries the state database for managers added since the specified minimum date.
-        ///// </summary>
-        ///// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
-        ///// <param name="minDate"></param>
-        ///// <param name="allManagers"></param>
-        //public int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
-        //{
-        //    List<EnginePropertyEntry> engineEntries = Database.QueryEngineProperties(minDate);
-        //    int addedManagers = 0;
 
-        //    // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-        //    foreach (EnginePropertyEntry entry in engineEntries)
-        //    {
-        //        string name = entry.Manager.Split(',')[0];
-        //        entry.Manager = name;
-        //    }
-
-        //    // For each entry: Find the associated manager and add the value to it. 
-        //    // If the manager exists but already has all values set, it must be the same manager in a new execution.
-        //    // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
-        //    foreach (EnginePropertyEntry entry in engineEntries)
-        //    {
-        //        // If manager was created by the log first (context id is set), find the first manager that is missing a property.
-        //        // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
-        //        Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
-        //        if (logManager != null)
-        //        {
-        //            AddEnginePropertiesToManager(logManager, entry);
-        //        }
-        //        else
-        //        {
-        //            // Find all managers created from ENGINE_PROPERTIES (context ID=0)
-        //            Manager engManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId == 0 && m.IsMissingValues);
-        //            if (engManager != null)
-        //            {
-        //                AddEnginePropertiesToManager(engManager, entry);
-        //            }
-        //            // If no manager was found at this point, it has neither been created from ENGINE_PROPERTIES or LOGGING - so we will create it!
-        //            else
-        //            {
-        //                Manager manager = new()
-        //                {
-        //                    Name = entry.Manager,
-        //                };
-        //                AddEnginePropertiesToManager(manager, entry);
-        //                allManagers.Add(manager);
-        //                addedManagers++;
-        //            }
-        //        }
-        //    }
-        //    return addedManagers;
-        //}
-
-        ///// <summary>
-        ///// Parses the value of the specified EnginePropertyEntry and adds it to the given manager.
-        ///// </summary>
-        ///// <param name="manager">The manager object associated with the entry.</param>
-        ///// <param name="entry">The EnginePropertyEntry to get data from.</param>
-        //private void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
-        //{
-        //    switch (entry.Key)
-        //    {
-        //        case "START_TIME":
-        //            if (DateTime.TryParse(entry.Value, out DateTime startTime))
-        //            {
-        //                manager.StartTime = startTime;
-        //                manager.Status = ManagerStatus.Running;
-        //                if (manager.EndTime.HasValue)
-        //                {
-        //                    manager.Runtime = manager.EndTime.Value.Subtract(startTime);
-        //                    manager.Status = ManagerStatus.Ok;
-        //                }
-        //            }
-        //            break;
-        //        case "END_TIME":
-        //            if (DateTime.TryParse(entry.Value, out DateTime endTime))
-        //            {
-        //                manager.EndTime = endTime;
-        //                if (manager.StartTime.HasValue)
-        //                {
-        //                    manager.Runtime = endTime.Subtract(manager.StartTime.Value);
-        //                    manager.Status = ManagerStatus.Ok;
-        //                }
-        //            }
-        //            break;
-        //        case "Læste rækker":
-        //            if (int.TryParse(entry.Value, out int rowsRead))
-        //            {
-        //                manager.RowsRead = rowsRead;
-        //            }
-        //            break;
-        //        case "Skrevne rækker":
-        //            if (int.TryParse(entry.Value, out int rowsWritten))
-        //            {
-        //                manager.RowsWritten = rowsWritten;
-        //            }
-        //            break;
-
-        //        default:
-        //            break;
-        //    }
-        //}
 
         //public IList<Manager> GetManagersSince(DateTime minDate)
         //{

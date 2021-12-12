@@ -18,10 +18,9 @@ namespace DashboardBackend.Database
         public IList<LoggingEntry> QueryLogMessages(DateTime minDate)
         {
             using NetcompanyDbContext db = new(_options);
-            var queryResult = (from item in db.Loggings
-                                               where item.Created > minDate
-                                               orderby item.Created
-                                               select item);
+            var queryResult = db.Loggings
+                                .Where(m => m.Created > minDate)
+                                .OrderBy(m => m.Created);
             return queryResult.ToList();
         }
 
@@ -32,6 +31,16 @@ namespace DashboardBackend.Database
             var queryResult = db.Executions
                                 .Where(e => e.Created > minDate)
                                 .OrderBy(e => e.Created);
+            return queryResult.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
+        {
+            using NetcompanyDbContext db = new(_options);
+            var queryResult = db.EngineProperties
+                                .Where(e => e.Timestamp > minDate)
+                                .OrderBy(e => e.Timestamp);
             return queryResult.ToList();
         }
 
@@ -47,19 +56,6 @@ namespace DashboardBackend.Database
         //    return queryResult.ToList();
         //}
 
-
-
-        ///// <inheritdoc/>
-        //public IList<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
-        //{
-        //    using NetcompanyDbContext db = new(_options);
-        //    var queryResult = db.Loggings
-        //                        .Where(e => e.Created > minDate)
-        //                        .Where(e => e.ExecutionId == executionId)
-        //                        .OrderBy(e => e.Created);
-
-        //    return queryResult.ToList();
-        //}
 
         ///// <inheritdoc/>
         //public List<LoggingContextEntry> QueryLoggingContext(int executionId)
@@ -95,20 +91,7 @@ namespace DashboardBackend.Database
         //    return queryResult.ToList();
         //}
 
-        ///// <inheritdoc/>
-        //public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
-        //{
-        //    using NetcompanyDbContext db = new(_options);
-        //    var queryResult = db.EngineProperties
-        //                        .Where(e => e.Timestamp > minDate 
-        //                                && (e.Key == "START_TIME"
-        //                                ||  e.Key == "END_TIME"
-        //                                ||  e.Key == "Læste rækker"
-        //                                ||  e.Key == "Skrevne rækker"))
-        //                        .OrderBy(e => e.Timestamp);
 
-        //    return queryResult.ToList();
-        //}
         #endregion
     }
 }

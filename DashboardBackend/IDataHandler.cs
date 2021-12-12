@@ -11,6 +11,7 @@ namespace DashboardBackend
         List<LogMessage> GetLogMessages(DateTime minDate);
         Tuple<List<Manager>, List<Execution>> GetParsedLogData(IList<LogMessage> messages);
         List<Execution> GetExecutions(DateTime minDate);
+        List<Manager> GetManagers(DateTime minDate);
 
         //void GetExecutionsSince(DateTime minDate);
         //void GetValidationsSince(DateTime minDate);
