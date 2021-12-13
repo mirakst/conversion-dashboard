@@ -45,6 +45,7 @@ namespace DashboardFrontend
             _updateManagersLock = new();
             _updateExecutionsLock = new();
             _updateValidationsLock = new();
+            _updateHealthReportLock = new();
             _homelessValidations = new();
 
             DataHandler = new DataHandler();
@@ -287,25 +288,28 @@ namespace DashboardFrontend
         /// </summary>
         public void UpdateHealthReport()
         {
-            if (Conversion?.HealthReport is null)
+            lock (_updateHealthReportLock)
             {
-                return;
-            }
-            SetStatusMessage(DashboardStatus.UpdatingHealthReport);
-
-            if (Conversion.HealthReport.IsInitialized)
-            {
-                int dataCount = DataHandler.AddHealthReportReadings(Conversion.HealthReport, Conversion.HealthReport.LastModified);
-                if (dataCount > 0)
+                if (Conversion is null)
                 {
+                    return;
+                }
+                SetStatusMessage(DashboardStatus.UpdatingHealthReport);
+
+                var data = DataHandler.GetHealthReportEntries(Conversion.HealthReport.LastModified);
+                Conversion.HealthReport.LastModified = DateTime.Now;
+
+                if (data.Any())
+                {
+                    Conversion.HealthReport = DataHandler.GetParsedHealthReport(data, Conversion.HealthReport);
+                    var (cpuReadings, ramReadings, networkReadings) = DataHandler.GetParsedHealthReportReadings(data, Conversion.HealthReport);
+                    Conversion.HealthReport.Cpu.Readings.AddRange(cpuReadings);
+                    Conversion.HealthReport.Ram.Readings.AddRange(ramReadings);
+                    Conversion.HealthReport.Network.Readings.AddRange(networkReadings);
                     Conversion.LastHealthReportUpdated = DateTime.Now;
                 }
+                ClearStatusMessage(DashboardStatus.UpdatingHealthReport);
             }
-            else
-            {
-                DataHandler.BuildHealthReport(Conversion.HealthReport);
-            }
-            ClearStatusMessage(DashboardStatus.UpdatingHealthReport);
         }
 
         /// <summary>
@@ -507,7 +511,6 @@ namespace DashboardFrontend
 
             _viewModel.IsRunning = true;
             UpdateExecutions();
-            DataHandler.BuildHealthReport(Conversion?.HealthReport);
             SetupTimers();
 
             while (_viewModel.IsRunning)

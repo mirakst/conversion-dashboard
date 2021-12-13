@@ -68,11 +68,11 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<HealthReportEntry> QueryHealthReport()
+        public List<HealthReportEntry> QueryHealthReport(DateTime minDate)
         {
             using NetcompanyDbContext db = new(_options);
             var queryResult = db.HealthReports
-                                .Where(e => e.ReportType.EndsWith("INIT"))
+                                .Where(e => e.LogTime > minDate)
                                 .OrderBy(e => e.LogTime);
 
             return queryResult.ToList();

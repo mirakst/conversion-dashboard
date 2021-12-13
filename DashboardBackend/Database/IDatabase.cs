@@ -47,7 +47,7 @@ namespace DashboardBackend.Database
         /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
         /// </summary>
         /// <returns>A Health Report, complete with system info on CPU, Network and RAM.</returns>
-        List<HealthReportEntry> QueryHealthReport();
+        List<HealthReportEntry> QueryHealthReport(DateTime minDate);
 
         /// <summary>
         /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, 

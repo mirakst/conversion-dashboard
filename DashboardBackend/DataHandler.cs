@@ -16,11 +16,18 @@ namespace DashboardBackend
     {
         private readonly IDataParser<LogMessage, Tuple<List<Manager>, List<Execution>>> _logParser;
         private readonly IDataParser<EnginePropertyEntry, List<Manager>> _managerParser;
-
+        private readonly IDataParser<HealthReportEntry, List<CpuLoad>> _cpuReadingParser;
+        private readonly IDataParser<HealthReportEntry, List<RamLoad>> _ramReadingParser;
+        private readonly IDataParser<HealthReportEntry, List<NetworkUsage>> _networkReadingParser;
+        private readonly IDataParser<HealthReportEntry, HealthReport> _healthReportInfoParser;
         public DataHandler()
         {
             _logParser = new LogMessageParser();
             _managerParser = new ManagerParser();
+            _cpuReadingParser = new CpuReadingParser();
+            _ramReadingParser = new RamReadingParser();
+            _networkReadingParser = new NetworkReadingParser();
+            _healthReportInfoParser = new HealthReportInfoParser();
         }
 
         public IDatabase Database { get; set; }
@@ -132,70 +139,34 @@ namespace DashboardBackend
         /// <param name="healthReport">The conversion's health report</param>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <exception cref="FormatException">Thrown if somehow the query failed and an unexpected entry is met.</exception>
-        public int AddHealthReportReadings(HealthReport healthReport, DateTime minDate)
+        public Tuple<List<CpuLoad>, List<RamLoad>, List<NetworkUsage>> GetParsedHealthReportReadings(List<HealthReportEntry> data, HealthReport healthReport)
         {
-            healthReport.LastModified = DateTime.Now;
-            List<HealthReportEntry> queryResult = Database.QueryPerformanceReadings(minDate);
-            List<CpuLoad> cpuRes = new();
-            List<RamLoad> ramRes = new();
-            List<NetworkUsage> netRes;
-            List<HealthReportEntry> cpuAndRamEntries = queryResult
-                                                       .Where(e => e.ReportType != "NETWORK")
-                                                       .ToList();
-            List<HealthReportEntry> networkEntries = queryResult
-                                                      .Where(e => e.ReportType == "NETWORK")
-                                                      .ToList();
+            var cpuReadings = GetParsedCpuReadings(data.Where(e => e.ReportType == "CPU").ToList());
+            var ramReadings = GetParsedRamReadings(data.Where(e => e.ReportType == "MEMORY").ToList(), healthReport);
+            var networkReadings = GetParsedNetworkReadings(data.Where(e => e.ReportType == "NETWORK").ToList());
+            return new(cpuReadings, ramReadings, networkReadings);
+        }
 
-            foreach (HealthReportEntry item in cpuAndRamEntries)
+        public List<CpuLoad> GetParsedCpuReadings(List<HealthReportEntry> data)
+        {
+            var result = _cpuReadingParser.Parse(data);
+            return result;
+        }
+
+        public List<RamLoad> GetParsedRamReadings(List<HealthReportEntry> data, HealthReport healthReport)
+        {
+            var result = _ramReadingParser.Parse(data);
+            foreach (var item in result)
             {
-                switch (item.ReportType)
-                {
-                    case "CPU":
-                        cpuRes.Add(GetCpuReading(item));
-                        break;
-                    case "MEMORY":
-                        ramRes.Add(GetRamReading(healthReport.Ram.Total, item));
-                        break;
-                    default:
-                        throw new FormatException(nameof(item));
-                }
+                item.Load = 1 - (double)item.Available / healthReport.Ram.Total.Value;
             }
-            netRes = BuildNetworkUsage(networkEntries);
-
-            healthReport.Cpu.Readings = cpuRes;
-            healthReport.Ram.Readings = ramRes;
-            healthReport.Network.Readings = netRes;
-            return queryResult.Count;
+            return result;
         }
 
-        /// <summary>
-        /// Creates a list of CPU Readings for the system model, which is returned.
-        /// </summary>
-        /// <param name="item">A state database entry with cpu load readings</param>
-        /// <returns>A CPU load reading.</returns>
-        public CpuLoad GetCpuReading(HealthReportEntry item)
+        public List<NetworkUsage> GetParsedNetworkReadings(List<HealthReportEntry> data)
         {
-            int executionId = item.ExecutionId.Value;
-            double reportNumValue = Convert.ToDouble(item.ReportNumericValue) / 100;
-            DateTime logTime = item.LogTime.Value;
-            CpuLoad cpuReading = new(executionId, reportNumValue, logTime);
-            return cpuReading;
-        }
-
-        /// <summary>
-        /// Creates a list of RAM Readings for the system model, which is returned.
-        /// </summary>
-        /// <param name="item">A state database entry with cpu load readings</param>
-        /// <returns>A RAM usage reading.</returns>
-        public RamLoad GetRamReading(long? totalRam, HealthReportEntry item)
-        {
-            int executionId = (int)item.ExecutionId.Value;
-            long reportNumValue = item.ReportNumericValue.Value;
-            double load = 1 - Convert.ToDouble(reportNumValue) / Convert.ToDouble(totalRam);
-            long available = item.ReportNumericValue.Value;
-            DateTime logTime = item.LogTime.Value;
-            RamLoad ramReading = new(executionId, load, available, logTime);
-            return ramReading;
+            var result = _networkReadingParser.Parse(data);
+            return result;
         }
 
         /// <summary>
@@ -254,61 +225,40 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="entries">A list of Health Report entries from the state database.</param>
         /// <returns>A Health Report initialized with system info.</returns>
-        public void BuildHealthReport(HealthReport healthReport)
+        public List<HealthReportEntry> GetHealthReportEntries(DateTime minDate)
         {
-            List<HealthReportEntry> queryResult = Database.QueryHealthReport();
-
-            //INIT
-            string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
-            string monitorName = queryResult.FindLast(e => e.ReportKey == "Monitor Name")?.ReportStringValue;
-
-            //CPU INIT
-            string cpuName = queryResult.FindLast(e => e.ReportKey == "CPU Name")?.ReportStringValue;
-            int? cpuCores = (int?) queryResult.FindLast(e => e.ReportKey == "PhysicalCores")?.ReportNumericValue;
-            long? cpuMaxFreq = queryResult.FindLast(e => e.ReportKey == "CPU Max frequency")?.ReportNumericValue;
-
-            Cpu cpu = new(cpuName, cpuCores, cpuMaxFreq);
-
-            //MEMORY INIT
-            long? ramTotal = queryResult.FindLast(e => e.ReportKey == "TOTAL")?.ReportNumericValue;
-            Ram ram = new(ramTotal);
-
-            //NETWORK INIT
-            string networkName = queryResult.FindLast(e => e.ReportKey == "Interface 0: Name")?.ReportStringValue;
-            string networkMacAddress = queryResult.FindLast(e => e.ReportKey == "Interface 0: MAC address")?.ReportStringValue;
-            long? networkSpeed = queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed")?.ReportNumericValue;
-            Network network = new(networkName, networkMacAddress, networkSpeed);
-
-            healthReport.Build(hostName, monitorName, cpu, network, ram);
+            List<HealthReportEntry> result = Database.QueryHealthReport(minDate);
+            return result;
         }
 
-        /// <summary>
-        /// Builds network usage readings by coupling network entries 6 at a time.
-        /// </summary>
-        /// <param name="entries">A list of network usage entries from the state database.</param>
-        /// <returns>A coupled list of network usage entries.</returns>
-        public List<NetworkUsage> BuildNetworkUsage(List<HealthReportEntry> entries)
+        public HealthReport GetParsedHealthReport(List<HealthReportEntry> data, HealthReport healthReport)
         {
-            List<List<HealthReportEntry>> distinctReports = new();
-            int entryCount = entries.Count;
-
-            for (int i = 0; i < entryCount; i += 6)
+            var newData = _healthReportInfoParser.Parse(data);
+            if (newData.HostName != string.Empty)
             {
-                distinctReports.Add(entries.Skip(i).Take(6).ToList());
+                healthReport.HostName = newData.HostName;
             }
-
-            //Build system model network usage objects.
-            return (from item in distinctReports
-                    let executionId = item.First().ExecutionId.Value
-                    let logTime = item.First().LogTime.Value
-                    let bytesSend = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send").ReportNumericValue
-                    let bytesSendDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)").ReportNumericValue
-                    let bytesSendSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)").ReportNumericValue
-                    let bytesReceived = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received").ReportNumericValue
-                    let bytesReceivedDelta = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)").ReportNumericValue
-                    let bytesReceivedSpeed = (long)item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)").ReportNumericValue
-                    select new NetworkUsage(executionId, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime))
-                    .ToList();
+            if (newData.MonitorName != string.Empty)
+            {
+                healthReport.MonitorName = newData.MonitorName;
+            }
+            if (newData.Cpu.Name != string.Empty && newData.Cpu.Name != healthReport.Cpu.Name)
+            {
+                newData.Cpu.Readings.AddRange(healthReport.Cpu.Readings);
+                healthReport.Cpu = newData.Cpu;
+            }
+            if (newData.Ram.Total.HasValue)
+            {
+                // This will ensure that previous values (in %) are maintained, but new values are correct relative to the new total.
+                newData.Ram.Readings.AddRange(healthReport.Ram.Readings);
+                healthReport.Ram = newData.Ram;
+            }
+            if (newData.Network.Name != string.Empty && newData.Network.Name != healthReport.Network.Name)
+            {
+                newData.Network.Readings.AddRange(healthReport.Network.Readings);
+                healthReport.Network = newData.Network;
+            }
+            return healthReport;
         }
     }
 }
