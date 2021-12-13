@@ -10,40 +10,40 @@ namespace DashboardBackend.Parsers
             HealthReport result = new();
             foreach (var entry in data)
             {
-                switch (entry.ReportKey)
+                switch (entry.ReportType)
                 {
                     #region Host data
-                    case "Hostname":
+                    case "INIT" when entry.ReportKey == "Hostname":
                         result.HostName = entry.ReportStringValue;
                         break;
-                    case "Monitor Name":
+                    case "INIT" when entry.ReportKey == "Monitor Name":
                         result.MonitorName = entry.ReportStringValue;
                         break;
                     #endregion
                     #region CPU data
-                    case "CPU Name":
+                    case "CPU_INIT" when entry.ReportKey == "CPU Name":
                         result.Cpu.Name = entry.ReportStringValue;
                         break;
-                    case "PhysicalCores":
-                        result.Cpu.Cores = Convert.ToInt16(entry.ReportNumericValue ?? 0);
+                    case "CPU_INIT" when entry.ReportKey == "PhysicalCores":
+                        result.Cpu.Cores = Convert.ToInt32(entry.ReportNumericValue ?? 0);
                         break;
-                    case "CPU Max Frequency":
-                        result.Cpu.Cores = Convert.ToInt16(entry.ReportNumericValue ?? 0);
+                    case "CPU_INIT" when entry.ReportKey == "CPU Max frequency":
+                        result.Cpu.MaxFrequency = Convert.ToInt32(entry.ReportNumericValue ?? 0);
                         break;
                     #endregion
                     #region RAM data
-                    case "TOTAL":
+                    case "MEMORY_INIT" when entry.ReportKey == "TOTAL":
                         result.Ram.Total = entry.ReportNumericValue;
                         break;
                     #endregion
                     #region Network data
-                    case "Interface 0: Name":
+                    case "NETWORK_INIT" when entry.ReportKey == "Interface 0: Name":
                         result.Network.Name = entry.ReportStringValue;
                         break;
-                    case "Interface 0: MAC address":
+                    case "NETWORK_INIT" when entry.ReportKey == "Interface 0: MAC address":
                         result.Network.MacAddress = entry.ReportStringValue;
                         break;
-                    case "Interface 0: Speed":
+                    case "NETWORK_INIT" when entry.ReportKey == "Interface 0: Speed":
                         result.Network.Speed = entry.ReportNumericValue ?? 0;
                         break;
                     #endregion

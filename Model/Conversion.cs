@@ -37,7 +37,7 @@ namespace Model
 
         #endregion
 
-        public void AddExecution(Execution execution)
+        public Conversion AddExecution(Execution execution)
         {
             if (ActiveExecution != null)
             {
@@ -49,6 +49,7 @@ namespace Model
                 }
             }
             Executions.Add(execution);
+            return this;
         }
     }
 }
