@@ -1,5 +1,4 @@
 using DashboardFrontend.DetachedWindows;
-using System;
 using DashboardFrontend.ViewModels;
 using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
@@ -9,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DashboardFrontend.Charts;
-using System.Linq;
 
 namespace DashboardFrontend
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
 using System.Windows;
 using DashboardFrontend.Charts;
 using LiveChartsCore.SkiaSharpView.WPF;

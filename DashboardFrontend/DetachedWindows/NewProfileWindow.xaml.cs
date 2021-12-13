@@ -1,8 +1,6 @@
 ﻿using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;

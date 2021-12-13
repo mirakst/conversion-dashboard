@@ -1,11 +1,8 @@
-﻿using DashboardFrontend.Charts;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 
 namespace DashboardFrontend.DetachedWindows
 {

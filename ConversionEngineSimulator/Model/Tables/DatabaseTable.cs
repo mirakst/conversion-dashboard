@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ConversionEngineSimulator
+﻿namespace ConversionEngineSimulator
 {
     public interface IDatabaseTable //Interface for database tables. On top of this, they include Entries<T> to store their entries
     {

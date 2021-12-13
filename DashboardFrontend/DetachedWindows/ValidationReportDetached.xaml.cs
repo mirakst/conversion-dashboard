@@ -3,8 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Model;
 using DashboardFrontend.ViewModels;
-using System.Windows.Controls.Primitives;
-using System.Diagnostics;
 
 namespace DashboardFrontend.DetachedWindows
 {
