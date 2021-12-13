@@ -140,7 +140,6 @@ namespace DashboardFrontend.ViewModels
                 ExpandedManagerNames.Clear();
                 ManagerView = (CollectionView)CollectionViewSource.GetDefaultView(exec.Managers);
                 ManagerView.Filter = OnManagersFilter;
-                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.Score), ListSortDirection.Ascending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.FailedCount), ListSortDirection.Descending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.DisabledCount), ListSortDirection.Descending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.StartTime), ListSortDirection.Ascending));

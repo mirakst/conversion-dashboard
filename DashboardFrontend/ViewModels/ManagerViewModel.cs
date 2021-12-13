@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,17 +13,37 @@ namespace DashboardFrontend.ViewModels
         public ManagerViewModel()
         {
             ManagerChartViewModel = new();
+        }
+
+        public ObservableCollection<ExecutionObservable> Executions { get; set; } = new();
+        public ExecutionObservable? _selectedExecution;
+        public ExecutionObservable? SelectedExecution
+        {
+            get => _selectedExecution;
+            set
+            {
+                ManagerChartViewModel.ClearChartLinesHelper();
+                _selectedExecution = value;
+                OnPropertyChanged(nameof(SelectedExecution));
+                SetExecution(value);
+            }
         }
 
-        public ManagerViewModel(DataGrid dataGrid)
+        public ManagerViewModel(Window detachedWindow) : this()
         {
-            _datagrid = dataGrid;
+            Window = detachedWindow;
         }
 
         public DateTime LastUpdated { get; set; } = DateTime.MinValue;
-        private readonly DataGrid _datagrid;
+        private string _managerSearch = string.Empty;
+        public string ManagerSearch { get => _managerSearch; 
+            set
+            {
+                _managerSearch = value;
+                if (DataGridManagers != null) _dataGridManagers.Items.Filter = OnManagersFilter;
+            }
+        }
         private ObservableCollection<ManagerWrapper> _managers = new();
-        public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public ObservableCollection<ManagerWrapper> Managers
         {
             get => _managers;
@@ -32,52 +53,63 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(Managers));
             }
         }
-        private ObservableCollection<ManagerWrapper> _wrappedManagers = new();
-        public ObservableCollection<ManagerWrapper> WrappedManagers
+
+        private ObservableCollection<ManagerWrapper> _detailedManagers = new();
+        public ObservableCollection<ManagerWrapper> DetailedManagers
         {
-            get => _wrappedManagers;
+            get => _detailedManagers;
             set
             {
-                _wrappedManagers = value;
-                OnPropertyChanged(nameof(WrappedManagers));
+                _detailedManagers = value;
+                OnPropertyChanged(nameof(DetailedManagers));
             }
         }
-
-        private string _managerSearch = string.Empty;
-        public string ManagerSearch
-        {
-            get => _managerSearch;
+        private DataGrid _dataGridManagers;
+        public DataGrid DataGridManagers { 
+            get => _dataGridManagers; 
             set
             {
-                _managerSearch = value;
-                OnPropertyChanged(nameof(ManagerSearch));
-                SearchManagers();
+                _dataGridManagers = value;
             }
         }
+        public int HiddenManagers { get; set; }
 
-        public void SearchManagers()
+        public void UpdateHiddenManagers()
         {
-            foreach (ManagerWrapper manager in Managers)
+            HiddenManagers = DetailedManagers.Where(m => m.Manager.CpuReadings.Count < 2).Count();
+            OnPropertyChanged(nameof(HiddenManagers));
+        }
+        public ManagerChartViewModel ManagerChartViewModel { get; set; }
+        public Window Window { get; set; }
+        public void UpdateData(List<Execution> executions)
+        {
+            Executions.Clear();
+            int count = executions.Count;
+            for (int i = 0; i < count; i++)
             {
-                DataGridRow row = (DataGridRow)_datagrid.ItemContainerGenerator.ContainerFromItem(manager);
-                if (!manager.Manager.Name.Contains(ManagerSearch))
+                Executions.Add(new ExecutionObservable(executions[i]));
+            }
+            if (SelectedExecution is null && count > 0)
+            {
+                SelectedExecution = Executions[^1];
+            }
+        }
+        private void SetExecution(ExecutionObservable exec)
+        {
+            if (exec is not null)
+            {
+                Managers.Clear();
+                DetailedManagers.Clear();
+                foreach (var manager in exec.Managers)
                 {
-                    row.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    row.Visibility = Visibility.Visible;
+                    Managers.Add(new ManagerWrapper(manager.OriginalManager));
                 }
             }
         }
-
-        public void UpdateData(List<Manager> executionManagers)
+        private bool OnManagersFilter(object item)
         {
-            Managers.Clear();
-            foreach (var manager in executionManagers)
-            {
-                Managers.Add(new ManagerWrapper(manager));
-            }
+            ManagerWrapper mgr = (ManagerWrapper)item;
+            return (mgr.Manager.Name.ToLower().Contains(ManagerSearch.ToLower()) || mgr.Manager.ContextId.ToString() == ManagerSearch);
         }
     }
 }

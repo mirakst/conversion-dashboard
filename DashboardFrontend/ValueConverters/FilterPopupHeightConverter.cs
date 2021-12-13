@@ -9,7 +9,7 @@ namespace DashboardFrontend.ValueConverters
         {
             if (value is double distance)
             {
-                return distance - 120;
+                return distance - 120 > 0 ? distance - 120 : 0;
             }
             else return 0;
         }

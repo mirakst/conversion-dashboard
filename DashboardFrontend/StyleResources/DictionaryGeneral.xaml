@@ -42,6 +42,8 @@
     <Style TargetType="{x:Type TextBox}" x:Key="ValidationsSearchBox">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource ForegroundColor}"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="FontSize" Value="14"/>

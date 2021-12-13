@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using static Model.ValidationTest;
 
 namespace Model
@@ -7,19 +6,15 @@ namespace Model
 
     public class Manager
     {
-        #region Constructors
         public Manager()
         {
             Status = ManagerStatus.Ready;
         }
-        #endregion
 
-        #region Enums
         public enum ManagerStatus : byte
         {
             Ready, Running, Ok
         }
-        #endregion Enums
 
         public event ManagerFinished OnManagerFinished;
 
@@ -34,22 +29,45 @@ namespace Model
             set
             {
                 _name = value;
-                var splitName = value.Split('.');
-                if (splitName.Contains("managers"))
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
-                }
-                else
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.Skip(4));
-                }
+                ShortName = value.Split(".").Last();
             }
-        } //[MANAGER_NAME] from [dbo].[MANAGERS]
+        }
         public int ContextId { get; set; }
         public int ExecutionId { get; set; }
         public string ShortName { get; set; }
-        public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
-        public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
+        private DateTime? _startTime;
+        public DateTime? StartTime
+        {
+            get => _startTime; set
+            {
+                _startTime = value;
+                if (value is not null)
+                {
+                    Status = ManagerStatus.Running;
+                    if (EndTime.HasValue)
+                    {
+                        Runtime = EndTime.Value.Subtract(value.Value);
+                    }
+                }
+            }
+        }
+        private DateTime? _endTime;
+        public DateTime? EndTime
+        {
+            get => _endTime; set
+            {
+                _endTime = value;
+                if (value is not null)
+                {
+                    Status = ManagerStatus.Ok;
+                    if (StartTime.HasValue)
+                    {
+                        Runtime = value.Value.Subtract(StartTime.Value);
+                    }
+                }
+
+            }
+        }
         public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
         private ManagerStatus _status;
         public ManagerStatus Status
@@ -61,27 +79,20 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
-                    UpdateScore();
                 }
             }
         }
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
-        public double? Score { get; set; }
-        public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
+        public double? PerformanceScore { get; set; }
+        public double? ValidationScore { get; set; }
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         #endregion
-
-        private void UpdateScore()
-        {
-            int OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
-            int TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
-            Score = TotalCount > 0 ? (double)OkCount / (double)TotalCount * 100.0d : 100.0d;
-        }
 
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
-            UpdateScore();
+            UpdateValidationScore();
         }
 
         /// <summary>
@@ -109,6 +120,16 @@ namespace Model
             {
                 RamReadings.AddRange(ramReadings);
             }
+        }
+
+        /// <summary>
+        /// Calculates the managers validation score
+        /// </summary>
+        private void UpdateValidationScore()
+        {
+            double OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
+            double TotalCount = Validations.Count;
+            ValidationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
         public override string ToString()

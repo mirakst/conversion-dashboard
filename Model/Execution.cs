@@ -1,6 +1,6 @@
 ﻿namespace Model
 {
-    public delegate void ExecutionProgressUpdated(int currentProgress);
+    public delegate void ExecutionProgressUpdated(Execution execution);
 
     public class Execution
     {
@@ -43,12 +43,13 @@
                 {
                     CurrentProgress = 100;
                 }
-                OnExecutionProgressUpdated?.Invoke(CurrentProgress);
+                OnExecutionProgressUpdated?.Invoke(this);
             }
         }
         public ValidationReport ValidationReport { get; set; } = new();
         public Log Log { get; set; } = new();
         public int EstimatedManagerCount { get; set; }
+        private readonly ManagerScore _managerScore = new();
         #endregion
 
         public void AddManager(Manager manager)
@@ -66,11 +67,19 @@
 
         private void UpdateProgress(Manager manager)
         {
+            lock (Managers)
+            {
+                foreach (var fucking in Managers)
+                {
+                    fucking.PerformanceScore = _managerScore.GetPerformanceScore(fucking);
+                    fucking.ValidationScore = _managerScore.GetValidationScore(fucking);
+                }
+            }
             if (EstimatedManagerCount > 0)
             {
                 CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
             }
-            OnExecutionProgressUpdated?.Invoke(CurrentProgress);
+            OnExecutionProgressUpdated?.Invoke(this);
         }
 
         public override string ToString()

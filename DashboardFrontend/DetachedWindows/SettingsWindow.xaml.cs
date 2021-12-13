@@ -5,7 +5,6 @@ using System;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
-using DashboardFrontend.Controllers;
 
 namespace DashboardFrontend.DetachedWindows
 {

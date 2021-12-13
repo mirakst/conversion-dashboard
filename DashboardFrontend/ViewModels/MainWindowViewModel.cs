@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using DashboardFrontend.Controllers;
+using Model;
 
 namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(ListView listViewLog)
+        public MainWindowViewModel(ListView listViewLog, Window window)
         {
             Controller = new(this);
             Controller.InitializeViewModels(listViewLog);
@@ -66,9 +66,9 @@ namespace DashboardFrontend.ViewModels
             OnPropertyChanged(nameof(ManagerViewModel));
         }
 
-        public void UpdateExecutionProgress(int currentProgress)
+        public void UpdateExecutionProgress(Execution execution)
         {
-            CurrentProgress = currentProgress;
+            CurrentProgress = execution.CurrentProgress;
         }
     }
 }

@@ -50,23 +50,12 @@ namespace DashboardBackend.Parsers
                     if (DateTime.TryParse(entry.Value, out DateTime startTime))
                     {
                         manager.StartTime = startTime;
-                        manager.Status = ManagerStatus.Running;
-                        if (manager.EndTime.HasValue)
-                        {
-                            manager.Runtime = manager.EndTime.Value.Subtract(startTime);
-                            manager.Status = ManagerStatus.Ok;
-                        }
                     }
                     break;
                 case "END_TIME":
                     if (DateTime.TryParse(entry.Value, out DateTime endTime))
                     {
                         manager.EndTime = endTime;
-                        if (manager.StartTime.HasValue)
-                        {
-                            manager.Runtime = endTime.Subtract(manager.StartTime.Value);
-                            manager.Status = ManagerStatus.Ok;
-                        }
                     }
                     break;
                 case "Læste rækker":

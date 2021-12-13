@@ -53,22 +53,22 @@
                     Command="{x:Static SystemCommands.CloseWindowCommand}"/>
 
             <TextBlock Text="Settings" 
-                   FontSize="32" 
-                   Grid.ColumnSpan="2"
-                   Margin="50,0,50,0"
-                   TextAlignment="Center"
-                   Foreground="{DynamicResource ForegroundColor}"/>
+                       FontSize="32" 
+                       Grid.ColumnSpan="2"
+                       Margin="50,0,50,0"
+                       TextAlignment="Center"
+                       Foreground="{DynamicResource ForegroundColor}"/>
 
             <TabControl Grid.Row="1" 
-                    Grid.ColumnSpan="2"
-                    SelectedIndex="3" 
-                    BorderThickness="0,1,0,0"
-                    BorderBrush="Transparent"
-                    Background="{DynamicResource BackgroundColor}">
+                        Grid.ColumnSpan="2"
+                        SelectedIndex="3" 
+                        BorderThickness="0,1,0,0"
+                        BorderBrush="Transparent"
+                        Background="{DynamicResource BackgroundColor}">
                 <TabItem Header="Profile" 
-                     IsSelected="True" 
-                     Margin="0,0,0,0"
-                     Style="{DynamicResource TabItemStyleOverwrite}">
+                         IsSelected="True" 
+                         Margin="0,0,0,0"
+                         Style="{DynamicResource TabItemStyleOverwrite}">
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"/>
@@ -176,33 +176,37 @@
                                  SelectedItem="{Binding SelectedProfile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
                             <Button Grid.Row="1" 
-                                Grid.Column="1" 
-                                Grid.ColumnSpan="2" 
-                                Content="Set as active" 
-                                Margin="5" 
-                                Click="Button_SetActiveProfile" 
-                                IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
+                                    Grid.Column="1" 
+                                    Grid.ColumnSpan="2" 
+                                    Content="Set as active" 
+                                    Margin="5" 
+                                    Click="Button_SetActiveProfile" 
+                                    Cursor="Hand"
+                                    IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
 
                             <Button Grid.Row="2" 
-                                Grid.Column="1" 
-                                Grid.ColumnSpan="2" 
-                                Content="New" 
-                                Margin="5" 
-                                Click="Button_NewProfile"/>
+                                    Grid.Column="1" 
+                                    Grid.ColumnSpan="2" 
+                                    Content="_New" 
+                                    Margin="5" 
+                                    Click="Button_NewProfile"
+                                    Cursor="Hand"/>
 
                             <Button Grid.Row="3" 
-                                Grid.Column="1" 
-                                Content="Edit" 
-                                Margin="5" 
-                                Click="Button_EditProfile" 
-                                IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
+                                    Grid.Column="1" 
+                                    Content="Edit" 
+                                    Margin="5" 
+                                    Click="Button_EditProfile" 
+                                    IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"
+                                    Cursor="Hand"/>
 
                             <Button Grid.Row="3" 
-                                Grid.Column="2" 
-                                Content="Delete" 
-                                Margin="5" 
-                                Click="Button_DeleteProfile" 
-                                IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
+                                    Grid.Column="2" 
+                                    Content="Delete" 
+                                    Margin="5" 
+                                    Click="Button_DeleteProfile"
+                                    Cursor="Hand"
+                                    IsEnabled="{Binding ElementName=profileListBox, Path=SelectedItem, Converter={StaticResource ProfileConverter}}"/>
                         </Grid>
                     </Grid>
                 </TabItem>
@@ -354,18 +358,22 @@
             </TabControl>
 
             <StackPanel Grid.Row="2" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center">
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center">
+                
                 <Button Content="Close" 
-                    IsCancel="True" 
-                    Margin="0 5 10 5" 
-                    Width="100" 
-                    Click="Button_Close"/>
-                <Button Content="Save and close" 
-                    IsDefault="True" 
-                    Margin="0 5 0 5" 
-                    Width="100" 
-                    Click="Button_SaveAndClose"/>
+                        IsCancel="True" 
+                        Margin="0 5 10 5" 
+                        Width="100" 
+                        Click="Button_Close"
+                        Cursor="Hand"/>
+                
+                <Button Content="_Save and close" 
+                        IsDefault="True" 
+                        Margin="0 5 0 5" 
+                        Width="100" 
+                        Click="Button_SaveAndClose"
+                        Cursor="Hand"/>
             </StackPanel>
         </Grid>
     </Border>

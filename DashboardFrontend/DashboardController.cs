@@ -351,10 +351,6 @@ namespace DashboardFrontend
                                 {
                                     existingManager.EndTime = manager.EndTime;
                                 }
-                                if (existingManager.Status != manager.Status)
-                                {
-                                    existingManager.Status = manager.Status;
-                                }
                             }
                             // If the manager does not exist, it is added to both the conversion and an appropriate execution.
                             else

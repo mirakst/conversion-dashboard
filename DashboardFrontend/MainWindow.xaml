@@ -36,6 +36,9 @@
             <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         </Style>
+        <Style TargetType="{x:Type lvc:CartesianChart}">
+            <Setter Property="Cursor" Value="Cross"/>
+        </Style>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
@@ -100,11 +103,10 @@
 
                     <Button Name="ButtonSettings" 
                             Click="ButtonSettingsClick" 
+                            Style="{StaticResource DefaultButton}"
                             Grid.Column="1" 
                             Grid.Row="0" 
-                            Grid.RowSpan="2" 
-                            Background="Transparent" 
-                            BorderBrush="Transparent">
+                            Grid.RowSpan="2">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
 
@@ -167,6 +169,7 @@
                       DataContext="{Binding ManagerViewModel}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4.5*"/>
                         <ColumnDefinition Width="30"/>
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
@@ -175,31 +178,42 @@
                         <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
 
+                    <ComboBox Margin="0 0 2 2"  
+                              ToolTip="Choose which execution to show data from" 
+                              Style="{DynamicResource ComboBoxExecutions}"  
+                              ItemsSource="{Binding Executions}"  
+                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}"  
+                                           VerticalAlignment="Center" 
+                                           Foreground="{DynamicResource ForegroundColor}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
+                             Style="{DynamicResource ValidationsSearchBox}"
                              Height="26"
-                             Style="{DynamicResource SearchBox}"
+                             Grid.Column="1"
+                             Grid.ColumnSpan="2"
                              Margin="0,0,0,1"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
 
-                    <DockPanel LastChildFill="False">
-                        <Image Source="Icons/MagnifyingglassAlt.png"
+                    <DockPanel LastChildFill="False"
+                               Grid.Column="2">
+                        <Image Source="Icons/Magnifyingglass.png"
                                Margin="0,5,10,5"
                                DockPanel.Dock="Right"/>
                     </DockPanel>
 
-                    <ToggleButton Name="ButtonManagerFilter"
-                            Grid.Column="1"
-                            Margin="0, 0, 0, 1"
-                            Style="{DynamicResource FilterButton}">
-                        <Image Source="Icons/Filter.png"/>
-                    </ToggleButton>
 
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="0, -2, -2, 0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
@@ -208,26 +222,35 @@
                     <DataGrid x:Name="datagridManagers"
                               ItemsSource="{Binding Managers}"
                               Grid.Row="1"
-                              Grid.ColumnSpan="3"
+                              Grid.ColumnSpan="4"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              MouseDoubleClick="DatagridManagers_MouseDoubleClick"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
-
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
-                                                Width="25pt"/>
+                                                Width="32pt"/>
                             <DataGridTextColumn Header="Manager name" 
                                                 Binding="{Binding Manager.ShortName}"
-                                                Width="8*"/>
-                            <DataGridTextColumn Header="Score" 
-                                                Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
-                                                Width="*"/>
+                                                Width="6*"/>
+                            <DataGridTextColumn Header="Perf score"
+                                                Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                Width="1.6*"/>
+                            <DataGridTextColumn Header="Val Score" 
+                                                Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                Width="1.6*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
                                                 Width="2*"/>
                         </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ToolTip" Value="Double click to open view"/>
+                                <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                     </DataGrid>
                 </Grid>
 
@@ -319,8 +342,7 @@
                         <ToggleButton Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}"
-                                Margin="0, 0, 0, -1"
-                                IsEnabled="{Binding ElementName=PopupLogFilter, Path=IsOpen}">
+                                Margin="0, 0, 0, -1">
                             <Image Source="Icons/Filter.png"/>
                         </ToggleButton>
 
@@ -360,7 +382,6 @@
                                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                   MouseEnter="ListViewLog_MouseOverChanged"
                                   MouseLeave="ListViewLog_MouseOverChanged"
-                                  
                                   Margin="0,-2,0,0">
                             <ListView.View>
                                 <GridView AllowsColumnReorder="False">
@@ -426,6 +447,7 @@
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="Focusable" Value="False"/>
                                     <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
+                                    <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
@@ -636,9 +658,7 @@
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="Search for managers by their name or context ID"
-                                         Foreground="{DynamicResource ForegroundColor}"
-                                         CaretBrush="{DynamicResource ForegroundColor}"/>
+                                         ToolTip="Search for managers by their name or context ID"/>
 
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        Grid.Column="1"
@@ -687,6 +707,7 @@
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="MinHeight" Value="25"/>
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
                                                     <Setter Property="Focusable" Value="False"/>
@@ -779,9 +800,8 @@
                                                FontWeight="Bold"
                                                Foreground="{DynamicResource HeaderForegroundColor}"
                                                Margin="10 20 10 10"/>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="10 5 10 10"
-                                                Height="30">
+                                    <WrapPanel Orientation="Horizontal"
+                                                Margin="10 5 10 10">
                                         <Button Margin="0 0 20 0"
                                                 Click="CopySrcSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
@@ -802,7 +822,7 @@
                                                        Style="{DynamicResource PopupLabel}"/>
                                             </Border>
                                         </Popup>
-                                    </StackPanel>
+                                    </WrapPanel>
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
@@ -869,7 +889,7 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Name="TextBlockCurrentCpuLoad"
-                                                Text="{Binding LastCpuReading,
+                                                Text="{Binding LastPrimaryReading,
                                                         StringFormat='CPU Usage: {0:0}%'}"
                                                 Foreground="{DynamicResource ForegroundColor}"
                                                 FontSize="14"
@@ -880,7 +900,7 @@
                                                 Margin="0,0,40,5"/>
 
                                     <TextBlock Name="TextBlockCurrentRamUsage"
-                                                Text="{Binding LastRamReading,
+                                                Text="{Binding LastSecondaryReading,
                                                         StringFormat='RAM Usage: {0:0}%'}"
                                                 Foreground="{DynamicResource ForegroundColor}"
                                                 FontSize="14"
@@ -897,9 +917,9 @@
 
                                     <lvc:CartesianChart
                                             Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
                                             ZoomMode="X"
                                             TooltipPosition="Top"
                                             MouseLeave="CartesianChart_MouseLeave"
@@ -918,17 +938,62 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding ChartData.Series}"
-                                                XAxes="{Binding ChartData.XAxis}"
-                                                YAxes="{Binding ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSent"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network data sent: {0:0}GB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
                                                 Grid.Row="0"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceived"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network data received: {0:0}GB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
                         </TabItem>
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkDelta"
@@ -936,18 +1001,63 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding ChartData.Series}"
-                                                XAxes="{Binding ChartData.XAxis}"
-                                                YAxes="{Binding ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                Grid.Row="1"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
-                        </TabItem>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSendDelta"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network data sent (Delta): {0:0}MB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceiveDelta"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network received (Delta): {0:0}MB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
+                        </TabItem> 
 
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
@@ -955,17 +1065,62 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <lvc:CartesianChart  Margin="-6,14,0,-30"
-                                                    Series="{Binding ChartData.Series}"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
-                                                    ZoomMode="X"
-                                                    TooltipPosition="Top"
-                                                    Grid.Row="2"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSendSpeed"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network send speed: {0:0.00}Mbps'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceiveSpeed"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network receive speed: {0:0.00}Mbps'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
                         </TabItem>
                     </TabControl>
 
@@ -1029,6 +1184,7 @@
 
             <Control Name="ControlLoadingAnim"
                      Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged, FallbackValue=Collapsed}"
+                     Cursor="Wait"
                      Grid.ColumnSpan="2"
                      Grid.RowSpan="2"
                      Margin="0,100,0,0"

@@ -16,7 +16,7 @@
         <Grid Name="GridLog" 
               Margin="20,10,20,20">
             <Grid Grid.Row="0"
-              Margin="-4, 0, 0, 4">
+                  Margin="-4, 0, 0, 4">
                 <ToggleButton Name="ToggleButtonLogInfo"
                               Grid.Column="0"
                               IsChecked="{Binding ShowInfo}"
@@ -194,6 +194,7 @@
                             <Setter Property="FontSize" Value="14"/>
                             <Setter Property="Focusable" Value="False"/>
                             <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
+                            <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Type}" Value="Info">
                                     <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
@@ -254,7 +255,6 @@
                             </ComboBox>
                             <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
                             <ItemsControl Style="{DynamicResource GridPopupItemsControlOverwrite}"
-                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
                                           ItemsSource="{Binding SelectedExecution.Managers}">
                                 <ItemsControl.Template>
                                     <ControlTemplate>

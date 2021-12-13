@@ -1,13 +1,15 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Linq;
+using System.ComponentModel;
 
 namespace DashboardBackend.Settings
 {
+    public delegate void SettingsChanged();
     public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
-        private readonly string _fileName = "UserSettings.json";
-
         public UserSettings()
         {
         }
@@ -24,14 +26,12 @@ namespace DashboardBackend.Settings
             ActiveProfile = Profiles.FirstOrDefault(p => p.Id == activeProfileId);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly string _fileName = "UserSettings.json";
 
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
-        private Profile _activeProfile;
-
-
+        private Profile? _activeProfile;
         [JsonIgnore]
-        public Profile ActiveProfile
+        public Profile? ActiveProfile
         {
             get => _activeProfile;
             set
@@ -40,16 +40,28 @@ namespace DashboardBackend.Settings
                 OnPropertyChanged(nameof(ActiveProfile));
             }
         }
-        public int LoggingQueryInterval { get; set; } = 15; // seconds
+        public int LoggingQueryInterval { get; set; } = 1; // seconds
         public int HealthReportQueryInterval { get; set; } = 30;
-        public int ValidationQueryInterval { get; set; } = 120;
-        public int ManagerQueryInterval { get; set; } = 60;
-        public int AllQueryInterval { get; set; } = 30;
+        public int ValidationQueryInterval { get; set; } = 5;
+        public int ManagerQueryInterval { get; set; } = 5;
+        public int AllQueryInterval { get; set; } = 2;
         public bool SynchronizeAllQueries { get; set; } = false;
         [JsonIgnore]
         public bool HasActiveProfile => ActiveProfile is not null;
         // For JSON serialization
         public int ActiveProfileId => ActiveProfile?.Id ?? 0;
+        public event SettingsChanged SettingsChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnSettingsChange()
+        {
+            SettingsChanged?.Invoke();
+        }
+
+        public bool HasEventListeners()
+        {
+            return SettingsChanged != null;
+        }
 
         private void OverwriteAll(IUserSettings settings)
         {
@@ -61,6 +73,7 @@ namespace DashboardBackend.Settings
             ManagerQueryInterval = settings.ManagerQueryInterval;
             AllQueryInterval = settings.AllQueryInterval;
             SynchronizeAllQueries = settings.SynchronizeAllQueries;
+            OnSettingsChange();
         }
         
         public void OverwriteAllAndSave(IUserSettings settings)
