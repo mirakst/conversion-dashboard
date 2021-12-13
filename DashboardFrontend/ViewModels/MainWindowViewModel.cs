@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using DashboardFrontend.Controllers;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -11,7 +12,7 @@ namespace DashboardFrontend.ViewModels
             Controller.InitializeViewModels(listViewLog);
         }
 
-        public Controller Controller { get; set; }
+        public DashboardController Controller { get; set; }
         private string _currentStatus;
         public string CurrentStatus
         {

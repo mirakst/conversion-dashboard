@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using DashboardFrontend.Charts;
 using LiveChartsCore.SkiaSharpView.WPF;
+using DashboardFrontend.Controllers;
 
 namespace DashboardFrontend
 {
@@ -36,7 +37,7 @@ namespace DashboardFrontend
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.Controller.OnStartPressed();
+            ViewModel.Controller.ChangeMonitoringState();
         }
 
         //Detach window events

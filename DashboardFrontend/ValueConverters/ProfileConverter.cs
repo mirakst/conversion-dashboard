@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.Settings;
+﻿using DashboardBackend.Settings;
 using System;
 using System.Globalization;
 using System.Windows.Data;

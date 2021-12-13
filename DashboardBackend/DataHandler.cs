@@ -6,16 +6,33 @@ using System.Text.RegularExpressions;
 using static Model.LogMessage;
 using static Model.ValidationTest;
 using static Model.Manager;
+using DashboardBackend.Parsers;
+using Microsoft.EntityFrameworkCore;
+using DashboardBackend.Settings;
 
 namespace DashboardBackend
 {
-    public static class DataUtilities
+    public class DataHandler : IDataHandler
     {
-        //The class that handles the state database queries. Default is SQL.
-        public static IDatabaseHandler DatabaseHandler { get; set; }
+        private readonly IDataParser<LogMessage, Tuple<List<Manager>, List<Execution>>> _logParser;
+        private readonly IDataParser<EnginePropertyEntry, List<Manager>> _managerParser;
 
-        //Set SQL minimum DateTime as default.
-        public static DateTime SqlMinDateTime { get; } = SqlDateTime.MinValue.Value;
+        public DataHandler()
+        {
+            _logParser = new LogMessageParser();
+            _managerParser = new ManagerParser();
+        }
+
+        public IDatabase Database { get; set; }
+        protected DateTime SqlMinDateTime => SqlDateTime.MinValue.Value;
+
+        public void SetupDatabase(Profile profile)
+        {
+            DbContextOptions<NetcompanyDbContext> options = new DbContextOptionsBuilder<NetcompanyDbContext>()
+                .UseSqlServer(profile.ConnectionString)
+                .Options;
+            Database = new EntityFrameworkDb(options);
+        }
 
         /// <summary>
         /// Queries the state database for executions newer than minDate, 
@@ -23,9 +40,9 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of executions, matching the supplied constraints.</returns>
-        public static List<Execution> GetExecutions(DateTime minDate)
+        public List<Execution> GetExecutions(DateTime minDate)
         {
-            List<ExecutionEntry> queryResult = DatabaseHandler.QueryExecutions(minDate);
+            List<ExecutionEntry> queryResult = Database.QueryExecutions(minDate);
 
             return (from item in queryResult
                     let executionId = (int)item.ExecutionId.Value
@@ -35,21 +52,14 @@ namespace DashboardBackend
         }
 
         /// <summary>
-        /// Queries the state database for executions newer than SqlMinDateTime, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <returns>A list of all executions in the state database</returns>
-        public static List<Execution> GetExecutions() => GetExecutions(SqlMinDateTime);
-
-        /// <summary>
         /// Queries the state database for validation tests newer than minDate, 
         /// then creates a list of them for the system model, which is returned.
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of validation tests, matching the supplied constraints.</returns>
-        public static List<ValidationTest> GetAfstemninger(DateTime minDate)
+        public List<ValidationTest> GetValidations(DateTime minDate)
         {
-            List<AfstemningEntry> queryResult = DatabaseHandler.QueryAfstemninger(minDate);
+            List<AfstemningEntry> queryResult = Database.QueryAfstemninger(minDate);
 
             return (from item in queryResult
                     let date = item.Afstemtdato
@@ -66,55 +76,14 @@ namespace DashboardBackend
         }
 
         /// <summary>
-        /// Queries the state database for validation tests newer than SqlMinDateTime, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <returns>A list of all validation tests in the state database</returns>
-        public static List<ValidationTest> GetAfstemninger() => GetAfstemninger(SqlMinDateTime);
-
-        /// <summary>
-        /// Queries the state database for log messages from a specific execution, newer than minDate,
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="executionId">An execution ID constraint for the objects in the returned list.</param>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public static List<LogMessage> GetLogMessages(int executionId, DateTime minDate)
-        {
-            if (executionId < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(executionId));
-            }
-
-            List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(executionId, minDate);
-
-            return (from item in queryResult
-                    let content = item.LogMessage
-                    let type = GetLogMessageType(item, content)
-                    let contextId = (int)item.ContextId.Value
-                    let msgExecutionId = (int)item.ExecutionId.Value
-                    let created = item.Created.Value
-                    select new LogMessage(content, type, contextId, msgExecutionId, created))
-                    .ToList();
-        }
-
-        /// <summary>
-        /// Queries the state database for log messages from a specific execution, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="executionId">An execution ID constraint for the objects in the returned list.</param>
-        /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public static List<LogMessage> GetLogMessages(int executionId) => GetLogMessages(executionId, SqlMinDateTime);
-
-        /// <summary>
         /// Queries the state database for log messages newer than minDate, 
         /// then creates a list of them for the system model, which is returned.
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public static List<LogMessage> GetLogMessages(DateTime minDate)
+        public List<LogMessage> GetLogMessages(DateTime minDate)
         {
-            List<LoggingEntry> queryResult = DatabaseHandler.QueryLogMessages(minDate);
+            List<LoggingEntry> queryResult = Database.QueryLogMessages(minDate);
 
             return (from item in queryResult
                     let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
@@ -127,11 +96,16 @@ namespace DashboardBackend
         }
 
         /// <summary>
-        /// Queries the state database for all log messages, 
+        /// Queries the state database for log messages newer than minDate, 
         /// then creates a list of them for the system model, which is returned.
         /// </summary>
-        /// <returns>A list of all log messages from the state database</returns>
-        public static List<LogMessage> GetLogMessages() => GetLogMessages(SqlMinDateTime);
+        /// <param name="minDate">The minimum DateTime for the query results.</param>
+        /// <returns>A list of log messages, matching the supplied constraints.</returns>
+        public Tuple<List<Manager>, List<Execution>> GetParsedLogData(List<LogMessage> messages)
+        {
+            var result = _logParser.Parse(messages);
+            return result;
+        }
 
         /// <summary>
         /// Queries the state database for managers added since the specified minimum date.
@@ -140,120 +114,28 @@ namespace DashboardBackend
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="minDate"></param>
         /// <param name="allManagers"></param>
-        public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
+        public List<Manager> GetManagers(DateTime minDate)
         {
-            List<EnginePropertyEntry> engineEntries = DatabaseHandler.QueryEngineProperties(minDate);
-            int addedManagers = 0;
-
-            // Necessary cleanup (removes ',rnd_-XXXX' from manager names)
-            foreach (var entry in engineEntries)
-            {
-                string name = entry.Manager.Split(',')[0];
-                entry.Manager = name;
-            }
-
-            // For each entry: Find the associated manager and add the value to it. 
-            // If the manager exists but already has all values set, it must be the same manager in a new execution.
-            // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
-            foreach (var entry in engineEntries)
-            {
-                // If manager was created by the log first (context id is set), find the first manager that is missing a property.
-                // The entries are parsed sequentially, so once all values for a manager has been set, the next time its name pops up will be for a new execution where the values are not yet set.
-                Manager logManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId != 0 && m.IsMissingValues);
-                if (logManager != null)
-                {
-                    AddEnginePropertiesToManager(logManager, entry);
-                }
-                else
-                {
-                    // Find all managers created from ENGINE_PROPERTIES (context ID=0)
-                    Manager engManager = allManagers.Find(m => m.Name == entry.Manager && m.ContextId == 0 && m.IsMissingValues);
-                    if (engManager != null)
-                    {
-                        AddEnginePropertiesToManager(engManager, entry);
-                    }
-                    // If no manager was found at this point, it has neither been created from ENGINE_PROPERTIES or LOGGING - so we will create it!
-                    else
-                    {
-                        Manager manager = new()
-                        {
-                            Name = entry.Manager,
-                        };
-                        AddEnginePropertiesToManager(manager, entry);
-                        allManagers.Add(manager);
-                        addedManagers++;
-                    }
-                }
-            }
-            return addedManagers;
+            List<EnginePropertyEntry> engineEntries = Database.QueryEngineProperties(minDate);
+            return _managerParser.Parse(engineEntries);
         }
 
-        /// <summary>
-        /// Parses the value of the specified EnginePropertyEntry and adds it to the given manager.
-        /// </summary>
-        /// <param name="manager">The manager object associated with the entry.</param>
-        /// <param name="entry">The EnginePropertyEntry to get data from.</param>
-        private static void AddEnginePropertiesToManager(Manager manager, EnginePropertyEntry entry)
+        public int GetEstimatedManagerCount(int executionId)
         {
-            switch (entry.Key)
-            {
-                case "START_TIME":
-                    if (DateTime.TryParse(entry.Value, out DateTime startTime))
-                    {
-                        manager.StartTime = startTime;
-                        manager.Status = ManagerStatus.Running;
-                        if (manager.EndTime.HasValue)
-                        {
-                            manager.Runtime = manager.EndTime.Value.Subtract(startTime);
-                            manager.Status = ManagerStatus.Ok;
-                        }
-                    }
-                    break;
-                case "END_TIME":
-                    if (DateTime.TryParse(entry.Value, out DateTime endTime))
-                    {
-                        manager.EndTime = endTime;
-                        if (manager.StartTime.HasValue)
-                        {
-                            manager.Runtime = endTime.Subtract(manager.StartTime.Value);
-                            manager.Status = ManagerStatus.Ok;
-                        }
-                    }
-                    break;
-                case "Læste rækker":
-                    if (int.TryParse(entry.Value, out int rowsRead))
-                    {
-                        manager.RowsRead = rowsRead;
-                    }
-                    break;
-                case "Skrevne rækker":
-                    if (int.TryParse(entry.Value, out int rowsWritten))
-                    {
-                        manager.RowsWritten = rowsWritten;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        public static int GetEstimatedManagerCount(int executionId)
-        {
-            return DatabaseHandler.QueryLoggingContext(executionId).Count;
+            return Database.QueryLoggingContext(executionId).Count;
         }
 
         /// <summary>
         /// Queries the state database for health report performance entries, 
         /// and adds them to the health report.
         /// </summary>
-        /// <param name="hr">The conversion's health report</param>
+        /// <param name="healthReport">The conversion's health report</param>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <exception cref="FormatException">Thrown if somehow the query failed and an unexpected entry is met.</exception>
-        public static int AddHealthReportReadings(HealthReport hr, DateTime minDate)
+        public int AddHealthReportReadings(HealthReport healthReport, DateTime minDate)
         {
-            hr.LastModified = DateTime.Now;
-            List<HealthReportEntry> queryResult = DatabaseHandler.QueryPerformanceReadings(minDate);
+            healthReport.LastModified = DateTime.Now;
+            List<HealthReportEntry> queryResult = Database.QueryPerformanceReadings(minDate);
             List<CpuLoad> cpuRes = new();
             List<RamLoad> ramRes = new();
             List<NetworkUsage> netRes;
@@ -272,7 +154,7 @@ namespace DashboardBackend
                         cpuRes.Add(GetCpuReading(item));
                         break;
                     case "MEMORY":
-                        ramRes.Add(GetRamReading(hr.Ram.Total, item));
+                        ramRes.Add(GetRamReading(healthReport.Ram.Total, item));
                         break;
                     default:
                         throw new FormatException(nameof(item));
@@ -280,25 +162,18 @@ namespace DashboardBackend
             }
             netRes = BuildNetworkUsage(networkEntries);
 
-            hr.Cpu.Readings = cpuRes;
-            hr.Ram.Readings = ramRes;
-            hr.Network.Readings = netRes;
+            healthReport.Cpu.Readings = cpuRes;
+            healthReport.Ram.Readings = ramRes;
+            healthReport.Network.Readings = netRes;
             return queryResult.Count;
         }
-
-        /// <summary>
-        /// Queries the state database for health report performance entries, 
-        /// and adds them to the health report.
-        /// </summary>
-        /// <param name="hr">The conversion's health report</param>
-        public static void AddHealthReportReadings(HealthReport hr) => AddHealthReportReadings(hr, SqlMinDateTime);
 
         /// <summary>
         /// Creates a list of CPU Readings for the system model, which is returned.
         /// </summary>
         /// <param name="item">A state database entry with cpu load readings</param>
         /// <returns>A CPU load reading.</returns>
-        public static CpuLoad GetCpuReading(HealthReportEntry item)
+        public CpuLoad GetCpuReading(HealthReportEntry item)
         {
             int executionId = item.ExecutionId.Value;
             double reportNumValue = Convert.ToDouble(item.ReportNumericValue) / 100;
@@ -312,7 +187,7 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="item">A state database entry with cpu load readings</param>
         /// <returns>A RAM usage reading.</returns>
-        public static RamLoad GetRamReading(long? totalRam, HealthReportEntry item)
+        public RamLoad GetRamReading(long? totalRam, HealthReportEntry item)
         {
             int executionId = (int)item.ExecutionId.Value;
             long reportNumValue = item.ReportNumericValue.Value;
@@ -329,7 +204,7 @@ namespace DashboardBackend
         /// <param name="entry">A single entry from the [LOGGING] table in the state database.</param>
         /// <returns>A log message type besed on the enum in the log message class.</returns>
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
-        public static LogMessageType GetLogMessageType(LoggingEntry entry, string content)
+        private LogMessageType GetLogMessageType(LoggingEntry entry, string content)
         {
             var type = entry.LogLevel switch
             {
@@ -361,7 +236,7 @@ namespace DashboardBackend
         /// <param name="entry">A single entry from the [AFSTEMNING] table in the state database.</param>
         /// <returns>A validation status based on the enum in the validation class.</returns>
         /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal validation status.</exception>
-        public static ValidationStatus GetValidationStatus(AfstemningEntry entry)
+        private ValidationStatus GetValidationStatus(AfstemningEntry entry)
         {
             return entry.Afstemresultat switch
             {
@@ -379,9 +254,9 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="entries">A list of Health Report entries from the state database.</param>
         /// <returns>A Health Report initialized with system info.</returns>
-        public static void BuildHealthReport(HealthReport hr)
+        public void BuildHealthReport(HealthReport healthReport)
         {
-            List<HealthReportEntry> queryResult = DatabaseHandler.QueryHealthReport();
+            List<HealthReportEntry> queryResult = Database.QueryHealthReport();
 
             //INIT
             string hostName = queryResult.FindLast(e => e.ReportKey == "Hostname")?.ReportStringValue;
@@ -404,7 +279,7 @@ namespace DashboardBackend
             long? networkSpeed = queryResult.FindLast(e => e.ReportKey == "Interface 0: Speed")?.ReportNumericValue;
             Network network = new(networkName, networkMacAddress, networkSpeed);
 
-            hr.Build(hostName, monitorName, cpu, network, ram);
+            healthReport.Build(hostName, monitorName, cpu, network, ram);
         }
 
         /// <summary>
@@ -412,7 +287,7 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="entries">A list of network usage entries from the state database.</param>
         /// <returns>A coupled list of network usage entries.</returns>
-        public static List<NetworkUsage> BuildNetworkUsage(List<HealthReportEntry> entries)
+        public List<NetworkUsage> BuildNetworkUsage(List<HealthReportEntry> entries)
         {
             List<List<HealthReportEntry>> distinctReports = new();
             int entryCount = entries.Count;

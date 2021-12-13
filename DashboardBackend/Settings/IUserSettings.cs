@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
     public interface IUserSettings
     {
         IList<Profile> Profiles { get; set; }
-        Profile? ActiveProfile { get; set; }
+        Profile ActiveProfile { get; set; }
         int LoggingQueryInterval { get; set; }
         int HealthReportQueryInterval { get; set; }
         int ValidationQueryInterval { get; set; }

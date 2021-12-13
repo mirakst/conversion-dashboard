@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.Settings;
+﻿using DashboardBackend.Settings;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 

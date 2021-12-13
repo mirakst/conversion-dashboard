@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using System.Text.Json.Serialization;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
     public delegate void ProfileChanged();
 
@@ -25,7 +25,7 @@ namespace DashboardFrontend.Settings
             _nextId = id + 1;
         }
 
-        public Profile() : this("", "", "", "", 30)
+        public Profile() : this("", "", "", "", 5)
         {
         }
 

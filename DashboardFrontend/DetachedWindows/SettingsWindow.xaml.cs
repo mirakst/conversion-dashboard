@@ -1,10 +1,11 @@
 ﻿using DashboardFrontend.ViewModels;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using System.Windows;
 using System;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using DashboardFrontend.Controllers;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -13,9 +14,9 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        private readonly Controller controller;
+        private readonly DashboardController controller;
 
-        public SettingsWindow(Controller controller)
+        public SettingsWindow(DashboardController controller)
         {
             InitializeComponent();
             Settings = controller.UserSettings;

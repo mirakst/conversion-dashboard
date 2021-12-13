@@ -1,14 +1,13 @@
-﻿using DashboardFrontend.ViewModels;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Linq;
 
-namespace DashboardFrontend.Settings
+namespace DashboardBackend.Settings
 {
-    public class UserSettings : BaseViewModel, IUserSettings
+    public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
+        private readonly string _fileName = "UserSettings.json";
+
         public UserSettings()
         {
         }
@@ -25,12 +24,14 @@ namespace DashboardFrontend.Settings
             ActiveProfile = Profiles.FirstOrDefault(p => p.Id == activeProfileId);
         }
 
-        private readonly string _fileName = "UserSettings.json";
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
-        private Profile? _activeProfile;
+        private Profile _activeProfile;
+
+
         [JsonIgnore]
-        public Profile? ActiveProfile
+        public Profile ActiveProfile
         {
             get => _activeProfile;
             set
@@ -88,6 +89,11 @@ namespace DashboardFrontend.Settings
             {
                 OverwriteAll(loadedSettings);
             }
+        }
+
+        private void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }

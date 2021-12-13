@@ -28,7 +28,7 @@
 
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
-        public DateTime? StartTime { get; } //From [CREATED] in [dbo].[EXECUTIONS].
+        public DateTime? StartTime { get; set; } //From [CREATED] in [dbo].[EXECUTIONS].
         public DateTime? EndTime { get; set; } //DateTime.Now when an execution is registered as done (from log?).
         public TimeSpan? Runtime { get; set; } //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
