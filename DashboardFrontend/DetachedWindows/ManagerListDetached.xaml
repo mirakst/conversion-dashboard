@@ -221,10 +221,10 @@
 
                                 <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.CPUChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding ChartData.Series}"
+                                                    Series="{Binding Chart.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    XAxes="{Binding Chart.XAxis}"
+                                                    YAxes="{Binding Chart.YAxis}"
                                                     AnimationsSpeed="0">
                                     <lvc:CartesianChart.TooltipTemplate>
                                         <DataTemplate></DataTemplate>
@@ -252,10 +252,10 @@
 
                                 <lvc:CartesianChart DataContext="{Binding ManagerChartViewModel.RAMChart}"
                                                     Grid.Row="1"
-                                                    Series="{Binding ChartData.Series}"
+                                                    Series="{Binding Chart.Series}"
                                                     ZoomMode="X"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
+                                                    XAxes="{Binding Chart.XAxis}"
+                                                    YAxes="{Binding Chart.YAxis}"
                                                     AnimationsSpeed="0">
                                     <lvc:CartesianChart.TooltipTemplate>
                                         <DataTemplate></DataTemplate>

@@ -6,7 +6,7 @@ using LiveChartsCore.SkiaSharpView;
 
 namespace DashboardFrontend.Charts;
 
-public abstract class BaseChart
+public abstract class ChartTemplate
 {
     public List<ObservableCollection<ObservablePoint>> Values { get; set; }
     public List<ISeries> Series { get; set; }
@@ -16,6 +16,6 @@ public abstract class BaseChart
 
     public enum ChartType
     {
-        Performance, Network, NetworkDelta, NetworkSpeed
+        Network, NetworkDelta, NetworkSpeed
     }
 }

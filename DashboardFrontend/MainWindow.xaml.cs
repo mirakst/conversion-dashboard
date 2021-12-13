@@ -195,13 +195,13 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOff();
         }
 
