@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using Model;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Forms;
 using static Model.LogMessage;
 using ListView = System.Windows.Controls.ListView;
 
@@ -171,9 +168,18 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the data for each execution in the log, and filters the messages.
+        /// </summary>
+        /// <param name="executions">A list of executions to add to the log.</param>
         public void UpdateData(List<Execution> executions)
         {
-            Executions = new(executions.Select(e => new ExecutionObservable(e)));
+            Executions = new();
+            for(int i = 0; i < executions.Count; i++)
+            {
+                Executions.Add(new ExecutionObservable(executions[i]));
+            }
+
             if (SelectedExecution is null)
             {
                 SelectedExecution = Executions.Last();
@@ -216,6 +222,9 @@ namespace DashboardFrontend.ViewModels
             ValidationCount = exec.ValidationCount;
         }
 
+        /// <summary>
+        /// Calls the bottom scrolling event handler.
+        /// </summary>
         public void ScrollToLast()
         {
             if (DoAutoScroll && LogListView is not null && !LogListView.Items.IsEmpty)
@@ -224,6 +233,9 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Scrolls to the bottom of the log.
+        /// </summary>
         public void ScrollToLast(object sender, RoutedEventArgs e)
         {
             int itemCount = LogListView.Items.Count;
@@ -233,6 +245,10 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the execution for the log.
+        /// </summary>
+        /// <param name="exec">The execution to display data for.</param>
         private void SetExecution(ExecutionObservable exec)
         {
             if (exec is not null)

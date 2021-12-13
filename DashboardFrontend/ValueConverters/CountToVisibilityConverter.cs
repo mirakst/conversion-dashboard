@@ -5,20 +5,15 @@ using System.Windows.Data;
 
 namespace DashboardFrontend.ValueConverters
 {
-    public class WindowStateToWingdingsConverter : IValueConverter
+    public class CountToVisibilityConverter : IValueConverter
     {
         /// <summary>
-        /// A converter for the maximize/restore window button.
+        /// A converter for the visibility of UI elements.
         /// </summary>
-        /// <returns>A character for the wingdings font, based on the state of the window.</returns>
+        /// <returns>True if value > 1, otherwise false.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (WindowState)value switch
-            {
-                WindowState.Normal => 1,
-                WindowState.Maximized => 2,
-                _ => 1
-            };
+            return (int)value > 1 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

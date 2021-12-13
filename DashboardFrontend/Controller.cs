@@ -5,8 +5,6 @@ using DashboardFrontend.ViewModels;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -85,6 +83,10 @@ namespace DashboardFrontend
             ManagerViewModels = new() { _vm.ManagerViewModel };
         }
 
+        /// <summary>
+        /// Creates a log view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The log view model.</returns>
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
@@ -96,6 +98,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a validation report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The validation report view model.</returns>
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
@@ -107,6 +113,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a health report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The health report view model.</returns>
         public HealthReportViewModel CreateHealthReportViewModel()
         {
             HealthReportViewModel result = new();
@@ -121,17 +131,24 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a manager view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The manager view model.</returns>
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
-                result.UpdateData(Conversion.ActiveExecution.Managers);
+                result.UpdateData(Conversion.Executions);
             }
             ManagerViewModels.Add(result);
             return result;
         }
 
+        /// <summary>
+        /// Updates the estimated count of managers for each execution.
+        /// </summary>
         public void UpdateEstimatedManagerCounts()
         {
             if (Conversion != null)
@@ -398,6 +415,11 @@ namespace DashboardFrontend
             ClearStatusMessage(DashboardStatus.UpdatingExecutions);
         }
 
+        /// <summary>
+        /// Clears the current status message, if it matches the input message, after a delay.
+        /// </summary>
+        /// <param name="status">The status message to clear.</param>
+        /// <param name="delay">The delay to wait.</param>
         private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
         {
             await Task.Delay(delay);
@@ -407,6 +429,10 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Sets the status message in the control bar.
+        /// </summary>
+        /// <param name="status">The status message to set.</param>
         private void SetStatusMessage(DashboardStatus status)
         {
             if (_vm is not null)
@@ -439,6 +465,10 @@ namespace DashboardFrontend
                     if (!UserSettings.ActiveProfile.HasEventListeners())
                     {
                         UserSettings.ActiveProfile.ProfileChanged += Reset;
+                    }
+                    if (!UserSettings.HasEventListeners())
+                    {
+                        UserSettings.SettingsChanged += ResetTimers;
                     }
                     Task monitoring = new(StartMonitoring);
                     Task updateViews = new(UpdateViews);
@@ -560,7 +590,7 @@ namespace DashboardFrontend
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            vm.UpdateData(Conversion.ActiveExecution.Managers);
+                            vm.UpdateData(Conversion.Executions);
                         });
                     }
                 }
@@ -610,6 +640,21 @@ namespace DashboardFrontend
         }
 
         /// <summary>
+        /// Disposes all timers in <see cref="_timers"/>, and sets them up with new query intervals.
+        /// </summary>
+        private void ResetTimers()
+        {
+            foreach (var timer in _timers)
+            {
+                timer.Dispose();
+            }
+            _timers.Clear();
+            SetupTimers();
+        }
+
+
+
+        /// <summary>
         /// Stops the periodic monitoring functions.
         /// </summary>
         private void StopMonitoring()
@@ -645,11 +690,19 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Displays an error to the user.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="ex">The exception that occurred.</param>
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
 
+        /// <summary>
+        /// Resets the controller and all view models.
+        /// </summary>
         internal void Reset()
         {
             StopMonitoring();
@@ -658,6 +711,83 @@ namespace DashboardFrontend
             _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
             _vm.UpdateView();
             _vm.CurrentProgress = 0;
+            KillAllChildren();
+        }
+
+        /// <summary>
+        /// Closes all child windows.
+        /// </summary>
+        internal void KillAllChildren()
+        {
+            if (LogViewModels.Count > 1)
+            {
+                LogViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (ManagerViewModels.Count > 1)
+            {
+                ManagerViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (ValidationReportViewModels.Count > 1)
+            {
+                ValidationReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            if (HealthReportViewModels.Count > 1)
+            {
+                HealthReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
+            }
+            foreach (Window item in Application.Current.Windows)
+            {
+                if (item != Application.Current.MainWindow)
+                    item.Close();
+            }
+        }
+
+        /// <summary>
+        /// Expands the manager view for a specific manager in a new or already existing detached manager view.
+        /// </summary>
+        /// <param name="wrapper">The selected <see cref="ManagerWrapper"/></param>
+        public async void ExpandManagerView(ManagerWrapper wrapper)
+        {
+            ManagerViewModel vm;
+            if (wrapper == null) return;
+            if (_vm.ManagerViewModel.SelectedExecution == null) return;
+            int selectedExecutionId = _vm.ManagerViewModel.SelectedExecution.Id;
+            if (_vm.Controller.ManagerViewModels.Skip(1).Any(vm => vm.SelectedExecution?.Id == selectedExecutionId))
+            {
+                vm = _vm.Controller.ManagerViewModels.Skip(1).First(vm => vm.SelectedExecution?.Id == selectedExecutionId);
+            }
+            else
+            {
+                vm = CreateManagerViewModel();
+                ManagerListDetached managerWindow = new ManagerListDetached(vm);
+                vm.Window = managerWindow;
+                vm.DataGridManagers = managerWindow.DatagridManagers;
+                vm.Window.Show();
+                vm.Window.Closed += delegate
+                {
+                    // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
+                    _ = Task.Run(() =>
+                    {
+                        while (ShouldUpdateManagers) { }
+                        ManagerViewModels.Remove(vm);
+                    });
+                };
+                await Task.Delay(5);
+                vm.SelectedExecution = vm.Executions[selectedExecutionId - 1];
+            }
+            vm.Window.Activate();
+            var foreignManager = vm.Managers.FirstOrDefault(m => m.Manager.ContextId == wrapper.Manager.ContextId);
+            if (foreignManager != null)
+            {
+                vm.Managers.Remove(foreignManager);
+                if (!vm.DetailedManagers.Contains(foreignManager))
+                {
+                    vm.DetailedManagers.Add(foreignManager);
+                    vm.UpdateHiddenManagers();
+                    foreignManager.IsDetailedInfoShown = true;
+                    vm.ManagerChartViewModel.AddChartLinesHelper(foreignManager);
+                }
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace DashboardFrontend.Settings
             _nextId = id + 1;
         }
 
-        public Profile() : this("", "", "", "", 30)
+        public Profile() : this("", "", "", "", 5)
         {
         }
 
@@ -44,15 +44,29 @@ namespace DashboardFrontend.Settings
         [JsonIgnore]
         public bool HasStartedMonitoring { get; set; }
         public event ProfileChanged ProfileChanged;
+
+        /// <summary>
+        /// Invokes the <see cref="ProfileChanged"/> event.
+        /// </summary>
         public void OnProfileChange()
         {
             ProfileChanged?.Invoke();
         }
 
+        /// <summary>
+        /// Checks if the <see cref="ProfileChanged"/> event has any listeners.
+        /// </summary>
+        /// <returns>True, if it has listeners.</returns>
         public bool HasEventListeners()
         {
             return ProfileChanged != null;
         }
+
+        /// <summary>
+        /// Builds a connection string from the user settings and login.
+        /// </summary>
+        /// <param name="userId">The username for the connection.</param>
+        /// <param name="password">The password for the connection.</param>
         public void BuildConnectionString(string userId, string password)
         {
             DbConnectionStringBuilder builder = new();

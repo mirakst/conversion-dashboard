@@ -6,7 +6,11 @@ using LiveChartsCore.SkiaSharpView;
 
 namespace DashboardFrontend.Charts;
 
-public abstract class BaseChart
+/// <summary>
+/// A template for the data contained in charts.
+/// Chart wrapper is built on this, or an inherited type of this.
+/// </summary>
+public abstract class ChartTemplate
 {
     public List<ObservableCollection<ObservablePoint>> Values { get; set; }
     public List<ISeries> Series { get; set; }
@@ -16,6 +20,6 @@ public abstract class BaseChart
 
     public enum ChartType
     {
-        Performance, Network, NetworkDelta, NetworkSpeed
+        Network, NetworkDelta, NetworkSpeed
     }
 }

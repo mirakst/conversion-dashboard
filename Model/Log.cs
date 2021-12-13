@@ -1,6 +1,4 @@
-﻿using static Model.LogMessage;
-
-namespace Model
+﻿namespace Model
 {
     public class Log
     {

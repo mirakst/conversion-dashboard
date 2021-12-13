@@ -1,6 +1,5 @@
 ﻿using Model;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using static Model.ValidationTest;
@@ -9,6 +8,10 @@ namespace DashboardFrontend.ValueConverters
 {
     public class ValidationStatusToImageConverter : IValueConverter
     {
+        /// <summary>
+        /// A converter for validation result icons.
+        /// </summary>
+        /// <returns>An icon based on the status of the validation test.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is ValidationTest test)

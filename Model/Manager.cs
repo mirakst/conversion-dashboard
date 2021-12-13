@@ -31,15 +31,7 @@ namespace Model
             set
             {
                 _name = value;
-                var splitName = value.Split('.');
-                if (splitName.Contains("managers"))
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
-                }
-                else
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.Skip(4));
-                }
+                ShortName = value.Split(".").Last();
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
         public int ContextId { get; set; }
@@ -57,7 +49,8 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
-                    UpdateScore();
+                    UpdateValidationScore();
+                    UpdatePerformanceScore();
                 }
             }
         }
@@ -66,18 +59,29 @@ namespace Model
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
         public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
+
+        private ManagerScore managerScore = new();
         #endregion
 
-        private void UpdateScore()
+        private void UpdateValidationScore()
         {
-            ValidationScore = ManagerScore.GetValidationScore(this);
-            PerformanceScore = ManagerScore.GetPerformanceScore(this);
+            ValidationScore = managerScore.GetValidationScore(this);
+        }
+
+        private void UpdatePerformanceScore()
+        {
+            PerformanceScore = managerScore.GetPerformanceScore(this);
         }
 
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
-            UpdateScore();
+            UpdateValidationScore();
+        }
+
+        public void OnManagerScoreUpdated(object sender, Manager e)
+        {
+            UpdatePerformanceScore();
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 using DashboardFrontend.DetachedWindows;
-using System;
 using DashboardFrontend.ViewModels;
 using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
@@ -8,9 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
 using DashboardFrontend.Charts;
-using LiveChartsCore.SkiaSharpView.WPF;
 
 namespace DashboardFrontend
 {
@@ -22,7 +19,8 @@ namespace DashboardFrontend
             MaxHeight = SystemParameters.WorkArea.Height;
             MaxWidth = SystemParameters.WorkArea.Width;
             InitializeComponent();
-            ViewModel = new(ListViewLog);
+            ViewModel = new(ListViewLog, this);
+            ViewModel.ManagerViewModel.DataGridManagers = datagridManagers;
             DataContext = ViewModel;
         }
 
@@ -37,6 +35,7 @@ namespace DashboardFrontend
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
             ViewModel.Controller.OnStartPressed();
+            ComboBox_SelectionChanged(this, null);
         }
 
         //Detach window events
@@ -47,12 +46,14 @@ namespace DashboardFrontend
             settingsWindow.ShowDialog();
         }
 
-        public void DetachManagerButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachManagerButtonClick(object sender, RoutedEventArgs e)
         {
             ManagerViewModel detachedManagerViewModel = ViewModel.Controller.CreateManagerViewModel();
-            ManagerListDetached detachManager = new(detachedManagerViewModel);
-            detachManager.Show();
-            detachManager.Closed += delegate
+            ManagerListDetached detachedManagerWindow = new(detachedManagerViewModel);
+            detachedManagerViewModel.Window = detachedManagerWindow;
+            detachedManagerViewModel.DataGridManagers = detachedManagerWindow.DatagridManagers;
+            detachedManagerWindow.Show();
+            detachedManagerWindow.Closed += delegate
             {
                 // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
                 _ = Task.Run(() =>
@@ -61,9 +62,13 @@ namespace DashboardFrontend
                     ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
                 });
             };
+            await Task.Delay(5);
+            if (ViewModel.ManagerViewModel.SelectedExecution == null) return;
+            int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
+            detachedManagerViewModel.SelectedExecution = detachedManagerViewModel.Executions[selectedExecutionId - 1];
         }
 
-        public void DetachLogButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachLogButtonClick(object sender, RoutedEventArgs e)
         {
             LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
             LogDetached detachLog = new(detachedLogViewModel);
@@ -76,9 +81,13 @@ namespace DashboardFrontend
                     ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
                 });
             };
+            await Task.Delay(5);
+            if (ViewModel.LogViewModel.SelectedExecution == null) return;
+            int selectedExecutionId = ViewModel.LogViewModel.SelectedExecution.Id;
+            detachedLogViewModel.SelectedExecution = detachedLogViewModel.Executions[selectedExecutionId - 1];
         }
 
-        public void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
         {
             ValidationReportViewModel detachedValidationReportViewModel =
                 ViewModel.Controller.CreateValidationReportViewModel();
@@ -92,6 +101,10 @@ namespace DashboardFrontend
                     ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
                 });
             };
+            await Task.Delay(5);
+            if (ViewModel.ValidationReportViewModel.SelectedExecution == null) return;
+            int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
+            detachedValidationReportViewModel.SelectedExecution = detachedValidationReportViewModel.Executions[selectedExecutionId - 1];
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
@@ -181,17 +194,17 @@ namespace DashboardFrontend
 
         private void CartesianChart_MouseLeave(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOn();
         }
 
         private void CartesianChart_MouseEnter(object sender, MouseEventArgs e)
         {
-            DataChart? chart = (DataChart)(sender as CartesianChart)?.DataContext!;
+            ChartWrapper? chart = (ChartWrapper)(sender as CartesianChart)?.DataContext!;
             chart?.AutoFocusOff();
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs? e)
         {
             if (ViewModel is null) return;
             _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);
@@ -297,6 +310,12 @@ namespace DashboardFrontend
                 ButtonLogFilter.IsChecked = false;
                 this.RemoveHandler(UIElement.MouseDownEvent, (MouseButtonEventHandler)GridPopupLogFilter_PreviewMouseDown);
             }
+        }
+
+        private void DatagridManagers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
+            ViewModel.Controller.ExpandManagerView((ManagerWrapper)datagridManagers.SelectedItem);
         }
     }
 }

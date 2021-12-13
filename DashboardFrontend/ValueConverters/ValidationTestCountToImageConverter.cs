@@ -7,6 +7,10 @@ namespace DashboardFrontend.ValueConverters
 {
     public class ValidationTestCountToImageConverter : IValueConverter
     {
+        /// <summary>
+        /// A converter for validation result icons.
+        /// </summary>
+        /// <returns>An icon based on whether a collection of tests is disabled, failed or OK.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is ManagerObservable entry)

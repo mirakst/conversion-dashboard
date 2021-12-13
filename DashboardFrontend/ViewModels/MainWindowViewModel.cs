@@ -5,7 +5,7 @@ namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(ListView listViewLog)
+        public MainWindowViewModel(ListView listViewLog, Window window)
         {
             Controller = new(this);
             Controller.InitializeViewModels(listViewLog);
@@ -57,6 +57,9 @@ namespace DashboardFrontend.ViewModels
         public HealthReportViewModel HealthReportViewModel { get; set; }
         public ManagerViewModel ManagerViewModel {  get; set; }
 
+        /// <summary>
+        /// Updates the view of all viewmodels.
+        /// </summary>
         public void UpdateView()
         {
             OnPropertyChanged(nameof(LogViewModel));

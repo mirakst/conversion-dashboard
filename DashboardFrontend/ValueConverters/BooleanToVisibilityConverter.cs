@@ -7,6 +7,10 @@ namespace DashboardFrontend.ValueConverters
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {
+        /// <summary>
+        /// A converter for the visibility of UI elements.
+        /// </summary>
+        /// <returns>Visible if value is true, otherwise false.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (bool)value
