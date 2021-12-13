@@ -166,8 +166,11 @@
                                     <DataGridTextColumn Header="Name" 
                                                         Binding="{Binding Manager.ShortName}"
                                                         Width="6*"/>
-                                    <DataGridTextColumn Header="Score" 
-                                                        Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                    <DataGridTextColumn Header="Perf score" 
+                                                        Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                        Width="1.2*"/>
+                                    <DataGridTextColumn Header="Val score" 
+                                                        Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                         Width="1.2*"/>
                                     <DataGridTextColumn Header="Start"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"

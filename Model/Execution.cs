@@ -1,4 +1,4 @@
-﻿namespace Model
+namespace Model
 {
     public delegate void ExecutionProgressUpdated(int currentProgress);
 
@@ -10,7 +10,6 @@
             Id = id;
             StartTime = startTime;
             Status = ExecutionStatus.Started;
-            ManagerScore.MaxPerformanceScore.Add(0);
         }
         #endregion
 
