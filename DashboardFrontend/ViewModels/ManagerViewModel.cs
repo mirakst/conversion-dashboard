@@ -17,6 +17,9 @@ namespace DashboardFrontend.ViewModels
 
         public ObservableCollection<ExecutionObservable> Executions { get; set; } = new();
         public ExecutionObservable? _selectedExecution;
+        /// <summary>
+        /// Clears the manager performance chart when selected execution is changed.
+        /// </summary>
         public ExecutionObservable? SelectedExecution
         {
             get => _selectedExecution;
@@ -74,13 +77,21 @@ namespace DashboardFrontend.ViewModels
         }
         public int HiddenManagers { get; set; }
 
+        /// <summary>
+        /// Updates the count of managers not plotted.
+        /// </summary>
         public void UpdateHiddenManagers()
         {
-            HiddenManagers = DetailedManagers.Where(m => m.Manager.CpuReadings.Count < 2).Count();
+            HiddenManagers = DetailedManagers.Count(m => m.Manager.CpuReadings.Count < 2);
             OnPropertyChanged(nameof(HiddenManagers));
         }
         public ManagerChartViewModel ManagerChartViewModel { get; set; }
         public Window Window { get; set; }
+
+        /// <summary>
+        /// Updates the data for the manager module.
+        /// </summary>
+        /// <param name="executions">The executions to add data from.</param>
         public void UpdateData(List<Execution> executions)
         {
             Executions.Clear();
@@ -88,12 +99,18 @@ namespace DashboardFrontend.ViewModels
             for (int i = 0; i < count; i++)
             {
                 Executions.Add(new ExecutionObservable(executions[i]));
-            }
+            }
+
             if (SelectedExecution is null && count > 0)
             {
                 SelectedExecution = Executions[^1];
             }
-        }
+        }
+
+        /// <summary>
+        /// Sets the execution for the module, emptying the view model collections.
+        /// </summary>
+        /// <param name="exec">The execution to add <see cref="ManagerWrapper"/>s from.</param>
         private void SetExecution(ExecutionObservable exec)
         {
             if (exec is not null)
@@ -106,6 +123,12 @@ namespace DashboardFrontend.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Filters manager names based on the matching of the characters (case insensitive), or context ID.
+        /// </summary>
+        /// <param name="item">A manager wrapper from the datagrid.</param>
+        /// <returns>True, if search string matches.</returns>
         private bool OnManagersFilter(object item)
         {
             ManagerWrapper mgr = (ManagerWrapper)item;

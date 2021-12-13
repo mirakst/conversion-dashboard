@@ -1,5 +1,4 @@
 using DashboardFrontend.DetachedWindows;
-using System;
 using DashboardFrontend.ViewModels;
 using LiveChartsCore.SkiaSharpView.WPF;
 using Model;
@@ -9,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DashboardFrontend.Charts;
-using System.Linq;
 
 namespace DashboardFrontend
 {
@@ -37,6 +35,7 @@ namespace DashboardFrontend
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
             ViewModel.Controller.OnStartPressed();
+            ComboBox_SelectionChanged(this, null);
         }
 
         //Detach window events
@@ -205,7 +204,7 @@ namespace DashboardFrontend
             chart?.AutoFocusOff();
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs? e)
         {
             if (ViewModel is null) return;
             _ = int.TryParse(((FrameworkElement)ComboBoxMaxView.SelectedItem).Tag as string, out int comboBoxItemValue);

@@ -10,6 +10,10 @@ namespace DashboardFrontend.ValidationRules
     {
         public string InvalidCharacters {  get; set; }
 
+        /// <summary>
+        /// Used to set illegal characters for an input.
+        /// </summary>
+        /// <returns>A validation result based on the contents of the input.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             string inputStr = value.ToString();

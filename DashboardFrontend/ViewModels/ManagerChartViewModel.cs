@@ -56,8 +56,13 @@ namespace DashboardFrontend.ViewModels
             }
             UpdateView();
         }
-        /*e => $"({DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}) {wrapper.Manager.ShortName} [{wrapper.Manager.ContextId}]: {e.PrimaryValue:P}"*/
-
+        
+        /// <summary>
+        /// Creates a plot point from performance point data, with an offset date.
+        /// </summary>
+        /// <param name="pointData">The data to create the point from.</param>
+        /// <param name="first">The time of the first performance reading during the manager's runtime.</param>
+        /// <returns>A new point with an offset date and the load value.</returns>
         private ObservablePoint CreatePoint(PerformanceMetric pointData, DateTime first)
         {
             double offsetDate = pointData.Date.ToOADate() - first.ToOADate();
@@ -94,15 +99,18 @@ namespace DashboardFrontend.ViewModels
             UpdateView();
         }
 
+        /// <summary>
+        /// Updates the view of the chart.
+        /// </summary>
         private void UpdateView()
         {
-            double MaxLimit = 0;
+            double maxLimit = 0;
             if (FurthestPoints.Any())
             {
-                MaxLimit = FurthestPoints.Max();
+                maxLimit = FurthestPoints.Max();
             }
-            CPUChart.Chart.XAxis[0].MaxLimit = MaxLimit;
-            RAMChart.Chart.XAxis[0].MaxLimit = MaxLimit;
+            CPUChart.Chart.XAxis[0].MaxLimit = maxLimit;
+            RAMChart.Chart.XAxis[0].MaxLimit = maxLimit;
         }
     }
 }

@@ -1,11 +1,8 @@
-﻿using DashboardFrontend.Charts;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -110,6 +107,9 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// If enter is pressed on a manager, add the manager to detailed view.
+        /// </summary>
         private void DatagridManagersAdd_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
@@ -119,12 +119,20 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// If a manager is double clicked, add the manager to detailed view.
+        /// </summary>
         private void DatagridManagersAdd_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
             AddManager_Click((object)sender, e);
         }
 
+        /// <summary>
+        /// If enter is pressed on a manager in the detailed view, remove the manager from the detailed view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DatagridManagersRemove_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
@@ -134,6 +142,11 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// If a manager is double clicked in the detailed view, remove the manager from the detailed view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DatagridManagersRemove_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;

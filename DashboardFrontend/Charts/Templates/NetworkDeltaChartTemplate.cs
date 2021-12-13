@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Drawing.Common;
 using LiveChartsCore.SkiaSharpView;
@@ -11,6 +9,9 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
+    /// <summary>
+    /// Empty chart template for network delta charts.
+    /// </summary>
     public class NetworkDeltaChartTemplate : ChartTemplate
     {
         public ObservableCollection<ObservablePoint> SendDeltaValues { get; private set; } = new();

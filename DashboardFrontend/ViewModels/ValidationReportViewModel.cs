@@ -2,8 +2,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Data;
 using static Model.ValidationTest;
@@ -133,6 +131,10 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the selected execution for the validation report module.
+        /// </summary>
+        /// <param name="exec">The execution to show data for.</param>
         private void SetExecution(ExecutionObservable exec)
         {
             if (exec is not null)
@@ -158,6 +160,12 @@ namespace DashboardFrontend.ViewModels
             return (mgr.Name.Contains(NameFilter) || mgr.ContextId.ToString() == NameFilter) && (!mgr.ValidationView.IsEmpty || ShowEmpty);
         }
 
+
+        /// <summary>
+        /// Used as a filter for validations
+        /// </summary>
+        /// <param name="item">A validation test object.</param>
+        /// <returns>True if the object should be shown, and false otherwise.</returns>
         public bool OnValidationsFilter(object item)
         {
             return item is ValidationTest val && ((ShowOk && val.Status is ValidationStatus.Ok)

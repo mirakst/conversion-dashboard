@@ -10,6 +10,10 @@ namespace DashboardFrontend.ValidationRules
     {
         public int MinimumCharacters {  get; set; }
 
+        /// <summary>
+        /// Used to validate if the length of an input is longer than the minimum.
+        /// </summary>
+        /// <returns>A validation result based on the success of the validation.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             string inputStr = value.ToString();

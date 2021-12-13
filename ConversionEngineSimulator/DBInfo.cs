@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
-using System.IO;
 
 namespace ConversionEngineSimulator
 {
