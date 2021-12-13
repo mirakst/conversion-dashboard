@@ -23,7 +23,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.3*"/>
                 <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="15"/>
@@ -109,12 +109,15 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" 
                                             Binding="{Binding Manager.ContextId}"
-                                            Width="0.7*"/>
+                                            Width="0.6*"/>
                         <DataGridTextColumn Header="Name" 
                                             Binding="{Binding Manager.ShortName}"
                                             Width="5*"/>
-                        <DataGridTextColumn Header="Score" 
-                                            Binding="{Binding Manager.Score, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                        <DataGridTextColumn Header="Perf score" 
+                                            Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                            Width="1.2*"/>
+                        <DataGridTextColumn Header="Val score" 
+                                            Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                             Width="1.1*"/>
                         <DataGridTextColumn Header="Status" 
                                             Binding="{Binding Manager.Status}"
