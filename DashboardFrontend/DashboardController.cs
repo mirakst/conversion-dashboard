@@ -141,20 +141,20 @@ namespace DashboardFrontend
             {
                 // For testing, these timers should invoke some event which we can subscribe to, in order to fully test the integration.
                 // Even better would be to turn these callback functions into a seperate class...
-                //Timer executionTimer = new(x => { /*TryUpdateExecutions();*/ }, null, 0, 10000);
-                //Timer logTimer = new(x => { TryUpdateLog(); }, null, 200, 1000);
-                //Timer managerTimer = new(x => { /*TryUpdateManagers();*/ }, null, 200, UserSettings.ManagerQueryInterval * 1000);
-                //Timer validationsTimer = new(x => { }, null, 200, UserSettings.ValidationQueryInterval * 1000);
-                //Timer healthReportTimer = new(x => { }, null, 200, UserSettings.HealthReportQueryInterval * 1000);
-                //_timers.AddRange(new List<Timer> { executionTimer, healthReportTimer, logTimer, validationsTimer, managerTimer });
+                Timer executionTimer = new(x => { TryUpdateExecutions(); }, null, 0, 10000);
+                Timer logTimer = new(x => { TryUpdateLog(); }, null, 0, 1000);
+                Timer managerTimer = new(x => { TryUpdateManagers(); }, null, 500, UserSettings.ManagerQueryInterval * 1000);
+                Timer validationsTimer = new(x => { TryUpdateValidations(); }, null, 500, UserSettings.ValidationQueryInterval * 1000);
+                Timer healthReportTimer = new(x => { }, null, 0, UserSettings.HealthReportQueryInterval * 1000);
+                _timers.AddRange(new List<Timer> { executionTimer, healthReportTimer, logTimer, validationsTimer, managerTimer });
             }
-            TryUpdateExecutions();
-            Trace.WriteLine("Got executions");
-            TryUpdateLog();
-            Trace.WriteLine("Got logs");
-            TryUpdateManagers();
-            Trace.WriteLine("Got managers");
-            TryUpdateValidations();
+            //TryUpdateExecutions();
+            //Trace.WriteLine("Got executions");
+            //TryUpdateLog();
+            //Trace.WriteLine("Got logs");
+            //TryUpdateManagers();
+            //Trace.WriteLine("Got managers");
+            //TryUpdateValidations();
 
         }
 
@@ -376,5 +376,7 @@ namespace DashboardFrontend
         }
         private readonly object _lockValidations = new();
         private readonly List<ValidationTest> _homelessValidations = new();
+
+        
     }
 }

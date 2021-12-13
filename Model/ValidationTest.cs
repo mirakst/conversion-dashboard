@@ -5,7 +5,7 @@
         Failed, FailMismatch, Disabled, Ok
     }
 
-    public class ValidationTest
+    public class ValidationTest : ObservableObject
     {
         public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {

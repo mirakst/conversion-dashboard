@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 
 namespace Model
@@ -17,17 +19,30 @@ namespace Model
         public Manager()
         {
             Id = Interlocked.Increment(ref _nextId);
-            Status = ManagerStatus.Ready;
             _validations = new();
             _ramReadings = new();
             _cpuReadings = new();
             Validations.CollectionChanged += UpdateValidationCounters;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _validationSource = new CollectionViewSource
+                {
+                    Source = Validations,
+                    IsLiveSortingRequested = true,
+                    LiveSortingProperties = { nameof(ValidationTest.Status) },
+                    SortDescriptions = { new(nameof(ValidationTest.Status), ListSortDirection.Ascending) }
+                };
+            });
+
+            Status = ManagerStatus.Ready;
         }
 
         public event ManagerFinished OnManagerFinished;
 
         /// Unique identifier for the Manager in the Dashboard system. Do not confuse with Context ID, which is only unique within an execution.
         public int Id { get; }
+        private CollectionViewSource _validationSource;
+        public CollectionViewSource ValidationSource { get => _validationSource; }
         private WpfObservableRangeCollection<ValidationTest> _validations;
         public WpfObservableRangeCollection<ValidationTest> Validations
         {
@@ -224,12 +239,14 @@ namespace Model
         {
             Validations.Add(v);
             UpdateScore();
+            OnPropertyChanged(nameof(Validations));
         }
 
         public void AddValidation(IEnumerable<ValidationTest> v)
         {
             Validations.AddRange(v);
             UpdateScore();
+            OnPropertyChanged(nameof(Validations));
         }
 
         /// <summary>

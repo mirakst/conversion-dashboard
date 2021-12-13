@@ -104,6 +104,47 @@ namespace Model
                 OnPropertyChanged(nameof(CurrentProgress));
             }
         }
+        private int _validationsTotal;
+        public int ValidationsTotal
+        {
+            get => _validationsTotal;
+            set
+            {
+                _validationsTotal = value;
+                OnPropertyChanged(nameof(ValidationsTotal));
+            }
+        }
+        private int _validationsOk;
+        public int ValidationsOk
+        {
+            get => _validationsOk;
+            set
+            {
+                _validationsOk = value;
+                OnPropertyChanged(nameof(ValidationsOk));
+            }
+        }
+        private int _validationsDisabled;
+        private int _validationsFailed;
+
+        public int ValidationsDisabled
+        {
+            get => _validationsDisabled;
+            set
+            {
+                _validationsDisabled = value;
+                OnPropertyChanged(nameof(ValidationsDisabled));
+            }
+        }
+        public int ValidationsFailed
+        {
+            get => _validationsFailed; 
+            set
+            {
+                _validationsFailed = value;
+                OnPropertyChanged(nameof(ValidationsFailed));
+            }
+        }
 
         /// <summary>
         /// Adds a manager to the execution. If its status is <see cref="ManagerStatus.Ok"/>, <see cref="CurrentProgress"/> is updated. Otherwise, we subscribe to its <see cref="Manager.OnManagerFinished"/> event.
@@ -112,6 +153,7 @@ namespace Model
         /// <param name="manager">The manager to add.</param>
         public void AddManager(Manager manager)
         {
+            Managers.Add(manager);
             if (manager.Status is ManagerStatus.Ok)
             {
                 UpdateProgress();
@@ -120,7 +162,8 @@ namespace Model
             {
                 manager.OnManagerFinished += UpdateProgress;
             }
-            Managers.Add(manager);
+
+            manager.Validations.CollectionChanged += ManagerValidations_CollectionChanged;
         }
 
         /// <summary>
@@ -130,15 +173,21 @@ namespace Model
         /// <param name="managers">The list of managers to add.</param>
         public void AddManagers(IList<Manager> managers)
         {
+            Managers.AddRange(managers);
             foreach (Manager manager in managers)
             {
+                manager.Validations.CollectionChanged += ManagerValidations_CollectionChanged;
                 if (manager.Status is not ManagerStatus.Ok)
                 {
                     manager.OnManagerFinished += UpdateProgress;
                 }
             }
             UpdateProgress();
-            Managers.AddRange(managers);
+        }
+
+        private void ManagerValidations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateValidationCounters();
         }
 
         /// <summary>
@@ -151,6 +200,28 @@ namespace Model
             {
                 CurrentProgress = (int)Math.Floor(Managers.Count(m => m.Status is ManagerStatus.Ok) / (double)EstimatedManagerCount * 100);
             }
+        }
+
+        private void UpdateValidationCounters()
+        {
+            int total = 0;
+            int ok = 0;
+            int disabled = 0;
+            int failed = 0;
+            lock (Managers)
+            {
+                foreach (var manager in Managers)
+                {
+                    total += manager.Validations.Count;
+                    ok += manager.ValidationsOk;
+                    disabled += manager.ValidationsDisabled;
+                    failed += manager.ValidationsFailed;
+                }
+            }
+            ValidationsTotal = total;
+            ValidationsOk = ok;
+            ValidationsDisabled = disabled;
+            ValidationsFailed = failed;
         }
 
         public override string ToString()

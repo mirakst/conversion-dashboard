@@ -12,10 +12,12 @@ namespace DashboardFrontend.NewViewModels
         public MainViewModel(IDashboardController controller)
         {
             LogViewModel = new(controller);
+            ValidationReportViewModel = new(controller);
             Controller = controller;
         }
 
         public NewLogViewModel LogViewModel { get; }
+        public NewValidationReportViewModel ValidationReportViewModel { get; }
         public IDashboardController Controller { get; }
     }
 }

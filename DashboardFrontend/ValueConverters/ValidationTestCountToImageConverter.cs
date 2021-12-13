@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.ViewModels;
+﻿using Model;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -9,13 +9,13 @@ namespace DashboardFrontend.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ManagerObservable entry)
+            if (value is Manager entry)
             {
-                if (entry.FailedCount == 0 && entry.DisabledCount > 0)
+                if (entry.ValidationsFailed == 0 && entry.ValidationsDisabled > 0)
                 {
                     return "/Icons/ValidationDisabled.png";
                 }
-                else if (entry.FailedCount > 0)
+                else if (entry.ValidationsFailed > 0)
                 {
                     return "/Icons/ValidationFailed.png";
                 }

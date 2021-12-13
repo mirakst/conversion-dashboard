@@ -9,7 +9,7 @@
         xmlns:local="clr-namespace:DashboardFrontend"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Conversion dashboard"
+        Title="Conversion Dashboard"
         Height="720"
         Width="1280"
         UseLayoutRounding="True"
@@ -572,7 +572,7 @@
                                         <Image Source="/Icons/Validation.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
-                                        <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.ValidationsOk,FallbackValue='N/A'}"
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
@@ -583,7 +583,7 @@
                                         <Image Source="/Icons/Warning.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
-                                        <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.ValidationsDisabled,FallbackValue='N/A'}"
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
@@ -594,11 +594,11 @@
                                         <Image Source="/Icons/Fatal.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
-                                        <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
+                                        <TextBlock Text="{Binding SelectedExecution.ValidationsFailed,FallbackValue='N/A'}"
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
-                                <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                                <TextBlock Text="{Binding SelectedExecution.ValidationsTotal,FallbackValue='N/A',StringFormat='(of {0})'}"
                                             VerticalAlignment="Center"
                                             Padding="6"
                                             Foreground="Gray"/>
@@ -656,7 +656,7 @@
                                           TreeViewItem.Expanded="TreeViewValidations_Expanded"
                                           TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
                                     <TreeView.ItemTemplate>
-                                        <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
+                                        <HierarchicalDataTemplate ItemsSource="{Binding ValidationSource.View}">
                                             <StackPanel Orientation="Horizontal" 
                                                         Height="20">
                                                 <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
@@ -688,7 +688,10 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
                                                     <Setter Property="Focusable" Value="False"/>
-                                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>

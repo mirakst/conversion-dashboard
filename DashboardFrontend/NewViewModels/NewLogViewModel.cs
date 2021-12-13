@@ -14,19 +14,19 @@ namespace DashboardFrontend.NewViewModels
         {
             _executions = new();
             _messageView = CollectionViewSource.GetDefaultView(null);
-            ShowInfo = true;
-            ShowWarn = true;
-            ShowErrors = true;
-            ShowFatal = true;
-            ShowValidations = true;
+            _showInfo = true;
+            _showWarn = true;
+            _showErrors = true;
+            _showFatal = true;
+            _showValidations = true;
 
-            if (controller.Conversion is not null)
+            if (controller.Conversion is null)
             {
-                Controller_OnConversionCreated(controller.Conversion);
+                controller.OnConversionCreated += Controller_OnConversionCreated;
             }
             else
             {
-                controller.OnConversionCreated += Controller_OnConversionCreated;
+                Controller_OnConversionCreated(controller.Conversion);
             }
         }
 
