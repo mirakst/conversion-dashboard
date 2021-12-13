@@ -99,12 +99,14 @@ namespace DashboardFrontend.ViewModels
             for (int i = 0; i < count; i++)
             {
                 Executions.Add(new ExecutionObservable(executions[i]));
-            }
+            }
+
             if (SelectedExecution is null && count > 0)
             {
                 SelectedExecution = Executions[^1];
             }
-        }
+        }
+
         /// <summary>
         /// Sets the execution for the module, emptying the view model collections.
         /// </summary>

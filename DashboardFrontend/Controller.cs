@@ -715,7 +715,7 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Kills all child windows.
+        /// Closes all child windows.
         /// </summary>
         internal void KillAllChildren()
         {

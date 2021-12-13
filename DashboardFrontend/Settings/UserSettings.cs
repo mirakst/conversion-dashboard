@@ -106,7 +106,7 @@ namespace DashboardFrontend.Settings
         }
 
         /// <summary>
-        /// Loads settings from Json file.
+        /// Loads settings from JSON file.
         /// </summary>
         public void LoadFromFile()
         {
