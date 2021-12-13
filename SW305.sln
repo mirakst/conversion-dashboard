@@ -10,7 +10,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend", "Dashboa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardFrontend", "DashboardFrontend\DashboardFrontend.csproj", "{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardBackend.Tests", "DashboardBackend.Tests\DashboardBackend.Tests.csproj", "{5BC631A3-8360-4171-A147-67A35803AD93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashboardBackend.Tests", "DashboardBackend.Tests\DashboardBackend.Tests.csproj", "{5BC631A3-8360-4171-A147-67A35803AD93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{C49F0CDB-8747-4F0E-AB00-C6CBD663D962}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{5BC631A3-8360-4171-A147-67A35803AD93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BC631A3-8360-4171-A147-67A35803AD93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BC631A3-8360-4171-A147-67A35803AD93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49F0CDB-8747-4F0E-AB00-C6CBD663D962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49F0CDB-8747-4F0E-AB00-C6CBD663D962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49F0CDB-8747-4F0E-AB00-C6CBD663D962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49F0CDB-8747-4F0E-AB00-C6CBD663D962}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

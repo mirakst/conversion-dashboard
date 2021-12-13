@@ -60,7 +60,7 @@ namespace DashboardFrontend
             LogViewModels = new();
             ValidationReportViewModels = new();
             ManagerViewModels = new();
-            UserSettings = new();
+            UserSettings = new UserSettings();
             LoadUserSettings();
         }
 
@@ -81,7 +81,7 @@ namespace DashboardFrontend
         public List<LogViewModel> LogViewModels { get; private set; }
         public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
         public List<ManagerViewModel> ManagerViewModels { get; private set; }
-        public UserSettings UserSettings { get; set; }
+        public IUserSettings UserSettings { get; set; }
 
         #region Viewmodels
         /// <summary>
@@ -202,7 +202,10 @@ namespace DashboardFrontend
                             // Otherwise, add it
                             else
                             {
-                                newExecution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
+                                if (_viewModel is not null)
+                                {
+                                    newExecution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
+                                }
                                 Conversion.AddExecution(newExecution);
                             }
                         }
@@ -315,7 +318,7 @@ namespace DashboardFrontend
         /// <summary>
         /// Updates the list of managers in the current Conversion and adds them to their associated executions.
         /// </summary>
-        public void UpdateManagerOverview()
+        public void UpdateManagers()
         {
             lock (_updateManagersLock)
             {
@@ -393,7 +396,7 @@ namespace DashboardFrontend
         /// <summary>
         /// Updates the list of executions in the current conversion.
         /// </summary>
-        private void UpdateExecutions()
+        public void UpdateExecutions()
         {
             lock (_updateExecutionsLock)
             {
@@ -419,8 +422,11 @@ namespace DashboardFrontend
                             else
                             {
                                 Conversion.AddExecution(execution);
+                                if (_viewModel is not null)
+                                {
+                                    execution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
+                                }
                             }
-                            execution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
                         }
                     }
                 }
@@ -523,7 +529,7 @@ namespace DashboardFrontend
                 }
                 if (ShouldUpdateManagers)
                 {
-                    UpdateManagerOverview();
+                    UpdateManagers();
                     ShouldUpdateManagers = false;
                     IsManagersReady = true;
                 }
@@ -676,7 +682,7 @@ namespace DashboardFrontend
         {
             try
             {
-                UserSettings.LoadFromFile();
+                UserSettings.Load();
             }
             catch (System.IO.FileNotFoundException)
             {

@@ -6,7 +6,7 @@ namespace DashboardFrontend.ViewModels
 {
     public class UserSettingsViewModel : BaseViewModel, IUserSettings
     {
-        public UserSettingsViewModel(UserSettings userSettings)
+        public UserSettingsViewModel(IUserSettings userSettings)
         {
             Profiles = new ObservableCollection<Profile>(userSettings.Profiles);
             ActiveProfile = userSettings.ActiveProfile;
@@ -40,6 +40,9 @@ namespace DashboardFrontend.ViewModels
             }
         }
         private Profile? _activeProfile;
+
+        public event SettingsChanged SettingsChanged;
+
         public Profile? ActiveProfile
         {
             get => _activeProfile;
@@ -48,6 +51,26 @@ namespace DashboardFrontend.ViewModels
                 _activeProfile = value;
                 OnPropertyChanged(nameof(ActiveProfile));
             }
+        }
+
+        public bool HasEventListeners()
+        {
+            return false;
+        }
+
+        public void OnSettingsChange()
+        {
+            
+        }
+
+        public void Save(IUserSettings settings)
+        {
+
+        }
+
+        public void Load()
+        {
+
         }
     }
 }

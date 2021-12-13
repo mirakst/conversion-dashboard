@@ -7,9 +7,10 @@ using System.ComponentModel;
 
 namespace DashboardBackend.Settings
 {
-    public delegate void SettingsChanged();
     public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
+        private readonly string _fileName = "UserSettings.json";
+
         public UserSettings()
         {
         }
@@ -26,12 +27,13 @@ namespace DashboardBackend.Settings
             ActiveProfile = Profiles.FirstOrDefault(p => p.Id == activeProfileId);
         }
 
-        private readonly string _fileName = "UserSettings.json";
+        public event SettingsChanged SettingsChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
-        private Profile? _activeProfile;
+        private Profile _activeProfile;
         [JsonIgnore]
-        public Profile? ActiveProfile
+        public Profile ActiveProfile
         {
             get => _activeProfile;
             set
@@ -50,8 +52,6 @@ namespace DashboardBackend.Settings
         public bool HasActiveProfile => ActiveProfile is not null;
         // For JSON serialization
         public int ActiveProfileId => ActiveProfile?.Id ?? 0;
-        public event SettingsChanged SettingsChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnSettingsChange()
         {
@@ -76,7 +76,7 @@ namespace DashboardBackend.Settings
             OnSettingsChange();
         }
         
-        public void OverwriteAllAndSave(IUserSettings settings)
+        public void Save(IUserSettings settings)
         {
             OverwriteAll(settings);
             SaveToFile();
@@ -94,10 +94,10 @@ namespace DashboardBackend.Settings
         /// <exception cref="FileNotFoundException"/>
         /// <exception cref="IOException"/>
         /// <exception cref="JsonException"/>
-        public void LoadFromFile()
+        public void Load()
         {
             string rawJson = File.ReadAllText(_fileName);
-            UserSettings? loadedSettings = JsonSerializer.Deserialize<UserSettings>(rawJson);
+            UserSettings loadedSettings = JsonSerializer.Deserialize<UserSettings>(rawJson);
             if (loadedSettings != null)
             {
                 OverwriteAll(loadedSettings);
