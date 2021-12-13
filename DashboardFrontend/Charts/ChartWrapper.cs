@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using DashboardFrontend.ViewModels;
-using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
-using Model;
+
 
 namespace DashboardFrontend.Charts
 {
     /// <summary>
-    /// A class for the creating and controlling <see cref="ISeries"/>
+    /// A wrapper class for charts. Contains the chart template <see cref="ChartTemplate"/>,
+    /// and methods to help control the view of this.
     /// </summary>
     public abstract class ChartWrapper : BaseViewModel
     {
@@ -53,7 +50,7 @@ namespace DashboardFrontend.Charts
         #region private
         private PeriodicTimer? _autoFocusTimer;
         private bool _isAutoFocusTimer = false;
-        private int _maxView = 10;
+        private int _maxView = 60;
         #endregion
 
         #region AutoFocus Functions
@@ -67,7 +64,7 @@ namespace DashboardFrontend.Charts
         }
 
         /// <summary>
-        /// Aync function that focus the chart on the most resent entries, within a given time span.
+        /// Async function that focus the chart on the most resent entries, within a given time span.
         /// </summary>
         public async void AutoFocusOn()
         {
@@ -80,10 +77,15 @@ namespace DashboardFrontend.Charts
                 {
                     if (Chart.Values.Count > 0 && Chart.Values.First()?.Count > 0)
                     {
-                        Chart.XAxis[0].MinLimit = Chart.Values.First().Count >= _maxView
-                            ? Chart.Values.First().Last().X.Value - DateTime.FromBinary(TimeSpan.FromMinutes(_maxView).Ticks).ToOADate() 
-                            : Chart.Values.First().First().X.Value;
-                        Chart.XAxis[0].MaxLimit = Chart.Values.First().Last().X.Value;
+                        var firstPointDate = DateTime.FromOADate(Chart.Values.First().First().X.Value);
+                        var lastPointDate = DateTime.FromOADate(Chart.Values.First().Last().X.Value);
+
+                        Chart.XAxis[0].MinLimit = lastPointDate - firstPointDate >
+                            TimeSpan.FromMinutes(_maxView) ?
+                            (lastPointDate - TimeSpan.FromMinutes(_maxView)).ToOADate()  :
+                             firstPointDate.ToOADate();
+
+                        Chart.XAxis[0].MaxLimit = lastPointDate.ToOADate();
                     }
                 }
             }
@@ -98,35 +100,6 @@ namespace DashboardFrontend.Charts
         public void ChangeMaxView(int input)
         {
             _maxView = input;
-        }
-
-        /// <summary>
-        /// Sets the smoothness of curves on all <see cref="ISeries"/>.
-        /// </summary>
-        /// <param name = "input">A number between 0 and 1. Standart is 1.</param>
-        public void ChangeLineSmoothness(double input)
-        {
-            if (input < 0 || input > 1) { return; }
-
-            foreach (LineSeries<ObservablePoint> line in Chart.Series)
-            {
-                line.LineSmoothness = input;
-            }
-        }
-
-        /// <summary>
-        /// Sets the size of line points on all <see cref="ISeries"/>.
-        /// </summary>
-        /// <param name="input">A number between 0 and 60. less is smaller. Standart is 10.</param>
-        public void ChangePointSize(int input)
-        {
-            if (input > 60) { return; }
-            else if (input < 0) { return; }
-
-            foreach (LineSeries<ObservablePoint> line in Chart.Series)
-            {
-                line.GeometrySize = input;
-            }
         }
         #endregion
     }

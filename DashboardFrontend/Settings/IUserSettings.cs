@@ -12,6 +12,5 @@ namespace DashboardFrontend.Settings
         int ManagerQueryInterval { get; set; }
         int AllQueryInterval { get; set; }
         bool SynchronizeAllQueries { get; set; }
-        bool HasActiveProfile { get; }
     }
 }

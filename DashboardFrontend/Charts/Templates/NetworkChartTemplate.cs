@@ -9,6 +9,9 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
+    /// <summary>
+    /// Empty chart template for network charts.
+    /// </summary>
     public class NetworkChartTemplate : ChartTemplate
     {
         public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();

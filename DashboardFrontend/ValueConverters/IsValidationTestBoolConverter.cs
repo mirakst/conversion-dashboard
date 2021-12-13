@@ -12,6 +12,8 @@ namespace DashboardFrontend.ValueConverters
 {
     public class IsValidationTestBoolConverter : IValueConverter
     {
+
+        /// <returns>True if value is a validation test.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is ValidationTest;

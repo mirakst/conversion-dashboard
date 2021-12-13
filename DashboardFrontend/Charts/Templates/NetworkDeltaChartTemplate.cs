@@ -11,6 +11,9 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
+    /// <summary>
+    /// Empty chart template for network delta charts.
+    /// </summary>
     public class NetworkDeltaChartTemplate : ChartTemplate
     {
         public ObservableCollection<ObservablePoint> SendDeltaValues { get; private set; } = new();

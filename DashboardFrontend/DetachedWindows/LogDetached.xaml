@@ -255,6 +255,7 @@
                             </ComboBox>
                             <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
                             <ItemsControl Style="{DynamicResource GridPopupItemsControlOverwrite}"
+                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
                                           ItemsSource="{Binding SelectedExecution.Managers}">
                                 <ItemsControl.Template>
                                     <ControlTemplate>

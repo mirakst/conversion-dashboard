@@ -85,6 +85,10 @@ namespace DashboardFrontend
             ManagerViewModels = new() { _vm.ManagerViewModel };
         }
 
+        /// <summary>
+        /// Creates a log view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The log view model.</returns>
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
@@ -96,6 +100,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a validation report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The validation report view model.</returns>
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
@@ -107,6 +115,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a health report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The health report view model.</returns>
         public HealthReportViewModel CreateHealthReportViewModel()
         {
             HealthReportViewModel result = new();
@@ -121,6 +133,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a manager view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The manager view model.</returns>
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new();
@@ -132,6 +148,9 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Updates the estimated count of managers for each execution.
+        /// </summary>
         public void UpdateEstimatedManagerCounts()
         {
             if (Conversion != null)
@@ -398,6 +417,11 @@ namespace DashboardFrontend
             ClearStatusMessage(DashboardStatus.UpdatingExecutions);
         }
 
+        /// <summary>
+        /// Clears the current status message, if it matches the input message, after a delay.
+        /// </summary>
+        /// <param name="status">The status message to clear.</param>
+        /// <param name="delay">The delay to wait.</param>
         private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
         {
             await Task.Delay(delay);
@@ -407,6 +431,10 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Sets the status message in the control bar.
+        /// </summary>
+        /// <param name="status">The status message to set.</param>
         private void SetStatusMessage(DashboardStatus status)
         {
             if (_vm is not null)
@@ -664,11 +692,19 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Displays an error to the user.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="ex">The exception that occurred.</param>
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
 
+        /// <summary>
+        /// Resets the controller and all view models.
+        /// </summary>
         internal void Reset()
         {
             StopMonitoring();
@@ -680,6 +716,9 @@ namespace DashboardFrontend
             KillAllChildren();
         }
 
+        /// <summary>
+        /// Kills all child windows.
+        /// </summary>
         internal void KillAllChildren()
         {
             if (LogViewModels.Count > 1)
@@ -698,13 +737,17 @@ namespace DashboardFrontend
             {
                 HealthReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
             }
-            foreach (Window item in App.Current.Windows)
+            foreach (Window item in Application.Current.Windows)
             {
-                if (item != App.Current.MainWindow)
+                if (item != Application.Current.MainWindow)
                     item.Close();
             }
         }
 
+        /// <summary>
+        /// Expands the manager view for a specific manager in a new or already existing detached manager view.
+        /// </summary>
+        /// <param name="wrapper">The selected <see cref="ManagerWrapper"/></param>
         public async void ExpandManagerView(ManagerWrapper wrapper)
         {
             ManagerViewModel vm;

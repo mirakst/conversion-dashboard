@@ -57,6 +57,9 @@ namespace DashboardFrontend.ViewModels
         public HealthReportViewModel HealthReportViewModel { get; set; }
         public ManagerViewModel ManagerViewModel {  get; set; }
 
+        /// <summary>
+        /// Updates the view of all viewmodels.
+        /// </summary>
         public void UpdateView()
         {
             OnPropertyChanged(nameof(LogViewModel));

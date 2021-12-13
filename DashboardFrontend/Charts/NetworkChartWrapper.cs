@@ -19,8 +19,16 @@ namespace DashboardFrontend.Charts
         {
         }
 
+        /// <summary>
+        /// Timestamp of last network data plot.
+        /// </summary>
         private DateTime LastNetPlot { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
 
+        /// <summary>
+        /// Method for adding new network data of different types.
+        /// </summary>
+        /// <param name="network">The health report network module.</param>
+        /// <exception cref="ArgumentOutOfRangeException">An unexpected chart type was received.</exception>
         public void UpdateData(Network? network)
         {
             if (network is null) return;
@@ -53,6 +61,10 @@ namespace DashboardFrontend.Charts
             }
         }
 
+        /// <summary>
+        /// Update send/receive data from network.
+        /// </summary>
+        /// <param name="reading">A send/receive measurement.</param>
         public void UpdateNetworkData(NetworkUsage reading)
         {
             double bytesSendFormatted = reading.BytesSend / Math.Pow(1024, 3);
@@ -61,6 +73,10 @@ namespace DashboardFrontend.Charts
             Chart.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
 
+        /// <summary>
+        /// Update send/receive delta data from network.
+        /// </summary>
+        /// <param name="reading">A send/receive delta measurement.</param>
         public void UpdateNetworkDeltaData(NetworkUsage reading)
         {
             double bytesSendFormatted = reading.BytesSendDelta / Math.Pow(1024, 2);
@@ -69,6 +85,10 @@ namespace DashboardFrontend.Charts
             Chart.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
 
+        /// <summary>
+        /// Update send/receive speed data from network.
+        /// </summary>
+        /// <param name="reading">A send/receive speed measurement.</param>
         public void UpdateNetworkSpeedData(NetworkUsage reading)
         {
             double bytesSendFormatted = reading.BytesSendSpeed / Math.Pow(1024, 2);
