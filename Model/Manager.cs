@@ -49,7 +49,8 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
-                    UpdateScore();
+                    UpdateValidationScore();
+                    UpdatePerformanceScore();
                 }
             }
         }
@@ -58,18 +59,29 @@ namespace Model
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
         public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
+
+        private ManagerScore managerScore = new();
         #endregion
 
-        private void UpdateScore()
+        private void UpdateValidationScore()
         {
-            ValidationScore = ManagerScore.GetValidationScore(this);
-            PerformanceScore = ManagerScore.GetPerformanceScore(this);
+            ValidationScore = managerScore.GetValidationScore(this);
+        }
+
+        private void UpdatePerformanceScore()
+        {
+            PerformanceScore = managerScore.GetPerformanceScore(this);
         }
 
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
-            UpdateScore();
+            UpdateValidationScore();
+        }
+
+        public void OnManagerScoreUpdated(object sender, Manager e)
+        {
+            UpdatePerformanceScore();
         }
 
         /// <summary>
