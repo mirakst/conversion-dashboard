@@ -23,7 +23,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="1.3*"/>
+                <ColumnDefinition Width="0.8*"/>
                 <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="15"/>
@@ -113,12 +113,6 @@
                         <DataGridTextColumn Header="Name" 
                                             Binding="{Binding Manager.ShortName}"
                                             Width="5*"/>
-                        <DataGridTextColumn Header="Perf score" 
-                                            Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
-                                            Width="1.2*"/>
-                        <DataGridTextColumn Header="Val score" 
-                                            Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
-                                            Width="1.1*"/>
                         <DataGridTextColumn Header="Status" 
                                             Binding="{Binding Manager.Status}"
                                             Width="1.1*"/>
@@ -157,7 +151,7 @@
                                       HorizontalScrollBarVisibility="Hidden"
                                       HorizontalAlignment="Left"
                                       PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown" 
-                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
+                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick" SelectionChanged="DatagridManagerDetails_SelectionChanged">
 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
@@ -171,7 +165,6 @@
                                                         Width="1.2*"/>
                                     <DataGridTextColumn Header="Val score" 
                                                         Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
-
                                                         Width="1.2*"/>
                                     <DataGridTextColumn Header="Start"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"
