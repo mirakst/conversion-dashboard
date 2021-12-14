@@ -15,12 +15,7 @@
         #endregion Properties
         public override int GetHashCode()
         {
-            return HashCode.Combine(Messages.GetHashCode(),
-                                    WarnCount,
-                                    InfoCount,
-                                    ErrorCount,
-                                    FatalCount,
-                                    ValidationCount);
+            return Messages.GetHashCode();
         }
         public override bool Equals(object obj)
         {

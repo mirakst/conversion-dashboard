@@ -115,26 +115,26 @@ namespace DashboardFrontend.Tests
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void UpdateLog_ExecutionNotFound_CreatesExecution()
-        {
-            var dh = new TestDataHandler();
-            dh.LoggingEntries.Add(new()
-            {
-                ExecutionId = 1,
-                Created = DateTime.MinValue,
-                LogMessage = "",
-                LogLevel = "INFO",
-                ContextId = 0
-            });
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(startWithExecution: false);
+        //[Fact]
+        //public void UpdateLog_ExecutionNotFound_CreatesExecution()
+        //{
+        //    var dh = new TestDataHandler();
+        //    dh.LoggingEntries.Add(new()
+        //    {
+        //        ExecutionId = 1,
+        //        Created = DateTime.MinValue,
+        //        LogMessage = "",
+        //        LogLevel = "INFO",
+        //        ContextId = 0
+        //    });
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(startWithExecution: false);
 
-            controller.UpdateLog();
-            var result = controller!.Conversion!.Executions.Find(e => e.Id == 1);
+        //    controller.UpdateLog();
+        //    var result = controller!.Conversion!.Executions.Find(e => e.Id == 1);
 
-            Assert.NotNull(result);
-        }
+        //    Assert.NotNull(result);
+        //}
 
         [Fact]
         public void UpdateLog_ExecutionExists_AddsLogMessageToExecution()
@@ -157,25 +157,25 @@ namespace DashboardFrontend.Tests
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void UpdateLog_OneLogMessageFound_EnqueuesLogMessage()
-        {
-            var dh = new TestDataHandler();
-            dh.LoggingEntries.Add(new()
-            {
-                ExecutionId = 1,
-                Created = DateTime.MinValue,
-                LogMessage = "",
-                LogLevel = "INFO",
-                ContextId = 0
-            });
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(startWithExecution: true);
+        //[Fact]
+        //public void UpdateLog_OneLogMessageFound_EnqueuesLogMessage()
+        //{
+        //    var dh = new TestDataHandler();
+        //    dh.LoggingEntries.Add(new()
+        //    {
+        //        ExecutionId = 1,
+        //        Created = DateTime.MinValue,
+        //        LogMessage = "",
+        //        LogLevel = "INFO",
+        //        ContextId = 0
+        //    });
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(startWithExecution: true);
 
-            controller.UpdateLog();
+        //    controller.UpdateLog();
 
-            Assert.NotEmpty(controller.LogParseQueue);
-        }
+        //    Assert.NotEmpty(controller.LogParseQueue);
+        //}
 
         [Fact]
         public void UpdateLog_NoNewData_DoesNotUpdateLastLogUpdatedProperty()
@@ -192,79 +192,79 @@ namespace DashboardFrontend.Tests
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void ParseLogMessage_StartedManagerNotFound_CreatesManager()
-        {
-            var dh = new TestDataHandler();
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(startWithExecution: true);
-            LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
+        //[Fact]
+        //public void ParseLogMessage_StartedManagerNotFound_CreatesManager()
+        //{
+        //    var dh = new TestDataHandler();
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(startWithExecution: true);
+        //    LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
 
-            controller.ParseLogMessage(input);
+        //    controller.ParseLogMessage(input);
 
-            Assert.NotEmpty(controller!.Conversion!.AllManagers);
-        }
+        //    Assert.NotEmpty(controller!.Conversion!.AllManagers);
+        //}
 
-        [Fact]
-        public void ParseLogMessage_StartedManagerExistsWithoutContextId_AssignsContextId()
-        {
-            var dh = new TestDataHandler();
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(startWithExecution: true);
-            Manager manager = new()
-            {
-                Name = "Manager.1",
-                ContextId = 0
-            };
-            controller!.Conversion!.ActiveExecution.Managers.Add(manager);
-            controller.Conversion.AllManagers.Add(manager);
-            LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
-            int expected = 1;
+        //[Fact]
+        //public void ParseLogMessage_StartedManagerExistsWithoutContextId_AssignsContextId()
+        //{
+        //    var dh = new TestDataHandler();
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(startWithExecution: true);
+        //    Manager manager = new()
+        //    {
+        //        Name = "Manager.1",
+        //        ContextId = 0
+        //    };
+        //    controller!.Conversion!.ActiveExecution.Managers.Add(manager);
+        //    controller.Conversion.AllManagers.Add(manager);
+        //    LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
+        //    int expected = 1;
 
-            controller.ParseLogMessage(input);
-            int actual = manager.ContextId;
+        //    controller.ParseLogMessage(input);
+        //    int actual = manager.ContextId;
 
-            Assert.Equal(expected, actual);
-        }
+        //    Assert.Equal(expected, actual);
+        //}
 
-        [Fact]
-        public void ParseLogMessage_StartedManagerIsInMultipleExecutions_AddsManagerToCorrectExecution()
-        {
-            var dh = new TestDataHandler();
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(startWithExecution: true);
-            Manager manager = new()
-            {
-                Name = "Manager.1",
-                ContextId = 1
-            };
-            controller!.Conversion!.Executions[0].Managers.Add(manager);
-            controller.Conversion.AddExecution(new(2, DateTime.Now));
-            LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 2, DateTime.MinValue);
+        //[Fact]
+        //public void ParseLogMessage_StartedManagerIsInMultipleExecutions_AddsManagerToCorrectExecution()
+        //{
+        //    var dh = new TestDataHandler();
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(startWithExecution: true);
+        //    Manager manager = new()
+        //    {
+        //        Name = "Manager.1",
+        //        ContextId = 1
+        //    };
+        //    controller!.Conversion!.Executions[0].Managers.Add(manager);
+        //    controller.Conversion.AddExecution(new(2, DateTime.Now));
+        //    LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 2, DateTime.MinValue);
 
-            controller.ParseLogMessage(input);
+        //    controller.ParseLogMessage(input);
 
-            Assert.NotEmpty(controller.Conversion.Executions[1].Managers);
-        }
+        //    Assert.NotEmpty(controller.Conversion.Executions[1].Managers);
+        //}
 
-        [Fact]
-        public void ParseLogMessage_StartedManagerExistsButIsNotInExecution_AddsManagerToExecution()
-        {
-            var dh = new TestDataHandler();
-            DataUtilities.DatabaseHandler = dh;
-            Controller controller = GetTestController(true);
-            Manager manager = new()
-            {
-                Name = "Manager.1",
-                ContextId = 0
-            };
-            controller!.Conversion!.AllManagers.Add(manager);
-            LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
+        //[Fact]
+        //public void ParseLogMessage_StartedManagerExistsButIsNotInExecution_AddsManagerToExecution()
+        //{
+        //    var dh = new TestDataHandler();
+        //    DataUtilities.DatabaseHandler = dh;
+        //    Controller controller = GetTestController(true);
+        //    Manager manager = new()
+        //    {
+        //        Name = "Manager.1",
+        //        ContextId = 0
+        //    };
+        //    controller!.Conversion!.AllManagers.Add(manager);
+        //    LogMessage input = new("Starting manager: Manager.1", LogMessage.LogMessageType.Info, 1, 1, DateTime.MinValue);
 
-            controller.ParseLogMessage(input);
+        //    controller.ParseLogMessage(input);
 
-            Assert.NotEmpty(controller.Conversion.Executions[0].Managers);
-        }
+        //    Assert.NotEmpty(controller.Conversion.Executions[0].Managers);
+        //}
 
         [Fact]
         public void ParseLogMessage_FinishedManagerExistsWithEndTime_AssignsOkStatus()

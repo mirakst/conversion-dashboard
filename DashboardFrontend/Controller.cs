@@ -363,9 +363,9 @@ namespace DashboardFrontend
             int managerCount = DU.GetAndUpdateManagers(Conversion.LastManagerQuery, Conversion.AllManagers);
             Conversion.LastManagerQuery = DateTime.Now;
 
-            while (LogParseQueue.Any())
+            while (_logParseQueue.Any())
             {
-                ParseLogMessage(LogParseQueue.Dequeue());
+                ParseLogMessage(_logParseQueue.Dequeue());
                 managerCount = 1;
             }
 
@@ -432,14 +432,6 @@ namespace DashboardFrontend
                 }
             }
 
-        }
-
-        private void SetStatusMessage(DashboardStatus status)
-        {
-            if (_vm is not null)
-            {
-                _vm.CurrentStatus = _statusMessages[status];
-            }
         }
 
         /// <summary>
