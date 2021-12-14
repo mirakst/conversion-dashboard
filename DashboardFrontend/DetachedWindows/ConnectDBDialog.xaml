@@ -8,8 +8,11 @@
         Height="200" 
         Width="350"
         Background="{DynamicResource BackgroundColor}"
+        BorderBrush="{DynamicResource BorderColor}"
+        BorderThickness="1"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
+        FocusManager.FocusedElement="{Binding ElementName=TextBoxUserId}"
         ResizeMode="NoResize">
     <Border Margin="10">
         <Grid>
@@ -41,11 +44,14 @@
                    Foreground="White"
                    Margin="0,6,0,0"/>
             <Control Name="ControlLoadingAnim"
-                     Visibility="Hidden"
+                     Visibility="Collapsed"
                      Grid.Column="0"
                      Grid.ColumnSpan="4"
                      Grid.Row="0"
                      Grid.RowSpan="4"
+                     Margin="-10"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
                      Style="{StaticResource LoadingAnimation}"/>
             <Grid MaxHeight="20"
                   Grid.Row="3"
@@ -58,15 +64,17 @@
                         MinWidth="100"
                         Margin="0,0,20,0"
                         Grid.Column="0"
-                        HorizontalAlignment="Right"/>
+                        HorizontalAlignment="Right"
+                        Cursor="Hand"/>
                 <Button Name="ButtonConnectDb"
-                        Content="Connect"
+                        Content="_Connect"
                         IsDefault="True"
                         Click="OnButtonConnectDBClick"
                         MinWidth="100"
                         Margin="20,0,0,0"
                         Grid.Column="1"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left"
+                        Cursor="Hand"/>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

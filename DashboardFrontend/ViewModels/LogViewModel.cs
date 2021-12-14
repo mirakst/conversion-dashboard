@@ -1,10 +1,12 @@
-﻿using Model;
+﻿using System;
+using System.Collections.Generic;
+using Model;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using static Model.LogMessage;
+using ListView = System.Windows.Controls.ListView;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -20,11 +22,31 @@ namespace DashboardFrontend.ViewModels
             LogListView = logListView;
         }
 
-        public System.DateTime LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; }
         public bool DoAutoScroll { get; set; } = true;
-        public int ShownExecution { get; set; }
         public ListView LogListView { get; set; }
-        public ObservableCollection<LogMessage> MessageList { get; private set; } = new();
+
+        private ObservableCollection<ExecutionObservable> _executions = new();
+        public ObservableCollection<ExecutionObservable> Executions
+        {
+            get => _executions;
+            set
+            {
+                _executions = value;
+                OnPropertyChanged(nameof(Executions));
+            }
+        }
+        private ExecutionObservable? _selectedExecution;
+        public ExecutionObservable? SelectedExecution
+        {
+            get => _selectedExecution;
+            set
+            {
+                _selectedExecution = value;
+                OnPropertyChanged(nameof(SelectedExecution));
+                SetExecution(value);
+            }
+        }
         private CollectionView _messageView;
         public CollectionView MessageView
         {
@@ -94,6 +116,7 @@ namespace DashboardFrontend.ViewModels
                 _showInfo = value;
                 OnPropertyChanged(nameof(ShowInfo));
                 MessageView?.Refresh();
+                ScrollToLast();
             }
         }
         private bool _showWarn = true;
@@ -105,6 +128,7 @@ namespace DashboardFrontend.ViewModels
                 _showWarn = value;
                 OnPropertyChanged(nameof(ShowWarn));
                 MessageView?.Refresh();
+                ScrollToLast();
             }
         }
         private bool _showError = true;
@@ -116,6 +140,7 @@ namespace DashboardFrontend.ViewModels
                 _showError = value;
                 OnPropertyChanged(nameof(ShowError));
                 MessageView?.Refresh();
+                ScrollToLast();
             }
         }
         private bool _showFatal = true;
@@ -127,6 +152,7 @@ namespace DashboardFrontend.ViewModels
                 _showFatal = value;
                 OnPropertyChanged(nameof(ShowFatal));
                 MessageView?.Refresh();
+                ScrollToLast();
             }
         }
         private bool _showValidation = true;
@@ -138,22 +164,29 @@ namespace DashboardFrontend.ViewModels
                 _showValidation = value;
                 OnPropertyChanged(nameof(ShowValidation));
                 MessageView?.Refresh();
+                ScrollToLast();
             }
         }
 
         /// <summary>
-        /// Updates the actual data of the view-model, for use whenever a query has been executed and parsed.
+        /// Updates the data for each execution in the log, and filters the messages.
         /// </summary>
-        public void UpdateData(Log log)
+        /// <param name="executions">A list of executions to add to the log.</param>
+        public void UpdateData(List<Execution> executions)
         {
-            MessageList = new(log.Messages);
-            MessageView = (CollectionView)CollectionViewSource.GetDefaultView(MessageList);
-            MessageView.Filter = OnMessagesFilter;
-            UpdateCounters(log);
-            if (DoAutoScroll && LogListView is not null && !LogListView.Items.IsEmpty)
+            Executions = new();
+            for(int i = 0; i < executions.Count; i++)
             {
-                ScrollToLast(this, new RoutedEventArgs());
+                Executions.Add(new ExecutionObservable(executions[i]));
             }
+
+            if (SelectedExecution is null)
+            {
+                SelectedExecution = Executions.Last();
+            }
+            UpdateCounters(SelectedExecution);
+            MessageView.Filter = OnMessagesFilter;
+            ScrollToLast();
         }
 
         /// <summary>
@@ -164,32 +197,66 @@ namespace DashboardFrontend.ViewModels
         private bool OnMessagesFilter(object item)
         {
             LogMessageType type = ((LogMessage)item).Type;
-            return (ShowInfo && type.HasFlag(LogMessageType.Info))
-                || (ShowWarn && type.HasFlag(LogMessageType.Warning))
-                || (ShowError && type.HasFlag(LogMessageType.Error))
-                || (ShowFatal && type.HasFlag(LogMessageType.Fatal))
-                || (ShowValidation && type.HasFlag(LogMessageType.Validation));
+            int ContextId = ((LogMessage) item).ContextId;
+            if (ContextId > 0 && !SelectedExecution.Managers.Where(m => m.IsChecked).Any(m => m.ContextId == ContextId))
+            {
+                return false;
+            }
+            return ((ShowInfo && type.HasFlag(LogMessageType.Info))
+                 || (ShowWarn && type.HasFlag(LogMessageType.Warning))
+                 || (ShowError && type.HasFlag(LogMessageType.Error))
+                 || (ShowFatal && type.HasFlag(LogMessageType.Fatal))
+                 || (ShowValidation && type.HasFlag(LogMessageType.Validation)));
         }
 
         /// <summary>
         /// Updates the number of log messages with the different possible types.
         /// </summary>
-        /// <param name="log">The log to fetch updated counts from.</param>
-        private void UpdateCounters(Log log)
+        /// <param name="exec">The execution to fetch updated counts from.</param>
+        private void UpdateCounters(ExecutionObservable exec)
         {
-            InfoCount = log.InfoCount;
-            WarnCount = log.WarnCount;
-            ErrorCount = log.ErrorCount;
-            FatalCount = log.FatalCount;
-            ValidationCount = log.ValidationCount;
+            InfoCount = exec.InfoCount;
+            WarnCount = exec.WarnCount;
+            ErrorCount = exec.ErrorCount;
+            FatalCount = exec.FatalCount;
+            ValidationCount = exec.ValidationCount;
         }
 
+        /// <summary>
+        /// Calls the bottom scrolling event handler.
+        /// </summary>
+        public void ScrollToLast()
+        {
+            if (DoAutoScroll && LogListView is not null && !LogListView.Items.IsEmpty)
+            {
+                ScrollToLast(this, new RoutedEventArgs());
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the bottom of the log.
+        /// </summary>
         public void ScrollToLast(object sender, RoutedEventArgs e)
         {
             int itemCount = LogListView.Items.Count;
             if (itemCount > 0)
             {
                 LogListView.ScrollIntoView(LogListView.Items[^1]);
+            }
+        }
+
+        /// <summary>
+        /// Sets the execution for the log.
+        /// </summary>
+        /// <param name="exec">The execution to display data for.</param>
+        private void SetExecution(ExecutionObservable exec)
+        {
+            if (exec is not null)
+            {
+                MessageView = (CollectionView)CollectionViewSource.GetDefaultView(exec.LogMessages);
+                UpdateCounters(exec);
+                MessageView.Filter = OnMessagesFilter;
+                ScrollToLast();
             }
         }
     }

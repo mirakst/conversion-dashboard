@@ -1,7 +1,5 @@
-﻿using DashboardFrontend.Charts;
-using DashboardFrontend.ViewModels;
+﻿using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,13 +28,18 @@ namespace DashboardFrontend.DetachedWindows
         /// <param name="e"></param>
         private void AddManager_Click(object sender, RoutedEventArgs e)
         {
+            List<ManagerWrapper> managers = new();
             foreach (ManagerWrapper manager in DatagridManagers.SelectedItems)
             {
-                if (!Vm.WrappedManagers.Any(e => e.Manager.ContextId == manager.Manager.ContextId))
+                if (!Vm.DetailedManagers.Any(m => m.Manager.Name == manager.Manager.Name))
                 {
                     DatagridManagerMover("Add", manager);
-                    manager.IsDetailedInfoShown = true;
                 }
+                managers.Add(manager);
+            }
+            foreach (var manager in managers)
+            {
+                Vm.Managers.Remove(manager);
             }
         }
 
@@ -55,7 +58,7 @@ namespace DashboardFrontend.DetachedWindows
             foreach (ManagerWrapper manager in managers) //You cannot iterate through the datagrid while also removing from the datagrid.
             {
                 DatagridManagerMover("Remove", manager);
-                manager.IsDetailedInfoShown = false;
+                Vm.Managers.Add(manager);
             }
         }
 
@@ -70,28 +73,6 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         /// <summary>
-        /// Searches through the manager overview based on the text present in the searchbar.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TextboxSearchbar_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            DatagridManagers.SelectedItems.Clear();
-            if (TextboxSearchbar.Text != null)
-            {
-                List<ManagerWrapper> foundManagers = new();
-                foreach (ManagerWrapper manager in DatagridManagers.Items)
-                {
-                    if (manager.Manager.Name.Contains(TextboxSearchbar.Text) || manager.Manager.ContextId.ToString() == TextboxSearchbar.Text)
-                    {
-                        foundManagers.Add(manager);
-                        DatagridManagers.SelectedItems.Add(manager);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Helper function assembling all the manager mover functionality.
         /// </summary>
         /// The function to be done to the manager <param name="method"></param>
@@ -101,20 +82,75 @@ namespace DashboardFrontend.DetachedWindows
             switch (method)
             {
                 case "Add" when manager is not null:
-                    Vm.WrappedManagers.Add(manager);
+                    manager.IsDetailedInfoShown = true;
+                    Vm.DetailedManagers.Add(manager);
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.AddChartLinesHelper(manager);
                     break;
 
                 case "Remove" when manager is not null:
-                    Vm.WrappedManagers.Remove(manager);
+                    manager.IsDetailedInfoShown = false;
+                    Vm.DetailedManagers.Remove(manager);
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.RemoveChartLinesHelper(manager);
                     break;
 
                 case "Clear":
-                    Vm.WrappedManagers.Clear();
+                    foreach (var wrapper in Vm.DetailedManagers)
+                    {
+                        Vm.Managers.Add(wrapper);
+                    }
+                    Vm.DetailedManagers.Clear();
+                    Vm.UpdateHiddenManagers();
                     Vm.ManagerChartViewModel.ClearChartLinesHelper();
                     break;
             }
+        }
+
+        /// <summary>
+        /// If enter is pressed on a manager, add the manager to detailed view.
+        /// </summary>
+        private void DatagridManagersAdd_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                AddManager_Click(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// If a manager is double clicked, add the manager to detailed view.
+        /// </summary>
+        private void DatagridManagersAdd_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
+            AddManager_Click((object)sender, e);
+        }
+
+        /// <summary>
+        /// If enter is pressed on a manager in the detailed view, remove the manager from the detailed view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DatagridManagersRemove_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                RemoveManager_Click(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// If a manager is double clicked in the detailed view, remove the manager from the detailed view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DatagridManagersRemove_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if ((e.OriginalSource as FrameworkElement)?.Parent is not DataGridCell) return;
+            RemoveManager_Click((object)sender, e);
         }
     }
 }

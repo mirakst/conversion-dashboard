@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Model;
 using DashboardFrontend.ViewModels;
-using System.Windows.Controls.Primitives;
 
 namespace DashboardFrontend.DetachedWindows
 {
@@ -45,13 +44,16 @@ namespace DashboardFrontend.DetachedWindows
             item.IsSelected = false;
             if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ExpandedManagerNames.Contains(manager.Name))
+                if (ViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
                     ViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }
             }
         }
 
+        /// <summary>
+        /// Copies the source SQL query from the validation test.
+        /// </summary>
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
@@ -63,6 +65,9 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Copies the destination SQL query from the validation test.
+        /// </summary>
         private void CopyDestSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
@@ -78,7 +83,6 @@ namespace DashboardFrontend.DetachedWindows
         {
             PopupCopySql.IsOpen = false;
         }
-
     }
 }
 

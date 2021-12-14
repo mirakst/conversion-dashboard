@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
-        Height="900"
-        Width="1600"
+        Height="720"
+        Width="1280"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         WindowStyle="None"
@@ -24,16 +24,20 @@
         <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_1" />
         <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_2" />
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
-        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_4" />
     </Window.CommandBindings>
     <Window.Resources>
         <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
         <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
         <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <converters:WindowStateToWingdingsConverter x:Key="WindowStateToWingdingsConverter"/>
+        <converters:FilterPopupHeightConverter x:Key="FilterPopupHeightConverter"/>
         <Style TargetType="{x:Type ScrollBar}">
             <Setter Property="Background" Value="{DynamicResource CanvasColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        </Style>
+        <Style TargetType="{x:Type lvc:CartesianChart}">
+            <Setter Property="Cursor" Value="Cross"/>
         </Style>
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
@@ -99,11 +103,10 @@
 
                     <Button Name="ButtonSettings" 
                             Click="ButtonSettingsClick" 
+                            Style="{StaticResource DefaultButton}"
                             Grid.Column="1" 
                             Grid.Row="0" 
-                            Grid.RowSpan="2" 
-                            Background="Transparent" 
-                            BorderBrush="Transparent">
+                            Grid.RowSpan="2">
                         <Image Source="Icons/Cog.png"/>
                     </Button>
 
@@ -154,11 +157,10 @@
                 </Grid>
             </Grid>
 
-            <Grid Margin="30,20,30,30" 
+            <Grid Margin="30,20,30,30"
                   Background="{DynamicResource BackgroundColor}"
                   Grid.Row="1"
                   Grid.ColumnSpan="2">
-
 
                 <Grid x:Name="gridManagerList"
                       Grid.Row="0"
@@ -167,6 +169,7 @@
                       DataContext="{Binding ManagerViewModel}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="4.5*"/>
                         <ColumnDefinition Width="30"/>
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
@@ -175,31 +178,42 @@
                         <RowDefinition Height="22*"/>
                     </Grid.RowDefinitions>
 
+                    <ComboBox Margin="0 0 2 2"  
+                              ToolTip="Choose which execution to show data from" 
+                              Style="{DynamicResource ComboBoxExecutions}"  
+                              ItemsSource="{Binding Executions}"  
+                              SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}"  
+                                           VerticalAlignment="Center" 
+                                           Foreground="{DynamicResource ForegroundColor}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
+                             Style="{DynamicResource ValidationsSearchBox}"
                              Height="26"
-                             Style="{DynamicResource SearchBox}"
+                             Grid.Column="1"
+                             Grid.ColumnSpan="2"
                              Margin="0,0,0,1"
                              BorderBrush="{DynamicResource BorderColor}">
                     </TextBox>
 
-                    <DockPanel LastChildFill="False">
-                        <Image Source="Icons/MagnifyingglassAlt.png"
+                    <DockPanel LastChildFill="False"
+                               Grid.Column="2">
+                        <Image Source="Icons/Magnifyingglass.png"
                                Margin="0,5,10,5"
                                DockPanel.Dock="Right"/>
                     </DockPanel>
 
-                    <Button Name="ButtonManagerFilter"
-                            Grid.Column="1"
-                            Margin="0, 0, 0, 1"
-                            Style="{DynamicResource FilterButton}">
-                        <Image Source="Icons/Filter.png"/>
-                    </Button>
 
                     <Button Name="ButtonDetachManager"
                             Click="DetachManagerButtonClick"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="0, -2, -2, 0"
                             Style="{StaticResource DetachButton}">
                         <Image Source="Icons/Detach.png"/>
@@ -208,26 +222,35 @@
                     <DataGrid x:Name="datagridManagers"
                               ItemsSource="{Binding Managers}"
                               Grid.Row="1"
-                              Grid.ColumnSpan="3"
+                              Grid.ColumnSpan="4"
                               Style="{DynamicResource DefaultDatagrid}"
                               BorderBrush="{DynamicResource BorderColor}"
+                              MouseDoubleClick="DatagridManagers_MouseDoubleClick"
                               HorizontalScrollBarVisibility="Hidden"
                               HorizontalAlignment="Left">
-
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" 
                                                 Binding="{Binding Manager.ContextId}"
-                                                Width="25pt"/>
+                                                Width="32pt"/>
                             <DataGridTextColumn Header="Manager name" 
                                                 Binding="{Binding Manager.ShortName}"
-                                                Width="8*"/>
-                            <DataGridTextColumn Header="Score" 
-                                                Binding="{Binding Manager.Score}"
-                                                Width="*"/>
+                                                Width="6*"/>
+                            <DataGridTextColumn Header="Perf score"
+                                                Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                Width="1.6*"/>
+                            <DataGridTextColumn Header="Val Score" 
+                                                Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
+                                                Width="1.6*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
                                                 Width="2*"/>
                         </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ToolTip" Value="Double click to open view"/>
+                                <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                     </DataGrid>
                 </Grid>
 
@@ -316,12 +339,12 @@
                             </StackPanel>
                         </ToggleButton>
 
-                        <Button Name="ButtonLogFilter"
+                        <ToggleButton Name="ButtonLogFilter"
                                 Grid.Column="9"
                                 Style="{DynamicResource FilterButton}"
                                 Margin="0, 0, 0, -1">
                             <Image Source="Icons/Filter.png"/>
-                        </Button>
+                        </ToggleButton>
 
                         <Button Name="ButtonLogDetach" 
                                 Click="DetachLogButtonClick" 
@@ -361,14 +384,13 @@
                                   MouseLeave="ListViewLog_MouseOverChanged"
                                   Margin="0,-2,0,0">
                             <ListView.View>
-                                <GridView>
+                                <GridView AllowsColumnReorder="False">
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style TargetType="{x:Type GridViewColumnHeader}">
                                             <Setter Property="OverridesDefaultStyle" Value="True"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
-
                                                         <StackPanel Orientation="Vertical">
                                                             <TextBlock Text="{TemplateBinding Content}" 
                                                                    Padding="4" 
@@ -424,6 +446,8 @@
                                     <Setter Property="FontFamily" Value="Consolas"/>
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="ToolTip" Value="{Binding ManagerName, TargetNullValue='Context not found'}"/>
+                                    <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="Info">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageInfoColor}"/>
@@ -455,6 +479,66 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
+                        <Grid x:Name="GridPopupLogFilter" 
+                              Style="{DynamicResource GridPopupStyleOverwrite}"
+                              IsVisibleChanged="GridPopup_Opened"
+                              Margin="0,-2,0,1">
+                            <Border Style="{DynamicResource GridPopupBorderOverwrite}">
+                                <StackPanel HorizontalAlignment="Center" Margin="10,5">
+                                    <TextBlock Foreground="{DynamicResource ForegroundColor}">Execution filter</TextBlock>
+                                    <ComboBox Width="100"
+                                      Height="26"
+                                      Margin="0,0,18,10"
+                                      VerticalAlignment="Top"
+                                      Style="{DynamicResource ComboBoxExecutions}" 
+                                      ItemsSource="{Binding Executions}" 
+                                      SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                       VerticalAlignment="Center"
+                                                       Foreground="White"/>
+                                                    <!--<TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="LightGray"/>-->
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <TextBlock Foreground="{DynamicResource ForegroundColor}">Context ID filter</TextBlock>
+                                    <ItemsControl Style="{DynamicResource GridPopupItemsControlOverwrite}"
+                                          Height="{Binding ActualHeight, ElementName=ListViewLog, Converter={StaticResource FilterPopupHeightConverter}}" 
+                                          ItemsSource="{Binding SelectedExecution.Managers}">
+                                        <ItemsControl.Template>
+                                            <ControlTemplate>
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                                      Background="{DynamicResource BackgroundColor}">
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Click="ContextIdCheckbox_OnToggle" 
+                                                  IsChecked="{Binding IsChecked}" 
+                                                  Content="{Binding ContextId}" 
+                                                  Foreground="{DynamicResource ForegroundColor}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Disable all" 
+                                        Margin="0,0,5,0" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="false"/>
+                                        <Button Content="Enable all" 
+                                        Click="ContextIdFilter_OnClick" 
+                                        Tag="true"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -472,7 +556,7 @@
                     <!-- Body -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4.5*" MinWidth="280"/>
+                            <ColumnDefinition Width="4.5*" MinWidth="355"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="2*" MinWidth="100"/>
                         </Grid.ColumnDefinitions>
@@ -481,53 +565,67 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        <GridSplitter Grid.Row="0"
+                                      Grid.RowSpan="2"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      Width="4"
+                                      Height="100"
+                                      Background="{DynamicResource BorderColor}"/>
+
                         <!-- Validations TreeView Header -->
                         <Grid>
                             <TextBlock Text="Validations"
-                                   Margin="5"
-                                   Foreground="LightGray"
-                                   FontWeight="Bold"/>
+                                       Margin="5"
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
+                                       FontWeight="Bold"/>
                             <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Right">
+                                        Orientation="Horizontal" 
+                                        HorizontalAlignment="Right">
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
+                                              IsChecked="{Binding ShowEmpty,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
+                                    <TextBlock Text="Show empty"
+                                                Padding="6"
+                                                VerticalAlignment="Center"/>
+                                </ToggleButton>
+                                <ToggleButton Style="{DynamicResource DefaultToggleButton}"
+                                              IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Validation.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0, 2, 0, 2">
+                                              IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0, 2, 0, 2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Warning.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
                                 <ToggleButton Style="{DynamicResource DefaultToggleButton}"
-                                          IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
-                                          Margin="0,2,0,2">
+                                              IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
+                                              Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
                                         <Image Source="/Icons/Fatal.png"
-                                           Margin="0 0 2 0"
-                                           MaxHeight="20"/>
+                                               Margin="0 0 2 0"
+                                               MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
-                                               VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </ToggleButton>
-                                <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                    <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
-                                           VerticalAlignment="Center"
-                                           Foreground="Gray"/>
-                                </StackPanel>
+                                <TextBlock Text="{Binding SelectedExecution.TotalCount,FallbackValue='N/A',StringFormat='(of {0})'}"
+                                            VerticalAlignment="Center"
+                                            Padding="6"
+                                            Foreground="Gray"/>
                             </StackPanel>
                         </Grid>
                         <!-- Validations TreeView -->
@@ -548,14 +646,9 @@
                                           SelectedItem="{Binding SelectedExecution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="White"/>
-                                                <TextBlock Text="{Binding StartTime, StringFormat=' ({0:dd/MM HH:mm})'}" 
-                                                           VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
-                                            </StackPanel>
+                                            <TextBlock Text="{Binding Id, StringFormat='Execution {0}'}" 
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource ForegroundColor}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -565,8 +658,7 @@
                                          Margin="2"
                                          Style="{DynamicResource ValidationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
-                                         Foreground="White"
-                                         CaretBrush="White"/>
+                                         ToolTip="Search for managers by their name or context ID"/>
 
                                 <Image Source="/Icons/Magnifyingglass.png"
                                        Grid.Column="1"
@@ -595,7 +687,7 @@
                                                            VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding ContextId, StringFormat=' (ID {0})'}"
                                                            VerticalAlignment="Center"
-                                                           Foreground="LightGray"/>
+                                                           Foreground="{DynamicResource HeaderForegroundColor}"/>
                                             </StackPanel>
                                             <HierarchicalDataTemplate.ItemTemplate>
                                                 <DataTemplate>
@@ -613,7 +705,7 @@
                                     </TreeView.ItemTemplate>
                                     <TreeView.Resources>
                                         <Style TargetType="TreeViewItem">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="MinHeight" Value="25"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
@@ -628,9 +720,9 @@
                         </Border>
 
                         <Grid Grid.Column="2">
-                            <TextBlock Text="Summary"
+                            <TextBlock Text="Details"
                                        Margin="0 5 5 5"
-                                       Foreground="LightGray"
+                                       Foreground="{DynamicResource HeaderForegroundColor}"
                                        FontWeight="Bold"/>
                             <Button Name="ButtonValidationReportDetach" 
                                     Click="DetachValidationReportButtonClick"
@@ -646,28 +738,28 @@
                                 Grid.Column="2">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Orientation="Vertical" 
-                                        Background="{DynamicResource CanvasColor}"
-                                        DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                                            Background="{DynamicResource CanvasColor}"
+                                            DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
                                     <TextBlock Text="Description" 
-                                           FontWeight="Bold" 
-                                           Margin="10 10 10 0"
-                                           Foreground="LightGray"/>
+                                               FontWeight="Bold" 
+                                               Margin="10 10 10 0"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <TextBlock Text="{Binding Name, FallbackValue='No active selection'}"
-                                           Margin="10 0 10 0"/>
+                                               Margin="10 0 10 0"/>
                                     
                                     <TextBlock Text="Toolkit ID"
                                                FontWeight="Bold"
                                                Margin="10 20 10 0"
-                                               Foreground="LightGray"/>
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <TextBlock Text="{Binding ToolkitId, TargetNullValue='N/A'}"
                                                Margin="10 0 10 0"/>
 
                                     <TextBlock Text="Result" 
-                                           FontWeight="Bold" 
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
+                                               FontWeight="Bold" 
+                                               Foreground="{DynamicResource HeaderForegroundColor}"
+                                               Margin="10 20 10 0"/>
                                     <StackPanel Orientation="Horizontal"
-                                            Margin="10 0 10 0">
+                                                Margin="10 0 10 0">
                                         <Image Width="20">
                                             <Image.Style>
                                                 <Style TargetType="{x:Type Image}">
@@ -680,44 +772,45 @@
                                             </Image.Style>
                                         </Image>
                                         <TextBlock Text="{Binding Status}"
-                                               Margin="5 0 0 0"
-                                               VerticalAlignment="Center"/>
+                                                   Margin="5 0 0 0"
+                                                   VerticalAlignment="Center"/>
                                     </StackPanel>
                                         
                                     <TextBlock Text="Row count" 
-                                           FontWeight="Bold" 
-                                           Margin="10 20 10 0"
-                                           Foreground="LightGray"/>
+                                               FontWeight="Bold" 
+                                               Margin="10 20 10 0"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"/>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Source "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                                   Margin="10 0 5 0"/>
                                         <TextBlock Text="{Binding SrcCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                                   Margin="0 0 10 0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Destination "
-                                               Foreground="LightGray"
-                                               Margin="10 0 5 0"/>
+                                                   Foreground="{DynamicResource HeaderForegroundColor}"
+                                                   Margin="10 0 5 0"/>
                                         <TextBlock Text="{Binding DstCount, TargetNullValue='N/A'}"
-                                               Margin="0 0 10 0"/>
+                                                   Margin="0 0 10 0"/>
                                     </StackPanel>
 
                                     <TextBlock Text="Copy SQL"
-                                           FontWeight="Bold"
-                                           Foreground="LightGray"
-                                           Margin="10 20 10 0"/>
-                                    <StackPanel Orientation="Horizontal"
-                                            Margin="10 5 10 0"
-                                            Height="30">
-                                        <Button Margin="0 0 5 0"
-                                            Click="CopySrcSql_Click"
-                                            MouseLeave="ButtonCopySql_MouseLeave"
-                                            IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
-                                            Content="Source"/>
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource HeaderForegroundColor}"
+                                               Margin="10 20 10 10"/>
+                                    <WrapPanel Orientation="Horizontal"
+                                                Margin="10 5 10 10">
+                                        <Button Margin="0 0 20 0"
+                                                Click="CopySrcSql_Click"
+                                                MouseLeave="ButtonCopySql_MouseLeave"
+                                                IsEnabled="{Binding SrcSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                                Template="{DynamicResource CopySqlButton}"
+                                                Content="Source"/>
                                         <Button Click="CopyDestSql_Click"
                                                 MouseLeave="ButtonCopySql_MouseLeave"
                                                 IsEnabled="{Binding DstSql, Converter={StaticResource SqlToBoolConverter}, FallbackValue=False}"
+                                                Template="{DynamicResource CopySqlButton}"
                                                 Content="Destination"/>
 
                                         <Popup x:Name="PopupCopySql"
@@ -728,16 +821,17 @@
                                                        Style="{DynamicResource PopupLabel}"/>
                                             </Border>
                                         </Popup>
-                                    </StackPanel>
+                                    </WrapPanel>
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="FontSize" Value="14"/>
                                             <Setter Property="TextWrapping" Value="Wrap"/>
                                         </Style>
                                         <Style TargetType="Button">
                                             <Setter Property="FontFamily" Value="Segoe UI"/>
                                             <Setter Property="FontSize" Value="14"/>
+                                            <Setter Property="Width" Value="80"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsEnabled" Value="False">
                                                     <Setter Property="Foreground" Value="Gray"/>
@@ -754,6 +848,7 @@
                       Margin="20,0,0,0"
                       Grid.Column="1"
                       Grid.Row="1">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
@@ -763,12 +858,14 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <TabControl Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="2"
                                 Margin="0,0,0,0">
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemCpuRam"
                                     Header="CPU &amp; RAM"
@@ -778,43 +875,6 @@
                                     DataContext="{Binding SystemLoadChart}">
                             <Border Margin="10">
                                 <Grid>
-                                    <TextBlock Name="TextBlockCurrentCpuLoad"
-                                                Text="{Binding LastCpuReading,
-                                                        StringFormat='CPU Usage: {0:0}%'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="1"
-                                                Grid.Row="0"
-                                                Margin="0,0,40,5"/>
-                                    <TextBlock Name="TextBlockCurrentRamUsage"
-                                                Text="{Binding LastRamReading,
-                                                        StringFormat='RAM Usage: {0:0}%'}"
-                                                Foreground="{DynamicResource ForegroundColor}"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Margin="5,0,0,5"/>
-                                    <Separator Grid.ColumnSpan="2"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="1"
-                                    Margin="-50,0"/>
-                                    <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding ChartData.Series}"
-                                            XAxes="{Binding ChartData.XAxis}"
-                                            YAxes="{Binding ChartData.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
-                                    </lvc:CartesianChart>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -826,6 +886,47 @@
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentCpuLoad"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='CPU Usage: {0:0}%'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentRamUsage"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='RAM Usage: {0:0}%'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
                                 </Grid>
                             </Border>
                         </TabItem>
@@ -836,16 +937,62 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkChart}">
-                            <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding ChartData.Series}"
-                                                XAxes="{Binding ChartData.XAxis}"
-                                                YAxes="{Binding ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSent"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network data sent: {0:0}GB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
                                                 Grid.Row="0"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceived"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network data received: {0:0}GB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
                         </TabItem>
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkDelta"
@@ -853,35 +1000,129 @@
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkDeltaChart}">
-                            <lvc:CartesianChart Margin="0,14,0,-30"
-                                                Series="{Binding ChartData.Series}"
-                                                XAxes="{Binding ChartData.XAxis}"
-                                                YAxes="{Binding ChartData.YAxis}"
-                                                ZoomMode="X"
-                                                TooltipPosition="Top"
-                                                Grid.Row="1"
-                                                MouseLeave="CartesianChart_MouseLeave"
-                                                MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
-                        </TabItem>
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSendDelta"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network data sent (Delta): {0:0}MB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceiveDelta"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network received (Delta): {0:0}MB'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
+                        </TabItem> 
+
                         <TabItem Style="{DynamicResource TabItemStyleOverwrite}"
                                     Name="TabItemNetworkSpeed"
                                     Header="Network Speed"
                                     Height="28"
                                     FontSize="16"
                                     DataContext="{Binding NetworkSpeedChart}">
-                            <lvc:CartesianChart  Margin="-6,14,0,-30"
-                                                    Series="{Binding ChartData.Series}"
-                                                    XAxes="{Binding ChartData.XAxis}"
-                                                    YAxes="{Binding ChartData.YAxis}"
-                                                    ZoomMode="X"
-                                                    TooltipPosition="Top"
-                                                    Grid.Row="2"
-                                                    MouseLeave="CartesianChart_MouseLeave"
-                                                    MouseEnter="CartesianChart_MouseEnter">
-                            </lvc:CartesianChart>
+                            <Border Margin="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="TextBlockCurrentNetSendSpeed"
+                                                Text="{Binding LastPrimaryReading,
+                                                        StringFormat='Network send speed: {0:0.00}Mbps'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="0"
+                                                Margin="0,0,40,5"/>
+
+                                    <TextBlock Name="TextBlockCurrentNetReceiveSpeed"
+                                                Text="{Binding LastSecondaryReading,
+                                                        StringFormat='Network receive speed: {0:0.00}Mbps'}"
+                                                Foreground="{DynamicResource ForegroundColor}"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Margin="5,0,0,5"/>
+
+                                    <Separator Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Grid.Column="1"
+                                    Margin="-50,0"/>
+
+                                    <lvc:CartesianChart
+                                            Margin="-7,0,5,-40"
+                                            Series="{Binding Chart.Series}"
+                                            XAxes="{Binding Chart.XAxis}"
+                                            YAxes="{Binding Chart.YAxis}"
+                                            ZoomMode="X"
+                                            TooltipPosition="Top"
+                                            MouseLeave="CartesianChart_MouseLeave"
+                                            MouseEnter="CartesianChart_MouseEnter"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="4"
+                                            Grid.Row="1">
+                                    </lvc:CartesianChart>
+                                </Grid>
+                            </Border>
                         </TabItem>
                     </TabControl>
+
                     <ComboBox Name="ComboBoxMaxView"
                               VerticalAlignment="Center"
                               Grid.Column="1"
@@ -926,14 +1167,8 @@
                 <Button Name="ButtonMaximize" 
                         Grid.Column="1" 
                         Style="{DynamicResource DefaultWindowButton}"
-                        Content="1"
+                        Content="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=WindowState, Converter={StaticResource WindowStateToWingdingsConverter}}"
                         Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
-                <Button Name="ButtonRestore" 
-                        Grid.Column="1" 
-                        Style="{DynamicResource DefaultWindowButton}"
-                        Content="2"
-                        Command="{x:Static SystemCommands.RestoreWindowCommand}" 
-                        Visibility="Collapsed"/>
                 <Button Name="ButtonClose" 
                         Grid.Column="2" 
                         Content="r"
@@ -945,6 +1180,16 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
+
+            <Control Name="ControlLoadingAnim"
+                     Visibility="{Binding LoadingVisibility, UpdateSourceTrigger=PropertyChanged, FallbackValue=Collapsed}"
+                     Cursor="Wait"
+                     Grid.ColumnSpan="2"
+                     Grid.RowSpan="2"
+                     Margin="0,100,0,0"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Style="{StaticResource LoadingAnimation}"/>
         </Grid>
     </Border>
 </Window>

@@ -40,11 +40,11 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Profile editor"
-                           FontSize="16"
-                           Grid.ColumnSpan="5"
-                           Margin="0,5,0,0"
-                           TextAlignment="Center"
-                           Foreground="{DynamicResource ForegroundColor}"/>
+                       FontSize="16"
+                       Grid.ColumnSpan="5"
+                       Margin="0,5,0,0"
+                       TextAlignment="Center"
+                       Foreground="{DynamicResource ForegroundColor}"/>
 
                 <Button Name="ButtonCloseSettings" 
                         Content="r"
@@ -183,11 +183,13 @@
                         Width="100" 
                         Margin="0 0 10 0" 
                         IsCancel="True" 
-                        Click="Button_Cancel"/>
-                <Button Content="Save" 
+                        Click="Button_Cancel"
+                        Cursor="Hand"/>
+                <Button Content="_Save"
                         Width="100" 
                         IsDefault="True" 
-                        Click="Button_Save"/>
+                        Click="Button_Save"
+                        Cursor="Hand"/>
             </StackPanel>
             
         </Grid>

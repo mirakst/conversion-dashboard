@@ -26,6 +26,16 @@ namespace DashboardFrontend
                 OnPropertyChanged(nameof(IsDetailedInfoShown));
             }
         }
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+                OnPropertyChanged(nameof(IsVisible));
+            }
+        }
 
         public ManagerWrapper(Manager manager)
         {
@@ -34,7 +44,7 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Assigns the managerwrapper with a random color using RGB.
+        /// Assigns the <see cref="ManagerWrapper"/> with a random color using RGB.
         /// </summary>
         /// <returns></returns>
         public Color RandomColor()

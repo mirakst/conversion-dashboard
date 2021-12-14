@@ -2,8 +2,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Data;
 using static Model.ValidationTest;
@@ -39,11 +37,10 @@ namespace DashboardFrontend.ViewModels
             {
                 _selectedExecution = value;
                 OnPropertyChanged(nameof(SelectedExecution));
-                SetExecution(value);
+                RefreshViews();
             }
         }
         public List<string> ExpandedManagerNames = new();
-        public ObservableCollection<Manager> ManagerList { get; private set; } = new();
         private CollectionView _managerView;
         public CollectionView ManagerView
         {
@@ -72,7 +69,7 @@ namespace DashboardFrontend.ViewModels
             {
                 _nameFilter = value;
                 OnPropertyChanged(nameof(NameFilter));
-                ManagerView?.Refresh();
+                RefreshViews();
             }
         }
         private bool _showOk;
@@ -108,6 +105,17 @@ namespace DashboardFrontend.ViewModels
                 RefreshViews();
             }
         }
+        private bool _showEmpty = false;
+        public bool ShowEmpty
+        {
+            get => _showEmpty;
+            set
+            {
+                _showEmpty = value;
+                OnPropertyChanged(nameof(ShowEmpty));
+                RefreshViews();
+            }
+        }
         #endregion
 
         /// <summary>
@@ -123,14 +131,21 @@ namespace DashboardFrontend.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the selected execution for the validation report module.
+        /// </summary>
+        /// <param name="exec">The execution to show data for.</param>
         private void SetExecution(ExecutionObservable exec)
         {
             if (exec is not null)
             {
+                ExpandedManagerNames.Clear();
                 ManagerView = (CollectionView)CollectionViewSource.GetDefaultView(exec.Managers);
                 ManagerView.Filter = OnManagersFilter;
+                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.PerformanceScore), ListSortDirection.Ascending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.FailedCount), ListSortDirection.Descending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.DisabledCount), ListSortDirection.Descending));
+                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.StartTime), ListSortDirection.Ascending));
             }
         }
 
@@ -142,16 +157,20 @@ namespace DashboardFrontend.ViewModels
         private bool OnManagersFilter(object item)
         {
             ManagerObservable mgr = (ManagerObservable)item;
-            return mgr.Name.Contains(NameFilter);
+            return (mgr.Name.Contains(NameFilter) || mgr.ContextId.ToString() == NameFilter) && (!mgr.ValidationView.IsEmpty || ShowEmpty);
         }
 
+
+        /// <summary>
+        /// Used as a filter for validations
+        /// </summary>
+        /// <param name="item">A validation test object.</param>
+        /// <returns>True if the object should be shown, and false otherwise.</returns>
         public bool OnValidationsFilter(object item)
         {
-            return item is ValidationTest val
-                ? (ShowOk && val.Status is ValidationStatus.Ok)
-                    || (ShowFailed && val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch)
-                    || (ShowDisabled && val.Status is ValidationStatus.Disabled)
-                : false;
+            return item is ValidationTest val && ((ShowOk && val.Status is ValidationStatus.Ok)
+                                              || (ShowFailed && val.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch)
+                                              || (ShowDisabled && val.Status is ValidationStatus.Disabled));
         }
 
         /// <summary>
@@ -159,16 +178,14 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         private void RefreshViews()
         {
-            if (SelectedExecution != null && ManagerView != null)
+            if (SelectedExecution != null)
             {
-                foreach (object item in ManagerView)
+                foreach (var mgr in SelectedExecution.Managers)
                 {
-                    ManagerObservable mgr = (ManagerObservable)item;
-                    mgr.ValidationView?.Refresh();
+                    mgr.ValidationView.Refresh();
                     mgr.IsExpanded = ExpandedManagerNames.Contains(mgr.Name);
-                    
                 }
-                ManagerView.Refresh();
+                SetExecution(SelectedExecution);
             }
         }
     }

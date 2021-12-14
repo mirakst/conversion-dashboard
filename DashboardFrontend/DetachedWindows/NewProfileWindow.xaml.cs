@@ -1,8 +1,6 @@
 ﻿using DashboardFrontend.Settings;
 using DashboardFrontend.ViewModels;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -38,6 +36,9 @@ namespace DashboardFrontend.DetachedWindows
             Close();
         }
 
+        /// <summary>
+        /// Save profile, check if data source or database have been modified, validate input.
+        /// </summary>
         private void Button_Save(object sender, RoutedEventArgs e)
         {
             bool ProfileDataChanged = false;
@@ -85,6 +86,10 @@ namespace DashboardFrontend.DetachedWindows
                 if (!UserSettings.Profiles.Contains(Profile))
                 {
                     UserSettings.Profiles.Add(Profile);
+                    if (UserSettings.ActiveProfile is null)
+                    {
+                        UserSettings.ActiveProfile = Profile;
+                    }
                 }
 
                 if (ProfileDataChanged)
@@ -105,6 +110,9 @@ namespace DashboardFrontend.DetachedWindows
             e.CanExecute = true;
         }
 
+        /// <summary>
+        /// Close window button command binding.
+        /// </summary>
         private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);

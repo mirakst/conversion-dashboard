@@ -27,6 +27,9 @@ namespace DashboardFrontend.DetachedWindows
         private UserSettingsViewModel SettingsViewModel { get; }
         private UserSettings Settings { get; }
 
+        /// <summary>
+        /// Save and close settings, validate input.
+        /// </summary>
         private void Button_SaveAndClose(object sender, RoutedEventArgs e)
         {
             List<bool> inputValidations = new()
@@ -62,7 +65,7 @@ namespace DashboardFrontend.DetachedWindows
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An unexpected error occured while saving settings\n\nDetails\n" + ex.Message);
+                MessageBox.Show("An unexpected error occurred while saving settings\n\nDetails\n" + ex.Message);
             }
         }
 
@@ -71,6 +74,9 @@ namespace DashboardFrontend.DetachedWindows
             Close();
         }
 
+        /// <summary>
+        /// Opens the new profile dialog.
+        /// </summary>
         private void Button_NewProfile(object sender, RoutedEventArgs e)
         {
             NewProfileWindow newProfileWindow = new(SettingsViewModel);
@@ -78,6 +84,9 @@ namespace DashboardFrontend.DetachedWindows
             newProfileWindow.ShowDialog();
         }
 
+        /// <summary>
+        /// Deletes the selected profile.
+        /// </summary>
         private void Button_DeleteProfile(object sender, RoutedEventArgs e)
         {
             Profile? profile = SettingsViewModel.SelectedProfile;
@@ -91,12 +100,20 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// Confirm message box, used to prompt user.
+        /// </summary>
+        /// <param name="message">The message to prompt the user.</param>
+        /// <returns>True, if user confirms.</returns>
         public static bool Confirm(string message)
         {
             MessageBoxResult result = MessageBox.Show(message, "Please confirm", MessageBoxButton.YesNo);
             return result == MessageBoxResult.Yes;
         }
 
+        /// <summary>
+        /// Opens the new profile window with the selected profile, to edit it.
+        /// </summary>
         private void Button_EditProfile(object sender, RoutedEventArgs e)
         {
             if (SettingsViewModel.SelectedProfile is not null)
@@ -106,6 +123,9 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
         
+        /// <summary>
+        /// Sets the active profile to the selected profile.
+        /// </summary>
         private void Button_SetActiveProfile(object sender, RoutedEventArgs e)
         {
             if (SettingsViewModel.SelectedProfile is not null)
@@ -120,6 +140,9 @@ namespace DashboardFrontend.DetachedWindows
             e.CanExecute = true;
         }
 
+        /// <summary>
+        /// The close window command binding.
+        /// </summary>
         private void CommandBinding_Executed_1(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);

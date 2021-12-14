@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Model
 {
     public delegate void ManagerFinished(Manager manager);
@@ -33,15 +31,7 @@ namespace Model
             set
             {
                 _name = value;
-                var splitName = value.Split('.');
-                if (splitName.Contains("managers"))
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.TakeLast(2));
-                }
-                else
-                {
-                    ShortName = "(...)" + string.Join(".", splitName.Skip(4));
-                }
+                ShortName = value.Split(".").Last();
             }
         } //[MANAGER_NAME] from [dbo].[MANAGERS]
         public int ContextId { get; set; }
@@ -59,14 +49,40 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
+                    UpdateValidationScore();
+                    UpdatePerformanceScore();
                 }
             }
         }
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
-        public double Score { get; set; }
+        public double? PerformanceScore { get; set; }
+        public double? ValidationScore { get; set; }
         public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
+
+        private ManagerScore managerScore = new();
         #endregion
+
+        private void UpdateValidationScore()
+        {
+            ValidationScore = managerScore.GetValidationScore(this);
+        }
+
+        private void UpdatePerformanceScore()
+        {
+            PerformanceScore = managerScore.GetPerformanceScore(this);
+        }
+
+        public void AddValidation(ValidationTest v)
+        {
+            Validations.Add(v);
+            UpdateValidationScore();
+        }
+
+        public void OnManagerScoreUpdated(object sender, Manager e)
+        {
+            UpdatePerformanceScore();
+        }
 
         /// <summary>
         /// Adds performance readings to the manager, and ensures that entries are never added twice.

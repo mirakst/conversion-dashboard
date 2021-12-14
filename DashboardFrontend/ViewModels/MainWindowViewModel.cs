@@ -1,10 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace DashboardFrontend.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        public MainWindowViewModel(ListView listViewLog)
+        public MainWindowViewModel(ListView listViewLog, Window window)
         {
             Controller = new(this);
             Controller.InitializeViewModels(listViewLog);
@@ -41,11 +42,24 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(IsRunning));
             }
         }
+        private Visibility _loadingVisibility = Visibility.Collapsed;
+        public Visibility LoadingVisibility
+        {
+            get => _loadingVisibility;
+            set
+            {
+                _loadingVisibility = value;
+                OnPropertyChanged(nameof(LoadingVisibility));
+            }
+        }
         public LogViewModel LogViewModel { get; set; }
         public ValidationReportViewModel ValidationReportViewModel { get; set; }
         public HealthReportViewModel HealthReportViewModel { get; set; }
         public ManagerViewModel ManagerViewModel {  get; set; }
 
+        /// <summary>
+        /// Updates the view of all viewmodels.
+        /// </summary>
         public void UpdateView()
         {
             OnPropertyChanged(nameof(LogViewModel));

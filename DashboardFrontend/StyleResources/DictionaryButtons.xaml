@@ -13,6 +13,9 @@
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="BorderThickness" Value="0,0,0,0"/>
         <Setter Property="Margin" Value="2,2,0,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="ToolTip" Value="Open in new window"/>
+        <Setter Property="ToolTipService.InitialShowDelay" Value="500"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -36,6 +39,7 @@
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="BorderThickness" Value="0,0,0,0"/>
         <Setter Property="Margin" Value="2,2,0,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -101,14 +105,14 @@
         </Setter>
     </Style>
 
-    <Style x:Key="FilterButton" TargetType="Button" >
+    <Style x:Key="FilterButton" TargetType="ToggleButton" >
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="0,2,0,0"/>
         <Setter Property="BorderThickness" Value="0,0,0,0"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border x:Name="Border" Background="{TemplateBinding Background}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
@@ -137,17 +141,41 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="Transparent" TargetName="Border" />
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
-    
+
+    <ControlTemplate x:Key="CopySqlButton" TargetType="Button">
+        <Border Background="{DynamicResource ButtonBackgroundColor}"
+                BorderBrush="{DynamicResource DarkBorderColor}"
+                BorderThickness="1"
+                CornerRadius="5"
+                Name="Border"
+                Cursor="Hand">
+            <ContentPresenter Name="Presenter"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              TextBlock.Foreground="{DynamicResource ForegroundColor}"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Control.Background" Value="{DynamicResource ButtonWindowOnHoverColor}"/>
+                <Setter TargetName="Border" Property="Control.BorderBrush" Value="{DynamicResource ForegroundColor}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Presenter" Property="TextBlock.Foreground" Value="Gray"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <!-- Default design for buttons -->
     <Style x:Key="DefaultButton" TargetType="Button">
         <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundColor}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderColor}"/>
         <Setter Property="Background" Value="{DynamicResource ButtonBackgroundColor}"/>

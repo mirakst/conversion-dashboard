@@ -9,26 +9,29 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
-    public class NetworkChart : BaseChart
+    /// <summary>
+    /// Empty chart template for network delta charts.
+    /// </summary>
+    public class NetworkDeltaChartTemplate : ChartTemplate
     {
-        public ObservableCollection<ObservablePoint> SendValues { get; private set; } = new();
-        public ObservableCollection<ObservablePoint> ReceiveValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> SendDeltaValues { get; private set; } = new();
+        public ObservableCollection<ObservablePoint> ReceiveDeltaValues { get; private set; } = new();
 
-        public NetworkChart()
+        public NetworkDeltaChartTemplate()
         {
-            Type = ChartType.Network;
+            Type = ChartType.NetworkDelta;
 
             Values = new()
             {
-                SendValues,
-                ReceiveValues,
+                SendDeltaValues,
+                ReceiveDeltaValues,
             };
 
             Series = new()
             {
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Send",
+                    Name = "Send delta",
                     Stroke = new SolidColorPaint(new SKColor(92, 84, 219), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(92, 84, 219)),
@@ -36,12 +39,12 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(0).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 Math.Round(e.PrimaryValue, 2) + "GB",
-                    Values=SendValues,
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
+                    Values=SendDeltaValues,
                 },
                 new LineSeries<ObservablePoint>
                 {
-                    Name = "Receive",
+                    Name = "Receive delta",
                     Stroke = new SolidColorPaint(new SKColor(245, 88, 47), 3),
                     Fill = null,
                     GeometryFill = new SolidColorPaint(new SKColor(245, 88, 47)),
@@ -49,10 +52,12 @@ namespace DashboardFrontend.Charts
                     GeometrySize = 3,
                     TooltipLabelFormatter = e => Series?.ElementAt(1).Name + "\n" +
                                                  DateTime.FromOADate(e.SecondaryValue).ToString("HH:mm:ss") + "\n" +
-                                                 Math.Round(e.PrimaryValue, 2) + "GB",
-                    Values=ReceiveValues,
+                                                 Math.Round(e.PrimaryValue, 2) + "MB",
+                    Values=ReceiveDeltaValues,
                 }
             };
+
+            
 
             XAxis = new()
             {
@@ -70,12 +75,10 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "SendReceived",
-                    Labeler = (value) => value.ToString("N0") + "GB",
+                    Name = "Delta",
+                    Labeler = (value) => value.ToString("N0") + "MB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)), 
-                    MinLimit = 0,
-                    MaxLimit = 100,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     Padding = new Padding(0),
                     NamePadding = new Padding(0),
                 }

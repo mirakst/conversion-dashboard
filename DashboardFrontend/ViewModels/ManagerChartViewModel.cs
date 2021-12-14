@@ -10,13 +10,14 @@ using Model;
 
 namespace DashboardFrontend.ViewModels
 {
-    public class ManagerChartViewModel
+    public class ManagerChartViewModel : BaseViewModel
     {
 
         #region Chart objects
-        public DataChart CPUChart { get; private set; } = new(new ManagerChart("load"), false);
-        public DataChart RAMChart { get; private set; } = new(new ManagerChart("load"), false);
-        public List<DataChart> Charts { get; private set; } = new();
+        public ManagerChartWrapper CPUChart { get; private set; } = new(new ManagerChartTemplate("load"), false);
+        public ManagerChartWrapper RAMChart { get; private set; } = new(new ManagerChartTemplate("load"), false);
+        public List<ManagerChartWrapper> Charts { get; private set; } = new();
+        public List<double> FurthestPoints { get; private set; } = new();
         #endregion
 
         public ManagerChartViewModel()
@@ -31,33 +32,37 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be added to the chart <param name="wrapper"></param>
         public void AddChartLinesHelper(ManagerWrapper wrapper)
         {
-            if (wrapper.Manager.CpuReadings.FirstOrDefault()?.Date is DateTime firstCpu)
-            {
-                wrapper.ManagerValues[0] = new(wrapper.Manager.CpuReadings.Select(p => CreatePoint(p, firstCpu)));
-            }
-            if (wrapper.Manager.RamReadings.FirstOrDefault()?.Date is DateTime firstRam)
-            {
-                wrapper.ManagerValues[1] = new(wrapper.Manager.RamReadings.Select(p => CreatePoint(p, firstRam)));
-            }
+            if (wrapper.Manager.CpuReadings.Count < 2) return;
+            DateTime firstCpu = wrapper.Manager.CpuReadings.First().Date;
+            wrapper.ManagerValues[0] = new(wrapper.Manager.CpuReadings.Select(p => CreatePoint(p, firstCpu)));
+            FurthestPoints.Add(wrapper.Manager.CpuReadings.Last().Date.ToOADate() - firstCpu.ToOADate());
+            DateTime firstRam = wrapper.Manager.RamReadings.First().Date;
+            wrapper.ManagerValues[1] = new(wrapper.Manager.RamReadings.Select(p => CreatePoint(p, firstRam)));
 
             int index = 0;
-            foreach (DataChart chart in Charts)
+            foreach (ManagerChartWrapper chart in Charts)
             {
                 chart.AddLine(new LineSeries<ObservablePoint>
                 {
-                    Name = $"{wrapper.Manager.Name.Split(".").Last()}",
+                    Name = $"{wrapper.Manager.ShortName}",
                     Fill = null,
                     Stroke = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString()), 3),
                     GeometryFill = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
                     GeometryStroke = new SolidColorPaint(SKColor.Parse(wrapper.LineColor.Color.ToString())),
                     GeometrySize = 0.4,
-                    TooltipLabelFormatter = e => $"({DateTime.FromOADate(e.SecondaryValue):HH:mm:ss}) {wrapper.Manager.Name.Split(".").Last()} [{wrapper.Manager.ContextId}]: {e.PrimaryValue:P}",
                     LineSmoothness = 0.5,
                     AnimationsSpeed = TimeSpan.FromMilliseconds(200),
                 }, wrapper.ManagerValues[index++]);
             }
+            UpdateView();
         }
-
+        
+        /// <summary>
+        /// Creates a plot point from performance point data, with an offset date.
+        /// </summary>
+        /// <param name="pointData">The data to create the point from.</param>
+        /// <param name="first">The time of the first performance reading during the manager's runtime.</param>
+        /// <returns>A new point with an offset date and the load value.</returns>
         private ObservablePoint CreatePoint(PerformanceMetric pointData, DateTime first)
         {
             double offsetDate = pointData.Date.ToOADate() - first.ToOADate();
@@ -70,10 +75,15 @@ namespace DashboardFrontend.ViewModels
         /// The manager to be removed <param name="manager"></param>
         public void RemoveChartLinesHelper(ManagerWrapper manager)
         {
+            if (manager.Manager.CpuReadings.Count < 2) return;
             for (int i = 0; i < Charts.Count; i++)
             {
                 Charts[i].RemoveData(manager.Manager.Name, manager.ManagerValues[i]);
             }
+            DateTime first = manager.Manager.CpuReadings.First().Date;
+            double offsetDate = manager.Manager.CpuReadings.Last().Date.ToOADate() - first.ToOADate();
+            FurthestPoints.Remove(offsetDate);
+            UpdateView();
         }
 
         /// <summary>
@@ -81,10 +91,26 @@ namespace DashboardFrontend.ViewModels
         /// </summary>
         public void ClearChartLinesHelper()
         {
-            foreach (DataChart chart in Charts)
+            foreach (ManagerChartWrapper chart in Charts)
             {
-                chart.ChartData.Series.Clear();
+                chart.Chart.Series.Clear();
             }
+            FurthestPoints = new();
+            UpdateView();
+        }
+
+        /// <summary>
+        /// Updates the view of the chart.
+        /// </summary>
+        private void UpdateView()
+        {
+            double maxLimit = 0;
+            if (FurthestPoints.Any())
+            {
+                maxLimit = FurthestPoints.Max();
+            }
+            CPUChart.Chart.XAxis[0].MaxLimit = maxLimit;
+            RAMChart.Chart.XAxis[0].MaxLimit = maxLimit;
         }
     }
 }
