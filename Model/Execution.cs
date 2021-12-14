@@ -24,9 +24,12 @@ namespace Model
 
         public event ExecutionProgressUpdated OnExecutionProgressUpdated;
 
-        public int CurrentProgress { get; private set; }
-        public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
-        public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+        public int CurrentProgress { get; private set; }
+
+        public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
+
+        public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+
 
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
@@ -35,25 +38,40 @@ namespace Model
         public TimeSpan? Runtime { get; set; } //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
         private ExecutionStatus _status;
-        public ExecutionStatus Status
-        {
-            get => _status;
-            set
-            {
-                _status = value;
-                if (value is ExecutionStatus.Finished)
-                {
-                    CurrentProgress = 100;
-                }
-                OnExecutionProgressUpdated?.Invoke(CurrentProgress);
-            }
+        public ExecutionStatus Status
+
+        {
+
+            get => _status;
+
+            set
+
+            {
+
+                _status = value;
+
+                if (value is ExecutionStatus.Finished)
+
+                {
+
+                    CurrentProgress = 100;
+
+                }
+
+                OnExecutionProgressUpdated?.Invoke(CurrentProgress);
+
+            }
+
         }
         public ValidationReport ValidationReport { get; set; } = new();
-        public Log Log { get; set; } = new();
-        public int EstimatedManagerCount { get; set; }
+        public Log Log { get; set; } = new();
+
+        public int EstimatedManagerCount { get; set; }
+
         #endregion
 
-        public void AddManager(Manager manager)        {
+        public void AddManager(Manager manager)
+        {
             if (manager.Status == Manager.ManagerStatus.Ok)
             {
                 UpdateProgress(manager);
@@ -63,7 +81,8 @@ namespace Model
                 manager.OnManagerFinished += UpdateProgress;
             }
             Managers.Add(manager);
-        }
+        }
+
         private void UpdateProgress(Manager manager)
         {
             if (EstimatedManagerCount > 0)
@@ -71,8 +90,10 @@ namespace Model
                 CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
             }
             OnExecutionProgressUpdated?.Invoke(CurrentProgress);
-        }
-
+        }
+
+
+
         public override string ToString()
         {
             return $"Execution {Id}: Status={Status} Start={StartTime?.ToString(new CultureInfo("da-DK"))} End={EndTime?.ToString(new CultureInfo("da-DK"))}";
@@ -81,7 +102,8 @@ namespace Model
         public override bool Equals(object obj)
         {
             return (obj as Execution)?.Id == Id;
-        }
+        }
+
         public override int GetHashCode()
         {
             return Id;

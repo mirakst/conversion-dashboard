@@ -1,3 +1,5 @@
+using static Model.ValidationTest;
+
 namespace Model
 {
     public delegate void ManagerFinished(Manager manager);
@@ -50,6 +52,7 @@ namespace Model
                 {
                     OnManagerFinished?.Invoke(this);
                     UpdateValidationScore();
+                    UpdatePerformanceScore();
                 }
             }
         }
@@ -62,7 +65,17 @@ namespace Model
 
         private void UpdateValidationScore()
         {
-            
+            double OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
+            double TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
+            ValidationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
+        }
+
+        public void UpdatePerformanceScore()
+        {
+            if (Runtime.HasValue && Runtime.Value.TotalSeconds > 0)
+            {
+                PerformanceScore = (RowsWritten ?? 0 / Runtime.Value.TotalSeconds) * 0.01;
+            }
         }
 
         public void AddValidation(ValidationTest v)
