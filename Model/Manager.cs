@@ -107,6 +107,11 @@ namespace Model
             UpdateValidationScore();
         }
 
+        public void OnManagerScoreUpdated(object sender, Manager e)
+        {
+            UpdatePerformanceScore();
+        }
+
         /// <summary>
         /// Adds performance readings to the manager, and ensures that entries are never added twice.
         /// </summary>

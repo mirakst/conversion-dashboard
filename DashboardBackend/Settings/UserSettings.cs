@@ -7,6 +7,8 @@ using System.ComponentModel;
 
 namespace DashboardBackend.Settings
 {
+    public delegate void SettingsChanged();
+        
     public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
         private readonly string _fileName = "UserSettings.json";
@@ -52,7 +54,7 @@ namespace DashboardBackend.Settings
         public bool HasActiveProfile => ActiveProfile is not null;
         // For JSON serialization
         public int ActiveProfileId => ActiveProfile?.Id ?? 0;
-
+        public event SettingsChanged SettingsChanged;
         public void OnSettingsChange()
         {
             SettingsChanged?.Invoke();
