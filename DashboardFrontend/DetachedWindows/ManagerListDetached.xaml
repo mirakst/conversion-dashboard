@@ -151,7 +151,7 @@
                                       HorizontalScrollBarVisibility="Hidden"
                                       HorizontalAlignment="Left"
                                       PreviewKeyDown="DatagridManagersRemove_PreviewKeyDown" 
-                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick" SelectionChanged="DatagridManagerDetails_SelectionChanged">
+                                      MouseDoubleClick="DatagridManagersRemove_MouseDoubleClick">
 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ID"
