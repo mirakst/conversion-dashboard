@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestLog
+    public class LogTests
     {
         [Fact]
         public void Equals_DiffrentLogWithNoParameters_ReturnsTrue()

@@ -317,10 +317,6 @@ namespace DashboardFrontend
                 if (data.Any())
                 {
                     Conversion.HealthReport = DataHandler.GetParsedHealthReport(data, Conversion.HealthReport);
-                    var (cpuReadings, ramReadings, networkReadings) = DataHandler.GetParsedHealthReportReadings(data, Conversion.HealthReport);
-                    Conversion.HealthReport.Cpu.Readings.AddRange(cpuReadings);
-                    Conversion.HealthReport.Ram.Readings.AddRange(ramReadings);
-                    Conversion.HealthReport.Network.Readings.AddRange(networkReadings);
                     Conversion.LastHealthReportUpdated = DateTime.Now;
                 }
                 ClearStatusMessage(DashboardStatus.UpdatingHealthReport);

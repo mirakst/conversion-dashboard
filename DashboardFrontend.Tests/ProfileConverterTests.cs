@@ -1,11 +1,10 @@
 ﻿using Xunit;
 using DashboardFrontend.ValueConverters;
-using DashboardFrontend.Settings;
-
+using DashboardBackend.Settings;
 
 namespace DashboardFrontend.Tests
 {
-    public class TestProfileConverter
+    public class ProfileConverterTests
     {
         [Fact]
         public void Convert_ProfileAsInput_ReturnsTrue()
@@ -19,7 +18,6 @@ namespace DashboardFrontend.Tests
 
             //Assert
             Assert.True(result);
-
         }
     }
 }

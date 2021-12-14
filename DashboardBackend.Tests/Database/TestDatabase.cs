@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DashboardBackend.Tests.Database
 {
-    public class TestDatabase : IDatabaseHandler
+    public class TestDatabase : IDatabase
     {
         public List<AfstemningEntry> QueryAfstemninger(DateTime minDate)
         {
@@ -237,145 +237,21 @@ namespace DashboardBackend.Tests.Database
                 {
                     Context = string.Empty,
                     ContextId = 0,
-                    ExecutionId= 0
+                    ExecutionId = 0
                 },
                 new LoggingContextEntry()
                 {
                     Context = string.Empty,
                     ContextId = 1,
-                    ExecutionId= 0
+                    ExecutionId = 0
                 },
                 new LoggingContextEntry()
                 {
                     Context = string.Empty,
                     ContextId = 1,
-                    ExecutionId= 1
+                    ExecutionId = 1
                 }
             }.FindAll(e => e.ExecutionId == executionId);
-        }
-
-        public List<HealthReportEntry> QueryHealthReport()
-        {
-            return new List<HealthReportEntry>()
-            {
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "Hostname",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = null,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = null,
-                    ReportKey = "Monitor Name",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = null,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "CPU Name",
-                    ReportStringValue = "CPU",
-                    ReportNumericValue = null,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "PhysicalCores",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 100,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "CPU Max frewuency",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 100,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "Total",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 100,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "Interface 0: Name",
-                    ReportStringValue = "Interface",
-                    ReportNumericValue = null,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "Interface 0: MAC address",
-                    ReportStringValue = "MAC address",
-                    ReportNumericValue = null,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = String.Empty,
-                    ReportKey = "Interface 0; Speed",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 100,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-            };
         }
 
         public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
@@ -393,16 +269,16 @@ namespace DashboardBackend.Tests.Database
                 new EnginePropertyEntry()
                 {
                     Manager = "ManagerTwo",
-                    Key = String.Empty,
-                    Value = String.Empty,
+                    Key = "START_TIME",
+                    Value = "01-01-2020 12:00:00",
                     Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
                 new EnginePropertyEntry()
                 {
-                    Manager = "ManagerThree,longassboithatisnotgoingtoshowitsfullname",
-                    Key = String.Empty,
-                    Value = String.Empty,
+                    Manager = "ManagerThree,rnd-xxxxx",
+                    Key = "START_TIME",
+                    Value = "01-01-2020 12:00:00",
                     Timestamp = DateTime.Parse("01-01-2020 12:00:00"),
                     RunNo = null,
                 },
@@ -433,221 +309,6 @@ namespace DashboardBackend.Tests.Database
             }.FindAll(e => e.Timestamp >= minDate);
         }
 
-        public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
-        {
-            return new List<HealthReportEntry>()
-            {
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "CPU",
-                    ReportKey = String.Empty,
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "MEMORY",
-                    ReportKey = String.Empty,
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "CPU",
-                    ReportKey = String.Empty,
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "MEMORY",
-                    ReportKey = String.Empty,
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send (Delta)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send (Speed)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received (Delta)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received (Speed)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 10,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send (Delta)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Send (Speed)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received (Delta)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                },
-                new HealthReportEntry()
-                {
-                    RowNo = null,
-                    MonitorNo = null,
-                    ExecutionId = 1,
-                    ReportType = "NETWORK",
-                    ReportKey = "Interface 0: Bytes Received (Speed)",
-                    ReportStringValue = String.Empty,
-                    ReportNumericValue = 20,
-                    ReportValueType = String.Empty,
-                    ReportValueHuman = String.Empty,
-                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
-                }
-            }.FindAll(e => e.LogTime >= minDate);
-        }
-
         public List<LoggingContextEntry> QueryManagers()
         {
             return new List<LoggingContextEntry>()
@@ -671,6 +332,338 @@ namespace DashboardBackend.Tests.Database
                     Context = "ManagerThree,longassnamethatisnotshown",
                 }
             };
+        }
+
+        public List<HealthReportEntry> QueryHealthReport(DateTime minDate)
+        {
+            return new List<HealthReportEntry>()
+            {
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "INIT",
+                    ReportKey = "Hostname",
+                    ReportStringValue = "Host 1",
+                    ReportNumericValue = null,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "INIT",
+                    ReportKey = "Monitor Name",
+                    ReportStringValue = "Monitor 1",
+                    ReportNumericValue = null,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "CPU_INIT",
+                    ReportKey = "CPU Name",
+                    ReportStringValue = "CPU 1",
+                    ReportNumericValue = null,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "CPU_INIT",
+                    ReportKey = "PhysicalCores",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 100,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "CPU_INIT",
+                    ReportKey = "CPU Max frequency",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 100,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "MEMORY_INIT",
+                    ReportKey = "TOTAL",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 40000000000,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK_INIT",
+                    ReportKey = "Interface 0: Name",
+                    ReportStringValue = "Interface 1",
+                    ReportNumericValue = null,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK_INIT",
+                    ReportKey = "Interface 0: MAC address",
+                    ReportStringValue = "MAC address 1",
+                    ReportNumericValue = null,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType ="NETWORK_INIT",
+                    ReportKey = "Interface 0: Speed",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 100,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "CPU",
+                    ReportKey = "LOAD",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "MEMORY",
+                    ReportKey = "AVAILABLE",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20000000000,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "CPU",
+                    ReportKey = "LOAD",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "MEMORY",
+                    ReportKey = "AVAILABLE",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10000000000,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send (Delta)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send (Speed)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received (Delta)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received (Speed)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 10,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 12:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send (Delta)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Send (Speed)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received (Delta)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                },
+                new HealthReportEntry()
+                {
+                    RowNo = 1,
+                    MonitorNo = 1,
+                    ExecutionId = 1,
+                    ReportType = "NETWORK",
+                    ReportKey = "Interface 0: Bytes Received (Speed)",
+                    ReportStringValue = String.Empty,
+                    ReportNumericValue = 20,
+                    ReportValueType = String.Empty,
+                    ReportValueHuman = String.Empty,
+                    LogTime = DateTime.Parse("01-01-2020 13:00:00"),
+                }
+            }.FindAll(e => e.LogTime >= minDate);
         }
     }
 }

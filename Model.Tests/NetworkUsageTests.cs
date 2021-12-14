@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestNetworkUsage
+    public class NetworkUsageTests
     {
         [Fact]
         public void Equals_DiffrentNetworkUsage_ReturnTrue()

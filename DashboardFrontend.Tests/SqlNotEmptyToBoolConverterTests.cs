@@ -3,7 +3,7 @@ using DashboardFrontend.ValueConverters;
 
 namespace DashboardFrontend.Tests
 {
-    public class TestSqlNotEmptyToBoolConverter
+    public class SqlNotEmptyToBoolConverterTests
     {
         [Fact]
         public void Convert_NullStringAsInput_ReturnsFalse()

@@ -2,7 +2,7 @@
 
 namespace Model.Tests
 {
-    public class TestNetwork
+    public class NetworkTests
     {
         [Fact]
         public void Equals_DiffrentNetworkWithSameParameters_ReturnTrue()

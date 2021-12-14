@@ -1,11 +1,9 @@
-﻿using DashboardFrontend.Settings;
+﻿using DashboardBackend.Settings;
 using Xunit;
-
-
 
 namespace DashboardFrontend.Tests
 {
-    public class TestProfile
+    public class ProfileTests
     {
         [Fact]
         public void BuildConnectionString_ProfileConnectionStringAsInput_ResultEqualsStringTrue()
@@ -19,7 +17,6 @@ namespace DashboardFrontend.Tests
 
             //Assert
             Assert.Equal(expected, actual);
-
         }
 
         [Fact]

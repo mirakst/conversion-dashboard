@@ -66,8 +66,20 @@ namespace Model
                 }
             }
         }
-        public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
+        public TimeSpan? Runtime
+        {
+            get => _runtime; 
+            set
+            {
+                _runtime = value;
+                if (value is not null)
+                {
+                    UpdatePerformanceScore();
+                }
+            }
+        }
         private ManagerStatus _status;
+        private TimeSpan? _runtime;
         public ManagerStatus Status
         {
             get => _status;
@@ -87,7 +99,6 @@ namespace Model
         public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
-        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
 
         private void UpdateValidationScore()
         {

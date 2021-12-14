@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestLogMessages
+    public class LogMessageTests
     {
         [Fact]
         public void Equals_DiffrentLogMessageWithSameParameters_ReturnsTrue()

@@ -7,13 +7,12 @@ using static Model.ValidationTest;
 
 namespace DashboardFrontend.Tests
 {
-    public class TestValidationTestCountToImageConverter
+    public class ValidationTestCountToImageConverterTests
     {
         [Theory]
         [InlineData(ValidationStatus.Ok, "/Icons/ValidationOk.png")]
         [InlineData(ValidationStatus.Disabled, "/Icons/ValidationDisabled.png")]
         [InlineData(ValidationStatus.Failed, "/Icons/ValidationFailed.png")]
-
         public void Convert_ManagerObservableAsInput_ResultEqualsStringTrue(ValidationStatus status, string expected)
         {   
             //Arrange
@@ -27,7 +26,6 @@ namespace DashboardFrontend.Tests
 
             //Assert
             Assert.Equal(expected, actual);
-
         }
     }
 }

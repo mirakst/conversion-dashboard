@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestExecution
+    public class ExecutionTests
     {
         [Fact]
         public void Equals_DiffrentExecutionsWithSameIdAndStartTime_ReturnsTrue()

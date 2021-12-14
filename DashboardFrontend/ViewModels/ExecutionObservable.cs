@@ -33,7 +33,7 @@ namespace DashboardFrontend.ViewModels
                 FailedTotalCount += manager.FailedCount;
                 DisabledTotalCount += manager.DisabledCount;
                 OkTotalCount += manager.OkCount;
-                TotalCount += manager.TotalCount;
+                TotalCount += manager.Validations.Count;
             }
         }
 

@@ -16,6 +16,11 @@ namespace Model
             Available = available;
         }
 
+        public RamLoad(int executionId, double load, long available, DateTime date)
+            : this(executionId, available, date)
+        {
+            Load = load;
+        }
 
         public long Available;
         

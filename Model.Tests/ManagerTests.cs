@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestManager
+    public class ManagerTests
     {
         [Fact]
         public void Equal_DiffrentManagerWithSameParametersIdExecutionIdAndName_ReturnsTrue()

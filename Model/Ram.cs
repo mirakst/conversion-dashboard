@@ -14,11 +14,23 @@
 
         public long? Total { get; set; } //bytes //From [REPORT_NUMERIC_VALUE] in [dbo].[HEALTH_REPORT], where [REPORT_KEY] = 'TOTAL'.
         //The property above can be gathered from the list of entries in [dbo].[HEALTH_REPORT], where [REPORT_TYPE] = 'CPU_INIT'.
-        private readonly List<RamLoad> _readings = new();
-        public List<RamLoad> Readings
+        public List<RamLoad> Readings { get; set; } = new();
+
+        public void AddReading(RamLoad reading)
         {
-            get => _readings;
-            set => _readings.AddRange(value);
+            if ((reading.Load == 0 && reading.Available != 0) && Total.HasValue && Total.Value > 0)
+            {
+                reading.Load = 1 - (double)reading.Available / Total.Value;
+            }
+            Readings.Add(reading);
+        }
+
+        public void AddReadings(IEnumerable<RamLoad> readings)
+        {
+            foreach (var reading in readings)
+            {
+                AddReading(reading);
+            }
         }
 
         public override string ToString()

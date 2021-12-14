@@ -16,7 +16,6 @@ namespace Model
         }
 
         public DateTime DateModified { get; set; } //DateTime.Now when configuration is updated.
-        public bool IsInitialized { get; set; } //If the conversion has been built.
         public List<Execution> Executions { get; set; } //Created on new entry in [dbo].[EXECUTIONS]
         public Execution ActiveExecution  => Executions.LastOrDefault();
         public DateTime LastExecutionQuery { get; set; }
@@ -32,7 +31,7 @@ namespace Model
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, DateModified);
+            return HashCode.Combine(AllManagers, DateModified);
         }
 
         public override bool Equals(object obj)
@@ -43,7 +42,7 @@ namespace Model
             return GetHashCode() == other.GetHashCode();
         }
 
-        public void AddExecution(Execution execution)
+        public Conversion AddExecution(Execution execution)
         {
             if (ActiveExecution != null)
             {

@@ -79,20 +79,6 @@ namespace DashboardBackend.Database
         }
 
         /// <inheritdoc/>
-        public List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate)
-        {
-            using NetcompanyDbContext db = new(_options);
-            var queryResult = db.HealthReports
-                                .Where(e => e.LogTime > minDate)
-                                .Where(e => e.ReportType == "CPU"
-                                         || e.ReportType == "NETWORK"
-                                         || e.ReportType == "MEMORY")
-                                .OrderBy(e => e.LogTime);
-
-            return queryResult.ToList();
-        }
-
-        /// <inheritdoc/>
         public List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate)
         {
             using NetcompanyDbContext db = new(_options);

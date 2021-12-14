@@ -2,7 +2,7 @@
 
 namespace Model.Tests
 {
-    public class TestCpu
+    public class CpuTests
     {
         [Fact]
         public void Equals_DifferentCpuWithSameNameCoresAndMaxFrequency_ReturnsTrue()

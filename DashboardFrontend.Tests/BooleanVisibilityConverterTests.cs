@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 namespace DashboardFrontend.Tests
 {
-    public class TestBooleanVisibilityConverter
+    public class BooleanVisibilityConverterTests
     {
         [Fact]  
         public void Convert_TrueAsInput_ReturnsVisible()

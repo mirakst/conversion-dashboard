@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 
 namespace Model
 {
-    public class ValidationTest
+    public class ValidationTest : INotifyPropertyChanged
     {
         public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
@@ -16,7 +17,14 @@ namespace Model
             SrcSql = srcSql;
             DstSql = dstSql;
         }
-        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public enum ValidationStatus
+        {
+            Failed, FailMismatch, Disabled, Ok
+        }
+
         private bool _isSelected;
         public bool IsSelected
         {

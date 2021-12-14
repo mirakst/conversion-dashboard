@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestValidationTest
+    public class ReconciliationTests
     {
         [Fact]
         public void Equals_DiffrentValidationTestWithSameParameters_ReturnTrue()

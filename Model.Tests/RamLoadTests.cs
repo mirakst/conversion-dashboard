@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestRamLoad
+    public class RamLoadTests
     {
         [Fact]
         public void Equals_DiffrentRamLoadWithSameParameters_ReturnTrue()

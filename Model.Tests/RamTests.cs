@@ -2,7 +2,7 @@
 
 namespace Model.Tests
 {
-    public class TestRam
+    public class RamTests
     {
         [Fact]
         public void Equals_DiffrentRamWithSameParameters_ReturnTrue()

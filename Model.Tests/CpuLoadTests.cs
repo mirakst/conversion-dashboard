@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Model.Tests
 {
-    public class TestCpuload
+    public class CpuLoadTests
     {
         [Fact]
         public void Equals_DiffrentCpuLoadWithSameExecutionIdLoadAndDate_ReturnsTrue()

@@ -1,13 +1,12 @@
 ﻿using Xunit;
 using DashboardFrontend.ValueConverters;
 using System;
-using DashboardFrontend.ViewModels;
 using Model;
 using static Model.ValidationTest;
 
 namespace DashboardFrontend.Tests
 {
-    public class TestValidationStatusToImageConverter
+    public class ValidationStatusToImageConverterTests
     {
         [Theory]
         [InlineData(ValidationStatus.Ok, "/Icons/ValidationOk.png")]

@@ -50,14 +50,6 @@ namespace DashboardBackend.Database
         List<HealthReportEntry> QueryHealthReport(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified DateTime, 
-        /// where REPORT_TYPE is either 'CPU', 'NETWORK' or 'MEMORY'.
-        /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of system performance readings no older than the specified DateTime</returns>
-        List<HealthReportEntry> QueryPerformanceReadings(DateTime minDate);
-
-        /// <summary>
         /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database.
         /// </summary>
         /// <returns>A list of manager data.</returns>

@@ -124,7 +124,11 @@ namespace DashboardFrontend.ViewModels
         /// <param name="validationReport">The Validation Report to get data from.</param>
         public void UpdateData(List<Execution> executions)
         {
-            Executions = new(executions.ToList().Select(e => new ExecutionObservable(e, this)));
+            Executions.Clear();
+            for (int i = 0; i < executions.Count; i++)
+            {
+                Executions.Add(new ExecutionObservable(executions[i], this));
+            }
             if (SelectedExecution is null)
             {
                 SelectedExecution = Executions.Last();
