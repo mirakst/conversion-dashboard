@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class CpuLoad : PerformanceMetric
     {
@@ -13,7 +15,22 @@
 
         public override string ToString()
         {
-            return $"{Date.ToLongTimeString()}: {Load}%";
+            return $"{Date.ToString(new CultureInfo("da-DK"))}: {Load}%";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExecutionId, Load, Date);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not CpuLoad other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

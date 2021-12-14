@@ -6,6 +6,7 @@ namespace DashboardFrontend.ValueConverters
 {
     public class SqlNotEmptyToBoolConverter : IValueConverter
     {
+        /// <returns>True, if value is not an empty string.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is string sql && sql != string.Empty;

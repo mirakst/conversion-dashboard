@@ -7,6 +7,10 @@ namespace DashboardFrontend.ValueConverters
 {
     public class CountToVisibilityConverter : IValueConverter
     {
+        /// <summary>
+        /// A converter for the visibility of UI elements.
+        /// </summary>
+        /// <returns>True if value > 1, otherwise false.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (int)value > 1 ? Visibility.Visible : Visibility.Collapsed;

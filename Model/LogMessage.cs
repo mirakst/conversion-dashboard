@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class LogMessage
     {
@@ -34,7 +36,22 @@
 
         public override string ToString()
         {
-            return $"{Date} [{Type}]: {Content}";
+            return $"{Date.ToString(new CultureInfo("da-DK"))} [{Type}]: {Content}";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Date, Content.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not LogMessage other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

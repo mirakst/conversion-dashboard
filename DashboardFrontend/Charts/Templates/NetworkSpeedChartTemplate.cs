@@ -9,6 +9,9 @@ using SkiaSharp;
 
 namespace DashboardFrontend.Charts
 {
+    /// <summary>
+    /// Empty chart template for network speed charts.
+    /// </summary>
     public class NetworkSpeedChartTemplate : ChartTemplate
     {
         public ObservableCollection<ObservablePoint> SendSpeedValues { get; private set; } = new();

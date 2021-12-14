@@ -19,6 +19,9 @@ namespace DashboardFrontend.DetachedWindows
             WorkerSupportsCancellation = true
         };
 
+        /// <summary>
+        /// Opens a dialog to attempt to receive username and password for connection.
+        /// </summary>
         private void OnButtonConnectDBClick(object sender, RoutedEventArgs e)
         {
             ButtonConnectDb.IsEnabled = false;
@@ -38,12 +41,18 @@ namespace DashboardFrontend.DetachedWindows
             Worker.RunWorkerAsync();
         }
 
+        /// <summary>
+        /// Connecting to database cancelled.
+        /// </summary>
         private void OnButtonBackClick(object sender, RoutedEventArgs e)
         {
             Worker.CancelAsync();
             Close();
         }
 
+        /// <summary>
+        /// Attempt connecting to the database.
+        /// </summary>
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             using SqlConnection conn = new(UserSettings.ActiveProfile!.ConnectionString);
@@ -59,6 +68,9 @@ namespace DashboardFrontend.DetachedWindows
             }
         }
 
+        /// <summary>
+        /// When connected to database.
+        /// </summary>
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ControlLoadingAnim.Visibility = Visibility.Collapsed;

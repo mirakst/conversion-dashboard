@@ -44,7 +44,7 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Assigns the managerwrapper with a random color using RGB.
+        /// Assigns the <see cref="ManagerWrapper"/> with a random color using RGB.
         /// </summary>
         /// <returns></returns>
         public Color RandomColor()

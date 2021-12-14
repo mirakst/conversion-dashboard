@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
-using DashboardFrontend.ViewModels;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
-using Model;
 
 namespace DashboardFrontend.Charts
 {

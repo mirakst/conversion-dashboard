@@ -11,6 +11,10 @@ namespace DashboardFrontend.ValidationRules
     {
         public string ValidDataType { get; set; }
 
+        /// <summary>
+        /// Checks if the input data type matches the valid data types.
+        /// </summary>
+        /// <returns>A validation result based on the success of the validation test.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             string inputStr = value.ToString();
@@ -21,7 +25,7 @@ namespace DashboardFrontend.ValidationRules
                     bool result = int.TryParse(inputStr, out int intVal);
                     return result ? new ValidationResult(true, null) : new ValidationResult(false, $"Input must be of type: Int16");
             }
-            throw new ArgumentException("The specified data type is either not implemented or it is spelt incorrectly in the assignment");
+            throw new ArgumentException("The specified data type is either not implemented or it is spelled incorrectly in the assignment");
         }
     }
 }

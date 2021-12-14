@@ -7,6 +7,7 @@ namespace DashboardFrontend.ValueConverters
 {
     public class ProfileConverter : IValueConverter
     {
+        /// <returns>True, if value is a profile.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is Profile;

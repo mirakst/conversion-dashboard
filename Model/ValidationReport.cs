@@ -19,5 +19,20 @@
             set => _validationTests.AddRange(value);
         }
         #endregion Properties
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(LastModified.GetHashCode(), ValidationTests.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ValidationReport other)
+                return false;
+            else if (ValidationTests.Count == 0 && other.ValidationTests.Count == 0)
+                return true;
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }

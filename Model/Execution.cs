@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public delegate void ExecutionProgressUpdated(Execution execution);
 
@@ -10,7 +12,6 @@
             Id = id;
             StartTime = startTime;
             Status = ExecutionStatus.Started;
-            ManagerScore.MaxPerformanceScore.Add(0);
         }
         #endregion
 
@@ -24,8 +25,11 @@
         public event ExecutionProgressUpdated OnExecutionProgressUpdated;
 
         public int CurrentProgress { get; private set; }
+
         public List<Manager> Managers { get; set; } = new();  //From [dbo].[MANAGERS], where [EXECUTIONS_ID] = Id.
+
         public DateTime LastUpdatedManagers { get; set; } = (DateTime)System.Data.SqlTypes.SqlDateTime.MinValue;
+
 
         #region Properties
         public int Id { get; } //From [EXECUTION_ID] in [dbo].[EXECUTIONS].
@@ -34,58 +38,49 @@
         public TimeSpan? Runtime { get; set; } //EndTime.Subtract(StartTime)
         public int RowsReadTotal { get; set; } //OnExecutionFinished, for each manager, RowsReadTotal += RowsRead.
         private ExecutionStatus _status;
-        public ExecutionStatus Status
-        {
-            get => _status;
-            set
-            {
-                _status = value;
-                if (value is ExecutionStatus.Finished)
-                {
-                    CurrentProgress = 100;
-                }
-                OnExecutionProgressUpdated?.Invoke(this);
-            }
+        public ExecutionStatus Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                if (value is ExecutionStatus.Finished)
+                {
+                    CurrentProgress = 100;
+                }
+                OnExecutionProgressUpdated?.Invoke(this);
+            }
         }
         public ValidationReport ValidationReport { get; set; } = new();
-        public Log Log { get; set; } = new();
-        public int EstimatedManagerCount { get; set; }
-        private readonly ManagerScore _managerScore = new();
+        public Log Log { get; set; } = new();
+        public int EstimatedManagerCount { get; set; }
         #endregion
 
-        public void AddManager(Manager manager)
-        {
-            if (manager.Status == Manager.ManagerStatus.Ok)
-            {
-                UpdateProgress(manager);
-            }
-            else
-            {
-                manager.OnManagerFinished += UpdateProgress;
-            }
-            Managers.Add(manager);
-        }
-
-        private void UpdateProgress(Manager manager)
-        {
-            lock (Managers)
-            {
-                foreach (var fucking in Managers)
-                {
-                    fucking.PerformanceScore = _managerScore.GetPerformanceScore(fucking);
-                    fucking.ValidationScore = _managerScore.GetValidationScore(fucking);
-                }
-            }
-            if (EstimatedManagerCount > 0)
-            {
-                CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
-            }
-            OnExecutionProgressUpdated?.Invoke(this);
-        }
-
+        public void AddManager(Manager manager)
+        {
+            if (manager.Status == Manager.ManagerStatus.Ok)
+            {
+                UpdateProgress(manager);
+            }
+            else
+            {
+                manager.OnManagerFinished += UpdateProgress;
+            }
+            Managers.Add(manager);
+        }
+
+        private void UpdateProgress(Manager manager)
+        {
+            if (EstimatedManagerCount > 0)
+            {
+                CurrentProgress = (int)Math.Floor((double)manager.ContextId / (double)EstimatedManagerCount * 100);
+            }
+            OnExecutionProgressUpdated?.Invoke(this);
+        }
+
         public override string ToString()
         {
-            return $"Execution {Id}: Status={Status} Start={StartTime} End={EndTime}";
+            return $"Execution {Id}: Status={Status} Start={StartTime?.ToString(new CultureInfo("da-DK"))} End={EndTime?.ToString(new CultureInfo("da-DK"))}";
         }
 
         public override bool Equals(object obj)

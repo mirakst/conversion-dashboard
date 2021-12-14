@@ -11,7 +11,7 @@ using SkiaSharp;
 namespace DashboardFrontend.Charts
 {
     /// <summary>
-    /// The ViewModel class for Performance monitoring.
+    /// Empty chart template for performance (CPU/RAM) charts.
     /// </summary>
     public class PerformanceChartTemplate : ChartTemplate
     {

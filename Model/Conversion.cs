@@ -4,7 +4,6 @@ namespace Model
 {
     public class Conversion
     {
-        #region Constructors
         public Conversion()
         {
             Executions = new();
@@ -15,14 +14,11 @@ namespace Model
             LastManagerQuery = (DateTime)SqlDateTime.MinValue;
             LastValidationsQuery = (DateTime)SqlDateTime.MinValue;
         }
-        #endregion
 
-        #region Properties
         public DateTime DateModified { get; set; } //DateTime.Now when configuration is updated.
         public bool IsInitialized { get; set; } //If the conversion has been built.
         public List<Execution> Executions { get; set; } //Created on new entry in [dbo].[EXECUTIONS]
         public Execution ActiveExecution  => Executions.LastOrDefault();
-
         public DateTime LastExecutionQuery { get; set; }
         public DateTime LastLogQuery { get; set; }
         public DateTime LastManagerQuery { get; set; }
@@ -31,13 +27,23 @@ namespace Model
         public DateTime LastManagerUpdated { get; set; }
         public DateTime LastHealthReportUpdated { get; set; }
         public DateTime LastValidationsUpdated { get; set; }
-
         public List<Manager> AllManagers { get; set; }
         public HealthReport HealthReport { get; set; }
 
-        #endregion
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, DateModified);
+        }
 
-        public Conversion AddExecution(Execution execution)
+        public override bool Equals(object obj)
+        {
+            if (obj is not Conversion other)
+                    return false;
+
+            return GetHashCode() == other.GetHashCode();
+        }
+
+        public void AddExecution(Execution execution)
         {
             if (ActiveExecution != null)
             {

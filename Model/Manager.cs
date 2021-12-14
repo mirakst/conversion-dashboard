@@ -18,7 +18,6 @@ namespace Model
 
         public event ManagerFinished OnManagerFinished;
 
-        #region Properties     
         public List<ValidationTest> Validations { get; set; } = new();
         public List<CpuLoad> CpuReadings { get; set; } = new();
         public List<RamLoad> RamReadings { get; set; } = new();
@@ -88,28 +87,27 @@ namespace Model
         public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
-        private ManagerScore _managerScore = new();
-        #endregion
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
 
         private void UpdateValidationScore()
         {
-            ValidationScore = _managerScore.GetValidationScore(this);
+            double OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
+            double TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
+            ValidationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
-        private void UpdatePerformanceScore()
+        public void UpdatePerformanceScore()
         {
-            PerformanceScore = _managerScore.GetPerformanceScore(this);
+            if (Runtime.HasValue && Runtime.Value.TotalSeconds > 0)
+            {
+                PerformanceScore = (RowsWritten ?? 0 / Runtime.Value.TotalSeconds) * 0.01;
+            }
         }
 
         public void AddValidation(ValidationTest v)
         {
             Validations.Add(v);
             UpdateValidationScore();
-        }
-
-        public void OnManagerScoreUpdated(object sender, Manager e)
-        {
-            UpdatePerformanceScore();
         }
 
         /// <summary>
