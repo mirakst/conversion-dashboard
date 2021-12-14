@@ -208,7 +208,7 @@ namespace DashboardFrontend
         /// The method also updates the status of managers when possible.
         /// </summary>
         /// <param name="message">The log message to parse.</param>
-        private void ParseLogMessage(LogMessage message)
+        public void ParseLogMessage(LogMessage message)
         {
             if (Conversion?.Executions.Find(e => e.Id == message.ExecutionId) is Execution exec)
             {
@@ -425,8 +425,13 @@ namespace DashboardFrontend
             await Task.Delay(delay);
             if (_vm is not null && _vm.CurrentStatus == _statusMessages[status])
             {
-                _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
+                await Task.Delay(delay);
+                if (_vm.CurrentStatus == _statusMessages[status])
+                {
+                    _vm.CurrentStatus = _statusMessages[DashboardStatus.Idle];
+                }
             }
+
         }
 
         /// <summary>

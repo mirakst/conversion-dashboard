@@ -52,7 +52,6 @@ namespace Model
                 {
                     OnManagerFinished?.Invoke(this);
                     UpdateValidationScore();
-                    UpdatePerformanceScore();
                 }
             }
         }

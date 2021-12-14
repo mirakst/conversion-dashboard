@@ -38,6 +38,19 @@ namespace Model
 
         #endregion
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, DateModified);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Conversion other)
+                    return false;
+
+            return GetHashCode() == other.GetHashCode();
+        }
+
         public void AddExecution(Execution execution)
         {
             if (ActiveExecution != null)

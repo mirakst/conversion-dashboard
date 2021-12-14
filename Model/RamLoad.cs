@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class RamLoad : PerformanceMetric
     {
@@ -18,7 +20,22 @@
         #endregion Properties
         public override string ToString()
         {
-            return $"{Date.ToLongTimeString()}: {Load} bytes";
+            return $"{Date.ToString(new CultureInfo("da-DK"))}: {Load:P} bytes";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ExecutionId, Load, Date, Available);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not RamLoad other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

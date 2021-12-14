@@ -29,5 +29,20 @@
         {
             return $"ADAPTER NAME: {Name}\nMAC ADDRESS: {MacAddress}\nSPEED: {Speed} bps";
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name == null ? 0 : Name.GetHashCode(),
+                                    MacAddress == null ? 0 : MacAddress.GetHashCode(),
+                                    Speed == null ? 0 : Speed.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Network other)
+                return false;
+
+            return GetHashCode() == other.GetHashCode();
+        }
     }
 }
