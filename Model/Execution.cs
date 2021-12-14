@@ -10,6 +10,7 @@
             Id = id;
             StartTime = startTime;
             Status = ExecutionStatus.Started;
+            ManagerScore.MaxPerformanceScore.Add(0);
         }
         #endregion
 

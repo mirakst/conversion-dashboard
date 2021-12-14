@@ -28,7 +28,7 @@ namespace DashboardBackend.Parsers
                         result.Cpu.Cores = Convert.ToInt32(entry.ReportNumericValue ?? 0);
                         break;
                     case "CPU_INIT" when entry.ReportKey == "CPU Max frequency":
-                        result.Cpu.MaxFrequency = Convert.ToInt32(entry.ReportNumericValue ?? 0);
+                        result.Cpu.MaxFrequency = Convert.ToInt64(entry.ReportNumericValue ?? 0);
                         break;
                     #endregion
                     #region RAM data

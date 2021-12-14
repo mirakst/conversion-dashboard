@@ -65,7 +65,6 @@ namespace Model
                         Runtime = value.Value.Subtract(StartTime.Value);
                     }
                 }
-
             }
         }
         public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
@@ -79,15 +78,28 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
+                    UpdateValidationScore();
+                    UpdatePerformanceScore();
                 }
             }
         }
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
-        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
+        private ManagerScore _managerScore = new();
         #endregion
+
+        private void UpdateValidationScore()
+        {
+            ValidationScore = _managerScore.GetValidationScore(this);
+        }
+
+        private void UpdatePerformanceScore()
+        {
+            PerformanceScore = _managerScore.GetPerformanceScore(this);
+        }
 
         public void AddValidation(ValidationTest v)
         {
@@ -120,16 +132,6 @@ namespace Model
             {
                 RamReadings.AddRange(ramReadings);
             }
-        }
-
-        /// <summary>
-        /// Calculates the managers validation score
-        /// </summary>
-        private void UpdateValidationScore()
-        {
-            double OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
-            double TotalCount = Validations.Count;
-            ValidationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
         public override string ToString()

@@ -1,7 +1,10 @@
-﻿namespace Model
+﻿using System.ComponentModel;
+
+namespace Model
 {
-    public class ValidationTest
+    public class ValidationTest : INotifyPropertyChanged
     {
+        private bool _isSelected;
         #region Constructors
         public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
@@ -34,8 +37,19 @@
         public int? ToolkitId { get; }
         public string SrcSql { get; }
         public string DstSql { get; }
+        public bool IsSelected
+        {
+            get => _isSelected; 
+            set
+            {
+                _isSelected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion Properties
-        
+
         public override string ToString()
         {
             return $"({Date}) {Name}: {Status}\n[src={SrcCount},dst={DstCount},toolkit={ToolkitId}]\nSrc sql: {SrcSql}\nDst sql: {DstSql}";

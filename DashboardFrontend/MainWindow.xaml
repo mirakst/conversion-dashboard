@@ -707,11 +707,13 @@
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="MinHeight" Value="25"/>
-                                            <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
                                                     <Setter Property="Focusable" Value="False"/>
                                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>

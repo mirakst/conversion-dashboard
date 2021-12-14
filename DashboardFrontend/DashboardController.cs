@@ -207,12 +207,8 @@ namespace DashboardFrontend
                                     newExecution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
                                 }
                                 Conversion.AddExecution(newExecution);
+                                Conversion.LastValidationsUpdated = DateTime.Now;
                             }
-                        }
-                        // Also add new log messages to their respective execution's log
-                        foreach (Execution? execution in Conversion.Executions)
-                        {
-                            execution.Log.Messages.AddRange(newData.Where(m => m.ExecutionId == execution.Id));
                         }
                     }
                     lock (Conversion.AllManagers)
@@ -239,6 +235,22 @@ namespace DashboardFrontend
                                     Trace.WriteLine($"Did not find execution for manager: {newManager.ShortName}, ContextID={newManager.ContextId}, ExecutionID={newManager.ExecutionId}");
                                 }
                             }
+                        }
+                    }
+                    lock (Conversion.Executions)
+                    {
+                        // Also add new log messages to their respective execution's log
+                        foreach (Execution? execution in Conversion.Executions)
+                        {
+                            var execMessages = newData.Where(m => m.ExecutionId == execution.Id);
+                            foreach (var msg in execMessages)
+                            {
+                                if (execution.Managers.Find(m => m.ContextId == msg.ContextId) is Manager mgr)
+                                {
+                                    msg.ManagerName = mgr.ShortName;
+                                }
+                            }
+                            execution.Log.Messages.AddRange(newData.Where(m => m.ExecutionId == execution.Id));
                         }
                     }
                     Conversion.LastLogUpdated = DateTime.Now;
@@ -426,6 +438,7 @@ namespace DashboardFrontend
                                 {
                                     execution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
                                 }
+                                Conversion.LastValidationsUpdated = DateTime.Now;
                             }
                         }
                     }
@@ -571,7 +584,7 @@ namespace DashboardFrontend
                 {
                     continue;
                 }
-                foreach (ValidationReportViewModel vm in ValidationReportViewModels)
+                foreach (ValidationReportViewModel vm in ValidationReportViewModels.ToList())
                 {
                     if (vm.LastUpdated < Conversion.LastValidationsUpdated)
                     {
@@ -582,7 +595,7 @@ namespace DashboardFrontend
                         });
                     }
                 }
-                foreach (LogViewModel vm in LogViewModels)
+                foreach (LogViewModel vm in LogViewModels.ToList())
                 {
                     if (vm.LastUpdated <= Conversion.LastLogUpdated)
                     {
@@ -593,7 +606,7 @@ namespace DashboardFrontend
                         });
                     }
                 }
-                foreach (ManagerViewModel vm in ManagerViewModels)
+                foreach (ManagerViewModel vm in ManagerViewModels.ToList())
                 {
                     if (vm.LastUpdated <= Conversion?.LastManagerUpdated)
                     {
@@ -604,7 +617,7 @@ namespace DashboardFrontend
                         });
                     }
                 }
-                foreach (HealthReportViewModel vm in HealthReportViewModels)
+                foreach (HealthReportViewModel vm in HealthReportViewModels.ToList())
                 {
                     if (vm.LastUpdated <= Conversion.LastHealthReportUpdated)
                     {

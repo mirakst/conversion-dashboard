@@ -110,8 +110,8 @@ namespace DashboardBackend
         /// <returns>A list of log messages, matching the supplied constraints.</returns>
         public Tuple<List<Manager>, List<Execution>> GetParsedLogData(List<LogMessage> messages)
         {
-            var result = _logParser.Parse(messages);
-            return result;
+            var tuple = _logParser.Parse(messages);
+            return tuple;
         }
 
         /// <summary>

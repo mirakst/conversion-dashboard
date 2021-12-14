@@ -30,10 +30,10 @@ namespace DashboardFrontend.ViewModels
                 manager.ValidationView.Filter = vm.OnValidationsFilter;
                 manager.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Status), ListSortDirection.Ascending));
                 manager.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Date), ListSortDirection.Descending));
-                FailedTotalCount += manager.Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-                DisabledTotalCount += manager.Validations.Count(v => v.Status is ValidationStatus.Disabled);
-                OkTotalCount += manager.Validations.Count(v => v.Status is ValidationStatus.Ok);
-                TotalCount += manager.Validations.Count;
+                FailedTotalCount += manager.FailedCount;
+                DisabledTotalCount += manager.DisabledCount;
+                OkTotalCount += manager.OkCount;
+                TotalCount += manager.TotalCount;
             }
         }
 

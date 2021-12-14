@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Data;
 using static Model.ValidationTest;
+using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -25,17 +26,16 @@ namespace DashboardFrontend.ViewModels
         private CollectionView _validationView;
         public CollectionView ValidationView
         {
-            get => _validationView; 
+            get => _validationView;
             set
             {
                 _validationView = value;
                 OnPropertyChanged(nameof(ValidationView));
-            }
+            } 
         }
         public string Name { get; private set; }
         public int ContextId { get; private set; }
         private bool _isChecked = true;
-
         public bool IsChecked
         {
             get => _isChecked;
@@ -45,7 +45,6 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(IsChecked));
             }
         }
-
         public System.DateTime? StartTime { get; private set; }
         public double? PerformanceScore { get; private set; }
         public double? ValidationScore { get; private set; }

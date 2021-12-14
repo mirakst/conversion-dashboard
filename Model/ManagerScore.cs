@@ -7,7 +7,9 @@ namespace Model
 {
     public class ManagerScore
     {
-        public double MaxPerformanceScore { get; private set; }
+        public event EventHandler<Manager> MaxManagerScoreUpdated;
+
+        public static List<double> MaxPerformanceScore { get; private set; } = new();
 
         /// <summary>
         /// Calculates the managers performance score
@@ -16,14 +18,16 @@ namespace Model
         /// <returns></returns>
         public double GetPerformanceScore(Manager manager)
         {
+            MaxManagerScoreUpdated += manager.OnManagerScoreUpdated;
             double score = CalculatePerformanceScore(manager);
 
-            if (score > MaxPerformanceScore)
+            if (score > MaxPerformanceScore[0/* manager.ExecutionId*/])
             {
-                MaxPerformanceScore = score;
+                MaxPerformanceScore[0/* manager.ExecutionId*/] = score;
+                MaxManagerScoreUpdated?.Invoke(this, manager);
             }
 
-            return PerformanceScoreToPercent(score);
+            return PerformanceScoreToPercent(score, 0 /* manager.ExecutionId */);
         }
 
         /// <summary>
@@ -34,21 +38,21 @@ namespace Model
         public double GetValidationScore(Manager manager)
         {
             double OkCount = manager.Validations.Count(v => v.Status is ValidationStatus.Ok);
-            double TotalCount = manager.Validations.Count;
+            double TotalCount = manager.Validations.Count(v => v.Status is not ValidationStatus.Disabled);
             return TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
         private double CalculatePerformanceScore(Manager manager)
         {
-            if (manager.Runtime.HasValue && manager.RowsWritten.HasValue)
-                return (double)(manager.RowsWritten) / manager.Runtime.Value.TotalSeconds;
+            if (manager.Runtime.HasValue)
+                return (double)(manager.RowsRead + manager.RowsWritten) / manager.Runtime.Value.Seconds;
             else
                 return 0;
         }
 
-        private double PerformanceScoreToPercent(double performanceScore)
+        private double PerformanceScoreToPercent(double performanceScore, int execution)
         {
-            return (performanceScore / MaxPerformanceScore) * 100;
+            return (performanceScore / MaxPerformanceScore[execution]) * 100;
         }
     }
 }
