@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Diagnostics;
+
+namespace Model
 {
     public class HealthReport 
     {
@@ -48,6 +50,32 @@
         {
             return $"SYSTEM INFO:\nHOSTNAME: {HostName}\nMONITOR NAME: {MonitorName}\n"+
                    $"CPU: {Cpu}\nNETWORK: {Network}\nRAM: {Ram}";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(HostName == null ? 0 : HostName.GetHashCode(),
+                                    MonitorName == null ? 0 : MonitorName.GetHashCode(),
+                                    Cpu == null ? 0 : Cpu.GetHashCode(),
+                                    Network == null ? 0 : Network.GetHashCode(),
+                                    Ram == null ? 0 : Ram.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not HealthReport other)
+            {
+                return false;
+            }
+
+            bool tempCpu = Cpu.Readings == null && other.Cpu.Readings == null ? true : Cpu.Readings.SequenceEqual(other.Cpu.Readings);
+            bool tempRam = Ram.Readings == null && other.Ram.Readings == null ? true : Ram.Readings.SequenceEqual(other.Ram.Readings);
+            bool tempNetwork = Network.Readings == null || other.Network.Readings == null ? true : Network.Readings.SequenceEqual(other.Network.Readings);
+
+            return GetHashCode() == other.GetHashCode()
+                   && tempCpu
+                   && tempRam
+                   && tempNetwork;
         }
     }
 }

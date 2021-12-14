@@ -26,9 +26,24 @@
 
         #endregion Properties
 
-    public override string ToString()
+        public override string ToString()
         {
             return $"CPU NAME: {Name}\nCPU CORES: {Cores}\nCPU MAX FREQUENCY: {MaxFrequency} Hz";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name == null ? 0 : Name.GetHashCode(),
+                                    Cores == null ? 0 : Cores.GetHashCode(),
+                                    MaxFrequency == null ? 0 : MaxFrequency.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Cpu other)
+                return false;
+
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }

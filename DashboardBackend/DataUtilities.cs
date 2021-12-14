@@ -1,4 +1,4 @@
-﻿using DashboardBackend.Database;
+using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
@@ -134,11 +134,9 @@ namespace DashboardBackend
         public static List<LogMessage> GetLogMessages() => GetLogMessages(SqlMinDateTime);
 
         /// <summary>
-        /// Queries the state database for managers added since the specified minimum date.
-        /// 
+        /// Queries the state database for managers.
         /// </summary>
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
-        /// <param name="minDate"></param>
         /// <param name="allManagers"></param>
         public static int GetAndUpdateManagers(DateTime minDate, List<Manager> allManagers)
         {
@@ -152,7 +150,7 @@ namespace DashboardBackend
                 entry.Manager = name;
             }
 
-            // For each entry: Find the associated manager and add the value to it. 
+            // For each entry: Find the associated manager and add the value to it.
             // If the manager exists but already has all values set, it must be the same manager in a new execution.
             // In this case, we create the manager again, but for the other execution (since it may receive a different context ID).
             foreach (var entry in engineEntries)
@@ -209,6 +207,7 @@ namespace DashboardBackend
                         }
                     }
                     break;
+
                 case "END_TIME":
                     if (DateTime.TryParse(entry.Value, out DateTime endTime))
                     {
@@ -220,12 +219,14 @@ namespace DashboardBackend
                         }
                     }
                     break;
+
                 case "Læste rækker":
                     if (int.TryParse(entry.Value, out int rowsRead))
                     {
                         manager.RowsRead = rowsRead;
                     }
                     break;
+
                 case "Skrevne rækker":
                     if (int.TryParse(entry.Value, out int rowsWritten))
                     {
@@ -339,7 +340,6 @@ namespace DashboardBackend
                 "FATAL" => LogMessageType.Fatal,
                 _ => LogMessageType.None,
             };
-
             if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
             {
                 if (type.HasFlag(LogMessageType.Error))
@@ -351,7 +351,6 @@ namespace DashboardBackend
                     type = LogMessageType.Validation;
                 }
             }
-
             return type;
         }
 
@@ -422,23 +421,23 @@ namespace DashboardBackend
                 distinctReports.Add(entries.Skip(i).Take(6).ToList());
             }
 
-            List<NetworkUsage> result = new();
-            foreach (var item in distinctReports)
-            {
-                int? execId = item.Find(i => i.ExecutionId.HasValue)?.ExecutionId.Value;
-                DateTime? logTime = item.Find(i => i.LogTime.HasValue)?.LogTime.Value;
-                long bytesSend = item.Find(e => e.ReportKey == "Interface 0: Bytes Send")?.ReportNumericValue ?? 0;
-                long bytesSendDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)")?.ReportNumericValue ?? 0;
-                long bytesSendSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)")?.ReportNumericValue ?? 0;
-                long bytesReceived = item.Find(e => e.ReportKey == "Interface 0: Bytes Received")?.ReportNumericValue ?? 0;
-                long bytesReceivedDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)")?.ReportNumericValue ?? 0;
-                long bytesReceivedSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)")?.ReportNumericValue ?? 0;
-
-                if (execId.HasValue && logTime.HasValue)
-                {
-                    result.Add(new NetworkUsage(execId.Value, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime.Value));
-                }
-            }
+            List<NetworkUsage> result = new();
+            foreach (var item in distinctReports)
+            {
+                int? execId = item.Find(i => i.ExecutionId.HasValue)?.ExecutionId.Value;
+                DateTime? logTime = item.Find(i => i.LogTime.HasValue)?.LogTime.Value;
+                long bytesSend = item.Find(e => e.ReportKey == "Interface 0: Bytes Send")?.ReportNumericValue ?? 0;
+                long bytesSendDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Delta)")?.ReportNumericValue ?? 0;
+                long bytesSendSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Send (Speed)")?.ReportNumericValue ?? 0;
+                long bytesReceived = item.Find(e => e.ReportKey == "Interface 0: Bytes Received")?.ReportNumericValue ?? 0;
+                long bytesReceivedDelta = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Delta)")?.ReportNumericValue ?? 0;
+                long bytesReceivedSpeed = item.Find(e => e.ReportKey == "Interface 0: Bytes Received (Speed)")?.ReportNumericValue ?? 0;
+
+                if (execId.HasValue && logTime.HasValue)
+                {
+                    result.Add(new NetworkUsage(execId.Value, bytesSend, bytesSendDelta, bytesSendSpeed, bytesReceived, bytesReceivedDelta, bytesReceivedSpeed, logTime.Value));
+                }
+            }
             return result;
         }
     }

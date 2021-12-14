@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System.Globalization;
+
+namespace Model
 {
     public class ValidationTest
     {
@@ -38,7 +40,22 @@
         
         public override string ToString()
         {
-            return $"({Date}) {Name}: {Status}\n[src={SrcCount},dst={DstCount},toolkit={ToolkitId}]\nSrc sql: {SrcSql}\nDst sql: {DstSql}";
+            return $"({Date.ToString(new CultureInfo("da-DK"))}) {Name}: {Status}\n[src={SrcCount},dst={DstCount},toolkit={ToolkitId}]\nSrc sql: {SrcSql}\nDst sql: {DstSql}";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Date, Name, ManagerName, Status, SrcCount, DstCount);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ValidationTest other)
+            {
+                return false;
+            }
+
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }
