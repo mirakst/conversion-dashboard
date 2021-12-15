@@ -20,7 +20,7 @@ namespace DashboardBackend.Tests
                 new Execution(2, DateTime.Parse("01-01-2020 13:00:00")),
             };
 
-            var actual = dataHandler.GetExecutions(DateTime.Parse("01-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedExecutions(DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
         }
@@ -30,7 +30,7 @@ namespace DashboardBackend.Tests
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var actual = dataHandler.GetExecutions(DateTime.Parse("02-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedExecutions(DateTime.Parse("02-01-2020 12:00:00"));
 
             Assert.Empty(actual);
         }
@@ -41,7 +41,7 @@ namespace DashboardBackend.Tests
             var dataHandler = new DataHandler { Database = new TestDatabase() };
             var expected = 2;
 
-            var actual = dataHandler.GetExecutions(DateTime.MinValue).FindAll(e => e.Id == 1);
+            var actual = dataHandler.GetParsedExecutions(DateTime.MinValue).FindAll(e => e.Id == 1);
 
             Assert.Equal(expected, actual.Count);
         }
@@ -74,7 +74,7 @@ namespace DashboardBackend.Tests
                                    "dstSql")
             };
 
-            var actual = dataHandler.GetValidations(DateTime.Parse("01-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedValidations(DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
         }
@@ -85,7 +85,7 @@ namespace DashboardBackend.Tests
             var dataHandler = new DataHandler { Database = new TestDatabase() };
             var expected = 2;
 
-            var actual = dataHandler.GetValidations(DateTime.Parse("01-01-2020 10:00:00")).FindAll(a => a.Name == "validationOne").Count;
+            var actual = dataHandler.GetParsedValidations(DateTime.Parse("01-01-2020 10:00:00")).FindAll(a => a.Name == "validationOne").Count;
 
             Assert.Equal(expected, actual);
         }
@@ -95,7 +95,7 @@ namespace DashboardBackend.Tests
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var actual = dataHandler.GetValidations(DateTime.Parse("02-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedValidations(DateTime.Parse("02-01-2020 12:00:00"));
 
             Assert.Empty(actual);
         }
@@ -145,7 +145,7 @@ namespace DashboardBackend.Tests
                                DateTime.Parse("01-01-2020 16:00:00")),
             };
 
-            var actual = dataHandler.GetLogMessages(DateTime.MinValue);
+            var (actual, _, _) = dataHandler.GetParsedLogData(DateTime.MinValue);
 
             Assert.Equal(expected, actual);
         }
@@ -155,7 +155,7 @@ namespace DashboardBackend.Tests
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var actual = dataHandler.GetLogMessages(DateTime.Parse("02-01-2020 12:00:00"));
+            var (actual, _, _) = dataHandler.GetParsedLogData(DateTime.Parse("02-01-2020 12:00:00"));
 
             Assert.Empty(actual);
         }
@@ -178,7 +178,7 @@ namespace DashboardBackend.Tests
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var result = dataHandler.GetManagers(DateTime.Parse("01-01-2020 10:00:00"));
+            var result = dataHandler.GetParsedManagers(DateTime.Parse("01-01-2020 10:00:00"));
 
             var managers = Assert.IsType<List<Manager>>(result);
             Assert.Collection(managers,
@@ -194,7 +194,7 @@ namespace DashboardBackend.Tests
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var actual = dataHandler.GetManagers(DateTime.Parse("02-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedManagers(DateTime.Parse("02-01-2020 12:00:00"));
 
             Assert.Empty(actual);
         }
@@ -226,9 +226,8 @@ namespace DashboardBackend.Tests
                 }
             };
             healthReport.Ram.AddReading(new RamLoad(1, 5, DateTime.Parse("01-01-2020 11:00:00")));
-            List<HealthReportEntry> entries = dataHandler.GetHealthReportEntries(DateTime.MinValue);
 
-            healthReport = dataHandler.GetParsedHealthReport(entries, healthReport);
+            healthReport = dataHandler.GetParsedHealthReport(DateTime.MinValue, healthReport);
 
             Assert.NotNull(healthReport);
             Assert.Equal("Host 1", healthReport.HostName);
@@ -255,9 +254,8 @@ namespace DashboardBackend.Tests
         public void GetParsedHealthReport_HasAllDataFromDb_UpdatesValuesInHealthReport()
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
-            var entries = dataHandler.GetHealthReportEntries(DateTime.MinValue);
             
-            var result = dataHandler.GetParsedHealthReport(entries, new HealthReport());
+            var result = dataHandler.GetParsedHealthReport(DateTime.MinValue, new HealthReport());
 
             Assert.NotNull(result);
             Assert.IsType<HealthReport>(result);

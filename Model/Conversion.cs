@@ -15,7 +15,6 @@ namespace Model
             LastValidationsQuery = (DateTime)SqlDateTime.MinValue;
         }
 
-        public DateTime DateModified { get; set; } //DateTime.Now when configuration is updated.
         public List<Execution> Executions { get; set; } //Created on new entry in [dbo].[EXECUTIONS]
         public Execution ActiveExecution  => Executions.LastOrDefault();
         public DateTime LastExecutionQuery { get; set; }
@@ -24,14 +23,13 @@ namespace Model
         public DateTime LastValidationsQuery { get; set; }
         public DateTime LastLogUpdated { get; set; }
         public DateTime LastManagerUpdated { get; set; }
-        public DateTime LastHealthReportUpdated { get; set; }
         public DateTime LastValidationsUpdated { get; set; }
         public List<Manager> AllManagers { get; set; }
         public HealthReport HealthReport { get; set; }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(AllManagers, DateModified);
+            return HashCode.Combine(AllManagers, Executions);
         }
 
         public override bool Equals(object obj)

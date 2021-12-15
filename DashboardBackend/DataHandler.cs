@@ -2,10 +2,6 @@
 using DashboardBackend.Database.Models;
 using Model;
 using System.Data.SqlTypes;
-using System.Text.RegularExpressions;
-using static Model.LogMessage;
-using static Model.ValidationTest;
-using static Model.Manager;
 using DashboardBackend.Parsers;
 using Microsoft.EntityFrameworkCore;
 using DashboardBackend.Settings;
@@ -14,15 +10,19 @@ namespace DashboardBackend
 {
     public class DataHandler : IDataHandler
     {
-        private readonly IDataParser<LogMessage, Tuple<List<Manager>, List<Execution>>> _logParser;
+        private readonly IDataParser<LoggingEntry, Tuple<List<LogMessage>, List<Manager>, List<Execution>>> _logParser;
         private readonly IDataParser<EnginePropertyEntry, List<Manager>> _managerParser;
         private readonly IDataParser<HealthReportEntry, HealthReport> _healthReportParser;
+        private readonly IDataParser<AfstemningEntry, List<ValidationTest>> _reconciliationParser;
+        private readonly IDataParser<ExecutionEntry, List<Execution>> _executionParser;
 
         public DataHandler()
         {
             _logParser = new LogMessageParser();
             _managerParser = new ManagerParser();
+            _executionParser = new ExecutionParser();
             _healthReportParser = new HealthReportParser();
+            _reconciliationParser = new ReconciliationParser();
         }
 
         public IDatabase Database { get; set; }
@@ -42,15 +42,10 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of executions, matching the supplied constraints.</returns>
-        public List<Execution> GetExecutions(DateTime minDate)
+        public List<Execution> GetParsedExecutions(DateTime minDate)
         {
-            List<ExecutionEntry> queryResult = Database.QueryExecutions(minDate);
-
-            return (from item in queryResult
-                    let executionId = (int)item.ExecutionId.Value
-                    let created = item.Created.Value
-                    select new Execution(executionId, created))
-                    .ToList();
+            List<ExecutionEntry> data = Database.QueryExecutions(minDate);
+            return _executionParser.Parse(data);
         }
 
         /// <summary>
@@ -59,22 +54,10 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of validation tests, matching the supplied constraints.</returns>
-        public List<ValidationTest> GetValidations(DateTime minDate)
+        public List<ValidationTest> GetParsedValidations(DateTime minDate)
         {
-            List<AfstemningEntry> queryResult = Database.QueryAfstemninger(minDate);
-
-            return (from item in queryResult
-                    let date = item.Afstemtdato
-                    let name = item.Description
-                    let managerName = item.Manager
-                    let status = GetValidationStatus(item)
-                    let srcCount = item.Srcantal
-                    let dstCount = item.Dstantal
-                    let toolkitId = item.ToolkitId
-                    let srcSql = item.SrcSql
-                    let dstSql = item.DstSql
-                    select new ValidationTest(date, name, status, managerName, srcCount, dstCount, toolkitId, srcSql, dstSql))
-                    .ToList();
+            List<AfstemningEntry> data = Database.QueryAfstemninger(minDate);
+            return _reconciliationParser.Parse(data);
         }
 
         /// <summary>
@@ -83,30 +66,10 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The minimum DateTime for the query results.</param>
         /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public List<LogMessage> GetLogMessages(DateTime minDate)
+        public Tuple<List<LogMessage>, List<Manager>, List<Execution>> GetParsedLogData(DateTime minDate)
         {
-            List<LoggingEntry> queryResult = Database.QueryLogMessages(minDate);
-
-            return (from item in queryResult
-                    let content = Regex.Replace(item.LogMessage, @"\u001b\[\d*;?\d+m", "")
-                    let type = GetLogMessageType(item, content)
-                    let contextId = (int)item.ContextId.Value
-                    let executionId = (int)item.ExecutionId.Value
-                    let created = item.Created.Value
-                    select new LogMessage(content, type, contextId, executionId, created))
-                    .ToList();
-        }
-
-        /// <summary>
-        /// Queries the state database for log messages newer than minDate, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <returns>A list of log messages, matching the supplied constraints.</returns>
-        public Tuple<List<Manager>, List<Execution>> GetParsedLogData(List<LogMessage> messages)
-        {
-            var tuple = _logParser.Parse(messages);
-            return tuple;
+            List<LoggingEntry> entries = Database.QueryLogMessages(minDate);
+            return _logParser.Parse(entries);
         }
 
         /// <summary>
@@ -116,7 +79,7 @@ namespace DashboardBackend
         /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
         /// <param name="minDate"></param>
         /// <param name="allManagers"></param>
-        public List<Manager> GetManagers(DateTime minDate)
+        public List<Manager> GetParsedManagers(DateTime minDate)
         {
             List<EnginePropertyEntry> engineEntries = Database.QueryEngineProperties(minDate);
             return _managerParser.Parse(engineEntries);
@@ -127,71 +90,10 @@ namespace DashboardBackend
             return Database.QueryLoggingContext(executionId).Count;
         }
 
-        /// <summary>
-        /// Returns the type of the log message parameter 'entry'.
-        /// </summary>
-        /// <param name="entry">A single entry from the [LOGGING] table in the state database.</param>
-        /// <returns>A log message type besed on the enum in the log message class.</returns>
-        /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal log message type.</exception>
-        private LogMessageType GetLogMessageType(LoggingEntry entry, string content)
+        public HealthReport GetParsedHealthReport(DateTime minDate, HealthReport healthReport)
         {
-            var type = entry.LogLevel switch
-            {
-                "INFO" => LogMessageType.Info,
-                "WARN" => LogMessageType.Warning,
-                "ERROR" => LogMessageType.Error,
-                "FATAL" => LogMessageType.Fatal,
-                _ => LogMessageType.None,
-            };
-
-            if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
-            {
-                if (type.HasFlag(LogMessageType.Error))
-                {
-                    type |= LogMessageType.Validation;
-                }
-                else
-                {
-                    type = LogMessageType.Validation;
-                }
-            }
-
-            return type;
-        }
-
-        /// <summary>
-        /// Returns the status of the validation test parameter 'entry'.
-        /// </summary>
-        /// <param name="entry">A single entry from the [AFSTEMNING] table in the state database.</param>
-        /// <returns>A validation status based on the enum in the validation class.</returns>
-        /// <exception cref="ArgumentException">Thrown if the parameter passed is not a legal validation status.</exception>
-        private ValidationStatus GetValidationStatus(AfstemningEntry entry)
-        {
-            return entry.Afstemresultat switch
-            {
-                "OK" => ValidationStatus.Ok,
-                "DISABLED" => ValidationStatus.Disabled,
-                "FAILED" => ValidationStatus.Failed,
-                "FAIL MISMATCH" => ValidationStatus.FailMismatch,
-                _ => throw new ArgumentException(nameof(entry) + " is not a known validation test result.")
-            };
-        }
-
-        /// <summary>
-        /// Builds the system model health report with CPU, Memory and Network, 
-        /// by use of entries with report_type ending on 'INIT'.
-        /// </summary>
-        /// <param name="entries">A list of Health Report entries from the state database.</param>
-        /// <returns>A Health Report initialized with system info.</returns>
-        public List<HealthReportEntry> GetHealthReportEntries(DateTime minDate)
-        {
-            List<HealthReportEntry> result = Database.QueryHealthReport(minDate);
-            return result;
-        }
-
-        public HealthReport GetParsedHealthReport(List<HealthReportEntry> data, HealthReport healthReport)
-        {
-            var parsed = _healthReportParser.Parse(data);
+            List<HealthReportEntry> entries = Database.QueryHealthReport(minDate);
+            var parsed = _healthReportParser.Parse(entries);
             // Check for any info updates
             if (parsed.HostName != string.Empty || healthReport.HostName is null)
             {

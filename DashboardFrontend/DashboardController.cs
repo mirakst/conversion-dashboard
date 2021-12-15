@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using DashboardBackend;
 using DashboardBackend.Settings;
 using DashboardFrontend.DetachedWindows;
@@ -183,11 +184,10 @@ namespace DashboardFrontend
                 }
                 SetStatusMessage(DashboardStatus.UpdatingLog);
 
-                List<LogMessage> newData = DataHandler.GetLogMessages(Conversion.LastLogQuery);
+                (List<LogMessage> messages, List<Manager> managers, List<Execution> executions) = DataHandler.GetParsedLogData(Conversion.LastLogQuery);
                 Conversion.LastLogQuery = DateTime.Now;
-                (List<Manager> managers, List<Execution> executions) = DataHandler.GetParsedLogData(newData);
 
-                if (newData.Any())
+                if (messages.Any())
                 {
                     lock (Conversion.Executions)
                     {
@@ -242,7 +242,7 @@ namespace DashboardFrontend
                         // Also add new log messages to their respective execution's log
                         foreach (Execution? execution in Conversion.Executions)
                         {
-                            var execMessages = newData.Where(m => m.ExecutionId == execution.Id);
+                            var execMessages = messages.Where(m => m.ExecutionId == execution.Id);
                             foreach (var msg in execMessages)
                             {
                                 if (execution.Managers.Find(m => m.ContextId == msg.ContextId) is Manager mgr)
@@ -250,7 +250,7 @@ namespace DashboardFrontend
                                     msg.ManagerName = mgr.ShortName;
                                 }
                             }
-                            execution.Log.Messages.AddRange(newData.Where(m => m.ExecutionId == execution.Id));
+                            execution.Log.Messages.AddRange(messages.Where(m => m.ExecutionId == execution.Id));
                         }
                     }
                     Conversion.LastLogUpdated = DateTime.Now;
@@ -272,7 +272,7 @@ namespace DashboardFrontend
                 }
                 SetStatusMessage(DashboardStatus.UpdatingValidations);
 
-                List<ValidationTest> newData = DataHandler.GetValidations(Conversion.LastValidationsQuery);
+                List<ValidationTest> newData = DataHandler.GetParsedValidations(Conversion.LastValidationsQuery);
                 Conversion.LastValidationsQuery = DateTime.Now;
                 newData.AddRange(_homelessValidations);
                 _homelessValidations.Clear();
@@ -311,14 +311,9 @@ namespace DashboardFrontend
                 }
                 SetStatusMessage(DashboardStatus.UpdatingHealthReport);
 
-                var data = DataHandler.GetHealthReportEntries(Conversion.HealthReport.LastModified);
+                Conversion.HealthReport = DataHandler.GetParsedHealthReport(Conversion.HealthReport.LastModified, Conversion.HealthReport);
                 Conversion.HealthReport.LastModified = DateTime.Now;
 
-                if (data.Any())
-                {
-                    Conversion.HealthReport = DataHandler.GetParsedHealthReport(data, Conversion.HealthReport);
-                    Conversion.LastHealthReportUpdated = DateTime.Now;
-                }
                 ClearStatusMessage(DashboardStatus.UpdatingHealthReport);
             }
         }
@@ -336,7 +331,7 @@ namespace DashboardFrontend
                 }
                 SetStatusMessage(DashboardStatus.UpdatingManagers);
 
-                List<Manager> managers = DataHandler.GetManagers(Conversion.LastManagerQuery);
+                List<Manager> managers = DataHandler.GetParsedManagers(Conversion.LastManagerQuery);
                 Conversion.LastManagerQuery = DateTime.Now;
 
                 if (managers.Any())
@@ -414,7 +409,7 @@ namespace DashboardFrontend
                 }
                 SetStatusMessage(DashboardStatus.UpdatingExecutions);
 
-                List<Execution> executions = DataHandler.GetExecutions(Conversion.LastExecutionQuery);
+                List<Execution> executions = DataHandler.GetParsedExecutions(Conversion.LastExecutionQuery);
                 Conversion.LastExecutionQuery = DateTime.Now;
 
                 if (executions.Any())
@@ -615,7 +610,7 @@ namespace DashboardFrontend
                 }
                 foreach (HealthReportViewModel vm in HealthReportViewModels.ToList())
                 {
-                    if (vm.LastUpdated <= Conversion.LastHealthReportUpdated)
+                    if (vm.LastUpdated <= Conversion.HealthReport.LastModified)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
