@@ -52,11 +52,13 @@ namespace DashboardBackend.Settings
         public bool HasActiveProfile => ActiveProfile is not null;
         public int ActiveProfileId => ActiveProfile?.Id ?? 0; // For JSON serialization
 
+        /// <inheritdoc/>
         public void OnSettingsChange()
         {
             SettingsChanged?.Invoke();
         }
 
+        /// <inheritdoc/>
         public bool HasEventListeners()
         {
             return SettingsChanged != null;

@@ -1,13 +1,15 @@
 ﻿using DashboardBackend.Database;
 using DashboardBackend.Database.Models;
 using Model;
-using System.Data.SqlTypes;
 using DashboardBackend.Parsers;
 using Microsoft.EntityFrameworkCore;
 using DashboardBackend.Settings;
 
 namespace DashboardBackend
 {
+    /// <summary>
+    /// Handles getting information from the state database and transforming it into models used by the Dashboard system through a list of <see cref="IDataParser{TInput, TOutput}"/> classes.
+    /// </summary>
     public class DataHandler : IDataHandler
     {
         private readonly IDataParser<LoggingEntry, Tuple<List<LogMessage>, List<Manager>, List<Execution>>> _logParser;
@@ -26,8 +28,8 @@ namespace DashboardBackend
         }
 
         public IDatabase Database { get; set; }
-        protected DateTime SqlMinDateTime => SqlDateTime.MinValue.Value;
 
+        /// <inheritdoc/>
         public void SetupDatabase(Profile profile)
         {
             DbContextOptions<NetcompanyDbContext> options = new DbContextOptionsBuilder<NetcompanyDbContext>()
@@ -36,60 +38,41 @@ namespace DashboardBackend
             Database = new EntityFrameworkDb(options);
         }
 
-        /// <summary>
-        /// Queries the state database for executions newer than minDate, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <returns>A list of executions, matching the supplied constraints.</returns>
+        /// <inheritdoc/>
         public List<Execution> GetParsedExecutions(DateTime minDate)
         {
             List<ExecutionEntry> data = Database.QueryExecutions(minDate);
             return _executionParser.Parse(data);
         }
 
-        /// <summary>
-        /// Queries the state database for validation tests newer than minDate, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <returns>A list of validation tests, matching the supplied constraints.</returns>
+        /// <inheritdoc/>
         public List<ValidationTest> GetParsedValidations(DateTime minDate)
         {
             List<AfstemningEntry> data = Database.QueryAfstemninger(minDate);
             return _reconciliationParser.Parse(data);
         }
 
-        /// <summary>
-        /// Queries the state database for log messages newer than minDate, 
-        /// then creates a list of them for the system model, which is returned.
-        /// </summary>
-        /// <param name="minDate">The minimum DateTime for the query results.</param>
-        /// <returns>A list of log messages, matching the supplied constraints.</returns>
+        /// <inheritdoc/>
         public Tuple<List<LogMessage>, List<Manager>, List<Execution>> GetParsedLogData(DateTime minDate)
         {
             List<LoggingEntry> entries = Database.QueryLogMessages(minDate);
             return _logParser.Parse(entries);
         }
 
-        /// <summary>
-        /// Queries the state database for managers added since the specified minimum date.
-        /// 
-        /// </summary>
-        /// <remarks>The ENGINE_PROPERTIES table is used since it contains all managers and their values, and it is periodically updated.</remarks>
-        /// <param name="minDate"></param>
-        /// <param name="allManagers"></param>
+        /// <inheritdoc/>
         public List<Manager> GetParsedManagers(DateTime minDate)
         {
             List<EnginePropertyEntry> engineEntries = Database.QueryEngineProperties(minDate);
             return _managerParser.Parse(engineEntries);
         }
 
+        /// <inheritdoc/>
         public int GetEstimatedManagerCount(int executionId)
         {
             return Database.QueryLoggingContext(executionId).Count;
         }
 
+        /// <inheritdoc/>
         public HealthReport GetParsedHealthReport(DateTime minDate, HealthReport healthReport)
         {
             List<HealthReportEntry> entries = Database.QueryHealthReport(minDate);
