@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Markup;
 using DashboardBackend;
 using DashboardBackend.Settings;
 using DashboardFrontend.DetachedWindows;
@@ -15,6 +14,9 @@ using Model;
 
 namespace DashboardFrontend
 {
+    /// <summary>
+    /// A controller for the Dashboard system which requests data from the <see cref="IDataHandler"/> and updates views accordingly.
+    /// </summary>
     public class DashboardController
     {
         private readonly MainWindowViewModel _viewModel;
@@ -103,6 +105,10 @@ namespace DashboardFrontend
             ManagerViewModels = new() { _viewModel.ManagerViewModel };
         }
 
+        /// <summary>
+        /// Creates a log view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The log view model.</returns>
         public LogViewModel CreateLogViewModel()
         {
             LogViewModel result = new();
@@ -114,6 +120,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a validation report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The validation report view model.</returns>
         public ValidationReportViewModel CreateValidationReportViewModel()
         {
             ValidationReportViewModel result = new();
@@ -125,6 +135,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a health report view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The health report view model.</returns>
         public HealthReportViewModel CreateHealthReportViewModel()
         {
             HealthReportViewModel result = new();
@@ -139,6 +153,10 @@ namespace DashboardFrontend
             return result;
         }
 
+        /// <summary>
+        /// Creates a manager view model, and updates data for it, if data exists.
+        /// </summary>
+        /// <returns>The manager view model.</returns>
         public ManagerViewModel CreateManagerViewModel()
         {
             ManagerViewModel result = new();
@@ -151,6 +169,9 @@ namespace DashboardFrontend
         }
         #endregion
 
+        /// <summary>
+        /// Updates the estimated count of managers for each execution.
+        /// </summary>
         public void UpdateEstimatedManagerCounts()
         {
             if (Conversion != null)
@@ -168,11 +189,10 @@ namespace DashboardFrontend
                     exec.EstimatedManagerCount = estimatedMgrCount;
                 }
             }
-
         }
 
         /// <summary>
-        /// Updates the messages in the log.
+        /// Updates the Log in all executions and also creates/updates managers and executions.
         /// </summary>
         public void UpdateLog()
         {
@@ -189,9 +209,9 @@ namespace DashboardFrontend
 
                 if (messages.Any())
                 {
+                    // Update executions
                     lock (Conversion.Executions)
                     {
-                        // Update executions
                         foreach (Execution? newExecution in executions)
                         {
                             // If the execution already exists, update its status (since it might be finished)
@@ -211,9 +231,9 @@ namespace DashboardFrontend
                             }
                         }
                     }
+                    // Update managers
                     lock (Conversion.AllManagers)
                     {
-                        // Update managers
                         foreach (Manager? newManager in managers)
                         {
                             // If the manager already exists, update its context and execution ID's
@@ -237,9 +257,9 @@ namespace DashboardFrontend
                             }
                         }
                     }
+                    // Also add new log messages to their respective execution's log
                     lock (Conversion.Executions)
                     {
-                        // Also add new log messages to their respective execution's log
                         foreach (Execution? execution in Conversion.Executions)
                         {
                             var execMessages = messages.Where(m => m.ExecutionId == execution.Id);
@@ -260,9 +280,10 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Updates the validation tests in the validation report.
+        /// Gets and updates validations for all managers.
         /// </summary>
-        public void UpdateValidationReport()
+        /// <remarks>If the manager associated with a validation does not yet exist, it will be passed to a list of <see cref="_homelessValidations"/>, and they will be added when the manager exists.</remarks>
+        public void UpdateValidations()
         {
             lock (_updateValidationsLock)
             {
@@ -299,8 +320,9 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Updates the readings in the health report.
+        /// Updates the Health Report for the current Conversion.
         /// </summary>
+        /// <remarks>Locks are used to prevent InvalidOperationExceptions when multiple threads work on the same collections.</remarks>
         public void UpdateHealthReport()
         {
             lock (_updateHealthReportLock)
@@ -321,6 +343,7 @@ namespace DashboardFrontend
         /// <summary>
         /// Updates the list of managers in the current Conversion and adds them to their associated executions.
         /// </summary>
+        /// <remarks>Locks are used to prevent InvalidOperationExceptions when multiple threads work on the same collections.</remarks>
         public void UpdateManagers()
         {
             lock (_updateManagersLock)
@@ -399,6 +422,8 @@ namespace DashboardFrontend
         /// <summary>
         /// Updates the list of executions in the current conversion.
         /// </summary>
+        /// <remarks>If a new execution was already created by the log, the existing one will simply be updated.
+        /// Locks are used to prevent InvalidOperationExceptions when multiple threads work on the same collections.</remarks>
         public void UpdateExecutions()
         {
             lock (_updateExecutionsLock)
@@ -418,10 +443,12 @@ namespace DashboardFrontend
                     {
                         foreach (Execution? execution in executions)
                         {
+                            // If the execution already exists (it was created by the log), update its start time
                             if (Conversion.Executions.FirstOrDefault(e => e.Id == execution.Id) is Execution existingExecution)
                             {
                                 existingExecution.StartTime = execution.StartTime;
                             }
+                            // Otherwise, add it!
                             else
                             {
                                 Conversion.AddExecution(execution);
@@ -439,6 +466,11 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Clears the current status message, if it matches the input message, after a delay.
+        /// </summary>
+        /// <param name="status">The status message to clear.</param>
+        /// <param name="delay">The delay to wait.</param>
         private async void ClearStatusMessage(DashboardStatus status, int delay = 1000)
         {
             await Task.Delay(delay);
@@ -448,6 +480,10 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Sets the status message in the control bar.
+        /// </summary>
+        /// <param name="status">The status message to set.</param>
         private void SetStatusMessage(DashboardStatus status)
         {
             if (_viewModel is not null)
@@ -539,7 +575,7 @@ namespace DashboardFrontend
                 }
                 if (ShouldUpdateValidations)
                 {
-                    UpdateValidationReport();
+                    UpdateValidations();
                     ShouldUpdateValidations = false;
                     IsValidationsReady = true;
                 }
@@ -702,11 +738,19 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Displays an error to the user.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="ex">The exception that occurred.</param>
         private static void DisplayGeneralError(string message, Exception ex)
         {
             MessageBox.Show($"{message}\n\nDetails\n{ex.Message}");
         }
 
+        /// <summary>
+        /// Resets the controller and all view models.
+        /// </summary>
         internal void Reset()
         {
             StopMonitoring();
@@ -718,6 +762,9 @@ namespace DashboardFrontend
             KillAllChildren();
         }
 
+        /// <summary>
+        /// Closes all child windows.
+        /// </summary>
         internal void KillAllChildren()
         {
             if (LogViewModels.Count > 1)
@@ -743,6 +790,10 @@ namespace DashboardFrontend
             }
         }
 
+        /// <summary>
+        /// Expands the manager view for a specific manager in a new or already existing detached manager view.
+        /// </summary>
+        /// <param name="wrapper">The selected <see cref="ManagerWrapper"/></param>
         public async void ExpandManagerView(ManagerWrapper wrapper)
         {
             ManagerViewModel vm;

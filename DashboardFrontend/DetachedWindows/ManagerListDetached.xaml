@@ -159,7 +159,7 @@
                                                         Width="0.8*"/>
                                     <DataGridTextColumn Header="Name" 
                                                         Binding="{Binding Manager.ShortName}"
-                                                        Width="6*"/>
+                                                        Width="4*"/>
                                     <DataGridTextColumn Header="Perf score" 
                                                         Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                         Width="1.2*"/>
