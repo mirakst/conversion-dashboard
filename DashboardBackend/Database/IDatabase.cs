@@ -3,56 +3,49 @@
 namespace DashboardBackend.Database
 {
     /// <summary>
-    /// Contains utilities to handle all interaction with the state database.
+    /// Contains method signatures to handle all interaction with the state database.
     /// </summary>
     public interface IDatabase
     {
         /// <summary>
-        /// Retrieves all entries in the AFSTEMNING table of the state database added after the specified DateTime.
+        /// Retrieves all entries in the AFSTEMNING table of the state database added after the specified date.
         /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of all Validations no older than the specified DateTime</returns>
+        /// <param name="minDate">A minimum date constraint for the returned objects.</param>
+        /// <returns>The result of the query, ordered by their timestamp.</returns>
         List<AfstemningEntry> QueryAfstemninger(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries in the EXECUTIONS table of the state database added after the specified DateTime.
+        /// Retrieves all entries in the EXECUTIONS table of the state database added after the specified date.
         /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects</param>
-        /// <returns>A list of Executions no older than the specified DateTime</returns>
+        /// <param name="minDate">A minimum date constraint for the returned objects.</param>
+        /// <returns>The result of the query, ordered by their timestamp.</returns>
         List<ExecutionEntry> QueryExecutions(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime, 
-        /// matching the supplied executionId.
+        /// Retrieves all entries in the LOGGING table of the state database added after the specified date.
         /// </summary>
-        /// <param name="executionId">An Execution ID constraint for the returned objects.</param>
-        /// <param name="minDate">A date constraint for the returned objects.</param>
-        /// <returns>A list of log messages no older than the specified DateTime, from the specific execution.</returns>
-        List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate);
-
-        /// <summary>
-        /// Retrieves all entries in the LOGGING table of the state database added after the specified DateTime.
-        /// </summary>
-        /// <param name="minDate">A date constraint for the returned objects.</param>
-        /// <returns>A list of log messages no older than the specified DateTime.</returns>
+        /// <param name="minDate">A minimum date constraint for the returned objects.</param>
+        /// <returns>The result of the query, ordered by their timestamp.</returns>
         List<LoggingEntry> QueryLogMessages(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries from the LOGGING_CONTEXT table of the state database .
+        /// Retrieves all entries from the LOGGING_CONTEXT table of the state database that match the specified execution ID.
         /// </summary>
-        /// <returns>A list of Managers.</returns>
+        /// <returns>The result of the query.</returns>
         List<LoggingContextEntry> QueryLoggingContext(int executionId);
 
         /// <summary>
-        /// Retrieves all entries in the HEALTH_REPORT table of the state database where REPORT_TYPE ends on 'INIT'.
+        /// Retrieves all entries in the HEALTH_REPORT table of the state database added after the specified date.
         /// </summary>
-        /// <returns>A Health Report, complete with system info on CPU, Network and RAM.</returns>
+        /// <param name="minDate">A minimum date constraint for the returned objects.</param>
+        /// <returns>The result of the query, ordered by their timestamp.</returns>
         List<HealthReportEntry> QueryHealthReport(DateTime minDate);
 
         /// <summary>
-        /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database.
+        /// Retrieves all entries from the ENGINE_PROPERTIES table of the state database added after the specified date.
         /// </summary>
-        /// <returns>A list of manager data.</returns>
+        /// <param name="minDate">A minimum date constraint for the returned objects.</param>
+        /// <returns>The result of the query, ordered by their timestamp.</returns>
         List<EnginePropertyEntry> QueryEngineProperties(DateTime minDate);
     }
 }

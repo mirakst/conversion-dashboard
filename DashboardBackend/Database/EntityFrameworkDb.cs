@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DashboardBackend.Database
 {   
-    /// <inheritdoc />
+    /// <summary>
+    /// An <see cref="IDatabase"/> that uses Microsoft's Entity Framework Core to interact with the actual database.
+    /// </summary>
     public class EntityFrameworkDb : IDatabase
     {
         private readonly DbContextOptions<NetcompanyDbContext> _options;
@@ -30,18 +32,6 @@ namespace DashboardBackend.Database
             using NetcompanyDbContext db = new(_options);
             var queryResult = db.Executions
                                 .Where(e => e.Created > minDate)
-                                .OrderBy(e => e.Created);
-
-            return queryResult.ToList();
-        }
-
-        /// <inheritdoc/>
-        public List<LoggingEntry> QueryLogMessages(int executionId, DateTime minDate)
-        {
-            using NetcompanyDbContext db = new(_options);
-            var queryResult = db.Loggings
-                                .Where(e => e.Created > minDate)
-                                .Where(e => e.ExecutionId == executionId)
                                 .OrderBy(e => e.Created);
 
             return queryResult.ToList();

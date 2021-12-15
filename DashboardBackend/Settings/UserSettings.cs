@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Linq;
 using System.ComponentModel;
 
 namespace DashboardBackend.Settings
 {
+    /// <summary>
+    /// Contains all user settings for the Dashboard, and methods to save and load them.
+    /// </summary>
     public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
         private readonly string _fileName = "UserSettings.json";
@@ -50,8 +50,7 @@ namespace DashboardBackend.Settings
         public bool SynchronizeAllQueries { get; set; } = false;
         [JsonIgnore]
         public bool HasActiveProfile => ActiveProfile is not null;
-        // For JSON serialization
-        public int ActiveProfileId => ActiveProfile?.Id ?? 0;
+        public int ActiveProfileId => ActiveProfile?.Id ?? 0; // For JSON serialization
 
         public void OnSettingsChange()
         {
@@ -76,24 +75,15 @@ namespace DashboardBackend.Settings
             OnSettingsChange();
         }
         
+        /// <inheritdoc/>
         public void Save(IUserSettings settings)
         {
             OverwriteAll(settings);
-            SaveToFile();
-        }
-
-        private void SaveToFile()
-        {
             using FileStream stream = File.Open(_fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
             JsonSerializer.Serialize(stream, this);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <exception cref="FileNotFoundException"/>
-        /// <exception cref="IOException"/>
-        /// <exception cref="JsonException"/>
+        /// <inheritdoc/>
         public void Load()
         {
             string rawJson = File.ReadAllText(_fileName);
