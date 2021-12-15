@@ -1,5 +1,5 @@
 ﻿using DashboardFrontend.ViewModels;
-using DashboardFrontend.Settings;
+using DashboardBackend.Settings;
 using System.Windows;
 using System;
 using System.Windows.Input;
@@ -13,19 +13,19 @@ namespace DashboardFrontend.DetachedWindows
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        private readonly Controller controller;
+        private readonly DashboardController _controller;
 
-        public SettingsWindow(Controller controller)
+        public SettingsWindow(DashboardController controller)
         {
             InitializeComponent();
             Settings = controller.UserSettings;
             SettingsViewModel = new(controller.UserSettings);
             DataContext = SettingsViewModel;
-            this.controller = controller;
+            _controller = controller;
         }
 
         private UserSettingsViewModel SettingsViewModel { get; }
-        private UserSettings Settings { get; }
+        private IUserSettings Settings { get; }
 
         /// <summary>
         /// Save and close settings, validate input.
@@ -51,7 +51,7 @@ namespace DashboardFrontend.DetachedWindows
                 if (Confirm("Changing the active profile will stop the current monitoring process and clear all views. Continue?"))
                 {
                     Settings.ActiveProfile.HasStartedMonitoring = false;
-                    controller.Reset();
+                    _controller.Reset();
                 }
                 else
                 {
@@ -60,7 +60,7 @@ namespace DashboardFrontend.DetachedWindows
             }
             try
             {
-                Settings.OverwriteAllAndSave(SettingsViewModel);
+                Settings.Save(SettingsViewModel);
                 Close();
             }
             catch (Exception ex)

@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 
 namespace Model
 {
-    public class ValidationTest
+    public class ValidationTest : INotifyPropertyChanged
     {
-        #region Constructors
         public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
             Date = date;
@@ -17,16 +17,24 @@ namespace Model
             SrcSql = srcSql;
             DstSql = dstSql;
         }
-        #endregion Constructors
 
-        #region Enums
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public enum ValidationStatus
         {
             Failed, FailMismatch, Disabled, Ok
         }
-        #endregion Enums
 
-        #region Properties
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected; 
+            set
+            {
+                _isSelected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+            }
+        }
         public ValidationStatus Status { get; } //From [AFSTEMRESULTAT] in [dbo].[AFSTEMNING]
         public string Name { get; } //From [DESCRIPTION] in [dbo].[AFSTEMNING]
         public DateTime Date { get; } //From [AFSTEMTDATO] in [dbo].[AFSTEMNING]
@@ -36,8 +44,7 @@ namespace Model
         public int? ToolkitId { get; }
         public string SrcSql { get; }
         public string DstSql { get; }
-        #endregion Properties
-        
+                
         public override string ToString()
         {
             return $"({Date.ToString(new CultureInfo("da-DK"))}) {Name}: {Status}\n[src={SrcCount},dst={DstCount},toolkit={ToolkitId}]\nSrc sql: {SrcSql}\nDst sql: {DstSql}";

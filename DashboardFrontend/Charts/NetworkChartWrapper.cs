@@ -63,8 +63,8 @@ namespace DashboardFrontend.Charts
         /// <param name="reading">A send/receive measurement.</param>
         public void UpdateNetworkData(NetworkUsage reading)
         {
-            double bytesSendFormatted = reading.BytesSend / Math.Pow(1024, 3);
-            double bytesReceivedFormatted = reading.BytesReceived / Math.Pow(1024, 3);
+            double bytesSendFormatted = reading.BytesSend.Value / Math.Pow(1024, 3);
+            double bytesReceivedFormatted = reading.BytesReceived.Value / Math.Pow(1024, 3);
             Chart.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
             Chart.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
@@ -75,8 +75,8 @@ namespace DashboardFrontend.Charts
         /// <param name="reading">A send/receive delta measurement.</param>
         public void UpdateNetworkDeltaData(NetworkUsage reading)
         {
-            double bytesSendFormatted = reading.BytesSendDelta / Math.Pow(1024, 2);
-            double bytesReceivedFormatted = reading.BytesReceivedDelta / Math.Pow(1024, 2);
+            double bytesSendFormatted = reading.BytesSendDelta.Value / Math.Pow(1024, 2);
+            double bytesReceivedFormatted = reading.BytesReceivedDelta.Value / Math.Pow(1024, 2);
             Chart.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
             Chart.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }
@@ -87,8 +87,8 @@ namespace DashboardFrontend.Charts
         /// <param name="reading">A send/receive speed measurement.</param>
         public void UpdateNetworkSpeedData(NetworkUsage reading)
         {
-            double bytesSendFormatted = reading.BytesSendSpeed / Math.Pow(1024, 2);
-            double bytesReceivedFormatted = reading.BytesReceivedSpeed / Math.Pow(1024, 2);
+            double bytesSendFormatted = reading.BytesSendSpeed.Value / Math.Pow(1024, 2);
+            double bytesReceivedFormatted = reading.BytesReceivedSpeed.Value / Math.Pow(1024, 2);
             Chart.Values[0].Add(CreatePoint(bytesSendFormatted, reading.Date));
             Chart.Values[1].Add(CreatePoint(bytesReceivedFormatted, reading.Date));
         }

@@ -712,6 +712,9 @@
                                                     <Setter Property="Focusable" Value="False"/>
                                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TreeView.Resources>

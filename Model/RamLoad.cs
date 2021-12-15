@@ -4,20 +4,26 @@ namespace Model
 {
     public class RamLoad : PerformanceMetric
     {
-        #region Constructors
-        public RamLoad(int executionId, double load, long available, DateTime date)
+        public RamLoad()
+        {
+
+        }
+
+        public RamLoad(int executionId, long available, DateTime date)
         {
             ExecutionId = executionId;
-            Load = load;
             Date = date;
             Available = available;
         }
-        #endregion Constructors
 
-        #region Properties
+        public RamLoad(int executionId, double load, long available, DateTime date)
+            : this(executionId, available, date)
+        {
+            Load = load;
+        }
 
         public long Available;
-        #endregion Properties
+        
         public override string ToString()
         {
             return $"{Date.ToString(new CultureInfo("da-DK"))}: {Load:P} bytes";

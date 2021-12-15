@@ -6,23 +6,18 @@ namespace Model
 
     public class Manager
     {
-        #region Constructors
         public Manager()
         {
             Status = ManagerStatus.Ready;
         }
-        #endregion
 
-        #region Enums
         public enum ManagerStatus : byte
         {
             Ready, Running, Ok
         }
-        #endregion Enums
 
         public event ManagerFinished OnManagerFinished;
 
-        #region Properties     
         public List<ValidationTest> Validations { get; set; } = new();
         public List<CpuLoad> CpuReadings { get; set; } = new();
         public List<RamLoad> RamReadings { get; set; } = new();
@@ -35,13 +30,56 @@ namespace Model
                 _name = value;
                 ShortName = value.Split(".").Last();
             }
-        } //[MANAGER_NAME] from [dbo].[MANAGERS]
+        }
         public int ContextId { get; set; }
+        public int ExecutionId { get; set; }
         public string ShortName { get; set; }
-        public DateTime? StartTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'START_TIME'.
-        public DateTime? EndTime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'END_TIME'.
-        public TimeSpan? Runtime { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES] for [MANAGER] = Name, where [KEY] = 'runtimeOverall'.
+        private DateTime? _startTime;
+        public DateTime? StartTime
+        {
+            get => _startTime; set
+            {
+                _startTime = value;
+                if (value is not null)
+                {
+                    Status = ManagerStatus.Running;
+                    if (EndTime.HasValue)
+                    {
+                        Runtime = EndTime.Value.Subtract(value.Value);
+                    }
+                }
+            }
+        }
+        private DateTime? _endTime;
+        public DateTime? EndTime
+        {
+            get => _endTime; set
+            {
+                _endTime = value;
+                if (value is not null)
+                {
+                    Status = ManagerStatus.Ok;
+                    if (StartTime.HasValue)
+                    {
+                        Runtime = value.Value.Subtract(StartTime.Value);
+                    }
+                }
+            }
+        }
+        public TimeSpan? Runtime
+        {
+            get => _runtime; 
+            set
+            {
+                _runtime = value;
+                if (value is not null)
+                {
+                    UpdatePerformanceScore();
+                }
+            }
+        }
         private ManagerStatus _status;
+        private TimeSpan? _runtime;
         public ManagerStatus Status
         {
             get => _status;
@@ -58,10 +96,9 @@ namespace Model
         }
         public int? RowsRead { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='READ [TOTAL]'.
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
+        public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         public double? PerformanceScore { get; set; }
         public double? ValidationScore { get; set; }
-        public bool IsMissingValues => !StartTime.HasValue || !EndTime.HasValue || !Runtime.HasValue || !RowsRead.HasValue || !RowsWritten.HasValue;
-        #endregion
 
         private void UpdateValidationScore()
         {

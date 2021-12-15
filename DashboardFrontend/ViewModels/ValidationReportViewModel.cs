@@ -124,7 +124,11 @@ namespace DashboardFrontend.ViewModels
         /// <param name="validationReport">The Validation Report to get data from.</param>
         public void UpdateData(List<Execution> executions)
         {
-            Executions = new(executions.Select(e => new ExecutionObservable(e, this)));
+            Executions.Clear();
+            for (int i = 0; i < executions.Count; i++)
+            {
+                Executions.Add(new ExecutionObservable(executions[i], this));
+            }
             if (SelectedExecution is null)
             {
                 SelectedExecution = Executions.Last();
@@ -142,7 +146,6 @@ namespace DashboardFrontend.ViewModels
                 ExpandedManagerNames.Clear();
                 ManagerView = (CollectionView)CollectionViewSource.GetDefaultView(exec.Managers);
                 ManagerView.Filter = OnManagersFilter;
-                ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.PerformanceScore), ListSortDirection.Ascending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.FailedCount), ListSortDirection.Descending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.DisabledCount), ListSortDirection.Descending));
                 ManagerView.SortDescriptions.Add(new(nameof(ManagerObservable.StartTime), ListSortDirection.Ascending));

@@ -34,7 +34,7 @@ namespace DashboardFrontend
 
         public void ButtonStartStopClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.Controller.OnStartPressed();
+            ViewModel.Controller.ChangeMonitoringState();
             ComboBox_SelectionChanged(this, null);
         }
 
@@ -53,15 +53,7 @@ namespace DashboardFrontend
             detachedManagerViewModel.Window = detachedManagerWindow;
             detachedManagerViewModel.DataGridManagers = detachedManagerWindow.DatagridManagers;
             detachedManagerWindow.Show();
-            detachedManagerWindow.Closed += delegate
-            {
-                // Ensures that the ViewModel is only removed from the controller after its data has been modified, preventing an InvalidOperationException.
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateManagers) { }
-                    ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
-                });
-            };
+            ViewModel.Controller.ManagerViewModels.Remove(detachedManagerViewModel);
             await Task.Delay(5);
             if (ViewModel.ManagerViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.ManagerViewModel.SelectedExecution.Id;
@@ -73,14 +65,7 @@ namespace DashboardFrontend
             LogViewModel detachedLogViewModel = ViewModel.Controller.CreateLogViewModel();
             LogDetached detachLog = new(detachedLogViewModel);
             detachLog.Show();
-            detachLog.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
-                });
-            };
+            ViewModel.Controller.LogViewModels.Remove(detachedLogViewModel);
             await Task.Delay(5);
             if (ViewModel.LogViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.LogViewModel.SelectedExecution.Id;
@@ -93,14 +78,7 @@ namespace DashboardFrontend
                 ViewModel.Controller.CreateValidationReportViewModel();
             ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
             detachVr.Show();
-            detachVr.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
-                });
-            };
+            ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
             await Task.Delay(5);
             if (ViewModel.ValidationReportViewModel.SelectedExecution == null) return;
             int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
@@ -112,14 +90,7 @@ namespace DashboardFrontend
             HealthReportViewModel detachedHealthReportViewModel = ViewModel.Controller.CreateHealthReportViewModel();
             HealthReportDetached detachHr = new(detachedHealthReportViewModel);
             detachHr.Show();
-            detachHr.Closed += delegate
-            {
-                _ = Task.Run(() =>
-                {
-                    while (ViewModel.Controller.ShouldUpdateLog) { }
-                    ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
-                });
-            };
+            ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
         }
 
         //OnWindowClosing events

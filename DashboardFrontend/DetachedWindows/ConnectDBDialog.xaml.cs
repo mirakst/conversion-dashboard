@@ -1,4 +1,4 @@
-﻿using DashboardFrontend.Settings;
+﻿using DashboardBackend.Settings;
 using Microsoft.Data.SqlClient;
 using System.ComponentModel;
 using System.Windows;
@@ -7,13 +7,13 @@ namespace DashboardFrontend.DetachedWindows
 {
     public partial class ConnectDBDialog : Window
     {
-        public ConnectDBDialog(UserSettings userSettings)
+        public ConnectDBDialog(IUserSettings userSettings)
         {
             InitializeComponent();
             UserSettings = userSettings;
         }
 
-        public UserSettings UserSettings { get; }
+        public IUserSettings UserSettings { get; }
         private readonly BackgroundWorker Worker = new()
         {
             WorkerSupportsCancellation = true

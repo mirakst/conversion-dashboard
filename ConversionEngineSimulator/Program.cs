@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Data.SqlClient;
 
 namespace ConversionEngineSimulator
 {
     internal class Program
     {
-        // Currently requires the "ANS_CUSTOM_2" database to function
         static int Main(string[] args)
         {
             //*** INIT ***
             if (args.Length != 3)
             {
-                Console.Error.WriteLine("Please specify -[server], -[source database], and -[destination database]");
+                Console.Error.WriteLine("Please specify a [server], [source database], and [destination database]");
+                Console.ReadKey(true);
                 return -1;
             }
             string server = args[0];
@@ -25,11 +26,18 @@ namespace ConversionEngineSimulator
 
             //INSERTING STATIC TABLES
             Console.WriteLine("\n---------- Inserting static tables ----------");
-            ManagerTable managerInfo = new();
+            try
+            {
+                ManagerTable managerInfo = new();
+                DBUtilities.InsertTable(managerInfo.Entries, managerInfo);
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             ManagerTrackingTable managerTracking = new();
             LoggingContextTable loggingContext = new();
 
-            DBUtilities.InsertTable(managerInfo.Entries, managerInfo);
             DBUtilities.InsertTable(managerTracking.Entries, managerTracking);
             DBUtilities.InsertTable(loggingContext.Entries, loggingContext);
 
@@ -51,7 +59,7 @@ namespace ConversionEngineSimulator
             _ = DBUtilities.AsyncExecution(engineProperties.Entries, engineProperties);
             _ = DBUtilities.AsyncExecution(healthReports.Entries, healthReports);
 
-            Console.ReadKey();
+            Console.ReadKey(true);
             return 0;
         }
     }
