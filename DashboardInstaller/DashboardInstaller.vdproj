@@ -433,7 +433,7 @@
                 {
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_68F5D16A31EE46FBBB27260EE42373C2"
                     {
-                    "Sequence" = "3:300"
+                    "Sequence" = "3:400"
                     "DisplayName" = "8:Confirm Installation"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -766,7 +766,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_030B54CEBF7B45D68DF18E9E109DB65A"
             {
-            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Debug\\net6.0-windows\\DashboardFrontend.dll"
+            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Release\\net6.0-windows\\DashboardFrontend.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
@@ -794,7 +794,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3371ACB2CE7D44DF9B9BB635BCDFD67E"
             {
-            "SourcePath" = "8:..\\DashboardBackend\\obj\\Debug\\net6.0-windows\\DashboardBackend.dll"
+            "SourcePath" = "8:..\\DashboardBackend\\obj\\Release\\net6.0-windows\\DashboardBackend.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
@@ -822,7 +822,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9E0A6C89721C407A91B79199EAF60286"
             {
-            "SourcePath" = "8:..\\Model\\obj\\Debug\\net6.0-windows\\Model.dll"
+            "SourcePath" = "8:..\\Model\\obj\\Release\\net6.0-windows\\Model.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
@@ -850,7 +850,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B44565BE15474D3FAC33753F6771D955"
             {
-            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Debug\\net6.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Release\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
