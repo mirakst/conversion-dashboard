@@ -3,9 +3,9 @@ using System.Globalization;
 
 namespace Model
 {
-    public class ValidationTest : INotifyPropertyChanged
+    public class Reconciliation : INotifyPropertyChanged
     {
-        public ValidationTest(DateTime date, string name, ValidationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
+        public Reconciliation(DateTime date, string name, ReconciliationStatus status, string managerName, int? srcCount, int? dstCount, int? toolkitId, string srcSql, string dstSql)
         {
             Date = date;
             Name = name;
@@ -20,7 +20,7 @@ namespace Model
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public enum ValidationStatus
+        public enum ReconciliationStatus
         {
             Failed, FailMismatch, Disabled, Ok
         }
@@ -35,7 +35,7 @@ namespace Model
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
             }
         }
-        public ValidationStatus Status { get; } //From [AFSTEMRESULTAT] in [dbo].[AFSTEMNING]
+        public ReconciliationStatus Status { get; } //From [AFSTEMRESULTAT] in [dbo].[AFSTEMNING]
         public string Name { get; } //From [DESCRIPTION] in [dbo].[AFSTEMNING]
         public DateTime Date { get; } //From [AFSTEMTDATO] in [dbo].[AFSTEMNING]
         public string ManagerName { get; } //From [MANAGER] in [dbo].[AFSTEMNING]
@@ -57,7 +57,7 @@ namespace Model
 
         public override bool Equals(object obj)
         {
-            if (obj is not ValidationTest other)
+            if (obj is not Reconciliation other)
             {
                 return false;
             }

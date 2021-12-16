@@ -9,7 +9,7 @@ namespace ConversionEngineSimulator
             ColumnNames = "CREATED, LOG_MESSAGE, LOG_LEVEL, EXECUTION_ID, CONTEXT_ID";
             OutputColumnNames = "@CREATED, @LOG_MESSAGE, @LOG_LEVEL, @EXECUTION_ID, @CONTEXT_ID";
             TableName = "dbo.LOGGING";
-            Entries = DBUtilities.QueryTable<LogMsg>(this);
+            Entries = DbUtilities.QueryTable<LogMsg>(this);
             Entries.Sort();
         }
         public string ColumnNames { get; }

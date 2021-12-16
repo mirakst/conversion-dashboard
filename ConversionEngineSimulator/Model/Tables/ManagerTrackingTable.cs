@@ -11,7 +11,7 @@ namespace ConversionEngineSimulator
             OutputColumnNames = "@MGR, @STATUS, @RUNTIME, @PERFORMANCECOUNTROWSREAD, " +
                                 "@PERFORMANCECOUNTROWSWRITTEN, @STARTTIME, @ENDTIME, @WEEK";
             TableName = "dbo.MANAGER_TRACKING";
-            Entries = DBUtilities.QueryTable<ManagerTracking>(this);
+            Entries = DbUtilities.QueryTable<ManagerTracking>(this);
         }
         public string ColumnNames { get; }
 

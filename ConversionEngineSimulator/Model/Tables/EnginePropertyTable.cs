@@ -9,7 +9,7 @@ namespace ConversionEngineSimulator
             ColumnNames = "MANAGER, [KEY], VALUE, TIMESTAMP, RUN_NO";
             OutputColumnNames = "@MANAGER, @KEY, @VALUE, @TIMESTAMP, @RUN_NO";
             TableName = "dbo.ENGINE_PROPERTIES";
-            Entries = DBUtilities.QueryTable<EngineProperty>(this);
+            Entries = DbUtilities.QueryTable<EngineProperty>(this);
             Entries.Sort();
         }
         public string ColumnNames { get; }

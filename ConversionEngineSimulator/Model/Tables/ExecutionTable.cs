@@ -10,9 +10,9 @@ namespace ConversionEngineSimulator
             ColumnNames = "EXECUTION_ID, EXECUTION_UUID, CREATED";
             OutputColumnNames = "@EXECUTION_ID, @EXECUTION_UUID, @CREATED";
             TableName = "dbo.EXECUTIONS";
-            Entries = DBUtilities.QueryTable<Execution>(this);
+            Entries = DbUtilities.QueryTable<Execution>(this);
             Entries.Sort();
-            DBInfo.convStartTime = Entries.First().CREATED; //Set the starting time for streaming.
+            DbInfo.ConvStartTime = Entries.First().CREATED; //Set the starting time for streaming.
         }
         public string ColumnNames { get; }
 

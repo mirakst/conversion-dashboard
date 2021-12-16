@@ -74,7 +74,7 @@
                          Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,5"
                          ToolTip="Search by manager Name or ID"
-                         Style="{DynamicResource ValidationsSearchBox}"
+                         Style="{DynamicResource ReconciliationsSearchBox}"
                          Grid.Column="1">
                 </TextBox>
 
@@ -164,7 +164,7 @@
                                                         Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                         Width="1.2*"/>
                                     <DataGridTextColumn Header="Val score" 
-                                                        Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
+                                                        Binding="{Binding Manager.ReconciliationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
                                                         Width="1.2*"/>
                                     <DataGridTextColumn Header="Start"
                                                         Binding="{Binding Manager.StartTime, StringFormat=dd/MM HH:mm:ss, TargetNullValue='N/A'}"

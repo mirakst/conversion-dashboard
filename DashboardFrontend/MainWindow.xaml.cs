@@ -72,17 +72,17 @@ namespace DashboardFrontend
             detachedLogViewModel.SelectedExecution = detachedLogViewModel.Executions[selectedExecutionId - 1];
         }
 
-        public async void DetachValidationReportButtonClick(object sender, RoutedEventArgs e)
+        public async void DetachReconciliationReportButtonClick(object sender, RoutedEventArgs e)
         {
-            ValidationReportViewModel detachedValidationReportViewModel =
-                ViewModel.Controller.CreateValidationReportViewModel();
-            ValidationReportDetached detachVr = new(detachedValidationReportViewModel);
+            ReconciliationReportViewModel detachedReconciliationReportViewModel =
+                ViewModel.Controller.CreateReconciliationReportViewModel();
+            ReconciliationReportDetached detachVr = new(detachedReconciliationReportViewModel);
             detachVr.Show();
-            ViewModel.Controller.ValidationReportViewModels.Remove(detachedValidationReportViewModel);
+            ViewModel.Controller.ReconciliationReportViewModels.Remove(detachedReconciliationReportViewModel);
             await Task.Delay(5);
-            if (ViewModel.ValidationReportViewModel.SelectedExecution == null) return;
-            int selectedExecutionId = ViewModel.ValidationReportViewModel.SelectedExecution.Id;
-            detachedValidationReportViewModel.SelectedExecution = detachedValidationReportViewModel.Executions[selectedExecutionId - 1];
+            if (ViewModel.ReconciliationReportViewModel.SelectedExecution == null) return;
+            int selectedExecutionId = ViewModel.ReconciliationReportViewModel.SelectedExecution.Id;
+            detachedReconciliationReportViewModel.SelectedExecution = detachedReconciliationReportViewModel.Executions[selectedExecutionId - 1];
         }
 
         public void DetachHealthReportButtonClick(object sender, RoutedEventArgs e)
@@ -91,32 +91,6 @@ namespace DashboardFrontend
             HealthReportDetached detachHr = new(detachedHealthReportViewModel);
             detachHr.Show();
             ViewModel.Controller.HealthReportViewModels.Remove(detachedHealthReportViewModel);
-        }
-
-        //OnWindowClosing events
-        private void OnSettingsWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonSettings.IsEnabled = true;
-        }
-
-        private void OnManagerWindowClosing(object sender, CancelEventArgs e)
-        {
-            ButtonDetachManager.IsEnabled = true;
-        }
-
-        private void ValidationsDataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            ButtonLogDetach.IsEnabled = true;
-        }
-
-        private void OnValidationWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonValidationReportDetach.IsEnabled = true;
-        }
-
-        private void OnHealthWindowClosing(object? sender, CancelEventArgs e)
-        {
-            ButtonHealthReportDetach.IsEnabled = true;
         }
 
         private void CommandBinding_CanExecute_1(object sender, CanExecuteRoutedEventArgs e)
@@ -191,35 +165,35 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// Called once a TreeViewItem is expanded. Gets the item's ManagerObservable, and adds the manager name to a list of expanded TreeViewItems in the Reconciliation Report viewmodel.
         /// </summary>
         /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
-        private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
+        private void TreeViewReconciliations_Expanded(object sender, RoutedEventArgs e)
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (!ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
+                if (!ViewModel.ReconciliationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Add(manager.Name);
+                    ViewModel.ReconciliationReportViewModel.ExpandedManagerNames.Add(manager.Name);
                 }
             }
         }
 
         /// <summary>
-        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerValidationsWrapper, and removes the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerObservable, and removes the manager name to a list of expanded TreeViewItems in the Reconciliation Report viewmodel.
         /// </summary>
-        private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
+        private void TreeViewReconciliations_Collapsed(object sender, RoutedEventArgs e)
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
             item.IsSelected = false;
             if (tree.ItemContainerGenerator.ItemFromContainer(item) is ManagerObservable manager)
             {
-                if (ViewModel.ValidationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
+                if (ViewModel.ReconciliationReportViewModel.ExpandedManagerNames.Contains(manager.Name))
                 {
-                    ViewModel.ValidationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
+                    ViewModel.ReconciliationReportViewModel.ExpandedManagerNames.Remove(manager.Name);
                 }
             }
         }
@@ -227,7 +201,7 @@ namespace DashboardFrontend
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
+            if (button.DataContext is Reconciliation test)
             {
                 Clipboard.SetText(test.SrcSql);
                 TextBlockPopupSql.Content = "SQL source copied to clipboard";
@@ -238,7 +212,7 @@ namespace DashboardFrontend
         private void CopyDestSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
+            if (button.DataContext is Reconciliation test)
             {
                 Clipboard.SetText(test.DstSql);
                 TextBlockPopupSql.Content = "SQL destination copied to clipboard";

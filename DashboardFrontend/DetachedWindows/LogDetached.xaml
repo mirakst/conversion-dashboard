@@ -82,16 +82,16 @@
                 <Rectangle Width="1"
                            Fill="{DynamicResource BorderColor}"
                            Grid.Column="7"/>
-                <ToggleButton Name="ToggleButtonLogValidation"
+                <ToggleButton Name="ToggleButtonLogReconciliation"
                               Grid.Column="8"
-                              IsChecked="{Binding ShowValidation}"
+                              IsChecked="{Binding ShowReconciliations}"
                               Style="{DynamicResource DefaultToggleButton}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="../Icons/Validation.png" 
+                        <Image Source="../Icons/Reconciliation.png" 
                                Width="13"
                                Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding ValidationCount}"/>
-                        <TextBlock Text=" Validation"/>
+                        <TextBlock Text="{Binding ReconciliationCount}"/>
+                        <TextBlock Text=" Reconciliation"/>
                     </StackPanel>
                 </ToggleButton>
 
@@ -206,14 +206,14 @@
                                     <Setter Property="Foreground" Value="{DynamicResource LogMessageFatalForegroundColor}"/>
                                     <Setter Property="Background" Value="{DynamicResource LogMessageFatalBackgroundColor}"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageValidationColor}"/>
+                                <DataTrigger Binding="{Binding Type}" Value="Reconciliation">
+                                    <Setter Property="Foreground" Value="{DynamicResource LogMessageReconciliationColor}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Error">
                                     <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
                                     <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Type}" Value="Error, Validation">
+                                <DataTrigger Binding="{Binding Type}" Value="Error, Reconciliation">
                                     <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
                                     <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
                                 </DataTrigger>

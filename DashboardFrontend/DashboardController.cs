@@ -21,15 +21,15 @@ namespace DashboardFrontend
     {
         private readonly MainWindowViewModel _viewModel;
         private readonly List<Timer> _timers;
-        private readonly List<ValidationTest> _homelessValidations;
+        private readonly List<Reconciliation> _homelessReconciliations;
         private readonly object _updateLogLock;
-        private readonly object _updateValidationsLock;
+        private readonly object _updateReconciliationsLock;
         private readonly object _updateManagersLock;
         private readonly object _updateExecutionsLock;
         private readonly object _updateHealthReportLock;
         private enum DashboardStatus
         {
-            Idle, UpdatingManagers, UpdatingLog, UpdatingExecutions, UpdatingHealthReport, UpdatingValidations,
+            Idle, UpdatingManagers, UpdatingLog, UpdatingExecutions, UpdatingHealthReport, UpdatingReconciliations,
         }
         private readonly Dictionary<DashboardStatus, string> _statusMessages = new()
         {
@@ -38,7 +38,7 @@ namespace DashboardFrontend
             { DashboardStatus.UpdatingManagers, "Querying managers..." },
             { DashboardStatus.UpdatingExecutions, "Querying executions..." },
             { DashboardStatus.UpdatingHealthReport, "Querying Health Report..." },
-            { DashboardStatus.UpdatingValidations, "Querying validations..." },
+            { DashboardStatus.UpdatingReconciliations, "Querying reconciliations..." },
         };
 
         public DashboardController()
@@ -47,9 +47,9 @@ namespace DashboardFrontend
             _updateLogLock = new();
             _updateManagersLock = new();
             _updateExecutionsLock = new();
-            _updateValidationsLock = new();
+            _updateReconciliationsLock = new();
             _updateHealthReportLock = new();
-            _homelessValidations = new();
+            _homelessReconciliations = new();
 
             DataHandler = new DataHandler();
             Conversion = new();
@@ -61,7 +61,7 @@ namespace DashboardFrontend
 
             HealthReportViewModels = new();
             LogViewModels = new();
-            ValidationReportViewModels = new();
+            ReconciliationReportViewModels = new();
             ManagerViewModels = new();
             UserSettings = new UserSettings();
             LoadUserSettings();
@@ -76,13 +76,13 @@ namespace DashboardFrontend
         public IDataHandler DataHandler { get; set; }
         public bool ShouldUpdateExecutions { get; private set; }
         public bool ShouldUpdateLog { get; private set; }
-        public bool ShouldUpdateValidations { get; private set; }
+        public bool ShouldUpdateReconciliations { get; private set; }
         public bool ShouldUpdateManagers { get; private set; }
         public bool ShouldUpdateHealthReport { get; private set; }
         public Conversion? Conversion { get; set; }
         public List<HealthReportViewModel> HealthReportViewModels { get; private set; }
         public List<LogViewModel> LogViewModels { get; private set; }
-        public List<ValidationReportViewModel> ValidationReportViewModels { get; private set; }
+        public List<ReconciliationReportViewModel> ReconciliationReportViewModels { get; private set; }
         public List<ManagerViewModel> ManagerViewModels { get; private set; }
         public IUserSettings UserSettings { get; set; }
 
@@ -95,8 +95,8 @@ namespace DashboardFrontend
             _viewModel.LogViewModel = new LogViewModel(listViewLog);
             LogViewModels = new() { _viewModel.LogViewModel };
 
-            _viewModel.ValidationReportViewModel = new ValidationReportViewModel();
-            ValidationReportViewModels = new() { _viewModel.ValidationReportViewModel };
+            _viewModel.ReconciliationReportViewModel = new ReconciliationReportViewModel();
+            ReconciliationReportViewModels = new() { _viewModel.ReconciliationReportViewModel };
 
             _viewModel.HealthReportViewModel = new HealthReportViewModel();
             HealthReportViewModels = new() { _viewModel.HealthReportViewModel };
@@ -121,17 +121,17 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Creates a validation report view model, and updates data for it, if data exists.
+        /// Creates a reconciliation report view model, and updates data for it, if data exists.
         /// </summary>
-        /// <returns>The validation report view model.</returns>
-        public ValidationReportViewModel CreateValidationReportViewModel()
+        /// <returns>The reconciliation report view model.</returns>
+        public ReconciliationReportViewModel CreateReconciliationReportViewModel()
         {
-            ValidationReportViewModel result = new();
+            ReconciliationReportViewModel result = new();
             if (Conversion != null && Conversion.Executions.Any())
             {
                 result.UpdateData(Conversion.Executions);
             }
-            ValidationReportViewModels.Add(result);
+            ReconciliationReportViewModels.Add(result);
             return result;
         }
 
@@ -227,7 +227,7 @@ namespace DashboardFrontend
                                     newExecution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
                                 }
                                 Conversion.AddExecution(newExecution);
-                                Conversion.LastValidationsUpdated = DateTime.Now;
+                                Conversion.LastReconciliationsUpdated = DateTime.Now;
                             }
                         }
                     }
@@ -280,23 +280,23 @@ namespace DashboardFrontend
         }
 
         /// <summary>
-        /// Gets and updates validations for all managers.
+        /// Gets and updates reconciliations for all managers.
         /// </summary>
-        /// <remarks>If the manager associated with a validation does not yet exist, it will be passed to a list of <see cref="_homelessValidations"/>, and they will be added when the manager exists.</remarks>
-        public void UpdateValidations()
+        /// <remarks>If the manager associated with a reconciliation does not yet exist, it will be passed to a list of <see cref="_homelessReconciliations"/>, and they will be added when the manager exists.</remarks>
+        public void UpdateReconciliations()
         {
-            lock (_updateValidationsLock)
+            lock (_updateReconciliationsLock)
             {
                 if (Conversion is null)
                 {
                     return;
                 }
-                SetStatusMessage(DashboardStatus.UpdatingValidations);
+                SetStatusMessage(DashboardStatus.UpdatingReconciliations);
 
-                List<ValidationTest> newData = DataHandler.GetParsedValidations(Conversion.LastValidationsQuery);
-                Conversion.LastValidationsQuery = DateTime.Now;
-                newData.AddRange(_homelessValidations);
-                _homelessValidations.Clear();
+                List<Reconciliation> newData = DataHandler.GetParsedReconciliations(Conversion.LastReconciliationsQuery);
+                Conversion.LastReconciliationsQuery = DateTime.Now;
+                newData.AddRange(_homelessReconciliations);
+                _homelessReconciliations.Clear();
 
                 if (newData.Any())
                 {
@@ -305,17 +305,17 @@ namespace DashboardFrontend
                         // Try to find the associated manager (and ensure that it is in the right execution as well)
                         if (Conversion.AllManagers.Find(m => m.Name.Contains(v.ManagerName) && v.Date < m.EndTime) is Manager mgr)
                         {
-                            mgr.AddValidation(v);
+                            mgr.AddReconciliation(v);
                         }
                         // Otherwise, the manager has not yet been created - it is passed to a list and we will try again next time
                         else
                         {
-                            _homelessValidations.Add(v);
+                            _homelessReconciliations.Add(v);
                         }
                     });
-                    Conversion.LastValidationsUpdated = DateTime.Now;
+                    Conversion.LastReconciliationsUpdated = DateTime.Now;
                 }
-                ClearStatusMessage(DashboardStatus.UpdatingValidations);
+                ClearStatusMessage(DashboardStatus.UpdatingReconciliations);
             }
         }
 
@@ -456,7 +456,7 @@ namespace DashboardFrontend
                                 {
                                     execution.OnExecutionProgressUpdated += _viewModel.UpdateExecutionProgress;
                                 }
-                                Conversion.LastValidationsUpdated = DateTime.Now;
+                                Conversion.LastReconciliationsUpdated = DateTime.Now;
                             }
                         }
                     }
@@ -552,7 +552,7 @@ namespace DashboardFrontend
         {
             bool IsLogReady = false,
                  IsManagersReady = false,
-                 IsValidationsReady = false,
+                 IsReconciliationsReady = false,
                  IsHealthReportReady = false;
 
             _viewModel.IsRunning = true;
@@ -573,11 +573,11 @@ namespace DashboardFrontend
                     ShouldUpdateManagers = false;
                     IsManagersReady = true;
                 }
-                if (ShouldUpdateValidations)
+                if (ShouldUpdateReconciliations)
                 {
-                    UpdateValidations();
-                    ShouldUpdateValidations = false;
-                    IsValidationsReady = true;
+                    UpdateReconciliations();
+                    ShouldUpdateReconciliations = false;
+                    IsReconciliationsReady = true;
                 }
                 if (ShouldUpdateHealthReport)
                 {
@@ -590,7 +590,7 @@ namespace DashboardFrontend
                     UpdateExecutions();
                     ShouldUpdateExecutions = false;
                 }
-                if (IsLogReady && IsManagersReady && IsValidationsReady && IsHealthReportReady)
+                if (IsLogReady && IsManagersReady && IsReconciliationsReady && IsHealthReportReady)
                 {
                     _viewModel.LoadingVisibility = Visibility.Collapsed;
                 }
@@ -611,9 +611,9 @@ namespace DashboardFrontend
                 {
                     continue;
                 }
-                foreach (ValidationReportViewModel vm in ValidationReportViewModels.ToList())
+                foreach (ReconciliationReportViewModel vm in ReconciliationReportViewModels.ToList())
                 {
-                    if (vm.LastUpdated < Conversion.LastValidationsUpdated)
+                    if (vm.LastUpdated < Conversion.LastReconciliationsUpdated)
                     {
                         vm.LastUpdated = DateTime.Now;
                         Application.Current.Dispatcher.Invoke(() =>
@@ -674,7 +674,7 @@ namespace DashboardFrontend
                     ShouldUpdateLog = true;
                     ShouldUpdateExecutions = true;
                     ShouldUpdateHealthReport = true;
-                    ShouldUpdateValidations = true;
+                    ShouldUpdateReconciliations = true;
                     ShouldUpdateManagers = true;
 
                 }, null, 0, UserSettings.AllQueryInterval * 1000));
@@ -684,7 +684,7 @@ namespace DashboardFrontend
                 _timers.Add(new Timer(x => ShouldUpdateLog = true, null, 0, UserSettings.LoggingQueryInterval * 1000));
                 _timers.Add(new Timer(x => ShouldUpdateExecutions = true, null, 0, 10000));
                 _timers.Add(new Timer(x => ShouldUpdateHealthReport = true, null, 0, UserSettings.HealthReportQueryInterval * 1000));
-                _timers.Add(new Timer(x => ShouldUpdateValidations = true, null, 0, UserSettings.ValidationQueryInterval * 1000));
+                _timers.Add(new Timer(x => ShouldUpdateReconciliations = true, null, 0, UserSettings.ReconciliationQueryInterval * 1000));
                 _timers.Add(new Timer(x => ShouldUpdateManagers = true, null, 0, UserSettings.ManagerQueryInterval * 1000));
             }
         }
@@ -775,17 +775,17 @@ namespace DashboardFrontend
             {
                 ManagerViewModels.RemoveRange(1, LogViewModels.Count - 1);
             }
-            if (ValidationReportViewModels.Count > 1)
+            if (ReconciliationReportViewModels.Count > 1)
             {
-                ValidationReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
+                ReconciliationReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
             }
             if (HealthReportViewModels.Count > 1)
             {
                 HealthReportViewModels.RemoveRange(1, LogViewModels.Count - 1);
             }
-            foreach (Window item in App.Current.Windows)
+            foreach (Window item in Application.Current.Windows)
             {
-                if (item != App.Current.MainWindow)
+                if (item != Application.Current.MainWindow)
                     item.Close();
             }
         }

@@ -49,23 +49,23 @@ namespace DashboardBackend.Tests
 
         #region GetAfstemninger
         [Fact]
-        public void GetValidations_GetsValidationsFromTestDatabase_ReturnsTrue()
+        public void GetReconciliations_GetsReconciliationsFromTestDatabase_ReturnsTrue()
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
-            var expected = new List<ValidationTest>()
+            var expected = new List<Reconciliation>()
             {
-                new ValidationTest(DateTime.Parse("01-01-2020 12:00:00"),
-                                   "validationOne",
-                                   ValidationTest.ValidationStatus.Ok,
+                new Reconciliation(DateTime.Parse("01-01-2020 12:00:00"),
+                                   "reconciliationOne",
+                                   Reconciliation.ReconciliationStatus.Ok,
                                    "managerOne",
                                    0,
                                    0,
                                    0,
                                    "srcSql",
                                    "dstSql"),
-                new ValidationTest(DateTime.Parse("01-01-2020 13:00:00"),
-                                   "validationTwo",
-                                   ValidationTest.ValidationStatus.Ok,
+                new Reconciliation(DateTime.Parse("01-01-2020 13:00:00"),
+                                   "reconciliationTwo",
+                                   Reconciliation.ReconciliationStatus.Ok,
                                    "managerTwo",
                                    0,
                                    0,
@@ -74,28 +74,28 @@ namespace DashboardBackend.Tests
                                    "dstSql")
             };
 
-            var actual = dataHandler.GetParsedValidations(DateTime.Parse("01-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedReconciliations(DateTime.Parse("01-01-2020 12:00:00"));
 
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void GetValidations_GetsValidationsFromTestDatabaseWhereOneIsDuplicated_ReturnsTrue()
+        public void GetReconciliations_GetsReconciliationsFromTestDatabaseWhereOneIsDuplicated_ReturnsTrue()
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
             var expected = 2;
 
-            var actual = dataHandler.GetParsedValidations(DateTime.Parse("01-01-2020 10:00:00")).FindAll(a => a.Name == "validationOne").Count;
+            var actual = dataHandler.GetParsedReconciliations(DateTime.Parse("01-01-2020 10:00:00")).FindAll(a => a.Name == "reconciliationOne").Count;
 
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void GetValidations_NoValidationsAfterSpecifiedMinDate_ReturnsEmpty()
+        public void GetReconciliations_NoReconciliationsAfterSpecifiedMinDate_ReturnsEmpty()
         {
             var dataHandler = new DataHandler { Database = new TestDatabase() };
 
-            var actual = dataHandler.GetParsedValidations(DateTime.Parse("02-01-2020 12:00:00"));
+            var actual = dataHandler.GetParsedReconciliations(DateTime.Parse("02-01-2020 12:00:00"));
 
             Assert.Empty(actual);
         }
@@ -109,12 +109,12 @@ namespace DashboardBackend.Tests
             var expected = new List<LogMessage>()
             {
                 new LogMessage("Afstemning Error",
-                               LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
+                               LogMessage.LogMessageType.Reconciliation | LogMessage.LogMessageType.Error,
                                0,
                                0,
                                DateTime.Parse("01-01-2020 17:00:00")),
                 new LogMessage("Check - Error",
-                               LogMessage.LogMessageType.Validation | LogMessage.LogMessageType.Error,
+                               LogMessage.LogMessageType.Reconciliation | LogMessage.LogMessageType.Error,
                                0,
                                0,
                                DateTime.Parse("01-01-2020 18:00:00")),

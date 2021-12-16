@@ -24,6 +24,12 @@
     <None Remove="Icons\Play.png" />
     <None Remove="Icons\Play2.png" />
     <None Remove="Icons\Play3.png" />
+    <None Remove="Icons\Reconciliation report.png" />
+    <None Remove="Icons\Reconciliation.png" />
+    <None Remove="Icons\ReconciliationAlt.png" />
+    <None Remove="Icons\ReconciliationDisabled.png" />
+    <None Remove="Icons\ReconciliationFailed.png" />
+    <None Remove="Icons\ReconciliationOk.png" />
     <None Remove="Icons\Refresh.png" />
     <None Remove="Icons\Remove.png" />
     <None Remove="Icons\Settings.png" />
@@ -32,12 +38,6 @@
     <None Remove="Icons\Settings4.png" />
     <None Remove="Icons\Start.png" />
     <None Remove="Icons\Stop.png" />
-    <None Remove="Icons\Validation report.png" />
-    <None Remove="Icons\ValidationDisabled.png" />
-    <None Remove="Icons\Validation.png" />
-    <None Remove="Icons\ValidationAlt.png" />
-    <None Remove="Icons\ValidationFailed.png" />
-    <None Remove="Icons\ValidationOk.png" />
     <None Remove="Icons\Warn.png" />
     <None Remove="Icons\Warning.png" />
   </ItemGroup>
@@ -104,22 +104,22 @@
     <Resource Include="Icons\Stop.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\Validation report.png">
+    <Resource Include="Icons\Reconciliation report.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\Validation.png">
+    <Resource Include="Icons\Reconciliation.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-	<Resource Include="Icons\ValidationDisabled.png">
+	<Resource Include="Icons\ReconciliationDisabled.png">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Resource>
-    <Resource Include="Icons\ValidationAlt.png">
+    <Resource Include="Icons\ReconciliationAlt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\ValidationFailed.png">
+    <Resource Include="Icons\ReconciliationFailed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\ValidationOk.png">
+    <Resource Include="Icons\ReconciliationOk.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\Warning.png">

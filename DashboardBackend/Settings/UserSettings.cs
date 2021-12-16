@@ -16,11 +16,11 @@ namespace DashboardBackend.Settings
         }
 
         [JsonConstructor]
-        public UserSettings(IList<Profile> profiles, int loggingQueryInterval, int validationQueryInterval, int managerQueryInterval, int allQueryInterval, bool synchronizeAllQueries, int activeProfileId)
+        public UserSettings(IList<Profile> profiles, int loggingQueryInterval, int reconciliationQueryInterval, int managerQueryInterval, int allQueryInterval, bool synchronizeAllQueries, int activeProfileId)
         {
             Profiles = profiles;
             LoggingQueryInterval = loggingQueryInterval;
-            ValidationQueryInterval = validationQueryInterval;
+            ReconciliationQueryInterval = reconciliationQueryInterval;
             ManagerQueryInterval = managerQueryInterval;
             AllQueryInterval = allQueryInterval;
             SynchronizeAllQueries = synchronizeAllQueries;
@@ -44,7 +44,7 @@ namespace DashboardBackend.Settings
         }
         public int LoggingQueryInterval { get; set; } = 1; // seconds
         public int HealthReportQueryInterval { get; set; } = 30;
-        public int ValidationQueryInterval { get; set; } = 5;
+        public int ReconciliationQueryInterval { get; set; } = 5;
         public int ManagerQueryInterval { get; set; } = 5;
         public int AllQueryInterval { get; set; } = 2;
         public bool SynchronizeAllQueries { get; set; } = false;
@@ -70,7 +70,7 @@ namespace DashboardBackend.Settings
             ActiveProfile = settings.ActiveProfile;
             LoggingQueryInterval = settings.LoggingQueryInterval;
             HealthReportQueryInterval = settings.HealthReportQueryInterval;
-            ValidationQueryInterval = settings.ValidationQueryInterval;
+            ReconciliationQueryInterval = settings.ReconciliationQueryInterval;
             ManagerQueryInterval = settings.ManagerQueryInterval;
             AllQueryInterval = settings.AllQueryInterval;
             SynchronizeAllQueries = settings.SynchronizeAllQueries;

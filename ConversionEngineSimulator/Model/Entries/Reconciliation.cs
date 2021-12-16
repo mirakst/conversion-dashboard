@@ -2,7 +2,7 @@
 
 namespace ConversionEngineSimulator
 {
-    public class Vote : ITimestampedDatabaseEntry, IComparable<Vote>
+    public class Reconciliation : ITimestampedDatabaseEntry, IComparable<Reconciliation>
     {
         public string ID { get; set; }
         public DateTime AFSTEMTDATO { get; set; }
@@ -33,9 +33,9 @@ namespace ConversionEngineSimulator
         {
             return $"{"[Afstemning]",-15} {CREATED}: {MANAGER} {AFSTEMRESULTAT}";
         }
-        public int CompareTo(Vote vote)
+        public int CompareTo(Reconciliation other)
         {
-            return DateTime.Compare(CREATED, vote.CREATED);
+            return DateTime.Compare(CREATED, other.CREATED);
         }
     }
 }

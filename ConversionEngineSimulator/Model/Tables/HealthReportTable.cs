@@ -13,7 +13,7 @@ namespace ConversionEngineSimulator
                                 "@REPORT_STRING_VALUE, @REPORT_NUMERIC_VALUE, @REPORT_VALUE_TYPE, " +
                                 "@REPORT_VALUE_HUMAN, @LOG_TIME";
             TableName = "dbo.HEALTH_REPORT";
-            Entries = DBUtilities.QueryTable<HealthReport>(this);
+            Entries = DbUtilities.QueryTable<HealthReport>(this);
             Entries.Sort();
         }
         public string ColumnNames { get; }

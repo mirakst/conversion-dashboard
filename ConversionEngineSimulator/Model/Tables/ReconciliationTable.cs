@@ -2,9 +2,9 @@
 
 namespace ConversionEngineSimulator
 {
-    public class VoteTable : IDatabaseTable
+    public class ReconciliationTable : IDatabaseTable
     {
-        public VoteTable()
+        public ReconciliationTable()
         {
             ColumnNames = "ID, AFSTEMTDATO, DESCRIPTION, MANAGER, CONTEXT, " +
                           "SRCANTAL, DSTANTAL, CUSTOMANTAL, AFSTEMRESULTAT, RUN_JOB, " +
@@ -18,7 +18,7 @@ namespace ConversionEngineSimulator
                                 "@DST_SQL, @CUSTOM_SQL, @SRC_SQL_TIME, @DST_SQL_TIME, @CUSTOM_SQL_TIME, " +
                                 "@START_TIME, @END_TIME, @AFSTEMNINGSDATA";
             TableName = "dbo.AFSTEMNING";
-            Entries = DBUtilities.QueryTable<Vote>(this);
+            Entries = DbUtilities.QueryTable<Reconciliation>(this);
             Entries.Sort();
         }
         public string ColumnNames { get; }
@@ -26,6 +26,6 @@ namespace ConversionEngineSimulator
         public string OutputColumnNames { get; }
 
         public string TableName { get; }
-        public List<Vote> Entries { get; set; }
+        public List<Reconciliation> Entries { get; set; }
     }
 }

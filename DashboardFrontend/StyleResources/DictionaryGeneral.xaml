@@ -11,11 +11,11 @@
     <SolidColorBrush x:Key="DarkBorderColor" Color="DarkSlateGray"/>
     <SolidColorBrush x:Key="BorderOnHoverColor" Color="White"/>
 
-    <!-- Validation Report -->
-    <SolidColorBrush x:Key="validationReportNormalColor" Color="White"/>
-    <SolidColorBrush x:Key="validationReportOkColor" Color="Green"/>
-    <SolidColorBrush x:Key="validationReportDisabledColor" Color="Yellow"/>
-    <SolidColorBrush x:Key="validationReportErrorColor" Color="Red"/>
+    <!-- Reconciliation Report -->
+    <SolidColorBrush x:Key="ReconciliationReportNormalColor" Color="White"/>
+    <SolidColorBrush x:Key="ReconciliationReportOkColor" Color="Green"/>
+    <SolidColorBrush x:Key="ReconciliationReportDisabledColor" Color="Yellow"/>
+    <SolidColorBrush x:Key="ReconciliationReportErrorColor" Color="Red"/>
     
     <!-- Log colors -->
     <SolidColorBrush x:Key="LogBackgroundColor" Color="#131314"/>
@@ -27,7 +27,7 @@
     <SolidColorBrush x:Key="LogMessageFatalBackgroundColor" Color="#cb0000"/>
     <SolidColorBrush x:Key="LogMessageWarningColor" Color="#fbe74e"/>
     <SolidColorBrush x:Key="LogMessageInfoColor" Color="#d1ccce"/>
-    <SolidColorBrush x:Key="LogMessageValidationColor" Color="#4d9905"/>
+    <SolidColorBrush x:Key="LogMessageReconciliationColor" Color="#4d9905"/>
 
     <Style x:Key="SearchBox" TargetType="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
@@ -39,7 +39,7 @@
         <Setter Property="Background" Value="{DynamicResource BackgroundColor}"/>
     </Style>
 
-    <Style TargetType="{x:Type TextBox}" x:Key="ValidationsSearchBox">
+    <Style TargetType="{x:Type TextBox}" x:Key="ReconciliationsSearchBox">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>

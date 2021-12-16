@@ -15,7 +15,7 @@ namespace DashboardBackend.Settings
         Profile ActiveProfile { get; set; }
         int LoggingQueryInterval { get; set; }
         int HealthReportQueryInterval { get; set; }
-        int ValidationQueryInterval { get; set; }
+        int ReconciliationQueryInterval { get; set; }
         int ManagerQueryInterval { get; set; }
         int AllQueryInterval { get; set; }
         bool SynchronizeAllQueries { get; set; }

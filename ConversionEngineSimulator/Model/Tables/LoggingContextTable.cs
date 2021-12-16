@@ -9,7 +9,7 @@ namespace ConversionEngineSimulator
             ColumnNames = "CONTEXT_ID, EXECUTION_ID, CONTEXT";
             OutputColumnNames = "@CONTEXT_ID, @EXECUTION_ID, @CONTEXT";
             TableName = "dbo.LOGGING_CONTEXT";
-            Entries = DBUtilities.QueryTable<LoggingContext>(this);
+            Entries = DbUtilities.QueryTable<LoggingContext>(this);
         }
         public string ColumnNames { get; }
 

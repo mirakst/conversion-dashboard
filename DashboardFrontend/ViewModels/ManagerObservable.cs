@@ -2,7 +2,7 @@ using Model;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Data;
-using static Model.ValidationTest;
+using static Model.Reconciliation;
 using System.ComponentModel;
 
 namespace DashboardFrontend.ViewModels
@@ -15,22 +15,22 @@ namespace DashboardFrontend.ViewModels
             ContextId = mgr.ContextId;
             StartTime = mgr.StartTime;
             PerformanceScore = mgr.PerformanceScore;
-            ValidationScore = mgr.ValidationScore;
-            Validations = new(mgr.Validations);
-            ValidationView = (CollectionView)CollectionViewSource.GetDefaultView(Validations);
+            ReconciliationScore = mgr.ReconciliationScore;
+            Reconciliations = new(mgr.Reconciliations);
+            ReconciliationView = (CollectionView)CollectionViewSource.GetDefaultView(Reconciliations);
             OriginalManager = mgr;
         }
 
         public Manager OriginalManager { get; private set; }
-        public List<ValidationTest> Validations = new();
-        private CollectionView _validationView;
-        public CollectionView ValidationView
+        public List<Reconciliation> Reconciliations = new();
+        private CollectionView _reconciliationView;
+        public CollectionView ReconciliationView
         {
-            get => _validationView;
+            get => _reconciliationView;
             set
             {
-                _validationView = value;
-                OnPropertyChanged(nameof(ValidationView));
+                _reconciliationView = value;
+                OnPropertyChanged(nameof(ReconciliationView));
             } 
         }
         public string Name { get; private set; }
@@ -47,10 +47,10 @@ namespace DashboardFrontend.ViewModels
         }
         public System.DateTime? StartTime { get; private set; }
         public double? PerformanceScore { get; private set; }
-        public double? ValidationScore { get; private set; }
-        public int FailedCount => Validations.Count(v => v.Status is ValidationStatus.Failed or ValidationStatus.FailMismatch);
-        public int DisabledCount => Validations.Count(v => v.Status is ValidationStatus.Disabled);
-        public int OkCount => Validations.Count(v => v.Status is ValidationStatus.Ok);
+        public double? ReconciliationScore { get; private set; }
+        public int FailedCount => Reconciliations.Count(v => v.Status is ReconciliationStatus.Failed or ReconciliationStatus.FailMismatch);
+        public int DisabledCount => Reconciliations.Count(v => v.Status is ReconciliationStatus.Disabled);
+        public int OkCount => Reconciliations.Count(v => v.Status is ReconciliationStatus.Ok);
         private bool _isExpanded;
         public bool IsExpanded
         {

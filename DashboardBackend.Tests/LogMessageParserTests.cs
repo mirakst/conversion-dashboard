@@ -135,7 +135,7 @@ namespace DashboardBackend.Tests
             var message = Assert.Single(messages);
             Assert.Equal("Afstemning - failed!!!", message.Content);
             Assert.True(message.Type.HasFlag(LogMessageType.Error));
-            Assert.True(message.Type.HasFlag(LogMessageType.Validation));
+            Assert.True(message.Type.HasFlag(LogMessageType.Reconciliation));
             Assert.Empty(managers);
             Assert.Single(executions);
         }

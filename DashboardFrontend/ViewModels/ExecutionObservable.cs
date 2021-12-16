@@ -3,7 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using static Model.ValidationTest;
+using static Model.Reconciliation;
 
 namespace DashboardFrontend.ViewModels
 {
@@ -22,18 +22,18 @@ namespace DashboardFrontend.ViewModels
 
             LogMessages = new(exec.Log.Messages);
         }
-        public ExecutionObservable(Execution exec, ValidationReportViewModel vm) : this(exec)
+        public ExecutionObservable(Execution exec, ReconciliationReportViewModel vm) : this(exec)
         {
             foreach (ManagerObservable manager in Managers)
             {
                 manager.IsExpanded = vm.ExpandedManagerNames.Contains(manager.Name);
-                manager.ValidationView.Filter = vm.OnValidationsFilter;
-                manager.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Status), ListSortDirection.Ascending));
-                manager.ValidationView.SortDescriptions.Add(new(nameof(ValidationTest.Date), ListSortDirection.Descending));
+                manager.ReconciliationView.Filter = vm.OnReconciliationsFilter;
+                manager.ReconciliationView.SortDescriptions.Add(new(nameof(Reconciliation.Status), ListSortDirection.Ascending));
+                manager.ReconciliationView.SortDescriptions.Add(new(nameof(Reconciliation.Date), ListSortDirection.Descending));
                 FailedTotalCount += manager.FailedCount;
                 DisabledTotalCount += manager.DisabledCount;
                 OkTotalCount += manager.OkCount;
-                TotalCount += manager.Validations.Count;
+                TotalCount += manager.Reconciliations.Count;
             }
         }
 
@@ -78,7 +78,7 @@ namespace DashboardFrontend.ViewModels
         public int WarnCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Warning));
         public int ErrorCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Error));
         public int FatalCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Fatal));
-        public int ValidationCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Validation));
+        public int ReconciliationCount => LogMessages.Count(m => m.Type.HasFlag(LogMessage.LogMessageType.Reconciliation));
         public int Id { get; set; }
         private ObservableCollection<ManagerObservable> _managers = new();
         public ObservableCollection<ManagerObservable> Managers

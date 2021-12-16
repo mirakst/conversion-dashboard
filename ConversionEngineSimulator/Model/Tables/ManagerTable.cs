@@ -10,7 +10,7 @@ namespace ConversionEngineSimulator
             ColumnNames = "MANAGER_NAME, ROW_ID, EXECUTIONS_ID";
             OutputColumnNames = "@MANAGER_NAME, @ROW_ID, @EXECUTIONS_ID";
             TableName = "dbo.MANAGERS";
-            Entries = DBUtilities.QueryTable<Manager>(this);
+            Entries = DbUtilities.QueryTable<Manager>(this);
         }
         public string ColumnNames { get; }
 

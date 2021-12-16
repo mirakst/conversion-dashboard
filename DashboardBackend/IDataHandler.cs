@@ -43,7 +43,7 @@ namespace DashboardBackend
         /// </summary>
         /// <param name="minDate">The time of the last query for reconciliations.</param>
         /// <returns>A list of reconciliations.</returns>
-        List<ValidationTest> GetParsedValidations(DateTime minDate);
+        List<Reconciliation> GetParsedReconciliations(DateTime minDate);
 
         /// <summary>
         /// Gets the estimated number of managers for a given execution.

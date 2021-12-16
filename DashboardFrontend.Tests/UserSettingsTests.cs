@@ -15,7 +15,7 @@ namespace DashboardFrontend.Tests
             newSettings.ActiveProfile = new Profile("TestName", "TestConversion", "TestDataSource", "TestDatabase", 0);
             newSettings.LoggingQueryInterval = 200;
             newSettings.HealthReportQueryInterval = 200;
-            newSettings.ValidationQueryInterval = 200;
+            newSettings.ReconciliationQueryInterval = 200;
             newSettings.ManagerQueryInterval = 200;
             newSettings.AllQueryInterval = 200;
             newSettings.SynchronizeAllQueries = false;
@@ -32,7 +32,7 @@ namespace DashboardFrontend.Tests
             Assert.Equal(result.ActiveProfile, newSettings.ActiveProfile);
             Assert.Equal(result.LoggingQueryInterval, newSettings.LoggingQueryInterval);
             Assert.Equal(result.HealthReportQueryInterval, newSettings.HealthReportQueryInterval);
-            Assert.Equal(result.ValidationQueryInterval, newSettings.ValidationQueryInterval);
+            Assert.Equal(result.ReconciliationQueryInterval, newSettings.ReconciliationQueryInterval);
             Assert.Equal(result.ManagerQueryInterval, newSettings.ManagerQueryInterval);
             Assert.Equal(result.AllQueryInterval, newSettings.AllQueryInterval);
             Assert.Equal(result.SynchronizeAllQueries, newSettings.SynchronizeAllQueries);

@@ -97,14 +97,14 @@ namespace DashboardFrontend.ViewModels
                 OnPropertyChanged(nameof(FatalCount));
             }
         }
-        private int _validationCount;
-        public int ValidationCount
+        private int _reconciliationCount;
+        public int ReconciliationCount
         {
-            get => _validationCount;
+            get => _reconciliationCount;
             set
             {
-                _validationCount = value;
-                OnPropertyChanged(nameof(ValidationCount));
+                _reconciliationCount = value;
+                OnPropertyChanged(nameof(ReconciliationCount));
             }
         }
         private bool _showInfo = true;
@@ -155,14 +155,14 @@ namespace DashboardFrontend.ViewModels
                 ScrollToLast();
             }
         }
-        private bool _showValidation = true;
-        public bool ShowValidation
+        private bool _showReconciliations = true;
+        public bool ShowReconciliations
         {
-            get => _showValidation;
+            get => _showReconciliations;
             set
             {
-                _showValidation = value;
-                OnPropertyChanged(nameof(ShowValidation));
+                _showReconciliations = value;
+                OnPropertyChanged(nameof(ShowReconciliations));
                 MessageView?.Refresh();
                 ScrollToLast();
             }
@@ -206,7 +206,7 @@ namespace DashboardFrontend.ViewModels
                  || (ShowWarn && type.HasFlag(LogMessageType.Warning))
                  || (ShowError && type.HasFlag(LogMessageType.Error))
                  || (ShowFatal && type.HasFlag(LogMessageType.Fatal))
-                 || (ShowValidation && type.HasFlag(LogMessageType.Validation)));
+                 || (ShowReconciliations && type.HasFlag(LogMessageType.Reconciliation)));
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace DashboardFrontend.ViewModels
             WarnCount = exec.WarnCount;
             ErrorCount = exec.ErrorCount;
             FatalCount = exec.FatalCount;
-            ValidationCount = exec.ValidationCount;
+            ReconciliationCount = exec.ReconciliationCount;
         }
 
         /// <summary>

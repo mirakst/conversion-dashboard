@@ -1,4 +1,4 @@
-using static Model.ValidationTest;
+using static Model.Reconciliation;
 
 namespace Model
 {
@@ -18,7 +18,7 @@ namespace Model
 
         public event ManagerFinished OnManagerFinished;
 
-        public List<ValidationTest> Validations { get; set; } = new();
+        public List<Reconciliation> Reconciliations { get; set; } = new();
         public List<CpuLoad> CpuReadings { get; set; } = new();
         public List<RamLoad> RamReadings { get; set; } = new();
         private string _name;
@@ -89,7 +89,7 @@ namespace Model
                 if (value is ManagerStatus.Ok)
                 {
                     OnManagerFinished?.Invoke(this);
-                    UpdateValidationScore();
+                    UpdateReconciliationScore();
                     UpdatePerformanceScore();
                 }
             }
@@ -98,13 +98,13 @@ namespace Model
         public int? RowsWritten { get; set; } //Key, value pair from [dbo].[ENGINE_PROPERTIES], where [KEY]='WRITE [TOTAL]'.
         public bool IsMissingValues => !(StartTime.HasValue && EndTime.HasValue && Runtime.HasValue && RowsRead.HasValue && RowsWritten.HasValue);
         public double? PerformanceScore { get; set; }
-        public double? ValidationScore { get; set; }
+        public double? ReconciliationScore { get; set; }
 
-        private void UpdateValidationScore()
+        private void UpdateReconciliationScore()
         {
-            double OkCount = Validations.Count(v => v.Status is ValidationStatus.Ok);
-            double TotalCount = Validations.Count(v => v.Status is not ValidationStatus.Disabled);
-            ValidationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
+            double OkCount = Reconciliations.Count(v => v.Status is ReconciliationStatus.Ok);
+            double TotalCount = Reconciliations.Count(v => v.Status is not ReconciliationStatus.Disabled);
+            ReconciliationScore = TotalCount > 0 ? OkCount / TotalCount * 100.0d : 100.0d;
         }
 
         public void UpdatePerformanceScore()
@@ -115,10 +115,10 @@ namespace Model
             }
         }
 
-        public void AddValidation(ValidationTest v)
+        public void AddReconciliation(Reconciliation v)
         {
-            Validations.Add(v);
-            UpdateValidationScore();
+            Reconciliations.Add(v);
+            UpdateReconciliationScore();
         }
 
         /// <summary>

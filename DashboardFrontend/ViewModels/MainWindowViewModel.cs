@@ -54,7 +54,7 @@ namespace DashboardFrontend.ViewModels
             }
         }
         public LogViewModel LogViewModel { get; set; }
-        public ValidationReportViewModel ValidationReportViewModel { get; set; }
+        public ReconciliationReportViewModel ReconciliationReportViewModel { get; set; }
         public HealthReportViewModel HealthReportViewModel { get; set; }
         public ManagerViewModel ManagerViewModel {  get; set; }
 
@@ -64,7 +64,7 @@ namespace DashboardFrontend.ViewModels
         public void UpdateView()
         {
             OnPropertyChanged(nameof(LogViewModel));
-            OnPropertyChanged(nameof(ValidationReportViewModel));
+            OnPropertyChanged(nameof(ReconciliationReportViewModel));
             OnPropertyChanged(nameof(HealthReportViewModel));
             OnPropertyChanged(nameof(ManagerViewModel));
         }

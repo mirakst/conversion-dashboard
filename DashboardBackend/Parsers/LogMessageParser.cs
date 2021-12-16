@@ -98,14 +98,14 @@ namespace DashboardBackend.Parsers
             if (content.StartsWith("Afstemning") || content.StartsWith("Check -"))
             {
                 // Since the enum is actually a bitflag, we can add several types to it.
-                // In this case, we want failed validations to not only be parsed as errors, but also as validations.
+                // In this case, we want failed reconciliations to not only be parsed as errors, but also as reconciliations.
                 if (type.HasFlag(LogMessageType.Error))
                 {
-                    type |= LogMessageType.Validation; // Adds the flag
+                    type |= LogMessageType.Reconciliation; // Adds the flag
                 }
                 else
                 {
-                    type = LogMessageType.Validation; // Sets the flag
+                    type = LogMessageType.Reconciliation; // Sets the flag
                 }
             }
             return type;

@@ -15,7 +15,7 @@ namespace DashboardBackend
         private readonly IDataParser<LoggingEntry, Tuple<List<LogMessage>, List<Manager>, List<Execution>>> _logParser;
         private readonly IDataParser<EnginePropertyEntry, List<Manager>> _managerParser;
         private readonly IDataParser<HealthReportEntry, HealthReport> _healthReportParser;
-        private readonly IDataParser<AfstemningEntry, List<ValidationTest>> _reconciliationParser;
+        private readonly IDataParser<AfstemningEntry, List<Reconciliation>> _reconciliationParser;
         private readonly IDataParser<ExecutionEntry, List<Execution>> _executionParser;
 
         public DataHandler()
@@ -46,7 +46,7 @@ namespace DashboardBackend
         }
 
         /// <inheritdoc/>
-        public List<ValidationTest> GetParsedValidations(DateTime minDate)
+        public List<Reconciliation> GetParsedReconciliations(DateTime minDate)
         {
             List<AfstemningEntry> data = Database.QueryAfstemninger(minDate);
             return _reconciliationParser.Parse(data);

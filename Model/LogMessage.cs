@@ -16,7 +16,7 @@ namespace Model
         [Flags]
         public enum LogMessageType : byte
         {
-            None = 0, Info = 1, Warning = 2, Error = 4, Fatal = 8, Validation = 16
+            None = 0, Info = 1, Warning = 2, Error = 4, Fatal = 8, Reconciliation = 16
         }
 
         public LogMessageType Type { get; } //From [LOG_LEVEL] in [dbo].[LOGGING].

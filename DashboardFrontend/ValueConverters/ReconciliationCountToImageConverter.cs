@@ -5,27 +5,27 @@ using System.Windows.Data;
 
 namespace DashboardFrontend.ValueConverters
 {
-    public class ValidationTestCountToImageConverter : IValueConverter
+    public class ReconciliationCountToImageConverter : IValueConverter
     {
         /// <summary>
-        /// A converter for validation result icons.
+        /// A converter for Reconciliation icons.
         /// </summary>
-        /// <returns>An icon based on whether a collection of tests is disabled, failed or OK.</returns>
+        /// <returns>An icon based on whether a collection of Reconciliations is disabled, failed or OK.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is ManagerObservable entry)
             {
                 if (entry.FailedCount == 0 && entry.DisabledCount > 0)
                 {
-                    return "/Icons/ValidationDisabled.png";
+                    return "/Icons/ReconciliationDisabled.png";
                 }
                 else if (entry.FailedCount > 0)
                 {
-                    return "/Icons/ValidationFailed.png";
+                    return "/Icons/ReconciliationFailed.png";
                 }
                 else
                 {
-                    return "/Icons/ValidationOk.png";
+                    return "/Icons/ReconciliationOk.png";
                 }
             }
             return "";

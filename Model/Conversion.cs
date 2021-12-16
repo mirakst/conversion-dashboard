@@ -12,7 +12,7 @@ namespace Model
             LastExecutionQuery = (DateTime)SqlDateTime.MinValue;
             LastLogQuery = (DateTime)SqlDateTime.MinValue;
             LastManagerQuery = (DateTime)SqlDateTime.MinValue;
-            LastValidationsQuery = (DateTime)SqlDateTime.MinValue;
+            LastReconciliationsQuery = (DateTime)SqlDateTime.MinValue;
         }
 
         public List<Execution> Executions { get; set; } //Created on new entry in [dbo].[EXECUTIONS]
@@ -20,10 +20,10 @@ namespace Model
         public DateTime LastExecutionQuery { get; set; }
         public DateTime LastLogQuery { get; set; }
         public DateTime LastManagerQuery { get; set; }
-        public DateTime LastValidationsQuery { get; set; }
+        public DateTime LastReconciliationsQuery { get; set; }
         public DateTime LastLogUpdated { get; set; }
         public DateTime LastManagerUpdated { get; set; }
-        public DateTime LastValidationsUpdated { get; set; }
+        public DateTime LastReconciliationsUpdated { get; set; }
         public List<Manager> AllManagers { get; set; }
         public HealthReport HealthReport { get; set; }
 

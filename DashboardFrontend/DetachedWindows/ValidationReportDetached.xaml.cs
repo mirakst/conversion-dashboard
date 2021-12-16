@@ -6,22 +6,22 @@ using DashboardFrontend.ViewModels;
 
 namespace DashboardFrontend.DetachedWindows
 {
-    public partial class ValidationReportDetached
+    public partial class ReconciliationReportDetached
     {
-        public ValidationReportDetached(ValidationReportViewModel validationReportViewModel)
+        public ReconciliationReportDetached(ReconciliationReportViewModel reconciliationReportViewModel)
         {
             InitializeComponent();
-            ViewModel = validationReportViewModel;
+            ViewModel = reconciliationReportViewModel;
             DataContext = ViewModel;
         }
         
-        public ValidationReportViewModel ViewModel { get; set; }
+        public ReconciliationReportViewModel ViewModel { get; set; }
 
         /// <summary>
-        /// Called once a TreeViewItem is expanded. Gets the item's ManagerValidationsWrapper, and adds the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// Called once a TreeViewItem is expanded. Gets the item's ManagerObservable, and adds the manager name to a list of expanded TreeViewItems in the Reconciliation Report viewmodel.
         /// </summary>
         /// <remarks>This ensures that the items stay expanded when the data is updated/refreshed.</remarks>
-        private void TreeViewValidations_Expanded(object sender, RoutedEventArgs e)
+        private void TreeViewReconciliations_Expanded(object sender, RoutedEventArgs e)
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
@@ -35,9 +35,9 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         /// <summary>
-        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerValidationsWrapper, and removes the manager name to a list of expanded TreeViewItems in the Validation Report viewmodel.
+        /// Called once a TreeViewItem is collapsed. Gets the item's ManagerObservable, and removes the manager name to a list of expanded TreeViewItems in the Reconciliation Report viewmodel.
         /// </summary>
-        private void TreeViewValidations_Collapsed(object sender, RoutedEventArgs e)
+        private void TreeViewReconciliations_Collapsed(object sender, RoutedEventArgs e)
         {
             TreeView tree = (TreeView)sender;
             TreeViewItem item = (TreeViewItem)e.OriginalSource;
@@ -52,12 +52,12 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         /// <summary>
-        /// Copies the source SQL query from the validation test.
+        /// Copies the source SQL query from the Reconciliation.
         /// </summary>
         private void CopySrcSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
+            if (button.DataContext is Reconciliation test)
             {
                 Clipboard.SetText(test.SrcSql);
                 TextBlockPopupSql.Content = "SQL source copied to clipboard";
@@ -66,12 +66,12 @@ namespace DashboardFrontend.DetachedWindows
         }
 
         /// <summary>
-        /// Copies the destination SQL query from the validation test.
+        /// Copies the destination SQL query from the Reconciliation.
         /// </summary>
         private void CopyDestSql_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            if (button.DataContext is ValidationTest test)
+            if (button.DataContext is Reconciliation test)
             {
                 Clipboard.SetText(test.DstSql);
                 TextBlockPopupSql.Content = "SQL destination copied to clipboard";

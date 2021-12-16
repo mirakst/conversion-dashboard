@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:DashboardFrontend.ValueConverters"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
-        xmlns:ctx="clr-namespace:LiveChartsCore.Kernel;assembly=LiveChartsCore"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="Conversion dashboard"
@@ -26,10 +25,10 @@
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_1" Executed="CommandBinding_Executed_3" />
     </Window.CommandBindings>
     <Window.Resources>
-        <converters:ValidationStatusToImageConverter x:Key="StatusToImageConverter"/>
+        <converters:ReconciliationStatusToImageConverter x:Key="StatusToImageConverter"/>
         <converters:SqlNotEmptyToBoolConverter x:Key="SqlToBoolConverter"/>
-        <converters:ValidationTestCountToImageConverter x:Key="CountToImageConverter"/>
-        <converters:IsValidationTestBoolConverter x:Key="IsValidationTestConverter"/>
+        <converters:ReconciliationCountToImageConverter x:Key="CountToImageConverter"/>
+        <converters:IsReconciliationBoolConverter x:Key="IsReconciliationConverter"/>
         <converters:WindowStateToWingdingsConverter x:Key="WindowStateToWingdingsConverter"/>
         <converters:FilterPopupHeightConverter x:Key="FilterPopupHeightConverter"/>
         <Style TargetType="{x:Type ScrollBar}">
@@ -195,7 +194,7 @@
                     <TextBox Name="textboxManagerSearchbar"
                              Text="{Binding ManagerSearch, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Search by manager Name or ID"
-                             Style="{DynamicResource ValidationsSearchBox}"
+                             Style="{DynamicResource ReconciliationsSearchBox}"
                              Height="26"
                              Grid.Column="1"
                              Grid.ColumnSpan="2"
@@ -239,7 +238,7 @@
                                                 Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                 Width="1.6*"/>
                             <DataGridTextColumn Header="Val Score" 
-                                                Binding="{Binding Manager.ValidationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
+                                                Binding="{Binding Manager.ReconciliationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
                                                 Width="1.6*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
@@ -326,16 +325,16 @@
                         <Rectangle Width="1"
                                    Fill="{DynamicResource BorderColor}"
                                    Grid.Column="7"/>
-                        <ToggleButton Name="ToggleButtonLogValidation"
+                        <ToggleButton Name="ToggleButtonLogReconciliation"
                                       Grid.Column="8"
-                                      IsChecked="{Binding ShowValidation}"
+                                      IsChecked="{Binding ShowReconciliations}"
                                       Style="{DynamicResource DefaultToggleButton}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="Icons/Validation.png" 
+                                <Image Source="Icons/ReconciliationOk.png" 
                                        Width="13"
                                        Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding ValidationCount}"/>
-                                <TextBlock Text=" Validation"/>
+                                <TextBlock Text="{Binding ReconciliationCount}"/>
+                                <TextBlock Text=" Reconciliations"/>
                             </StackPanel>
                         </ToggleButton>
 
@@ -408,13 +407,13 @@
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
                                     <GridViewColumn Header="Date"
-                                                    DisplayMemberBinding="{Binding Date,StringFormat=dd/MM HH:mm:ss}"
-                                                    Width="120"/>
+                                                    DisplayMemberBinding="{Binding Date,StringFormat=HH:mm:ss}"
+                                                    Width="80"/>
                                     <GridViewColumn Header="ID" 
                                                     DisplayMemberBinding="{Binding ContextId}"
-                                                    Width="40"/>
+                                                    Width="30"/>
                                     <GridViewColumn Header="Type" 
-                                                    Width="90">
+                                                    Width="120">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock TextWrapping="Wrap"
@@ -459,14 +458,14 @@
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageFatalForegroundColor}"/>
                                             <Setter Property="Background" Value="{DynamicResource LogMessageFatalBackgroundColor}"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Validation">
-                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageValidationColor}"/>
+                                        <DataTrigger Binding="{Binding Type}" Value="Reconciliation">
+                                            <Setter Property="Foreground" Value="{DynamicResource LogMessageReconciliationColor}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="Error">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
                                             <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="Error, Validation">
+                                        <DataTrigger Binding="{Binding Type}" Value="Error, Reconciliation">
                                             <Setter Property="Foreground" Value="{DynamicResource LogMessageErrorForegroundColor}"/>
                                             <Setter Property="Background" Value="{DynamicResource LogMessageErrorBackgroundColor}"/>
                                         </DataTrigger>
@@ -546,9 +545,9 @@
                     </Grid.RowDefinitions>
                 </Grid>
 
-                <!-- Validation Report Component -->
-                <Grid Name="gridValidationReport"
-                      DataContext="{Binding ValidationReportViewModel}"
+                <!-- Reconciliation Report Component -->
+                <Grid Name="gridReconciliationReport"
+                      DataContext="{Binding ReconciliationReportViewModel}"
                       Margin="0,0,20,0"
                       Grid.Column="0"
                       Grid.Row="1">
@@ -556,7 +555,7 @@
                     <!-- Body -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4.5*" MinWidth="355"/>
+                            <ColumnDefinition Width="4.5*" MinWidth="370"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="2*" MinWidth="100"/>
                         </Grid.ColumnDefinitions>
@@ -573,9 +572,9 @@
                                       Height="100"
                                       Background="{DynamicResource BorderColor}"/>
 
-                        <!-- Validations TreeView Header -->
+                        <!-- Reconciliation TreeView Header -->
                         <Grid>
-                            <TextBlock Text="Validations"
+                            <TextBlock Text="Reconciliations"
                                        Margin="5"
                                        Foreground="{DynamicResource HeaderForegroundColor}"
                                        FontWeight="Bold"/>
@@ -593,7 +592,7 @@
                                               IsChecked="{Binding ShowOk,UpdateSourceTrigger=PropertyChanged}"
                                               Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                        <Image Source="/Icons/Validation.png"
+                                        <Image Source="/Icons/ReconciliationOk.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.OkTotalCount,FallbackValue='N/A'}"
@@ -604,7 +603,7 @@
                                               IsChecked="{Binding ShowDisabled,UpdateSourceTrigger=PropertyChanged}"
                                               Margin="0, 2, 0, 2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                        <Image Source="/Icons/Warning.png"
+                                        <Image Source="/Icons/ReconciliationDisabled.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.DisabledTotalCount,FallbackValue='N/A'}"
@@ -615,7 +614,7 @@
                                               IsChecked="{Binding ShowFailed,UpdateSourceTrigger=PropertyChanged}"
                                               Margin="0,2,0,2">
                                     <StackPanel Orientation="Horizontal" Margin="6 0 6 0">
-                                        <Image Source="/Icons/Fatal.png"
+                                        <Image Source="/Icons/ReconciliationFailed.png"
                                                Margin="0 0 2 0"
                                                MaxHeight="20"/>
                                         <TextBlock Text="{Binding SelectedExecution.FailedTotalCount,FallbackValue='N/A'}"
@@ -628,7 +627,7 @@
                                             Foreground="Gray"/>
                             </StackPanel>
                         </Grid>
-                        <!-- Validations TreeView -->
+                        <!-- Reconciliation TreeView -->
                         <Border Grid.Row="1" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
                             <Grid Background="{DynamicResource CanvasColor}">
                                 <Grid.ColumnDefinitions>
@@ -652,11 +651,11 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                
-                                <TextBox x:Name="TextBoxValidationsSearchBar"
+
+                                <TextBox x:Name="TextBoxReconciliationsSearchBar"
                                          Grid.Column="1"
                                          Margin="2"
-                                         Style="{DynamicResource ValidationsSearchBox}"
+                                         Style="{DynamicResource ReconciliationsSearchBox}"
                                          Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="Search for managers by their name or context ID"/>
 
@@ -668,17 +667,17 @@
 
                                 <TreeView Grid.Row="1"
                                           Grid.ColumnSpan="2"
-                                          Name="TreeViewValidations"
+                                          Name="TreeViewReconciliations"
                                           Background="Transparent"
                                           BorderBrush="Transparent"
                                           ItemsSource="{Binding ManagerView}"
                                           VirtualizingPanel.IsVirtualizing="True"
                                           VirtualizingPanel.VirtualizationMode="Recycling"
                                           VirtualizingPanel.ScrollUnit="Pixel"
-                                          TreeViewItem.Expanded="TreeViewValidations_Expanded"
-                                          TreeViewItem.Collapsed="TreeViewValidations_Collapsed">
+                                          TreeViewItem.Expanded="TreeViewReconciliations_Expanded"
+                                          TreeViewItem.Collapsed="TreeViewReconciliations_Collapsed">
                                     <TreeView.ItemTemplate>
-                                        <HierarchicalDataTemplate ItemsSource="{Binding ValidationView}">
+                                        <HierarchicalDataTemplate ItemsSource="{Binding ReconciliationView}">
                                             <StackPanel Orientation="Horizontal" 
                                                         Height="20">
                                                 <Image Source="{Binding Converter={StaticResource CountToImageConverter}}"
@@ -708,11 +707,11 @@
                                             <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}"/>
                                             <Setter Property="MinHeight" Value="25"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="False">
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsReconciliationConverter}}" Value="False">
                                                     <Setter Property="Focusable" Value="False"/>
                                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                <DataTrigger Binding="{Binding Converter={StaticResource IsReconciliationConverter}}" Value="True">
                                                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -727,8 +726,8 @@
                                        Margin="0 5 5 5"
                                        Foreground="{DynamicResource HeaderForegroundColor}"
                                        FontWeight="Bold"/>
-                            <Button Name="ButtonValidationReportDetach" 
-                                    Click="DetachValidationReportButtonClick"
+                            <Button Name="ButtonReconciliationReportDetach" 
+                                    Click="DetachReconciliationReportButtonClick"
                                     HorizontalAlignment="Right"
                                     Margin="0, 0, -2, 0"
                                     Style="{StaticResource DetachButton}">
@@ -742,7 +741,7 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Orientation="Vertical" 
                                             Background="{DynamicResource CanvasColor}"
-                                            DataContext="{Binding ElementName=TreeViewValidations, Path=SelectedItem}">
+                                            DataContext="{Binding ElementName=TreeViewReconciliations, Path=SelectedItem}">
                                     <TextBlock Text="Description" 
                                                FontWeight="Bold" 
                                                Margin="10 10 10 0"
@@ -767,7 +766,7 @@
                                             <Image.Style>
                                                 <Style TargetType="{x:Type Image}">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Converter={StaticResource IsValidationTestConverter}}" Value="True">
+                                                        <DataTrigger Binding="{Binding Converter={StaticResource IsReconciliationConverter}}" Value="True">
                                                             <Setter Property="Source" Value="{Binding Converter={StaticResource StatusToImageConverter}}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>

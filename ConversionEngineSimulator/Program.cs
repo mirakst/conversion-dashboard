@@ -18,18 +18,18 @@ namespace ConversionEngineSimulator
             string srcDb = args[1];
             string dstDb = args[2];
             Console.WriteLine("--------- Initializing streaming ----------");
-            DBInfo.Initialize(server, srcDb, dstDb);
+            DbInfo.Initialize(server, srcDb, dstDb);
 
             //CLEAR DESTINATION DB
             Console.WriteLine("Clearing destination DB tables...");
-            Console.WriteLine($"Rows affected: " + DBUtilities.ClearDestTables());
+            Console.WriteLine($"Rows affected: " + DbUtilities.ClearDestTables());
 
             //INSERTING STATIC TABLES
             Console.WriteLine("\n---------- Inserting static tables ----------");
             try
             {
                 ManagerTable managerInfo = new();
-                DBUtilities.InsertTable(managerInfo.Entries, managerInfo);
+                DbUtilities.InsertTable(managerInfo.Entries, managerInfo);
             }
             catch (SqlException ex)
             {
@@ -38,13 +38,13 @@ namespace ConversionEngineSimulator
             ManagerTrackingTable managerTracking = new();
             LoggingContextTable loggingContext = new();
 
-            DBUtilities.InsertTable(managerTracking.Entries, managerTracking);
-            DBUtilities.InsertTable(loggingContext.Entries, loggingContext);
+            DbUtilities.InsertTable(managerTracking.Entries, managerTracking);
+            DbUtilities.InsertTable(loggingContext.Entries, loggingContext);
 
             //QUERY TABLES
             Console.WriteLine("\n---------- Querying tables ----------");
             LoggingTable logs = new();
-            VoteTable votes = new();
+            ReconciliationTable reconciliations = new();
             ExecutionTable executions = new();
             EnginePropertyTable engineProperties = new();
             HealthReportTable healthReports = new();
@@ -53,11 +53,11 @@ namespace ConversionEngineSimulator
             Console.WriteLine("\n---------- Stream starting ----------");
 
             //STREAM FILES FROM THE STORED TABLES
-            _ = DBUtilities.AsyncExecution(logs.Entries, logs);
-            _ = DBUtilities.AsyncExecution(votes.Entries, votes);
-            _ = DBUtilities.AsyncExecution(executions.Entries, executions);
-            _ = DBUtilities.AsyncExecution(engineProperties.Entries, engineProperties);
-            _ = DBUtilities.AsyncExecution(healthReports.Entries, healthReports);
+            _ = DbUtilities.AsyncExecution(logs.Entries, logs);
+            _ = DbUtilities.AsyncExecution(reconciliations.Entries, reconciliations);
+            _ = DbUtilities.AsyncExecution(executions.Entries, executions);
+            _ = DbUtilities.AsyncExecution(engineProperties.Entries, engineProperties);
+            _ = DbUtilities.AsyncExecution(healthReports.Entries, healthReports);
 
             Console.ReadKey(true);
             return 0;

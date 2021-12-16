@@ -5,13 +5,13 @@ using System.Windows.Data;
 
 namespace DashboardFrontend.ValueConverters
 {
-    public class IsValidationTestBoolConverter : IValueConverter
+    public class IsReconciliationBoolConverter : IValueConverter
     {
 
-        /// <returns>True if value is a validation test.</returns>
+        /// <returns>True if value is a Reconciliation.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is ValidationTest;
+            return value is Reconciliation;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

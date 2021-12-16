@@ -12,7 +12,7 @@ namespace DashboardFrontend.ViewModels
             ActiveProfile = userSettings.ActiveProfile;
             LoggingQueryInterval = userSettings.LoggingQueryInterval;
             HealthReportQueryInterval = userSettings.HealthReportQueryInterval;
-            ValidationQueryInterval = userSettings.ValidationQueryInterval;
+            ReconciliationQueryInterval = userSettings.ReconciliationQueryInterval;
             ManagerQueryInterval = userSettings.ManagerQueryInterval;
             AllQueryInterval = userSettings.AllQueryInterval;
             SynchronizeAllQueries = userSettings.SynchronizeAllQueries;
@@ -22,7 +22,7 @@ namespace DashboardFrontend.ViewModels
         public IList<Profile> Profiles { get; set; }
         public int LoggingQueryInterval { get; set; }
         public int HealthReportQueryInterval { get; set; }
-        public int ValidationQueryInterval { get; set; }
+        public int ReconciliationQueryInterval { get; set; }
         public int ManagerQueryInterval { get; set; }
         public int AllQueryInterval { get; set; }
         public bool HasActiveProfile => ActiveProfile != null;
