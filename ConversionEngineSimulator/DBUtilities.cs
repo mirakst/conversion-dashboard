@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConversionEngineSimulator
 {
-    static class DBUtilities
+    internal static class DbUtilities
     {
         /// <summary>
         /// Generates a raw SQL query for the specified table and with the specified conditions.
@@ -36,7 +36,7 @@ namespace ConversionEngineSimulator
         /// <returns>The number of rows affected.</returns>
         public static int ClearDestTables() //Clears all tables in destination database
         {
-            var conn = DBInfo.ConnectToDestDB();
+            var conn = DbInfo.ConnectToDestDb();
             int rowsAffected = 0;
             try
             {
@@ -60,7 +60,7 @@ namespace ConversionEngineSimulator
         /// <returns>The result of the query.</returns>
         public static List<T> QueryTable<T>(IDatabaseTable tbl)
         {
-            var conn = DBInfo.ConnectToSrcDB();
+            var conn = DbInfo.ConnectToSrcDb();
             var queryString = GenerateQueryString(tbl);
             System.Console.WriteLine("Attempting query on table: "+tbl.TableName);
             List<T> outputList = conn.Query<T>(queryString).ToList();
@@ -76,7 +76,7 @@ namespace ConversionEngineSimulator
         /// <param name="tbl">The table to insert into.</param>
         public static void InsertTable<T>(List<T> entryList, IDatabaseTable tbl) //Populates a table in the destination database
         {
-            SqlConnection conn = DBInfo.ConnectToDestDB();
+            SqlConnection conn = DbInfo.ConnectToDestDb();
             string sqlExecution = GenerateExecutionString(tbl);
             Console.WriteLine($"Inserted table {tbl.TableName} with {conn.Execute(sqlExecution, entryList)} entries.");
         }
@@ -85,7 +85,7 @@ namespace ConversionEngineSimulator
         /// Helper method to perform a task after a specified delay.
         /// </summary>
         /// <param name="ts">The timespan of the delay.</param>
-        public async static Task SetTimeout(TimeSpan ts) //Calls itself after a timeout
+        public static async Task SetTimeout(TimeSpan ts) //Calls itself after a timeout
         {
             await Task.Delay(ts).ConfigureAwait(false);
         }
@@ -98,12 +98,12 @@ namespace ConversionEngineSimulator
         /// <param name="entryList">The list of entries to insert.</param>
         /// <param name="tbl">The table to insert into.</param>
         public static async Task AsyncExecution<T>(List<T> entryList, IDatabaseTable tbl) 
-            where T : ITimestampedDatabaseEntry 
+            where T : class, ITimestampedDatabaseEntry 
         {
             string executionString = GenerateExecutionString(tbl);
             await Task.Run(() =>
             {
-                var startTime = DBInfo.convStartTime;
+                var startTime = DbInfo.ConvStartTime;
 
                 foreach (T entry in entryList)
                 {
@@ -111,11 +111,11 @@ namespace ConversionEngineSimulator
                     SetTimeout(offset).ContinueWith(t =>
                     {
                         entry.CREATED = DateTime.Now;
-                        if (entry is EngineProperty e && (e.KEY == "START_TIME" || e.KEY == "END_TIME"))
+                        if (entry is EngineProperty e && e.KEY is "START_TIME" or "END_TIME")
                         {
                             e.VALUE = entry.CREATED.ToString();
                         }
-                        using (SqlConnection conn = DBInfo.ConnectToDestDB())
+                        using (SqlConnection conn = DbInfo.ConnectToDestDb())
                         {
                             conn.Execute(executionString, entry);
                         }

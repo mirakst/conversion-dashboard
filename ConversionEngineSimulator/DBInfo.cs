@@ -3,11 +3,11 @@ using System.Data.SqlClient;
 
 namespace ConversionEngineSimulator
 {
-    static class DBInfo
+    internal static class DbInfo
     {
         public static string SrcConnectionString { get; private set; }
         public static string DestConnectionString { get; private set; }
-        public static DateTime convStartTime; //Time of the first database entry
+        public static DateTime ConvStartTime; //Time of the first database entry
 
         /// <summary>
         /// Creates and assigns the <see cref="SrcConnectionString"/> and <see cref="DestConnectionString"/> properties from the specified inputs.
@@ -25,7 +25,7 @@ namespace ConversionEngineSimulator
         /// Creates an <see cref="SqlConnection"/> to the source database.
         /// </summary>
         /// <returns>The connection object.</returns>
-        public static SqlConnection ConnectToSrcDB() //Returns a connection to the source DB
+        public static SqlConnection ConnectToSrcDb() //Returns a connection to the source DB
         {
             return new SqlConnection(SrcConnectionString);
         }
@@ -34,7 +34,7 @@ namespace ConversionEngineSimulator
         /// Creates an <see cref="SqlConnection"/> to the destination database.
         /// </summary>
         /// <returns>The connection object.</returns>
-        public static SqlConnection ConnectToDestDB() //Returns a conection to the destination DB
+        public static SqlConnection ConnectToDestDb() //Returns a connection to the destination DB
         {
             return new SqlConnection(DestConnectionString);
         }
