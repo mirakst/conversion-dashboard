@@ -9,6 +9,7 @@ namespace DashboardBackend.Settings
     /// </summary>
     public class UserSettings : INotifyPropertyChanged, IUserSettings
     {
+        private readonly string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/ConversionDashboard/";
         private readonly string _fileName = "UserSettings.json";
 
         public UserSettings()
@@ -80,15 +81,17 @@ namespace DashboardBackend.Settings
         /// <inheritdoc/>
         public void Save(IUserSettings settings)
         {
+            Directory.CreateDirectory(_folderPath);
             OverwriteAll(settings);
-            using FileStream stream = File.Open(_fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
+            using FileStream stream = File.Open(_folderPath + _fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
             JsonSerializer.Serialize(stream, this);
         }
 
         /// <inheritdoc/>
         public void Load()
         {
-            string rawJson = File.ReadAllText(_fileName);
+            Directory.CreateDirectory(_folderPath);
+            string rawJson = File.ReadAllText(_folderPath + _fileName);
             UserSettings loadedSettings = JsonSerializer.Deserialize<UserSettings>(rawJson);
             if (loadedSettings != null)
             {
