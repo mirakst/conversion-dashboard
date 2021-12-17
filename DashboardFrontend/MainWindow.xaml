@@ -237,7 +237,7 @@
                             <DataGridTextColumn Header="Perf score"
                                                 Binding="{Binding Manager.PerformanceScore, StringFormat='\{0:0\}', TargetNullValue='N/A'}"
                                                 Width="1.6*"/>
-                            <DataGridTextColumn Header="Val Score" 
+                            <DataGridTextColumn Header="Rec Score" 
                                                 Binding="{Binding Manager.ReconciliationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
                                                 Width="1.55*"/>
                             <DataGridTextColumn Header="Status" 
