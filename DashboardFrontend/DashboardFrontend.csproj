@@ -7,6 +7,9 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Icons\favicon.ico</ApplicationIcon>
     <UseWindowsForms>True</UseWindowsForms>
+    <DebugType>portable</DebugType>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,7 +56,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DashboardBackend\DashboardBackend.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
-    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.80" />
   </ItemGroup>
 
   <ItemGroup>

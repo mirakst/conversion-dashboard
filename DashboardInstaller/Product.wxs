@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<?if $(var.Platform)=x64 ?>
+		<?define ProductCode = "{EE870252-63BC-4B78-8639-45C1629D2170}" ?>
+	<?else?>
+		<?define ProductCode = "{97768286-C92D-48C9-8E81-443971AB226D}" ?>
+	<?endif?>
+	
+	<?define UpgradeCode = "{DD1F25F3-C2D6-4B1B-ABDF-CF92A0043208}"?>
+	
+	<Product Id="$(var.ProductCode)"
+			 Name="!(loc.ApplicationName)"
+			 Language="!(loc.Language)"
+			 Version="1.0.0"
+			 Manufacturer="!(loc.Manufacturer)"
+			 UpgradeCode="$(var.UpgradeCode)">
+		
+		<Package InstallerVersion="200"
+				 Compressed="yes"
+				 InstallScope="perMachine"
+				 Platform="$(var.Platform)"
+				 Manufacturer="!(loc.Manufacturer)"
+				 Description="!(loc.Description)"
+				 Keywords="!(loc.Keywords)"
+				 Comments="!(loc.Comments)"
+				 Languages="!(loc.Language)"
+				 />
+
+		<!-- Downgrade error message -->
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)" />
+
+		<!-- Compress .cab into .msi -->
+		<MediaTemplate EmbedCab="yes"/>
+		
+		<!-- <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
+		<Property Id='DiskPrompt' Value="Acme's Foobar 1.0 Installation [1]" />-->
+
+		<Icon Id="AppIcon.ico" SourceFile="$(var.DashboardFrontend.ProjectDir)\Icons\favicon.ico" />
+
+		<!-- Use the icon.ico icon for this installer (shows up in Add/Remove programs) -->
+		<Property Id="ARPPRODUCTICON">AppIcon.ico</Property>
+
+		<Feature Id="ProductFeature" Title="Conversion Dashboard" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+</Wix>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    
+        <!-- Product Components -->
+        <ComponentGroup Id="ProductComponents">
+
+            <!-- Shortcut -->
+            <ComponentRef Id="MainAppShortcut" />
+      
+        </ComponentGroup>
+
+        <!-- Installed files -->
+        <DirectoryRef Id="INSTALLFOLDER" FileSource="..\DashboardFrontend\bin\Debug\net6.0-windows\win-$(var.Platform)">
+
+            <!-- Shortcut to main application -->
+            <Component Id="MainAppShortcut"
+					   Guid="{0995664D-AE63-4DD6-B894-708A99611370}">
+
+                <Shortcut Id="MainAppShortcut"
+                          Name="!(loc.ProductName_$(var.Platform))"
+                          Target="[INSTALLFOLDER]DashboardFrontend.exe"
+                          Directory="InstallProgramMenuFolder"
+                          WorkingDirectory="INSTALLFOLDER"
+                          Icon="AppIcon.ico"
+                          />
+
+                <!-- Unique key for component/shortcut -->
+                <RegistryValue Id="RegShortcutKey"
+							   Root="HKCU"
+				               Key="SOFTWARE\$(loc.ProductNameFolder)"
+				               Name="Shortcut"
+				               Value="1"
+				               Type="integer"
+				               KeyPath="yes" />
+        
+                <!--Remove start menu items -->
+                <RemoveFolder Id="RemoveStartMenu"
+							  Directory="InstallProgramMenuFolder"
+				              On="uninstall" />
+        
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+</Wix>

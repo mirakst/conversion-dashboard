@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	
+	<!-- Application info -->
+	<String Id="ApplicationName">Conversion Dashboard</String>
+	<String Id="Manufacturer">CS21-SW3-05</String>
+	<String Id="Description">Description</String>
+	<String Id="Comments">Fuck</String>
+	<String Id="Keywords">Ass</String>
+
+	<!-- Installer name -->
+	<String Id="ProductName_x86">ConversionDashboard(32 bit)</String>
+	<String Id="ProductName_x64">ConversionDashboard(64 bit)</String>
+	
+	<String Id="ProductNameFolder">ConversionDashboard</String>
+	
+	<String Id="DowngradeErrorMessage">A newer version of Conversion Dashboard is already installed.</String>
+	<!-- Languages -->
+	<String Id="Language">1033</String>
+	
+</WixLocalization>
