@@ -36,7 +36,7 @@ namespace DashboardFrontend.DetachedWindows
             {
                 Validation.GetHasError(TextBoxLoggingInterval),
                 Validation.GetHasError(TextBoxHRInterval),
-                Validation.GetHasError(TextBoxValidationInterval),
+                Validation.GetHasError(TextBoxReconciliationInterval),
                 Validation.GetHasError(TextBoxManagerInterval),
                 Validation.GetHasError(TextBoxAllInterval)
             };

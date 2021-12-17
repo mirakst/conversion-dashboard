@@ -16,7 +16,7 @@
     </Window.Resources>
     <Border Background="{DynamicResource BackgroundColor}">
         <Grid Margin="10">
-            <TabControl Background="{DynamicResource BackgroundColor}"
+            <TabControl Background="{DynamicResource CanvasColor}"
                         BorderBrush="{DynamicResource BorderColor}"
                         Grid.RowSpan="2"
                         Grid.ColumnSpan="2">

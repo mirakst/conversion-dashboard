@@ -239,10 +239,10 @@
                                                 Width="1.6*"/>
                             <DataGridTextColumn Header="Val Score" 
                                                 Binding="{Binding Manager.ReconciliationScore, StringFormat='\{0:0\}%', TargetNullValue='N/A'}"
-                                                Width="1.6*"/>
+                                                Width="1.55*"/>
                             <DataGridTextColumn Header="Status" 
                                                 Binding="{Binding Manager.Status}"
-                                                Width="2*"/>
+                                                Width="2.05*"/>
                         </DataGrid.Columns>
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
@@ -374,7 +374,7 @@
                         </Grid.Resources>
                         <ListView x:Name="ListViewLog"
                                   ItemsSource="{Binding MessageView}"
-                                  Background="{DynamicResource BackgroundColor}"
+                                  Background="{DynamicResource CanvasColor}"
                                   VirtualizingPanel.ScrollUnit="Pixel"
                                   VirtualizingPanel.IsVirtualizing="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
@@ -393,7 +393,7 @@
                                                         <StackPanel Orientation="Vertical">
                                                             <TextBlock Text="{TemplateBinding Content}" 
                                                                    Padding="4" 
-                                                                   Background="{DynamicResource BackgroundColor}" 
+                                                                   Background="{DynamicResource CanvasColor}" 
                                                                    Width="{TemplateBinding Width}" 
                                                                    TextAlignment="Left"
                                                                    Foreground="{DynamicResource ForegroundColor}"
@@ -861,7 +861,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <TabControl Background="{DynamicResource BackgroundColor}"
+                    <TabControl Background="{DynamicResource CanvasColor}"
                                 BorderBrush="{DynamicResource BorderColor}"
                                 DataContext="{Binding HealthReportViewModel}"
                                 Grid.ColumnSpan="3"
@@ -980,18 +980,17 @@
                                     Grid.Column="1"
                                     Margin="-50,0"/>
 
-                                    <lvc:CartesianChart
-                                            Margin="-7,0,5,-40"
-                                            Series="{Binding Chart.Series}"
-                                            XAxes="{Binding Chart.XAxis}"
-                                            YAxes="{Binding Chart.YAxis}"
-                                            ZoomMode="X"
-                                            TooltipPosition="Top"
-                                            MouseLeave="CartesianChart_MouseLeave"
-                                            MouseEnter="CartesianChart_MouseEnter"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="4"
-                                            Grid.Row="1">
+                                    <lvc:CartesianChart Margin="-7,0,5,-40"
+                                                        Series="{Binding Chart.Series}"
+                                                        XAxes="{Binding Chart.XAxis}"
+                                                        YAxes="{Binding Chart.YAxis}"
+                                                        ZoomMode="X"
+                                                        TooltipPosition="Top"
+                                                        MouseLeave="CartesianChart_MouseLeave"
+                                                        MouseEnter="CartesianChart_MouseEnter"
+                                                        Grid.Column="0"
+                                                        Grid.ColumnSpan="4"
+                                                        Grid.Row="1">
                                     </lvc:CartesianChart>
                                 </Grid>
                             </Border>

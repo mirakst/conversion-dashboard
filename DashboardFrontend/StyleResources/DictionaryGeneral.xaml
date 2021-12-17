@@ -51,11 +51,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">
-                    <Border Name="Border"
-                            CornerRadius="5" 
-                            Padding="2"
-                            BorderBrush="{DynamicResource DarkBorderColor}"
-                            BorderThickness="1" >
+                    <Border Name="Border"
+
+                            CornerRadius="5" 
+
+                            Padding="2"
+
+                            BorderBrush="{DynamicResource DarkBorderColor}"
+
+                            BorderThickness="1" 
+                            
+                            Background="{DynamicResource BackgroundColor}">
                         <ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
                     </Border>
                     <ControlTemplate.Triggers>

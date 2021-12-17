@@ -73,7 +73,6 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "SendReceived",
                     Labeler = (value) => value.ToString("N0") + "GB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)), 

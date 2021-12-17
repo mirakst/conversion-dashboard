@@ -18,7 +18,6 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "Time",
                     Labeler = value => DateTime.FromOADate(value).ToString("mm:ss"),
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),

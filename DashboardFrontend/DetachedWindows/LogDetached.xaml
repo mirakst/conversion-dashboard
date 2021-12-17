@@ -122,7 +122,7 @@
                 </Grid.Resources>
                 <ListView x:Name="ListViewLog"
                           ItemsSource="{Binding MessageView}"
-                          Background="{DynamicResource BackgroundColor}"
+                          Background="{DynamicResource CanvasColor}"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           VirtualizingPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
@@ -142,7 +142,7 @@
                                                 <StackPanel Orientation="Vertical">
                                                     <TextBlock Text="{TemplateBinding Content}" 
                                                                Padding="4" 
-                                                               Background="{DynamicResource BackgroundColor}" 
+                                                               Background="{DynamicResource CanvasColor}" 
                                                                Width="{TemplateBinding Width}" 
                                                                TextAlignment="Left"
                                                                Foreground="White"

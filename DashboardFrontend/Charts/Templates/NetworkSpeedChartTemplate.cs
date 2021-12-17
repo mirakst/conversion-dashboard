@@ -73,7 +73,6 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "Speed",
                     Labeler = (value) => value.ToString("N0") + "Mbps",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),

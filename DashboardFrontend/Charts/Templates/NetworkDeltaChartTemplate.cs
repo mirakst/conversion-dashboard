@@ -75,7 +75,6 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "Delta",
                     Labeler = (value) => value.ToString("N0") + "MB",
                     LabelsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),
                     SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255)),

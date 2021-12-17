@@ -104,7 +104,7 @@
                          Height="22" 
                          Margin="0,5,0,15"
                          VerticalAlignment="Center" 
-                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxName_TextChanged">
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
                         <Binding Path="Name" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>
@@ -132,7 +132,7 @@
                          Height="22" 
                          Margin="0,0,0,15"
                          VerticalAlignment="Center"
-                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}" TextChanged="TextBoxDataSrc_TextChanged">
+                         Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                     <TextBox.Text>
                         <Binding Path="DataSource" UpdateSourceTrigger="Explicit" ValidatesOnDataErrors="True">
                             <Binding.ValidationRules>

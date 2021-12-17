@@ -249,7 +249,7 @@
                                 Height="20"/>
                             
                             <TextBlock
-                                Text="Validations (sec)" 
+                                Text="Reconciliations (sec)" 
                                 Margin="0,0,0,15"
                                 Height="20"/>
                             
@@ -278,6 +278,7 @@
                                     <Binding Path="LoggingQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                            <ValidationRules:WithinRangeRule/>
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
@@ -293,21 +294,23 @@
                                     <Binding Path="HealthReportQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                            <ValidationRules:WithinRangeRule/>
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
                             </TextBox>
 
-                            <TextBox x:Name="TextBoxValidationInterval"
+                            <TextBox x:Name="TextBoxReconciliationInterval"
                                      Grid.Column="1" 
                                      Height="20" 
                                      Width="100"
                                      Margin="0,0,0,15"
                                      Validation.ErrorTemplate="{DynamicResource ValidationTemplate}">
                                 <TextBox.Text>
-                                    <Binding Path="ValidationQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                    <Binding Path="ReconciliationQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                            <ValidationRules:WithinRangeRule/>
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
@@ -323,6 +326,7 @@
                                     <Binding Path="ManagerQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                            <ValidationRules:WithinRangeRule/>
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>
@@ -338,6 +342,7 @@
                                     <Binding Path="AllQueryInterval" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
                                         <Binding.ValidationRules>
                                             <ValidationRules:ValidTypeRule ValidDataType="Int16"/>
+                                            <ValidationRules:WithinRangeRule/>
                                         </Binding.ValidationRules>
                                     </Binding>
                                 </TextBox.Text>

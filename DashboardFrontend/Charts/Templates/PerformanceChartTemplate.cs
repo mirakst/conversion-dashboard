@@ -74,7 +74,6 @@ namespace DashboardFrontend.Charts
             {
                 new Axis
                 {
-                    Name = "Load",
                     Labeler  = (value) => value.ToString("P0"),
                     MaxLimit = 1,
                     MinLimit = 0,

@@ -117,15 +117,5 @@ namespace DashboardFrontend.DetachedWindows
         {
             SystemCommands.CloseWindow(this);
         }
-
-        private void TextBoxName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void TextBoxDataSrc_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
     }
 }
