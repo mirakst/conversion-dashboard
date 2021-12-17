@@ -357,9 +357,9 @@ namespace DashboardFrontend
                 List<Manager> managers = DataHandler.GetParsedManagers(Conversion.LastManagerQuery);
                 Conversion.LastManagerQuery = DateTime.Now;
 
-                if (managers.Any())
+                lock (Conversion.AllManagers)
                 {
-                    lock (Conversion.AllManagers)
+                    if (managers.Any())
                     {
                         // Update managers
                         foreach (Manager? manager in managers)
@@ -402,18 +402,18 @@ namespace DashboardFrontend
                                 }
                             }
                         }
-                        // Check for any health report readings
-                        if (Conversion.HealthReport?.Cpu is not null && Conversion.HealthReport?.Ram is not null)
-                        {
-                            Conversion.AllManagers.ForEach(m =>
-                            {
-                                List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                                List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
-                                m.AddReadings(cpuReadings, ramReadings);
-                            });
-                        }
+                        Conversion.LastManagerUpdated = DateTime.Now;
                     }
-                    Conversion.LastManagerUpdated = DateTime.Now;
+                    // Check for any health report readings
+                    if (Conversion.HealthReport?.Cpu is not null && Conversion.HealthReport?.Ram is not null)
+                    {
+                        Conversion.AllManagers.ForEach(m =>
+                        {
+                            List<CpuLoad> cpuReadings = Conversion.HealthReport.Cpu.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                            List<RamLoad> ramReadings = Conversion.HealthReport.Ram.Readings.Where(r => r.Date >= m.StartTime && r.Date <= m.EndTime).ToList();
+                            m.AddReadings(cpuReadings, ramReadings);
+                        });
+                    }
                 }
                 ClearStatusMessage(DashboardStatus.UpdatingManagers);
             }

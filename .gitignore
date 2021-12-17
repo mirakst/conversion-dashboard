@@ -351,3 +351,5 @@ MigrationBackup/
 
 # Resharper
 DashboardFrontend/Properties/Annotations.cs
+
+*.idea
