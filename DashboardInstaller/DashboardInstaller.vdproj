@@ -15,24 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_030B54CEBF7B45D68DF18E9E109DB65A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3371ACB2CE7D44DF9B9BB635BCDFD67E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9E0A6C89721C407A91B79199EAF60286"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_B44565BE15474D3FAC33753F6771D955"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -217,7 +199,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Conversion Dashboard"
         "ProductCode" = "8:{53D10B06-E9F9-4DF6-8413-503D6A344FF7}"
-        "PackageCode" = "8:{2EE02BF4-F1C3-4558-B86B-81426F878675}"
+        "PackageCode" = "8:{B7DF85FB-03D7-4AB9-B005-AEB02CFAECBC}"
         "UpgradeCode" = "8:{4F147098-7B9A-4544-A7E8-58EAED9F9F49}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -764,90 +746,6 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_030B54CEBF7B45D68DF18E9E109DB65A"
-            {
-            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Release\\net6.0-windows\\DashboardFrontend.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{16DB8F7E-3264-4B19-BC55-A9C7F7BFBF40}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3371ACB2CE7D44DF9B9BB635BCDFD67E"
-            {
-            "SourcePath" = "8:..\\DashboardBackend\\obj\\Release\\net6.0-windows\\DashboardBackend.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{808A4020-110B-42BC-86DC-968645430538}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9E0A6C89721C407A91B79199EAF60286"
-            {
-            "SourcePath" = "8:..\\Model\\obj\\Release\\net6.0-windows\\Model.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{E824F912-3FFD-41D8-8924-23229B11C5A4}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B44565BE15474D3FAC33753F6771D955"
             {
             "SourcePath" = "8:..\\DashboardFrontend\\obj\\Release\\net6.0-windows\\apphost.exe"
@@ -874,6 +772,9 @@
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
+                "ExcludeFilter" = "8:Model.pdb"
+                "ExcludeFilter" = "8:DashboardBackend.pdb"
+                "ExcludeFilter" = "8:DashboardFrontend.pdb"
                 }
             }
         }
