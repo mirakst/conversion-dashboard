@@ -36,13 +36,25 @@
 		<!-- <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
 		<Property Id='DiskPrompt' Value="Acme's Foobar 1.0 Installation [1]" />-->
 
-		<Icon Id="AppIcon.ico" SourceFile="$(var.DashboardFrontend.ProjectDir)\Icons\favicon.ico" />
+		<Icon Id="AppIcon.ico" SourceFile="$(var.ProjectDir)\Assets\\AppIcon.ico" />
 
 		<!-- Use the icon.ico icon for this installer (shows up in Add/Remove programs) -->
 		<Property Id="ARPPRODUCTICON">AppIcon.ico</Property>
 
-		<Feature Id="ProductFeature" Title="Conversion Dashboard" Level="1">
+		<!-- Create a basic UI for the installer -->
+		<UIRef Id="WixUI_Minimal" />
+	
+		<!-- Change the installer UI background images -->
+		<!--<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\License.rtf" />
+		<WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\Background.bmp" />
+		<WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\Banner.bmp" />-->
+	
+		<!-- Define components, shortcuts, files etc... for installer -->
+		<Feature Id="ProductFeature" Title="ConsoleApp" Level="1">
+
 			<ComponentGroupRef Id="ProductComponents" />
+			<!--<ComponentGroupRef Id="PublishedComponents" />-->
+		
 		</Feature>
 	</Product>
 </Wix>

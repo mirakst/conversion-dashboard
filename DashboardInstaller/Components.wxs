@@ -15,7 +15,7 @@
 
             <!-- Shortcut to main application -->
             <Component Id="MainAppShortcut"
-					   Guid="{0995664D-AE63-4DD6-B894-708A99611370}">
+					   Guid="{F380E030-B4FC-4311-9E15-ED175B3E9CD5}">
 
                 <Shortcut Id="MainAppShortcut"
                           Name="!(loc.ProductName_$(var.Platform))"
@@ -28,7 +28,7 @@
                 <!-- Unique key for component/shortcut -->
                 <RegistryValue Id="RegShortcutKey"
 							   Root="HKCU"
-				               Key="SOFTWARE\$(loc.ProductNameFolder)"
+				               Key="SOFTWARE\!(loc.ProductNameFolder)"
 				               Name="Shortcut"
 				               Value="1"
 				               Type="integer"

@@ -5,8 +5,8 @@
 	<String Id="ApplicationName">Conversion Dashboard</String>
 	<String Id="Manufacturer">CS21-SW3-05</String>
 	<String Id="Description">Description</String>
-	<String Id="Comments">Fuck</String>
-	<String Id="Keywords">Ass</String>
+	<String Id="Comments">Commenting</String>
+	<String Id="Keywords">Conversion, Dashboard, Monitoring, C#, MSSQL, SQL</String>
 
 	<!-- Installer name -->
 	<String Id="ProductName_x86">ConversionDashboard(32 bit)</String>
