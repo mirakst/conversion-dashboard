@@ -4,24 +4,22 @@ This program is designed for Netcompany, to provide a dashboard for the Conversi
 It queries, parses and visualized the important log data, which assists the user in data analysis of ongoing and previous conversions.
 The software is developed by the P3-Project CS-21-SW-3-05 team.
 
-<!-- GETTING STARTED -->
- ## Getting Started
- 
-To get the program up and running, follow these steps
- 
+<!-- INSTALLATION -->
+  
  ### Installation 
-
+ To get the program up and running, follow these steps
+ 
  1. Clone the repository
 
 ```sh
 git clone https://github.com/mirakst/P3-Project.git
 ```
 
- 2. Compile the program using any IDE that supports `net6.0`
+ 2. Run the `Setup.exe` file
 
- 3. Run the executable `Conversion Dashboard.exe` (placeholder)
+### Getting Started
 
- 4. Set up your first profile in the settings menu
+ Set up your first profile in the settings menu
 
 `Profile name:` The name of the profile.
 
