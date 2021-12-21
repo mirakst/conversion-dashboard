@@ -15,7 +15,7 @@ The software is developed by the P3-Project CS-21-SW-3-05 team.
 git clone https://github.com/mirakst/P3-Project.git
 ```
 
- 2. Run the `Setup.exe` file
+ 2. Compile the program using any IDE that supports `net 6.0`
 
 ### Getting Started
 
