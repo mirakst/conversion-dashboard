@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['macroattribute_0',['MacroAttribute',['../class_dashboard_frontend_1_1_properties_1_1_macro_attribute.html',1,'DashboardFrontend::Properties']]],
+  ['mainwindow_1',['MainWindow',['../class_dashboard_frontend_1_1_main_window.html',1,'DashboardFrontend']]],
+  ['mainwindowviewmodel_2',['MainWindowViewModel',['../class_dashboard_frontend_1_1_view_models_1_1_main_window_view_model.html',1,'DashboardFrontend::ViewModels']]],
+  ['manager_3',['Manager',['../class_conversion_engine_simulator_1_1_manager.html',1,'ConversionEngineSimulator.Manager'],['../class_model_1_1_manager.html',1,'Model.Manager']]],
+  ['managercharttemplate_4',['ManagerChartTemplate',['../class_dashboard_frontend_1_1_charts_1_1_manager_chart_template.html',1,'DashboardFrontend::Charts']]],
+  ['managerchartviewmodel_5',['ManagerChartViewModel',['../class_dashboard_frontend_1_1_view_models_1_1_manager_chart_view_model.html',1,'DashboardFrontend::ViewModels']]],
+  ['managerchartwrapper_6',['ManagerChartWrapper',['../class_dashboard_frontend_1_1_charts_1_1_manager_chart_wrapper.html',1,'DashboardFrontend::Charts']]],
+  ['managerentry_7',['ManagerEntry',['../class_dashboard_backend_1_1_database_1_1_models_1_1_manager_entry.html',1,'DashboardBackend::Database::Models']]],
+  ['managerlistdetached_8',['ManagerListDetached',['../class_dashboard_frontend_1_1_detached_windows_1_1_manager_list_detached.html',1,'DashboardFrontend::DetachedWindows']]],
+  ['managerobservable_9',['ManagerObservable',['../class_dashboard_frontend_1_1_view_models_1_1_manager_observable.html',1,'DashboardFrontend::ViewModels']]],
+  ['managerparser_10',['ManagerParser',['../class_dashboard_backend_1_1_parsers_1_1_manager_parser.html',1,'DashboardBackend::Parsers']]],
+  ['managerparsertests_11',['ManagerParserTests',['../class_dashboard_backend_1_1_tests_1_1_manager_parser_tests.html',1,'DashboardBackend::Tests']]],
+  ['managertable_12',['ManagerTable',['../class_conversion_engine_simulator_1_1_manager_table.html',1,'ConversionEngineSimulator']]],
+  ['managertests_13',['ManagerTests',['../class_model_1_1_tests_1_1_manager_tests.html',1,'Model::Tests']]],
+  ['managertracking_14',['ManagerTracking',['../class_conversion_engine_simulator_1_1_manager_tracking.html',1,'ConversionEngineSimulator.ManagerTracking'],['../class_dashboard_backend_1_1_database_1_1_models_1_1_manager_tracking.html',1,'DashboardBackend.Database.Models.ManagerTracking']]],
+  ['managertrackingtable_15',['ManagerTrackingTable',['../class_conversion_engine_simulator_1_1_manager_tracking_table.html',1,'ConversionEngineSimulator']]],
+  ['managerviewmodel_16',['ManagerViewModel',['../class_dashboard_frontend_1_1_view_models_1_1_manager_view_model.html',1,'DashboardFrontend::ViewModels']]],
+  ['managerwrapper_17',['ManagerWrapper',['../class_dashboard_frontend_1_1_manager_wrapper.html',1,'DashboardFrontend']]],
+  ['meansimplicituseattribute_18',['MeansImplicitUseAttribute',['../class_dashboard_frontend_1_1_properties_1_1_means_implicit_use_attribute.html',1,'DashboardFrontend::Properties']]],
+  ['migrationfile_19',['MigrationFile',['../class_dashboard_backend_1_1_database_1_1_models_1_1_migration_file.html',1,'DashboardBackend::Database::Models']]],
+  ['minimumcharactersrule_20',['MinimumCharactersRule',['../class_dashboard_frontend_1_1_validation_rules_1_1_minimum_characters_rule.html',1,'DashboardFrontend::ValidationRules']]],
+  ['mustusereturnvalueattribute_21',['MustUseReturnValueAttribute',['../class_dashboard_frontend_1_1_properties_1_1_must_use_return_value_attribute.html',1,'DashboardFrontend::Properties']]]
+];
