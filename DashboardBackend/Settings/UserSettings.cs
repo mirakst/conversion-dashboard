@@ -81,7 +81,6 @@ namespace DashboardBackend.Settings
         /// <inheritdoc/>
         public void Save(IUserSettings settings)
         {
-            Directory.CreateDirectory(_folderPath);
             OverwriteAll(settings);
             using FileStream stream = File.Open(_folderPath + _fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
             JsonSerializer.Serialize(stream, this);
