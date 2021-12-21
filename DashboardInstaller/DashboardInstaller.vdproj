@@ -198,15 +198,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Conversion Dashboard"
-        "ProductCode" = "8:{53D10B06-E9F9-4DF6-8413-503D6A344FF7}"
-        "PackageCode" = "8:{B7DF85FB-03D7-4AB9-B005-AEB02CFAECBC}"
+        "ProductCode" = "8:{84384868-1F15-42E8-B263-085D002974E8}"
+        "PackageCode" = "8:{BF9CBAFA-A584-45BD-8D74-A9BD34B4F0B9}"
         "UpgradeCode" = "8:{4F147098-7B9A-4544-A7E8-58EAED9F9F49}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.1.0"
+        "ProductVersion" = "8:1.0.0"
         "Manufacturer" = "8:CS-21-SW3-05"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -748,7 +748,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B44565BE15474D3FAC33753F6771D955"
             {
-            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Release\\net6.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\DashboardFrontend\\obj\\Debug\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FF1D812D8C344E678E1BAFD6C7450F75"
