@@ -55,6 +55,11 @@ By utilizing the detached views of the modules, you can compare the module's dat
 Simply detach a window and change the execution for that window to the one you want to compare with, and compare it with the data in the main window.
 You could do this in two separate detached windows as well.
 
+ <!-- DOCUMENTATION -->
+ ## Documentation
+ 
+ Documentation for the system can be accessed at [https://mirakst.github.io/conversion-dashboard/html/](https://mirakst.github.io/conversion-dashboard/html/).
+
  <!-- LICENSE -->
  ## License
  
